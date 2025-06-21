@@ -14,7 +14,7 @@ const checkTask2Answer = () => {
       setShowTask2Solution(true);
     } else {
       alert(
-        "Make sure you use a for loop with range() and calculate the sum of numbers."
+        "Make sure you use a for loop with range() and calculate the sum of numbers. total = 0\nfor i in range(1,11):\n    total += i \nprint(total)"
       );
     }
   };

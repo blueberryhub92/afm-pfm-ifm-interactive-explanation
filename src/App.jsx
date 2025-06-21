@@ -21,14 +21,20 @@ import { Slide15TwoMorePythonTasks } from "./components/Slide15TwoMorePythonTask
 import { Slide16LearningRateQuestion } from "./components/Slide16LearningRateQuestion";
 import { Slide17LearningRateExplanation } from "./components/Slide17LearningRateExplanation";
 import { Slide18PredictorQuestion } from "./components/Slide18PredictorQuestion";
+import { Slide21PFM } from "./components/Slide21PFM";
+import {Slide22PFMSimulation} from "./components/Slide22PFMSimulation";
+import { Slide25GreyArea } from "./components/Slide25GreyArea";
+import {Slide26GreyAreaEstimation} from "./components/Slide26GreyAreaEstimation";
 import { Layout } from "./components/shared/Layout";
 import { SuccessProbabilityBar } from "./components/shared/SuccessProbabilityBar";
 import { ProbabilityProvider, useProbability } from './components/shared/ProbabilityContext';
 import { AFMFormulaTooltip } from "./components/shared/AFMFormulaTooltip";
+import { Slide23IFM } from "./components/Slide23IFM";
+import { Slide24IFMSimulation } from "./components/Slide24IFMSimulation";
 
 // Constants
 const BAR_VISIBILITY_START_SLIDE = 9;
-const TOTAL_SLIDES = 21;
+const TOTAL_SLIDES = 26;
 
 // Helper component to create Layout with conditional bar
 const SlideLayout = ({ slideIndex, children, className, ref }) => {
@@ -283,9 +289,63 @@ function AFMLearningAppContent() {
             ref={slideRefs[20]} 
             // className="!p-0"
           >
-            <Slide20AFMLimitations />
+            <Slide20AFMLimitations scroll={scroll} />
           </SlideLayout>
         );
+        case 21:
+          return (
+            <SlideLayout 
+              slideIndex={21} 
+              ref={slideRefs[21]}
+            >
+              <Slide21PFM scroll={scroll} />
+            </SlideLayout>
+          );
+        case 22:
+          return (
+            <SlideLayout 
+              slideIndex={22} 
+              ref={slideRefs[22]}
+            >
+              <Slide22PFMSimulation scroll={scroll} />
+            </SlideLayout>
+          );
+        case 23:
+          return (
+            <SlideLayout 
+              slideIndex={23} 
+              ref={slideRefs[23]}
+            >
+              <Slide23IFM scroll={scroll} />
+            </SlideLayout>
+          );
+        case 24:
+          return (
+            <SlideLayout 
+              slideIndex={24} 
+              ref={slideRefs[24]}
+            >
+              <Slide24IFMSimulation scroll={scroll} />
+            </SlideLayout>
+          );
+        case 25:
+          return (
+            <SlideLayout 
+              slideIndex={25} 
+              ref={slideRefs[25]}
+            >
+              <Slide25GreyArea scroll={scroll} />
+            </SlideLayout>
+          );
+        case 26:
+          return (
+            <SlideLayout 
+              slideIndex={26} 
+              ref={slideRefs[26]}
+            >
+              <Slide26GreyAreaEstimation scroll={scroll} />
+            </SlideLayout>
+          );
       default:
         return null;
     }
@@ -296,7 +356,7 @@ function AFMLearningAppContent() {
     if (slideIndex >= 7 && slideIndex < 13) return 2; // θ + T
     if (slideIndex >= 13 && slideIndex < 16) return 3; // θ + β + T  
     if (slideIndex >= 16 && slideIndex < 18) return 4; 
-    if (slideIndex >=18) return 5;
+    if (slideIndex >=18 && slideIndex < 21) return 5;
     return 0; // No formula
   };
 

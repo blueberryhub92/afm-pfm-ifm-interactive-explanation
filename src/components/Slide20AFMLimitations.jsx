@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export const Slide20AFMLimitations = () => {
+export const Slide20AFMLimitations = ({scroll}) => {
   const [currentView, setCurrentView] = useState("overview");
   const [completedScenarios, setCompletedScenarios] = useState(new Set());
   const [step, setStep] = useState(0);
@@ -17,6 +17,7 @@ export const Slide20AFMLimitations = () => {
   const [userGuess, setUserGuess] = useState({ value: 4, unit: "weeks" });
   const [showAnswer, setShowAnswer] = useState(false);
   const [showTellMeAnswer, setShowTellMeAnswer] = useState(false);
+  const [showExplanation, setShowExplanation] = useState(false);
 
   const handleSliderChange = (period, value) => {
     setSliderValues((prev) => ({ ...prev, [period]: value }));
@@ -98,6 +99,7 @@ print(result)`,
       setCurrentView("no-forgetting");
       setShowAnswer(false);
       setShowTellMeAnswer(false);
+      setShowExplanation(false);
       setSliderValues({ days: 0.8, months: 0.8, year: 0.8 });
       setUserGuess({ value: 4, unit: "weeks" });
       setStep(0);
@@ -490,16 +492,22 @@ print(result)`,
                 <p className="text-gray-700 mb-3 text-lg">
                   Why might it make sense for success probability to increase
                   regardless of the correctness of your answer?{" "}
-                  <strong className="text-blue-700">Tell me!</strong>
+                  <button
+                    onClick={() => setShowExplanation(true)}
+                    className="text-blue-700 font-bold hover:text-blue-800 underline cursor-pointer"
+                  >
+                    Tell me!
+                  </button>
                 </p>
-                <p className="text-gray-600">
-                  Well, BKT considers every answer, wrong or right, as a
-                  learning opportunity that brings you one step closer to
-                  mastery. As you might have experienced in real life, reviewing
-                  incorrect answers often helps to solidify your knowledge even
-                  more and reduce the chance that you'll make the same mistake
-                  again.
-                </p>
+                {showExplanation && (
+                  <p className="text-gray-600 mt-4 animate-fade-in">
+                    Well, AFM considers every answer, wrong or right, as a
+                    learning opportunity that raises your success probability. As you might have experienced in real life, reviewing
+                    incorrect answers often helps to solidify your knowledge even
+                    more and reduce the chance that you'll make the same mistake
+                    again.
+                  </p>
+                )}
               </div>
 
               <div className="flex justify-center space-x-4">
@@ -627,10 +635,7 @@ print(result)`,
             <button
               className="px-12 py-4 bg-gradient-to-r from-green-600 to-teal-600 text-white rounded-lg hover:from-green-700 hover:to-teal-700 transition-all duration-300 text-xl font-bold shadow-lg transform hover:scale-105"
               onClick={() => {
-                // Add your continue logic here
-                console.log(
-                  "All scenarios completed! Continue to next section..."
-                );
+                scroll(21);
               }}
             >
               Continue to Next Section →
