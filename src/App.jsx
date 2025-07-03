@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
-import { Slide20AFMLimitations } from "./components/Slide20AFMLimitations";
+import { Slide21AFMLimitations } from "./components/Slide21AFMLimitations";
 import { Slide19AFMFormula } from "./components/Slide19AFMFormula";
 import { scrollToSlide } from "./utils/utils";
 import { Slide0IntroductoryQuestion } from "./components/Slide0IntroductoryQuestion";
@@ -21,46 +21,20 @@ import { Slide15TwoMorePythonTasks } from "./components/Slide15TwoMorePythonTask
 import { Slide16LearningRateQuestion } from "./components/Slide16LearningRateQuestion";
 import { Slide17LearningRateExplanation } from "./components/Slide17LearningRateExplanation";
 import { Slide18PredictorQuestion } from "./components/Slide18PredictorQuestion";
-import { Slide21PFM } from "./components/Slide21PFM";
-import {Slide22PFMSimulation} from "./components/Slide22PFMSimulation";
-import { Slide25GreyArea } from "./components/Slide25GreyArea";
-import {Slide26GreyAreaEstimation} from "./components/Slide26GreyAreaEstimation";
-import { Layout } from "./components/shared/Layout";
-import { SuccessProbabilityBar } from "./components/shared/SuccessProbabilityBar";
+import { Slide23PFM } from "./components/Slide23PFM";
+import {Slide24PFMSimulation} from "./components/Slide24PFMSimulation";
+import { Slide28GreyArea } from "./components/Slide28GreyArea";
 import { ProbabilityProvider, useProbability } from './components/shared/ProbabilityContext';
 import { AFMFormulaTooltip } from "./components/shared/AFMFormulaTooltip";
-import { Slide23IFM } from "./components/Slide23IFM";
-import { Slide24IFMSimulation } from "./components/Slide24IFMSimulation";
+import { Slide26IFM } from "./components/Slide26IFM";
+import { Slide27IFMSimulation } from "./components/Slide27IFMSimulation";
+import { Slide20AFMSimulator } from "./components/Slide20AFMSimulator";
+import { Slide25IFMTasks } from "./components/Slide25IFMTasks";
+import { Slide22AFMCorrectness } from "./components/Slide22AFMCorrectness";
+import { Slide29InteractiveGreyArea } from "./components/Slide29InteractiveGreyArea";
 
 // Constants
-const BAR_VISIBILITY_START_SLIDE = 9;
-const TOTAL_SLIDES = 26;
-
-// Helper component to create Layout with conditional bar
-const SlideLayout = ({ slideIndex, children, className, ref }) => {
-  const { currentProbability, showCurrentValue, setIsHovering } = useProbability();
-  
-  const shouldShowBar = slideIndex >= BAR_VISIBILITY_START_SLIDE;
-  
-  const barContent = shouldShowBar ? (
-    <SuccessProbabilityBar
-      currentProbability={currentProbability}
-      showCurrentValue={showCurrentValue}
-      onHover={setIsHovering}
-    />
-  ) : null;
-  
-  return (
-    <Layout 
-      ref={ref} 
-      className={className} 
-      showBar={shouldShowBar} 
-      barContent={barContent}
-    >
-      {children}
-    </Layout>
-  );
-};
+const TOTAL_SLIDES = 28;
 
 function AFMLearningAppContent() {
   const [guess1, setGuess1] = useState("");
@@ -69,6 +43,7 @@ function AFMLearningAppContent() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [maxVisitedSlide, setMaxVisitedSlide] = useState(0);
 
+  const { setIsHovering } = useProbability();
 
   const slideRefs = useMemo(
     () => Array.from({ length: TOTAL_SLIDES }, () => ({ current: null })),
@@ -148,204 +123,136 @@ function AFMLearningAppContent() {
     switch(currentSlide) {
       case 0:
         return (
-          <SlideLayout slideIndex={0} ref={slideRefs[0]}>
-            <Slide0IntroductoryQuestion
-              guess1={guess1}
-              setGuess1={setGuess1}
-              scroll={scroll}
-            />
-          </SlideLayout>
+          <Slide0IntroductoryQuestion
+            guess1={guess1}
+            setGuess1={setGuess1}
+            scroll={scroll}
+          />
         );
       case 1:
         return (
-          <SlideLayout slideIndex={1} ref={slideRefs[1]}>
-            <Slide1GuessResult guess1={guess1} scroll={scroll} />
-          </SlideLayout>
+          <Slide1GuessResult guess1={guess1} scroll={scroll} />
         );
       case 2:
         return (
-          <SlideLayout slideIndex={2} ref={slideRefs[2]}>
-            <Slide2CodeExplanation scroll={scroll} />
-          </SlideLayout>
+          <Slide2CodeExplanation scroll={scroll} />
         );
       case 3:
         return (
-          <SlideLayout slideIndex={3} ref={slideRefs[3]}>
-            <Slide3SliderQuestion scroll={scroll} />
-          </SlideLayout>
+          <Slide3SliderQuestion scroll={scroll} />
         );
       case 4:
         return (
-          <SlideLayout slideIndex={4} ref={slideRefs[4]}>
-            <Slide4AFMIntroduction scroll={scroll} />
-          </SlideLayout>
+          <Slide4AFMIntroduction scroll={scroll} />
         );
       case 5:
         return (
-          <SlideLayout slideIndex={5} ref={slideRefs[5]}>
-            <Slide5SecondTask scroll={scroll} />
-          </SlideLayout>
+          <Slide5SecondTask scroll={scroll} />
         );
       case 6:
         return (
-          <SlideLayout slideIndex={6} ref={slideRefs[6]}>
-            <Slide6Quiz guess2={guess2} setGuess2={setGuess2} scroll={scroll} />
-          </SlideLayout>
+          <Slide6Quiz guess2={guess2} setGuess2={setGuess2} scroll={scroll} />
         );
       case 7:
         return (
-          <SlideLayout slideIndex={7} ref={slideRefs[7]}>
-            <Slide7QuizResult guess2={guess2} scroll={scroll} />
-          </SlideLayout>
+          <Slide7QuizResult guess2={guess2} scroll={scroll} />
         );
       case 8:
         return (
-          <SlideLayout slideIndex={8} ref={slideRefs[8]}>
-            <Slide8OpportunityChoices scroll={scroll} />
-          </SlideLayout>
+          <Slide8OpportunityChoices scroll={scroll} />
         );
       case 9:
         return (
-          <SlideLayout slideIndex={9} ref={slideRefs[9]}>
-            <Slide9SuccessProbabilityProgress scroll={scroll} />
-          </SlideLayout>
+          <Slide9SuccessProbabilityProgress scroll={scroll} />
         );
       case 10:
         return (
-          <SlideLayout slideIndex={10} ref={slideRefs[10]}>
-            <Slide10TwoPythonTasks scroll={scroll} />
-          </SlideLayout>
+          <Slide10TwoPythonTasks scroll={scroll} />
         );
       case 11:
         return (
-          <SlideLayout slideIndex={11} ref={slideRefs[11]}>
-            <Slide11VariableDeclaration scroll={scroll} />
-          </SlideLayout>
+          <Slide11VariableDeclaration scroll={scroll} />
         );
       case 12:
         return (
-          <SlideLayout slideIndex={12} ref={slideRefs[12]}>
-            <Slide12ForLoops scroll={scroll} />
-          </SlideLayout>
+          <Slide12ForLoops scroll={scroll} />
         );
       case 13:
         return (
-          <SlideLayout slideIndex={13} ref={slideRefs[13]}>
-            <Slide13TaskDifficultyQuestion
-              taskChoice={taskChoice}
-              setTaskChoice={setTaskChoice}
-              scroll={scroll}
-            />
-          </SlideLayout>
+          <Slide13TaskDifficultyQuestion
+            taskChoice={taskChoice}
+            setTaskChoice={setTaskChoice}
+            scroll={scroll}
+          />
         );
       case 14:
         return (
-          <SlideLayout slideIndex={14} ref={slideRefs[14]}>
-            <Slide14BetaParameter scroll={scroll} />
-          </SlideLayout>
+          <Slide14BetaParameter scroll={scroll} />
         );
       case 15:
         return (
-          <SlideLayout slideIndex={15} ref={slideRefs[15]}>
-            <Slide15TwoMorePythonTasks scroll={scroll} />
-          </SlideLayout>
+          <Slide15TwoMorePythonTasks scroll={scroll} />
         );
       case 16:
         return (
-          <SlideLayout slideIndex={16} ref={slideRefs[16]}>
           <Slide16LearningRateQuestion
-              taskChoice={taskChoice}
-              setTaskChoice={setTaskChoice}
-              scroll={scroll}
-            />
-          </SlideLayout>
+            taskChoice={taskChoice}
+            setTaskChoice={setTaskChoice}
+            scroll={scroll}
+          />
         );
       case 17:
         return (
-          <SlideLayout slideIndex={17} ref={slideRefs[17]}>
-            <Slide17LearningRateExplanation scroll={scroll} />
-          </SlideLayout>
+          <Slide17LearningRateExplanation scroll={scroll} />
         );
       case 18:
         return (
-          <SlideLayout slideIndex={18} ref={slideRefs[18]}>
-            <Slide18PredictorQuestion scroll={scroll} />
-          </SlideLayout>
+          <Slide18PredictorQuestion scroll={scroll} />
         );
       case 19:
         return (
-          <SlideLayout 
-            slideIndex={19} 
-            ref={slideRefs[19]}
-            // className="!bg-gradient-to-r !from-purple-100 !to-pink-100 !p-0"
-          >
-            <Slide19AFMFormula scroll={scroll} />
-          </SlideLayout>
+          <Slide19AFMFormula scroll={scroll} />
         );
       case 20:
         return (
-          <SlideLayout 
-            slideIndex={20} 
-            ref={slideRefs[20]} 
-            // className="!p-0"
-          >
-            <Slide20AFMLimitations scroll={scroll} />
-          </SlideLayout>
+          <Slide20AFMSimulator scroll={scroll} />
         );
-        case 21:
-          return (
-            <SlideLayout 
-              slideIndex={21} 
-              ref={slideRefs[21]}
-            >
-              <Slide21PFM scroll={scroll} />
-            </SlideLayout>
-          );
-        case 22:
-          return (
-            <SlideLayout 
-              slideIndex={22} 
-              ref={slideRefs[22]}
-            >
-              <Slide22PFMSimulation scroll={scroll} />
-            </SlideLayout>
-          );
-        case 23:
-          return (
-            <SlideLayout 
-              slideIndex={23} 
-              ref={slideRefs[23]}
-            >
-              <Slide23IFM scroll={scroll} />
-            </SlideLayout>
-          );
-        case 24:
-          return (
-            <SlideLayout 
-              slideIndex={24} 
-              ref={slideRefs[24]}
-            >
-              <Slide24IFMSimulation scroll={scroll} />
-            </SlideLayout>
-          );
-        case 25:
-          return (
-            <SlideLayout 
-              slideIndex={25} 
-              ref={slideRefs[25]}
-            >
-              <Slide25GreyArea scroll={scroll} />
-            </SlideLayout>
-          );
-        case 26:
-          return (
-            <SlideLayout 
-              slideIndex={26} 
-              ref={slideRefs[26]}
-            >
-              <Slide26GreyAreaEstimation scroll={scroll} />
-            </SlideLayout>
-          );
+      case 21:
+        return (
+          <Slide21AFMLimitations scroll={scroll} />
+        );
+      case 22:
+        return (
+          <Slide22AFMCorrectness scroll={scroll} />
+        );
+      case 23:
+        return (
+          <Slide23PFM scroll={scroll} />
+        );
+      case 24:
+        return (
+          <Slide24PFMSimulation scroll={scroll} />
+        );
+      case 25:
+        return (
+          <Slide25IFMTasks scroll={scroll} />
+        );
+      case 26:
+        return (
+          <Slide26IFM scroll={scroll} />
+        );
+      case 27:
+        return (
+          <Slide27IFMSimulation scroll={scroll} />
+        );
+      case 28:
+        return (
+          <Slide28GreyArea scroll={scroll} />
+        );
+      case 29:
+        return (
+          <Slide29InteractiveGreyArea scroll={scroll} />
+        );
       default:
         return null;
     }
@@ -353,16 +260,21 @@ function AFMLearningAppContent() {
 
   const getFormulaStage = (slideIndex) => {
     if (slideIndex >= 4 && slideIndex < 7) return 1; // θ only
-    if (slideIndex >= 7 && slideIndex < 13) return 2; // θ + T
-    if (slideIndex >= 13 && slideIndex < 16) return 3; // θ + β + T  
-    if (slideIndex >= 16 && slideIndex < 18) return 4; 
-    if (slideIndex >=18 && slideIndex < 21) return 5;
+    if (slideIndex >= 7 && slideIndex < 14) return 2; // θ + T
+    if (slideIndex >= 14 && slideIndex < 16) return 3; // θ + β + T  
+    if (slideIndex >= 16 && slideIndex < 19) return 4; 
+    if (slideIndex >=19 && slideIndex < 20) return 5;
     return 0; // No formula
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
-      {renderCurrentSlide()}
+      {/* Current slide content */}
+      <div>
+        {renderCurrentSlide()}
+      </div>
+      
+      {/* AFM Formula Tooltip - conditionally rendered */}
       {getFormulaStage(currentSlide) > 0 && (
         <AFMFormulaTooltip stage={getFormulaStage(currentSlide)} />
       )}

@@ -1,29 +1,35 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { TrendingUp, TrendingDown, ArrowRight } from 'lucide-react';
+import { TrendingUp, TrendingDown, ArrowRight, Brain, Target, Activity, Lightbulb, Code, Zap, ArrowDownRight } from 'lucide-react';
 
 export const Slide4AFMIntroduction = ({ scroll }) => {
   const [hoveredTerm, setHoveredTerm] = useState(null);
-  const [probability, setProbability] = useState(0.25);
+  const [probability, setProbability] = useState(0.15);
   const [taskRecommendation, setTaskRecommendation] = useState('');
-  const [difficultyLevel, setDifficultyLevel] = useState('Medium');
-  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0, side: 'right' });
+  const [difficultyLevel, setDifficultyLevel] = useState('Easy');
+  const [currentTask, setCurrentTask] = useState(1);
+  const [maxTasks] = useState(8);
   
-  const skillRef = useRef(null);
   const baselineRef = useRef(null);
   const successRef = useRef(null);
 
-  // Simulate probability changes and adaptive recommendations
+  // Simulate realistic AFM learning progression
   useEffect(() => {
     const interval = setInterval(() => {
-      setProbability(prev => {
-        const change = (Math.random() - 0.5) * 0.15;
-        const newValue = prev + change;
-        return Math.max(0.1, Math.min(0.95, newValue));
+      setCurrentTask(prev => {
+        const nextTask = prev >= maxTasks ? 1 : prev + 1;
+        
+        // Realistic AFM progression: start low, grow with each opportunity
+        const baseGrowth = nextTask * 0.08; // Each task adds ~8% base growth
+        const randomVariation = (Math.random() - 0.3) * 0.06; // Small random component, slightly negative bias
+        const newProbability = Math.max(0.12, Math.min(0.88, 0.15 + baseGrowth + randomVariation));
+        
+        setProbability(newProbability);
+        return nextTask;
       });
-    }, 3000);
+    }, 2500);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [maxTasks]);
 
   // Update task recommendations based on probability
   useEffect(() => {
@@ -42,130 +48,119 @@ export const Slide4AFMIntroduction = ({ scroll }) => {
     }
   }, [probability]);
 
-  // Simple tooltip position calculation - always in top-left corner
-  const calculateTooltipPosition = (element, tooltipWidth = 384, tooltipHeight = 300) => {
-    const margin = 16; // Margin from screen edges
-    
-    return { 
-      x: margin, 
-      y: margin, 
-      side: 'top-left' 
-    };
-  };
-
-  const handleMouseEnter = (term, ref, tooltipWidth = 384, tooltipHeight = 300) => {
+  const handleMouseEnter = (term) => {
     setHoveredTerm(term);
-    if (ref.current) {
-      const position = calculateTooltipPosition(ref.current, tooltipWidth, tooltipHeight);
-      setTooltipPosition(position);
-    }
   };
 
   const SkillTooltip = () => (
-    <div 
-      className="fixed z-50 bg-white border border-gray-200 rounded-lg shadow-xl p-4 w-96"
-      style={{ 
-        left: `${tooltipPosition.x}px`, 
-        top: `${tooltipPosition.y}px`,
-        maxWidth: '384px'
-      }}
-    >
-      <h4 className="font-semibold text-gray-800 mb-2">What is a "Skill" in AFM?</h4>
+    <div className="fixed z-50 top-4 left-4 bg-white border-4 border-green-700 rounded-xl shadow-lg p-6 w-96 font-['IBM_Plex_Mono',monospace]">
+      <div className="absolute -top-6 left-4 px-3 py-1 bg-green-700 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
+        <Code className="w-4 h-4" />
+        SKILL DEFINITION
+      </div>
       
-      <p className="text-gray-700 text-sm leading-relaxed mb-3">
+      <h4 className="font-bold text-green-800 mb-4 text-lg uppercase tracking-wide">What is a "Skill" in AFM?</h4>
+      
+      <p className="text-black text-sm leading-relaxed mb-4 font-semibold">
         In AFM, a "skill" is a specific concept or technique that can be learned and practiced independently. Each skill represents a distinct cognitive ability.
       </p>
       
-      <div className="bg-gray-100 p-3 rounded-lg font-mono text-sm mb-3">
-        <div className="text-green-600 mb-1"># Current Example - String Slicing:</div>
-        <div>word = "nohtyp"</div>
-        <div>reversed_word = word[::-1]</div>
-        <div>print(reversed_word)</div>
-        <div className="text-blue-600 mt-1"># Output: python</div>
+      <div className="bg-neutral-100 border-2 border-black rounded p-4 font-mono text-sm mb-4">
+        <div className="text-green-700 mb-2 font-bold"># Current Example - String Slicing:</div>
+        <div className="text-black">word = "nohtyp"</div>
+        <div className="text-black">reversed_word = word[::-1]</div>
+        <div className="text-black">print(reversed_word)</div>
+        <div className="text-blue-700 mt-2 font-bold"># Output: python</div>
       </div>
       
       <div>
-        <h5 className="font-medium text-gray-800 mb-2">Other Python Skills in AFM:</h5>
+        <h5 className="font-bold text-black mb-3 uppercase tracking-wide border-b-2 border-black pb-1">Other Python Skills:</h5>
         <div className="space-y-2 text-sm">
-          <div>
-            <strong className="text-blue-600">Functions:</strong> Defining and calling functions, parameters, return values
+          <div className="border-l-4 border-blue-600 pl-3">
+            <strong className="text-blue-600 uppercase">Functions:</strong> <span className="text-black">Defining, calling, parameters, returns</span>
           </div>
-          <div>
-            <strong className="text-green-600">Object-Oriented Programming:</strong> Classes, objects, inheritance, encapsulation
+          <div className="border-l-4 border-green-600 pl-3">
+            <strong className="text-green-600 uppercase">OOP:</strong> <span className="text-black">Classes, objects, inheritance</span>
           </div>
-          <div>
-            <strong className="text-purple-600">Recursion:</strong> Base cases, recursive calls, stack understanding
+          <div className="border-l-4 border-purple-600 pl-3">
+            <strong className="text-purple-600 uppercase">Recursion:</strong> <span className="text-black">Base cases, recursive calls</span>
           </div>
-          <div>
-            <strong className="text-orange-600">Data Structures:</strong> Lists, dictionaries, sets, tuples manipulation
-          </div>
-          <div>
-            <strong className="text-red-600">Control Flow:</strong> If/else statements, loops, conditional logic
-          </div>
-          <div>
-            <strong className="text-teal-600">Exception Handling:</strong> Try/except blocks, error management
+          <div className="border-l-4 border-orange-600 pl-3">
+            <strong className="text-orange-600 uppercase">Data Structures:</strong> <span className="text-black">Lists, dicts, sets, tuples</span>
           </div>
         </div>
       </div>
       
-      <p className="text-gray-600 text-xs mt-3">
-        Each skill is tracked separately, allowing personalized learning paths for different programming concepts.
-      </p>
+      <button
+        onClick={() => setHoveredTerm(null)}
+        className="absolute top-2 right-2 px-2 py-1 rounded border-2 border-black bg-green-700 text-white font-bold hover:bg-white hover:text-green-700 transition-colors"
+      >
+        X
+      </button>
     </div>
   );
 
   const BaselineProficiencyTooltip = () => (
-    <div 
-      className="fixed z-50 bg-white border border-gray-200 rounded-lg shadow-xl p-4 w-96"
-      style={{ 
-        left: `${tooltipPosition.x}px`, 
-        top: `${tooltipPosition.y}px`,
-        maxWidth: '384px'
-      }}
-    >
-      <h4 className="font-semibold text-gray-800 mb-2">How AFM Determines Baseline Proficiency (θ)</h4>
+    <div className="fixed z-50 top-4 left-4 bg-white border-4 border-purple-700 rounded-xl shadow-lg p-6 w-96 font-['IBM_Plex_Mono',monospace]">
+      <div className="absolute -top-6 left-4 px-3 py-1 bg-purple-700 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
+        <Brain className="w-4 h-4" />
+        BASELINE PROFICIENCY (θ)
+      </div>
       
-      <p className="text-gray-700 text-sm leading-relaxed mb-3">
+      <h4 className="font-bold text-purple-800 mb-4 text-lg uppercase tracking-wide">How AFM Determines Baseline Proficiency</h4>
+      
+      <p className="text-black text-sm leading-relaxed mb-4 font-semibold">
         Before you attempt any tasks, AFM estimates your baseline proficiency using several methods:
       </p>
       
-      <ul className="text-gray-700 text-sm space-y-2">
-        <li>• <strong>Prior assessments:</strong> Previous performance on similar skills</li>
-        <li>• <strong>Self-reported experience:</strong> Your stated familiarity with Python</li>
-        <li>• <strong>Demographic factors:</strong> Education level, programming background</li>
-        <li>• <strong>Initial diagnostic questions:</strong> Quick skills assessment</li>
-        <li>• <strong>Time spent on similar topics:</strong> Learning engagement patterns</li>
-      </ul>
+      <div className="space-y-3 text-sm">
+        <div className="border-2 border-black rounded p-2 bg-neutral-50">
+          <strong className="text-purple-700">PRIOR ASSESSMENTS:</strong> <span className="text-black">Previous performance on similar skills</span>
+        </div>
+        <div className="border-2 border-black rounded p-2 bg-neutral-50">
+          <strong className="text-purple-700">SELF-REPORTED:</strong> <span className="text-black">Your stated familiarity with Python</span>
+        </div>
+        <div className="border-2 border-black rounded p-2 bg-neutral-50">
+          <strong className="text-purple-700">DEMOGRAPHICS:</strong> <span className="text-black">Education level, programming background</span>
+        </div>
+        <div className="border-2 border-black rounded p-2 bg-neutral-50">
+          <strong className="text-purple-700">DIAGNOSTIC TESTS:</strong> <span className="text-black">Quick skills assessment</span>
+        </div>
+      </div>
+      
+      <button
+        onClick={() => setHoveredTerm(null)}
+        className="absolute top-2 right-2 px-2 py-1 rounded border-2 border-black bg-purple-700 text-white font-bold hover:bg-white hover:text-purple-700 transition-colors"
+      >
+        X
+      </button>
     </div>
   );
 
   const SuccessProbabilitySimulation = () => (
-    <div 
-      className="fixed z-50 bg-gradient-to-br from-blue-50 to-purple-50 border border-blue-200 rounded-lg shadow-xl p-4 w-80"
-      style={{ 
-        left: `${tooltipPosition.x}px`, 
-        top: `${tooltipPosition.y}px`,
-        maxWidth: '320px'
-      }}
-    >
-      <div className="text-sm font-semibold text-blue-800 mb-2 flex items-center">
-        <span>Live Success Probability</span>
-        {probability >= 0.7 ? <TrendingUp size={16} className="ml-1 text-green-600" /> : 
-         probability <= 0.4 ? <TrendingDown size={16} className="ml-1 text-red-600" /> : 
-         <ArrowRight size={16} className="ml-1 text-yellow-600" />}
+    <div className="fixed z-50 top-4 left-4 bg-white border-4 border-blue-700 rounded-xl shadow-lg p-6 w-80 font-['IBM_Plex_Mono',monospace]">
+      <div className="absolute -top-6 left-4 px-3 py-1 bg-blue-700 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
+        <Activity className="w-4 h-4" />
+        REALISTIC AFM SIMULATION
       </div>
       
-      <div className="text-2xl font-bold text-blue-600 mb-1">
-        {(probability * 100).toFixed(1)}%
+      <div className="text-sm font-bold text-blue-800 mb-3 flex items-center justify-between">
+        <span className="uppercase tracking-wide">Success Probability</span>
+        <TrendingUp size={16} className="text-green-600" />
       </div>
       
-      <div className="text-xs text-blue-600 mb-3">
-        String Slicing Skill
+      <div className="border-4 border-blue-700 rounded-xl p-4 bg-blue-50 text-center mb-4">
+        <div className="text-4xl font-bold text-blue-700 mb-1">
+          {(probability * 100).toFixed(1)}%
+        </div>
+        <div className="text-xs font-bold text-blue-600 uppercase tracking-wide">
+          String Slicing Skill
+        </div>
       </div>
       
-      <div className="w-full bg-blue-200 rounded-full h-2 mb-3">
+      <div className="w-full bg-neutral-200 rounded-lg h-6 mb-4 border-2 border-black overflow-hidden">
         <div 
-          className={`h-2 rounded-full transition-all duration-1000 ${
+          className={`h-full rounded-lg transition-all duration-1000 ${
             probability >= 0.7 ? 'bg-green-500' : 
             probability <= 0.4 ? 'bg-red-500' : 'bg-yellow-500'
           }`}
@@ -173,85 +168,128 @@ export const Slide4AFMIntroduction = ({ scroll }) => {
         ></div>
       </div>
       
-      <div className="border-t border-blue-200 pt-2">
-        <div className="text-xs font-semibold text-gray-700 mb-1">
-          Adaptive Recommendation:
+      <div className="bg-neutral-100 border-2 border-neutral-400 rounded-lg p-3 mb-4">
+        <div className="flex items-center justify-between text-xs font-bold text-neutral-700 mb-2">
+          <span>TASK PROGRESS:</span>
+          <span>{currentTask}/{maxTasks}</span>
         </div>
-        <div className={`text-sm font-medium px-2 py-1 rounded text-center ${
+        <div className="w-full bg-neutral-300 rounded-full h-2 border border-black">
+          <div 
+            className="bg-blue-600 h-full rounded-full transition-all duration-1000"
+            style={{ width: `${(currentTask / maxTasks) * 100}%` }}
+          ></div>
+        </div>
+      </div>
+      
+      <div className="border-t-4 border-black pt-4">
+        <div className="text-xs font-bold text-black mb-2 uppercase tracking-wide">
+          Current Recommendation:
+        </div>
+        <div className={`text-sm font-bold px-3 py-2 rounded-lg text-center border-2 border-black ${
           difficultyLevel === 'Easy' ? 'bg-green-100 text-green-800' :
           difficultyLevel === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
           difficultyLevel === 'Hard' ? 'bg-orange-100 text-orange-800' :
           'bg-red-100 text-red-800'
         }`}>
-          {difficultyLevel}: {taskRecommendation}
+          <div className="uppercase text-xs tracking-wide">{difficultyLevel}</div>
+          <div className="text-xs">{taskRecommendation}</div>
         </div>
       </div>
       
-      <p className="text-xs text-gray-600 mt-2">
-        Watch how recommendations change based on predicted success probability!
-      </p>
+      <button
+        onClick={() => setHoveredTerm(null)}
+        className="absolute top-2 right-2 px-2 py-1 rounded border-2 border-black bg-blue-700 text-white font-bold hover:bg-white hover:text-blue-700 transition-colors"
+      >
+        X
+      </button>
     </div>
   );
 
   return (
-    <div className="relative max-w-2xl w-full space-y-8">
-      <p className="text-lg text-gray-700 leading-relaxed">
-        If you said pretty small, you'd be right.
-      </p>
-      
-      <p className="text-lg text-gray-700 leading-relaxed">
-        So what does this have to do with <strong>Additive Factor Models</strong>? Well, AFM is an artificial intelligence algorithm that helps us predict what people know – often students, since AFM is typically used in educational contexts (e.g., Khan Academy and other online learning sites).
-      </p>
-      
-      <p className="text-lg text-gray-700 leading-relaxed">
-        Like many other algorithms, AFM relies on parameters to compute its output, which in this case is the success probability
-        {' '}that a student answers the next question on a specific{' '}
-        <span 
-          ref={skillRef}
-          className="relative cursor-help border-b-2 border-dotted border-green-500 text-green-600 font-semibold"
-          onMouseEnter={() => handleMouseEnter('skill', skillRef, 384, 400)}
-          onMouseLeave={() => setHoveredTerm(null)}
-        >
-          skill
-        </span>
-        {' '}correctly.
-      </p>
+    <div className="bg-white min-h-screen flex flex-col items-center justify-center py-8 px-4 md:px-10 text-black font-['IBM_Plex_Mono',monospace]">
+      <div className="w-full max-w-4xl mx-auto flex flex-col gap-8">
 
-      <p className="text-lg text-gray-700 leading-relaxed">
-        But why is knowing this success probability so valuable? It enables <strong>adaptive learning</strong> – the system can automatically adjust the difficulty and type of questions based on your predicted performance. If your success probability is very low (say, below 30%), the next task should be easier to build confidence and fill knowledge gaps. If it's very high (above 80%), you're ready for more challenging problems to accelerate your learning. Check out this {' '}
-        <span 
-          ref={successRef}
-          className="relative cursor-help border-b-2 border-dotted border-blue-500 text-blue-600 font-semibold"
-          onMouseEnter={() => handleMouseEnter('success-probability', successRef, 320, 280)}
-          onMouseLeave={() => setHoveredTerm(null)}
-        >
-          simulation 
-        </span>
-        {' '}to see how reccomendations change depending on success probability
-      </p>
-      
-      <p className="text-lg text-gray-700 leading-relaxed">
-        And <em>guess what?</em> You already know about the first parameter, <strong>θ</strong>, which is the{' '}
-        <span 
-          ref={baselineRef}
-          className="relative cursor-help border-b-2 border-dotted border-purple-500 text-purple-600 font-semibold"
-          onMouseEnter={() => handleMouseEnter('baseline-proficiency', baselineRef, 384, 280)}
-          onMouseLeave={() => setHoveredTerm(null)}
-        >
-          baseline proficiency
-        </span>
-        . This is what the model estimates about your ability before seeing you work on specific skills.
-      </p>
-      
-      <div className="text-center">
-        <button
-          onClick={() => scroll(5)}
-          className="px-8 py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors"
-        >
-          Next →
-        </button>
+        {/* Adaptive Learning Block */}
+        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
+          <div className="absolute -top-6 left-6 px-4 py-2 bg-orange-600 text-white font-semibold rounded-md text-sm tracking-wider flex items-center gap-2">
+            <Zap className="w-4 h-4" />
+            ADAPTIVE LEARNING
+          </div>
+          
+          <div className="space-y-6 text-lg font-semibold leading-relaxed">
+            <p className="text-black">
+              But why is knowing this success probability so valuable? It enables <span className="bg-orange-200 px-2 py-1 border-2 border-black rounded font-bold uppercase">adaptive learning</span> – the system can automatically adjust the difficulty and type of questions based on your predicted performance.
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="border-4 border-red-600 rounded-xl p-4 bg-red-50">
+                <div className="font-bold text-red-800 text-center mb-2 uppercase tracking-wide">Low (e.g., &lt;30%)</div>
+                <div className="text-sm text-red-700 text-center font-semibold">Easier tasks to build confidence</div>
+              </div>
+              <div className="border-4 border-yellow-600 rounded-xl p-4 bg-yellow-50">
+                <div className="font-bold text-yellow-800 text-center mb-2 uppercase tracking-wide">Medium (e.g., 30-80%)</div>
+                <div className="text-sm text-yellow-700 text-center font-semibold">Balanced practice problems</div>
+              </div>
+              <div className="border-4 border-green-600 rounded-xl p-4 bg-green-50">
+                <div className="font-bold text-green-800 text-center mb-2 uppercase tracking-wide">High (e.g., &gt;80%)</div>
+                <div className="text-sm text-green-700 text-center font-semibold">Challenging problems to accelerate</div>
+              </div>
+            </div>
+            
+            <p className="text-black">
+              Check out this{' '}
+              <span 
+                ref={successRef}
+                className="relative cursor-pointer border-4 border-blue-600 bg-blue-100 px-2 py-1 rounded font-bold text-blue-800 uppercase hover:bg-blue-200 transition-colors"
+                onMouseEnter={() => handleMouseEnter('success-probability')}
+                onMouseLeave={() => setHoveredTerm(null)}
+              >
+                simulation
+              </span>
+              {' '}to see how recommendations change depending on success probability.
+            </p>
+          </div>
+        </div>
+
+        {/* Parameters Block */}
+        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
+          <div className="absolute -top-6 left-6 px-4 py-2 bg-purple-600 text-white font-semibold rounded-md text-sm tracking-wider flex items-center gap-2">
+            <Target className="w-4 h-4" />
+            PARAMETERS
+          </div>
+          
+          <div className="space-y-6 text-lg font-semibold leading-relaxed">
+            <p className="text-black">
+              And <em className="font-bold text-purple-700 uppercase">guess what?</em> You already know about the first parameter of AFM, <span 
+                className="bg-purple-300 px-2 py-1 border-2 border-black rounded font-bold uppercase transition-colors"
+              >
+                θ
+              </span>, which is the{' '}
+              <span 
+                ref={baselineRef}
+                className="relative cursor-pointer border-4 border-purple-600 bg-purple-100 px-2 py-1 rounded font-bold text-purple-800 uppercase hover:bg-purple-200 transition-colors"
+                onMouseEnter={() => handleMouseEnter('baseline-proficiency')}
+                onMouseLeave={() => setHoveredTerm(null)}
+              >
+                baseline proficiency
+              </span>
+              . This is what the model estimates about your ability before seeing you work on specific skills. Watch the AFM formula build up in the lower right corner as we progress!
+            </p>
+          </div>
+        </div>
+
+        {/* Action Button */}
+        <div className="text-center">
+          <button
+            onClick={() => scroll(6)}
+            className="px-12 py-4 bg-purple-600 text-white border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide hover:bg-white hover:text-purple-600 hover:border-purple-600 transition-all duration-200 shadow-lg"
+          >
+            Next →
+          </button>
+        </div>
       </div>
 
+      {/* Tooltips */}
       {hoveredTerm === 'skill' && <SkillTooltip />}
       {hoveredTerm === 'baseline-proficiency' && <BaselineProficiencyTooltip />}
       {hoveredTerm === 'success-probability' && <SuccessProbabilitySimulation />}
