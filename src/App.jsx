@@ -25,6 +25,7 @@ import { Slide27IFMSimulation } from "./components/Slide27IFMSimulation";
 import { Slide20AFMSimulator } from "./components/Slide20AFMSimulator";
 import { Slide25IFMTasks } from "./components/Slide25IFMTasks";
 import { Slide22AFMCorrectness } from "./components/Slide22AFMCorrectness";
+import { WelcomePage } from "./components/WelcomePage";
 
 // Constants
 const TOTAL_SLIDES = 24;
