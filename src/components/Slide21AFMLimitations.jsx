@@ -971,10 +971,7 @@ print(result)`,
         </div>
       </div>
 
-      {/* Continue button appears when all scenarios are completed */}
-      {completedScenarios.size === 6 && (
         <div className="flex justify-center mt-12">
-
             <button
               className="px-12 py-4 bg-green-600 text-white border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide hover:bg-white hover:text-green-600 hover:border-green-600 transition-all transform hover:scale-105 flex items-center gap-3 font-['IBM_Plex_Mono',monospace]"
               onClick={() => {
@@ -985,7 +982,6 @@ print(result)`,
               <ArrowRight className="w-6 h-6" />
             </button>
         </div>
-      )}
     </div>
   );
 

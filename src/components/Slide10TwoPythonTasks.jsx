@@ -349,45 +349,7 @@ print(total)
                 )}
               </div>
               
-              <div className={`flex items-center justify-between p-4 ${colors.accent} border-2 ${colors.border} rounded-lg`}>
-                <div className="flex items-center gap-3">
-                  <div className={`w-4 h-4 bg-${task.color}-500 border-2 border-black rounded-full`}></div>
-                  <span className={`font-mono text-sm ${colors.text}`}>Task {selectedTask}: Complete</span>
-                  {completedTasks.length === 2 && (
-                    <>
-                      <div className="w-4 h-4 bg-green-500 border-2 border-black rounded-full"></div>
-                      <span className="font-mono text-sm text-green-800">All Tasks Done!</span>
-                    </>
-                  )}
-                </div>
-                <div className="flex gap-3">
-                  <button
-                    onClick={resetTask}
-                    className="px-6 py-2 bg-gray-600 text-white border-2 border-black rounded-lg font-bold text-sm uppercase tracking-wide hover:bg-white hover:text-gray-600 transition-all"
-                  >
-                    ← Back to Tasks
-                  </button>
-                  <button
-                    onClick={() => scroll(13)}
-                    className="px-6 py-2 bg-purple-600 text-white border-2 border-black rounded-lg font-bold text-sm uppercase tracking-wide hover:bg-white hover:text-purple-600 transition-all flex items-center gap-2"
-                  >
-                    Continue <ArrowRight className="w-4 h-4" />
-                  </button>
-                  {completedTasks.length < 2 && (
-                    <button
-                      onClick={() => {
-                        const nextTask = selectedTask === 1 ? 2 : 1;
-                        if (!completedTasks.includes(nextTask)) {
-                          handleTaskClick(nextTask);
-                        }
-                      }}
-                      className="px-6 py-2 bg-black text-white border-2 border-black rounded-lg font-bold text-sm uppercase tracking-wide hover:bg-white hover:text-black transition-all flex items-center gap-2"
-                    >
-                      Try Task {selectedTask === 1 ? 2 : 1} <ArrowRight className="w-4 h-4" />
-                    </button>
-                  )}
-                </div>
-              </div>
+             
             </div>
           )}
 
