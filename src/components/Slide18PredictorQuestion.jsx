@@ -57,7 +57,7 @@ export const Slide18PredictorQuestion = ({ scroll }) => {
 
   const steps = [
     {
-      title: "Understanding the Question",
+      title: "The Question",
       content: (
         <div className="space-y-6">
           <div className="border-l-8 border-red-600 bg-red-100 p-6 rounded-r-xl">
@@ -121,7 +121,7 @@ export const Slide18PredictorQuestion = ({ scroll }) => {
       )
     },
     {
-      title: "AFM Model Analysis & Answer Explanation",
+      title: "Answer & Explanation",
       content: (
         <div className="space-y-6">
           {/* Result Header */}
@@ -154,84 +154,6 @@ export const Slide18PredictorQuestion = ({ scroll }) => {
             </div>
           </div>
 
-          {/* AFM Formula Breakdown */}
-          <div className="border-4 border-orange-600 rounded-xl p-6 bg-orange-50">
-            <div className="flex items-center gap-3 mb-4">
-              <Calculator className="w-8 h-8 text-orange-600" />
-              <h3 className="text-xl font-bold text-orange-700 uppercase tracking-wide">AFM Formula Breakdown</h3>
-            </div>
-            
-            <div className="bg-black text-orange-400 p-4 rounded-lg border-2 border-orange-600 font-mono text-sm text-center mb-4">
-              <div className="text-orange-300 mb-2">AFM FORMULA:</div>
-              <div className="text-white">log(p/(1-p)) = θᵢ + Σₖ qⱼₖ(βₖ + γₖ·Tᵢₖ)</div>
-            </div>
-            
-            <p className="text-black text-lg font-bold leading-relaxed mb-4">
-              Let's examine each{' '}
-              <span 
-                ref={parametersRef}
-                className="cursor-help bg-orange-200 px-2 py-1 border-2 border-orange-600 rounded text-orange-800 font-bold hover:bg-orange-300 transition-all"
-                onMouseEnter={() => handleMouseEnter('parameters', parametersRef)}
-                onMouseLeave={() => setHoveredTerm(null)}
-              >
-                parameter
-              </span>
-              {' '}to understand what changes during a learning session.
-            </p>
-          </div>
-
-          {/* Static vs Dynamic Parameters */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="border-4 border-red-600 rounded-xl p-6 bg-red-50">
-              <div className="flex items-center gap-3 mb-4">
-                <XCircle className="w-6 h-6 text-red-600" />
-                <h4 className="text-lg font-bold text-red-700 uppercase">Static Parameters</h4>
-              </div>
-              <div className="space-y-3">
-                <div className="bg-red-100 border-2 border-red-600 rounded-lg p-3">
-                  <div className="font-bold text-red-800 text-sm flex items-center gap-2">
-                    <Brain className="w-4 h-4" />
-                    θ - Student Ability
-                  </div>
-                  <div className="text-red-900 font-mono text-xs">Fixed during session</div>
-                </div>
-                <div className="bg-red-100 border-2 border-red-600 rounded-lg p-3">
-                  <div className="font-bold text-red-800 text-sm flex items-center gap-2">
-                    <Target className="w-4 h-4" />
-                    β - Task Difficulty
-                  </div>
-                  <div className="text-red-900 font-mono text-xs">Fixed during session</div>
-                </div>
-                <div className="bg-red-100 border-2 border-red-600 rounded-lg p-3">
-                  <div className="font-bold text-red-800 text-sm flex items-center gap-2">
-                    <TrendingUp className="w-4 h-4" />
-                    γ - Learning Rate
-                  </div>
-                  <div className="text-red-900 font-mono text-xs">Fixed during session</div>
-                </div>
-              </div>
-            </div>
-
-            <div className="border-4 border-green-600 rounded-xl p-6 bg-green-50">
-              <div className="flex items-center gap-3 mb-4">
-                <CheckCircle className="w-6 h-6 text-green-600" />
-                <h4 className="text-lg font-bold text-green-700 uppercase">Dynamic Parameter</h4>
-              </div>
-              <div className="bg-green-100 border-2 border-green-600 rounded-lg p-4">
-                <div className="font-bold text-green-800 text-sm flex items-center gap-2 mb-2">
-                  <Play className="w-4 h-4" />
-                  T - Practice Opportunities
-                </div>
-                <div className="text-green-900 font-mono text-xs mb-2">Increases with each attempt</div>
-                <div className="bg-green-200 border-2 border-green-700 rounded p-2">
-                  <div className="text-green-800 font-bold text-xs">
-                    T₀ = 0 → T₁ = 1 → T₂ = 2 → T₃ = 3...
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
           {/* Correct Answer Explanation */}
           <div className="border-4 border-green-600 rounded-xl p-6 bg-green-50">
             <div className="flex items-center gap-3 mb-4">
@@ -249,14 +171,30 @@ export const Slide18PredictorQuestion = ({ scroll }) => {
               </span>
               {' '}is the only parameter that changes during a learning session.
             </p>
+            
+            <div className="bg-white border-2 border-green-600 rounded-lg p-4">
+              <div className="font-bold text-green-800 mb-2">Why Practice Opportunities?</div>
+              <div className="text-green-900 text-sm space-y-1">
+                <div>• Every time you attempt a problem, T increases by 1</div>
+                <div>• This accumulates your practice experience</div>
+                <div>• More practice = higher success probability</div>
+              </div>
+            </div>
           </div>
 
-          {/* Key Insights */}
+          {/* Mathematical Impact */}
           <div className="border-4 border-blue-600 rounded-xl p-6 bg-blue-50">
             <div className="flex items-center gap-3 mb-4">
               <Lightbulb className="w-8 h-8 text-blue-600" />
-              <h3 className="text-xl font-bold text-blue-700 uppercase tracking-wide">Key Insight</h3>
+              <h3 className="text-xl font-bold text-blue-700 uppercase tracking-wide">Mathematical Impact</h3>
             </div>
+            
+            <div className="bg-black text-blue-400 p-4 rounded-lg border-2 border-blue-600 font-mono text-sm text-center mb-4">
+              <div className="text-blue-300 mb-2">DYNAMIC COMPONENT:</div>
+              <div className="text-white">γₖ × Tᵢₖ</div>
+              <div className="text-blue-300 text-xs mt-2">Only T changes during session</div>
+            </div>
+            
             <p className="text-black text-lg font-bold leading-relaxed mb-4">
               In the{' '}
               <span 
@@ -267,52 +205,23 @@ export const Slide18PredictorQuestion = ({ scroll }) => {
               >
                 AFM model
               </span>
-              , your underlying ability doesn't change mid-session - only your practice accumulates!
+              , success probability increases through practice accumulation, not ability growth during the session.
             </p>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-white border-2 border-blue-600 rounded-lg p-4">
-                <div className="font-bold text-blue-800 mb-2">What This Means:</div>
-                <div className="text-blue-900 font-mono text-sm">
-                  Success probability increases through practice accumulation, not ability growth
+            <div className="space-y-2">
+              <div className="bg-white border-2 border-blue-600 rounded-lg p-3">
+                <div className="font-mono text-blue-900 text-sm">
+                  T₀ = 0: γ × 0 = 0 (no practice benefit yet)
                 </div>
               </div>
-              <div className="bg-white border-2 border-blue-600 rounded-lg p-4">
-                <div className="font-bold text-blue-800 mb-2">Mathematical Impact:</div>
-                <div className="text-blue-900 font-mono text-sm">
-                  γ × T grows as T increases, boosting success probability
+              <div className="bg-white border-2 border-blue-600 rounded-lg p-3">
+                <div className="font-mono text-blue-900 text-sm">
+                  T₁ = 1: γ × 1 = γ (first practice benefit kicks in)
                 </div>
               </div>
-            </div>
-          </div>
-
-          {/* Formula Impact */}
-          <div className="border-4 border-purple-600 rounded-xl p-6 bg-purple-50">
-            <div className="flex items-center gap-3 mb-4">
-              <Calculator className="w-8 h-8 text-purple-600" />
-              <h3 className="text-xl font-bold text-purple-700 uppercase tracking-wide">Formula Impact</h3>
-            </div>
-            
-            <div className="bg-black text-purple-400 p-4 rounded-lg border-2 border-purple-600 font-mono text-sm text-center mb-4">
-              <div className="text-purple-300 mb-2">DYNAMIC COMPONENT:</div>
-              <div className="text-white">γₖ × Tᵢₖ</div>
-              <div className="text-purple-300 text-xs mt-2">Only T changes during session</div>
-            </div>
-            
-            <div className="space-y-3">
-              <div className="bg-white border-2 border-purple-600 rounded-lg p-3">
-                <div className="font-mono text-purple-900 text-sm">
-                  • T₀ = 0: γ × 0 = 0 (no practice benefit)
-                </div>
-              </div>
-              <div className="bg-white border-2 border-purple-600 rounded-lg p-3">
-                <div className="font-mono text-purple-900 text-sm">
-                  • T₁ = 1: γ × 1 = γ (first practice benefit)
-                </div>
-              </div>
-              <div className="bg-white border-2 border-purple-600 rounded-lg p-3">
-                <div className="font-mono text-purple-900 text-sm">
-                  • T₂ = 2: γ × 2 = 2γ (accumulated practice benefit)
+              <div className="bg-white border-2 border-blue-600 rounded-lg p-3">
+                <div className="font-mono text-blue-900 text-sm">
+                  T₂ = 2: γ × 2 = 2γ (accumulated practice benefit grows)
                 </div>
               </div>
             </div>
@@ -334,7 +243,7 @@ export const Slide18PredictorQuestion = ({ scroll }) => {
     >
       <div className="border-4 border-blue-600 rounded-xl p-4 bg-blue-50 mb-4">
         <div className="flex items-center gap-2 mb-3">
-          <RefreshCw className="w-5 h-5 text-blue-700" />
+          <Clock className="w-5 h-5 text-blue-700" />
           <span className="font-bold text-blue-700 uppercase tracking-wide">Learning Session</span>
         </div>
       </div>
@@ -343,18 +252,17 @@ export const Slide18PredictorQuestion = ({ scroll }) => {
         <div className="border-4 border-green-600 rounded-xl p-3 bg-green-50">
           <div className="font-bold text-green-800 text-sm mb-2">During Session:</div>
           <ul className="text-xs text-green-700 font-mono space-y-1">
-            <li>• Only T (practice count) increases</li>
-            <li>• θ, β, γ stay fixed</li>
-            <li>• Real-time predictions update</li>
+            <li>• Student is actively working on problems</li>
+            <li>• Each attempt happens in real-time</li>
+            <li>• Continuous progression through tasks</li>
           </ul>
         </div>
         
         <div className="border-4 border-purple-600 rounded-xl p-3 bg-purple-50">
           <div className="font-bold text-purple-800 text-sm mb-2">Between Sessions:</div>
           <ul className="text-xs text-purple-700 font-mono space-y-1">
-            <li>• Model retrains with new data</li>
-            <li>• θ, β, γ get updated</li>
-            <li>• T resets to 0 for new skills</li>
+            <li>• Time gap between learning periods</li>
+            <li>• New session starts fresh (after model was retrained)</li>
           </ul>
         </div>
       </div>

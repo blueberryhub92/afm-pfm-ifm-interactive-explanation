@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { Brain, Target, HelpCircle, ArrowRight } from 'lucide-react';
 
-export const Slide7QuizResult = ({ guess2, scroll }) => {
-  const [showTellMe, setShowTellMe] = useState(false);
+export const Slide7QuizResult = ({ guess2, scroll, showTellMe, setShowTellMe }) => {
   
   const handleTellMe = () => {
     setShowTellMe(true);

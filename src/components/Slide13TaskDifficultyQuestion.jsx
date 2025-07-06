@@ -100,16 +100,16 @@ export const Slide13TaskDifficultyQuestion = ({
               EXPLANATION
             </div>
             <div className="text-lg leading-relaxed text-black">
-              The for loop task is more challenging because it requires understanding 
-              <span className="font-bold bg-yellow-200 px-1 rounded"> multiple concepts working together</span>: 
+              The for loop task is more challenging because it requires understanding
+              <span className="font-bold bg-yellow-200 px-1 rounded ml-1">multiple concepts working together</span>: 
               loop syntax, the range() function, variable accumulation, and logical flow control.
             </div>
             <div className="mt-4 text-lg leading-relaxed text-black">
-              Variable declaration is more straightforward - it's just 
-              <span className="font-bold bg-green-200 px-1 rounded"> assigning values to names</span>. 
+              Variable declaration is more straightforward - it's just
+              <span className="font-bold bg-green-200 px-1 rounded ml-1">assigning values to names</span>. 
               For loops require understanding how iteration works and how to maintain state 
-              across multiple iterations, making it 
-              <span className="font-bold bg-red-200 px-1 rounded"> cognitively more demanding</span>.
+              across multiple iterations, making it
+              <span className="font-bold bg-red-200 px-1 rounded ml-1">cognitively more demanding</span>.
             </div>
           </div>
         )}
@@ -118,7 +118,7 @@ export const Slide13TaskDifficultyQuestion = ({
         {showTellMe2 && (
           <div className="flex justify-center">
             <button
-              onClick={() => scroll(14)}
+              onClick={() => scroll(11)}
               className="px-8 py-4 bg-purple-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-purple-600 hover:border-purple-600 transition-all transform hover:scale-105 flex items-center gap-3"
             >
               <span>Continue</span>

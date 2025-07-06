@@ -3,6 +3,7 @@ import { TrendingUp, TrendingDown, ArrowRight, Brain, Target, Activity, Lightbul
 
 export const Slide4AFMIntroduction = ({ scroll }) => {
   const [hoveredTerm, setHoveredTerm] = useState(null);
+  const [baselineProficiency] = useState(0.15); // θ (theta) - starting baseline
   const [probability, setProbability] = useState(0.15);
   const [taskRecommendation, setTaskRecommendation] = useState('');
   const [difficultyLevel, setDifficultyLevel] = useState('Easy');
@@ -18,10 +19,10 @@ export const Slide4AFMIntroduction = ({ scroll }) => {
       setCurrentTask(prev => {
         const nextTask = prev >= maxTasks ? 1 : prev + 1;
         
-        // Realistic AFM progression: start low, grow with each opportunity
+        // Realistic AFM progression: start from baseline θ, grow with each opportunity
         const baseGrowth = nextTask * 0.08; // Each task adds ~8% base growth
         const randomVariation = (Math.random() - 0.3) * 0.06; // Small random component, slightly negative bias
-        const newProbability = Math.max(0.12, Math.min(0.88, 0.15 + baseGrowth + randomVariation));
+        const newProbability = Math.max(0.12, Math.min(0.88, baselineProficiency + baseGrowth + randomVariation));
         
         setProbability(newProbability);
         return nextTask;
@@ -29,7 +30,7 @@ export const Slide4AFMIntroduction = ({ scroll }) => {
     }, 2500);
 
     return () => clearInterval(interval);
-  }, [maxTasks]);
+  }, [maxTasks, baselineProficiency]);
 
   // Update task recommendations based on probability
   useEffect(() => {
@@ -52,57 +53,9 @@ export const Slide4AFMIntroduction = ({ scroll }) => {
     setHoveredTerm(term);
   };
 
-  const SkillTooltip = () => (
-    <div className="fixed z-50 top-4 left-4 bg-white border-4 border-green-700 rounded-xl shadow-lg p-6 w-96 font-['IBM_Plex_Mono',monospace]">
-      <div className="absolute -top-6 left-4 px-3 py-1 bg-green-700 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
-        <Code className="w-4 h-4" />
-        SKILL DEFINITION
-      </div>
-      
-      <h4 className="font-bold text-green-800 mb-4 text-lg uppercase tracking-wide">What is a "Skill" in AFM?</h4>
-      
-      <p className="text-black text-sm leading-relaxed mb-4 font-semibold">
-        In AFM, a "skill" is a specific concept or technique that can be learned and practiced independently. Each skill represents a distinct cognitive ability.
-      </p>
-      
-      <div className="bg-neutral-100 border-2 border-black rounded p-4 font-mono text-sm mb-4">
-        <div className="text-green-700 mb-2 font-bold"># Current Example - String Slicing:</div>
-        <div className="text-black">word = "nohtyp"</div>
-        <div className="text-black">reversed_word = word[::-1]</div>
-        <div className="text-black">print(reversed_word)</div>
-        <div className="text-blue-700 mt-2 font-bold"># Output: python</div>
-      </div>
-      
-      <div>
-        <h5 className="font-bold text-black mb-3 uppercase tracking-wide border-b-2 border-black pb-1">Other Python Skills:</h5>
-        <div className="space-y-2 text-sm">
-          <div className="border-l-4 border-blue-600 pl-3">
-            <strong className="text-blue-600 uppercase">Functions:</strong> <span className="text-black">Defining, calling, parameters, returns</span>
-          </div>
-          <div className="border-l-4 border-green-600 pl-3">
-            <strong className="text-green-600 uppercase">OOP:</strong> <span className="text-black">Classes, objects, inheritance</span>
-          </div>
-          <div className="border-l-4 border-purple-600 pl-3">
-            <strong className="text-purple-600 uppercase">Recursion:</strong> <span className="text-black">Base cases, recursive calls</span>
-          </div>
-          <div className="border-l-4 border-orange-600 pl-3">
-            <strong className="text-orange-600 uppercase">Data Structures:</strong> <span className="text-black">Lists, dicts, sets, tuples</span>
-          </div>
-        </div>
-      </div>
-      
-      <button
-        onClick={() => setHoveredTerm(null)}
-        className="absolute top-2 right-2 px-2 py-1 rounded border-2 border-black bg-green-700 text-white font-bold hover:bg-white hover:text-green-700 transition-colors"
-      >
-        X
-      </button>
-    </div>
-  );
-
   const BaselineProficiencyTooltip = () => (
-    <div className="fixed z-50 top-4 left-4 bg-white border-4 border-purple-700 rounded-xl shadow-lg p-6 w-96 font-['IBM_Plex_Mono',monospace]">
-      <div className="absolute -top-6 left-4 px-3 py-1 bg-purple-700 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
+    <div className="fixed z-50 top-8 right-4 bg-white border-4 border-purple-700 rounded-xl shadow-lg p-6 w-96 font-['IBM_Plex_Mono',monospace]">
+      <div className="absolute -top-6 right-4 px-3 py-1 bg-purple-700 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
         <Brain className="w-4 h-4" />
         BASELINE PROFICIENCY (θ)
       </div>
@@ -131,74 +84,6 @@ export const Slide4AFMIntroduction = ({ scroll }) => {
       <button
         onClick={() => setHoveredTerm(null)}
         className="absolute top-2 right-2 px-2 py-1 rounded border-2 border-black bg-purple-700 text-white font-bold hover:bg-white hover:text-purple-700 transition-colors"
-      >
-        X
-      </button>
-    </div>
-  );
-
-  const SuccessProbabilitySimulation = () => (
-    <div className="fixed z-50 top-4 left-4 bg-white border-4 border-blue-700 rounded-xl shadow-lg p-6 w-80 font-['IBM_Plex_Mono',monospace]">
-      <div className="absolute -top-6 left-4 px-3 py-1 bg-blue-700 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
-        <Activity className="w-4 h-4" />
-        REALISTIC AFM SIMULATION
-      </div>
-      
-      <div className="text-sm font-bold text-blue-800 mb-3 flex items-center justify-between">
-        <span className="uppercase tracking-wide">Success Probability</span>
-        <TrendingUp size={16} className="text-green-600" />
-      </div>
-      
-      <div className="border-4 border-blue-700 rounded-xl p-4 bg-blue-50 text-center mb-4">
-        <div className="text-4xl font-bold text-blue-700 mb-1">
-          {(probability * 100).toFixed(1)}%
-        </div>
-        <div className="text-xs font-bold text-blue-600 uppercase tracking-wide">
-          String Slicing Skill
-        </div>
-      </div>
-      
-      <div className="w-full bg-neutral-200 rounded-lg h-6 mb-4 border-2 border-black overflow-hidden">
-        <div 
-          className={`h-full rounded-lg transition-all duration-1000 ${
-            probability >= 0.7 ? 'bg-green-500' : 
-            probability <= 0.4 ? 'bg-red-500' : 'bg-yellow-500'
-          }`}
-          style={{ width: `${probability * 100}%` }}
-        ></div>
-      </div>
-      
-      <div className="bg-neutral-100 border-2 border-neutral-400 rounded-lg p-3 mb-4">
-        <div className="flex items-center justify-between text-xs font-bold text-neutral-700 mb-2">
-          <span>TASK PROGRESS:</span>
-          <span>{currentTask}/{maxTasks}</span>
-        </div>
-        <div className="w-full bg-neutral-300 rounded-full h-2 border border-black">
-          <div 
-            className="bg-blue-600 h-full rounded-full transition-all duration-1000"
-            style={{ width: `${(currentTask / maxTasks) * 100}%` }}
-          ></div>
-        </div>
-      </div>
-      
-      <div className="border-t-4 border-black pt-4">
-        <div className="text-xs font-bold text-black mb-2 uppercase tracking-wide">
-          Current Recommendation:
-        </div>
-        <div className={`text-sm font-bold px-3 py-2 rounded-lg text-center border-2 border-black ${
-          difficultyLevel === 'Easy' ? 'bg-green-100 text-green-800' :
-          difficultyLevel === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
-          difficultyLevel === 'Hard' ? 'bg-orange-100 text-orange-800' :
-          'bg-red-100 text-red-800'
-        }`}>
-          <div className="uppercase text-xs tracking-wide">{difficultyLevel}</div>
-          <div className="text-xs">{taskRecommendation}</div>
-        </div>
-      </div>
-      
-      <button
-        onClick={() => setHoveredTerm(null)}
-        className="absolute top-2 right-2 px-2 py-1 rounded border-2 border-black bg-blue-700 text-white font-bold hover:bg-white hover:text-blue-700 transition-colors"
       >
         X
       </button>
@@ -235,19 +120,6 @@ export const Slide4AFMIntroduction = ({ scroll }) => {
                 <div className="text-sm text-green-700 text-center font-semibold">Challenging problems to accelerate</div>
               </div>
             </div>
-            
-            <p className="text-black">
-              Check out this{' '}
-              <span 
-                ref={successRef}
-                className="relative cursor-pointer border-4 border-blue-600 bg-blue-100 px-2 py-1 rounded font-bold text-blue-800 uppercase hover:bg-blue-200 transition-colors"
-                onMouseEnter={() => handleMouseEnter('success-probability')}
-                onMouseLeave={() => setHoveredTerm(null)}
-              >
-                simulation
-              </span>
-              {' '}to see how recommendations change depending on success probability.
-            </p>
           </div>
         </div>
 
@@ -290,9 +162,7 @@ export const Slide4AFMIntroduction = ({ scroll }) => {
       </div>
 
       {/* Tooltips */}
-      {hoveredTerm === 'skill' && <SkillTooltip />}
       {hoveredTerm === 'baseline-proficiency' && <BaselineProficiencyTooltip />}
-      {hoveredTerm === 'success-probability' && <SuccessProbabilitySimulation />}
     </div>
   );
 };

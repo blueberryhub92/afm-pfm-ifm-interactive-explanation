@@ -74,10 +74,9 @@ export const Slide8OpportunityChoices = ({ scroll }) => {
             </div>
             <div className="bg-white border-2 border-black rounded-lg p-4">
               <p className="text-black leading-relaxed font-mono">
-                What does that mean? Well, before the first question, you maybe didn't know much (or anything) about Python, but now you've worked on two tasks on the skill of {" "}
-                <span className="bg-yellow-200 px-2 py-1 rounded border-2 border-black font-bold">
-                  Index Slicing in Python
-                </span>.
+                After the first question, you had <span className="bg-yellow-300 px-1 font-bold">1 opportunity</span> in <span className="bg-blue-200 px-1 font-bold">Index Slicing in Python</span>. After the second question, you had <span className="bg-yellow-300 px-1 font-bold">2 opportunities</span> in that same skill. Each time you work on a task for a <span className="bg-green-200 px-1 font-bold">specific skill</span>, your opportunities in that skill <span className="bg-yellow-300 px-1 font-bold">increase by 1</span>. However, your opportunities in <span className="bg-red-200 px-1 font-bold">different skills</span> (like loops) stay the same, as tasks are <span className="bg-green-200 px-1 font-bold">skill-specific</span>.
+                <br /><br />
+                <span className="bg-purple-200 px-1 font-bold">AFM</span> estimates the <span className="bg-orange-200 px-1 font-bold">probability</span> that a student answers the next task on a specific skill correctly. As it will turn out, <span className="bg-purple-200 px-1 font-bold">T</span> helps to update the <span className="bg-orange-200 px-1 font-bold">success probability</span> over time.
               </p>
             </div>
           </div>

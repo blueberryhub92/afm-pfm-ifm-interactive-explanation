@@ -29,7 +29,7 @@ export const Slide23PFM = ({ scroll }) => {
         <div className="space-y-6">
           <div className="border-l-8 border-purple-600 bg-purple-100 p-6 rounded-r-xl">
             <p className="text-black text-xl font-bold leading-relaxed">
-              Now let's compare AFM to another sophisticated model: the{' '}
+              Let's compare AFM to PFM: the{' '}
               <span 
                 ref={pfmRef}
                 className="cursor-help bg-purple-200 px-3 py-2 border-2 border-purple-600 rounded text-purple-800 font-bold hover:bg-purple-300 transition-all"
@@ -265,12 +265,12 @@ export const Slide23PFM = ({ scroll }) => {
       
       <div className="space-y-4">
         <div className="border-4 border-green-600 rounded-xl p-4 bg-green-50">
-          <div className="font-bold text-green-700 text-lg uppercase tracking-wide">γₖˢᵘᶜᶜ (SUCCESS RATE)</div>
+          <div className="font-bold text-green-700 text-lg uppercase tracking-wide">yₖˢᵘᶜᶜ (SUCCESS RATE)</div>
           <div className="text-black font-bold">Learning from getting answers RIGHT</div>
         </div>
         
         <div className="border-4 border-red-600 rounded-xl p-4 bg-red-50">
-          <div className="font-bold text-red-700 text-lg uppercase tracking-wide">γₖᶠᵃⁱˡ (FAILURE RATE)</div>
+          <div className="font-bold text-red-700 text-lg uppercase tracking-wide">yₖᶠᵃⁱˡ (FAILURE RATE)</div>
           <div className="text-black font-bold">Learning from getting answers WRONG</div>
         </div>
       </div>
@@ -350,7 +350,7 @@ export const Slide23PFM = ({ scroll }) => {
               </button>
             ) : (
               <button
-                onClick={() => scroll(24)}
+                onClick={() => scroll(20)}
                 className="px-8 py-4 bg-green-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-green-600 transition-all transform hover:scale-105 flex items-center gap-3"
               >
                 <span>Discover the Comparison</span>

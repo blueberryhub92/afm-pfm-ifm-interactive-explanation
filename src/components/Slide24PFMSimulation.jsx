@@ -305,10 +305,10 @@ export const Slide24PFMSimulation = ({ scroll }) => {
             <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-16 h-16 bg-blue-100 border-4 border-blue-600 rounded-xl flex items-center justify-center text-blue-700 font-bold text-2xl">
-                  P
+                  PFM
                 </div>
                 <div className="text-xl font-bold text-black uppercase tracking-wide">
-                  PFM PREDICTION
+                  PREDICTION
                 </div>
               </div>
               
@@ -333,10 +333,10 @@ export const Slide24PFMSimulation = ({ scroll }) => {
             <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-16 h-16 bg-green-100 border-4 border-green-600 rounded-xl flex items-center justify-center text-green-700 font-bold text-2xl">
-                  A
+                  AFM
                 </div>
                 <div className="text-xl font-bold text-black uppercase tracking-wide">
-                  AFM PREDICTION
+                  PREDICTION
                 </div>
               </div>
               
@@ -365,7 +365,7 @@ export const Slide24PFMSimulation = ({ scroll }) => {
               <span className="font-bold text-black text-xl tracking-wide uppercase">PREDICTION DIFFERENCE:</span>
               <span className="text-2xl font-bold text-orange-600">
                 {Math.abs(pfmProbability - afmProbability) > 0.001 ? 
-                  `${Math.abs((pfmProbability - afmProbability) * 100).toFixed(1)} PERCENTAGE POINTS` :
+                  `${Math.abs((pfmProbability - afmProbability) * 100).toFixed(1)} %` :
                   'MODELS AGREE'
                 }
               </span>
@@ -406,7 +406,7 @@ export const Slide24PFMSimulation = ({ scroll }) => {
           {/* Navigation - matching Slide22 pattern */}
           <div className="flex justify-center">
             <button
-              onClick={() => scroll(25)}
+              onClick={() => scroll(21)}
               className="px-8 py-4 bg-purple-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-purple-600 transition-all transform hover:scale-105 flex items-center gap-3"
             >
               <span>Continue</span>

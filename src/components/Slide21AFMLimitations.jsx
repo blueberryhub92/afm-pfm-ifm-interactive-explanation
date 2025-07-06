@@ -287,7 +287,7 @@ print(result)`,
             <div className="border-4 border-black rounded-xl p-6 bg-gray-100">
               <div className="text-left max-w-md mx-auto">
                 <label className="block text-lg font-bold text-black mb-4 uppercase tracking-wide">
-                  Learning Rate y:{" "}
+                  Try to adapt the Learning Rate y:{" "}
                   <span className="text-2xl text-purple-600">
                     {learningRate.toFixed(2)}
                   </span>
@@ -513,7 +513,7 @@ print(result)`,
                   Did you notice that your success probability increased, even
                   though you got the answer wrong?{" "}
                   <span className="text-yellow-700 underline decoration-4">
-                    We promise there really wasn't a correct answer option.
+                    There really wasn't a correct answer option.
                   </span>{" "}
                   This is another interesting characteristic of AFM, but it
                   isn't necessarily a flaw.
@@ -582,7 +582,7 @@ print(result)`,
 
           <div className="border-4 border-blue-600 rounded-xl p-6 bg-blue-50 mb-6">
             <p className="text-black text-lg leading-relaxed font-mono">
-              Kris is a student who has been learning Python for 3 months.
+              Aileen is a student who has been learning Python for 3 months.
               Today, she tested her knowledge of programming in Python with AFM
               and received a success probability of{" "}
               <span className="bg-yellow-300 px-2 py-1 border-2 border-black rounded font-bold">
@@ -978,7 +978,7 @@ print(result)`,
             <button
               className="px-12 py-4 bg-green-600 text-white border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide hover:bg-white hover:text-green-600 hover:border-green-600 transition-all transform hover:scale-105 flex items-center gap-3 font-['IBM_Plex_Mono',monospace]"
               onClick={() => {
-                scroll(22);
+                scroll(18);
               }}
             >
               <span>Continue to Next Section</span>

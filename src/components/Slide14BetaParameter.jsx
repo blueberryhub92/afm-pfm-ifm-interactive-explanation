@@ -15,10 +15,6 @@ export const Slide14BetaParameter = ({ scroll }) => {
     setShowResult(true);
   };
 
-  const handleContinue15 = () => {
-    scroll(15);
-  };
-
   return (
     <div className="bg-white min-h-screen flex flex-col items-center py-8 px-4 md:px-10 text-black font-['IBM_Plex_Mono',monospace]">
       <div className="w-full max-w-4xl mx-auto flex flex-col gap-8">
@@ -142,7 +138,7 @@ export const Slide14BetaParameter = ({ scroll }) => {
               )}
               
               <button
-                onClick={handleContinue15}
+                onClick={() => scroll(12)}
                 className="px-8 py-4 bg-blue-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-blue-600 hover:border-blue-600 transition-all transform hover:scale-105 flex items-center gap-3 mx-auto"
               >
                 <span>Continue</span>

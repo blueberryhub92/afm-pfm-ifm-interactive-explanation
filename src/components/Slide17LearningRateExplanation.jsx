@@ -1,27 +1,8 @@
-import { Zap, Clock, Lightbulb, ArrowRight, Target, Brain, TrendingUp } from "lucide-react";
-import { useState, useRef } from 'react';
+import { Zap, Clock, Lightbulb, ArrowRight, Target, Brain, TrendingUp, List, Users } from "lucide-react";
+import { useState } from 'react';
 
 export const Slide17LearningRateExplanation = ({ scroll }) => {
-  const [hoveredTerm, setHoveredTerm] = useState(null);
-  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0, side: 'right' });
   const [currentStep, setCurrentStep] = useState(0);
-  
-  const fastLearningRef = useRef(null);
-  const slowLearningRef = useRef(null);
-  const afmConnectionRef = useRef(null);
-  const difficultyRef = useRef(null);
-
-  // Simple tooltip position calculation
-  const calculateTooltipPosition = () => {
-    const margin = 16;
-    return { x: margin, y: margin, side: 'top-left' };
-  };
-
-  const handleMouseEnter = (term, ref) => {
-    setHoveredTerm(term);
-    const position = calculateTooltipPosition();
-    setTooltipPosition(position);
-  };
 
   const steps = [
     {
@@ -30,28 +11,47 @@ export const Slide17LearningRateExplanation = ({ scroll }) => {
         <div className="space-y-6">
           <div className="border-l-8 border-blue-600 bg-blue-100 p-6 rounded-r-xl">
             <p className="text-black text-xl font-bold leading-relaxed">
-              Not all tasks are learned at the same speed. Let's explore why some skills have{' '}
-              <span 
-                ref={fastLearningRef}
-                className="cursor-help bg-green-200 px-2 py-1 border-2 border-green-600 rounded text-green-800 font-bold hover:bg-green-300 transition-all"
-                onMouseEnter={() => handleMouseEnter('fast', fastLearningRef)}
-                onMouseLeave={() => setHoveredTerm(null)}
-              >
+              Not all concepts are learned at the same speed. Let's explore why some skills have{' '}
+              <span className="bg-green-200 px-2 py-1 border-2 border-green-600 rounded text-green-800 font-bold">
                 fast learning rates
               </span>
               {' '}while others have{' '}
-              <span 
-                ref={slowLearningRef}
-                className="cursor-help bg-purple-200 px-2 py-1 border-2 border-purple-600 rounded text-purple-800 font-bold hover:bg-purple-300 transition-all"
-                onMouseEnter={() => handleMouseEnter('slow', slowLearningRef)}
-                onMouseLeave={() => setHoveredTerm(null)}
-              >
+              <span className="bg-purple-200 px-2 py-1 border-2 border-purple-600 rounded text-purple-800 font-bold">
                 slow learning rates
               </span>
               .
             </p>
           </div>
-          
+
+          <div className="border-4 border-yellow-600 rounded-xl p-6 bg-yellow-50">
+            <div className="flex items-center gap-3 mb-4">
+              <Target className="w-8 h-8 text-yellow-600" />
+              <h3 className="text-xl font-bold text-yellow-700 uppercase tracking-wide">Critical Distinction</h3>
+            </div>
+            <p className="text-black text-lg font-bold leading-relaxed">
+              <span className="bg-yellow-200 px-2 py-1 border-2 border-yellow-600 rounded text-yellow-800 font-bold">
+                Learning Rate ≠ Task Difficulty
+              </span>
+              . A task can have fast learning rate but still be highly difficult overall.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+              <div className="bg-green-100 border-2 border-green-600 rounded-lg p-3">
+                <div className="font-bold text-green-800 text-sm flex items-center gap-2">
+                  <Zap className="w-4 h-4" />
+                  Learning Rate
+                </div>
+                <div className="text-green-900 text-xs mt-1">Speed of progress per practice session - how quickly you improve with each attempt</div>
+              </div>
+              <div className="bg-red-100 border-2 border-red-600 rounded-lg p-3">
+                <div className="font-bold text-red-800 text-sm flex items-center gap-2">
+                  <Target className="w-4 h-4" />
+                  Task Difficulty
+                </div>
+                <div className="text-red-900 text-xs mt-1">Inherent conceptual difficulty - how hard the skill is to learn in the first place</div>
+              </div>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Fast Learning Rate - Task A */}
             <div className="border-4 border-green-600 rounded-xl p-6 bg-green-50">
@@ -59,22 +59,25 @@ export const Slide17LearningRateExplanation = ({ scroll }) => {
                 <div className="w-12 h-12 bg-green-600 text-white rounded-lg flex items-center justify-center text-2xl font-black border-2 border-black">
                   A
                 </div>
-                <h3 className="text-xl font-bold text-green-700 uppercase tracking-wide">Fast Learning</h3>
+                <div>
+                  <h3 className="text-xl font-bold text-green-700 uppercase tracking-wide">Fast Learning</h3>
+                </div>
               </div>
+
               <div className="space-y-3">
                 <div className="bg-green-100 border-2 border-green-600 rounded-lg p-3">
                   <div className="font-bold text-green-800 text-sm flex items-center gap-2">
                     <Target className="w-4 h-4" />
-                    Immediate Feedback
+                    Immediate Feedback Loops
                   </div>
-                  <div className="text-green-900 font-mono text-xs">Each function either works or doesn't</div>
+                  <div className="text-green-900 text-xs mt-1">Each function either works or doesn't - clear success/failure indicators with concrete, testable results</div>
                 </div>
                 <div className="bg-green-100 border-2 border-green-600 rounded-lg p-3">
                   <div className="font-bold text-green-800 text-sm flex items-center gap-2">
                     <Lightbulb className="w-4 h-4" />
-                    Clear Patterns
+                    Clear Patterns & Incremental Building
                   </div>
-                  <div className="text-green-900 font-mono text-xs">Syntax and logic become recognizable quickly</div>
+                  <div className="text-green-900 text-xs mt-1">Syntax and logic become recognizable quickly through incremental skill building</div>
                 </div>
               </div>
             </div>
@@ -85,22 +88,25 @@ export const Slide17LearningRateExplanation = ({ scroll }) => {
                 <div className="w-12 h-12 bg-purple-600 text-white rounded-lg flex items-center justify-center text-2xl font-black border-2 border-black">
                   B
                 </div>
-                <h3 className="text-xl font-bold text-purple-700 uppercase tracking-wide">Slow Learning</h3>
+                <div>
+                  <h3 className="text-xl font-bold text-purple-700 uppercase tracking-wide">Slow Learning</h3>
+                </div>
               </div>
+
               <div className="space-y-3">
                 <div className="bg-purple-100 border-2 border-purple-600 rounded-lg p-3">
                   <div className="font-bold text-purple-800 text-sm flex items-center gap-2">
                     <Brain className="w-4 h-4" />
-                    Abstract Thinking
+                    Abstract Mental Models Required
                   </div>
-                  <div className="text-purple-900 font-mono text-xs">Requires developing mental models</div>
+                  <div className="text-purple-900 text-xs mt-1">Requires developing mental models where multiple concepts must integrate</div>
                 </div>
                 <div className="bg-purple-100 border-2 border-purple-600 rounded-lg p-3">
                   <div className="font-bold text-purple-800 text-sm flex items-center gap-2">
                     <Clock className="w-4 h-4" />
-                    Delayed Understanding
+                    Delayed Understanding & Pattern Recognition
                   </div>
-                  <div className="text-purple-900 font-mono text-xs">"Aha!" moments come after extended practice</div>
+                  <div className="text-purple-900 text-xs mt-1">Pattern recognition takes time - "Aha!" moments come after extended practice</div>
                 </div>
               </div>
             </div>
@@ -115,26 +121,31 @@ export const Slide17LearningRateExplanation = ({ scroll }) => {
           <div className="border-4 border-orange-600 rounded-xl p-6 bg-orange-50">
             <div className="flex items-center gap-3 mb-4">
               <TrendingUp className="w-8 h-8 text-orange-600" />
-              <h3 className="text-xl font-bold text-orange-700 uppercase tracking-wide">AFM Connection</h3>
+              <h3 className="text-xl font-bold text-orange-700 uppercase tracking-wide">AFM Mathematical Relationship</h3>
             </div>
             <p className="text-black text-lg font-bold leading-relaxed mb-4">
               In the{' '}
-              <span 
-                ref={afmConnectionRef}
-                className="cursor-help bg-orange-200 px-2 py-1 border-2 border-orange-600 rounded text-orange-800 font-bold hover:bg-orange-300 transition-all"
-                onMouseEnter={() => handleMouseEnter('afm', afmConnectionRef)}
-                onMouseLeave={() => setHoveredTerm(null)}
-              >
+              <span className="bg-orange-200 px-2 py-1 border-2 border-orange-600 rounded text-orange-800 font-bold">
                 Additive Factor Model
               </span>
               , learning rate (γ) and opportunities (T) are mathematically connected and inversely related.
             </p>
-            
+
             <div className="bg-black text-orange-400 p-4 rounded-lg border-2 border-orange-600 font-mono text-sm text-center mb-4">
               <div className="text-orange-300 mb-2">AFM FORMULA:</div>
-              <div className="text-white">log(p/(1-p)) = θᵢ + Σₖ qⱼₖ(βₖ + γₖ·Tᵢₖ)</div>
+              <div className="text-white">P(success) = θᵢ + βₖ + γₖ·Tᵢₖ</div>
+              <div className="text-orange-300 text-xs mt-2">INVERSE RELATIONSHIP: γ ∝ 1/T</div>
             </div>
-            
+
+            <div className="space-y-3 mb-4">
+              <div className="border-l-4 border-blue-600 bg-blue-100 px-3 py-2 rounded-r-lg">
+                <strong className="text-blue-800">γ (gamma):</strong> <span className="text-blue-700">Learning rate parameter</span>
+              </div>
+              <div className="border-l-4 border-purple-600 bg-purple-100 px-3 py-2 rounded-r-lg">
+                <strong className="text-purple-800">T:</strong> <span className="text-purple-700">Number of practice opportunities</span>
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="bg-green-100 border-2 border-green-600 rounded-lg p-4">
                 <div className="font-bold text-green-800 mb-2">When T is High (Many Opportunities)</div>
@@ -145,6 +156,16 @@ export const Slide17LearningRateExplanation = ({ scroll }) => {
                 <div className="text-red-900 font-mono text-sm">γ must be higher - each event more impactful</div>
               </div>
             </div>
+
+            <div className="border-4 border-green-600 rounded-xl p-4 bg-green-50 mt-4">
+              <div className="flex items-center gap-2 mb-2">
+                <Brain className="w-5 h-5 text-green-700" />
+                <span className="font-bold text-green-700 uppercase tracking-wide">Key Insight</span>
+              </div>
+              <p className="text-green-800 text-sm font-mono">
+                Learning rate is bound to opportunities - they're mathematically connected in AFM!
+              </p>
+            </div>
           </div>
         </div>
       )
@@ -153,53 +174,40 @@ export const Slide17LearningRateExplanation = ({ scroll }) => {
       title: "Key Insights and Takeaways",
       content: (
         <div className="space-y-6">
-          <div className="border-4 border-blue-600 rounded-xl p-6 bg-blue-50">
-            <div className="flex items-center gap-3 mb-4">
-              <Lightbulb className="w-8 h-8 text-blue-600" />
-              <h3 className="text-xl font-bold text-blue-700 uppercase tracking-wide">Critical Distinction</h3>
-            </div>
-            <p className="text-black text-lg font-bold leading-relaxed">
-              <span 
-                ref={difficultyRef}
-                className="cursor-help bg-yellow-200 px-2 py-1 border-2 border-yellow-600 rounded text-yellow-800 font-bold hover:bg-yellow-300 transition-all"
-                onMouseEnter={() => handleMouseEnter('difficulty', difficultyRef)}
-                onMouseLeave={() => setHoveredTerm(null)}
-              >
-                Learning Rate ≠ Task Difficulty
-              </span>
-              . A task can have fast learning rate but still be highly difficult overall.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="border-4 border-green-600 rounded-xl p-6 bg-green-50">
-              <div className="flex items-center gap-3 mb-4">
-                <Zap className="w-6 h-6 text-green-600" />
-                <h4 className="text-lg font-bold text-green-700 uppercase">Learning Rate</h4>
-              </div>
-              <p className="text-green-800 font-bold text-sm">
-                How quickly you absorb new information and see progress in each practice session.
-              </p>
-            </div>
-
-            <div className="border-4 border-red-600 rounded-xl p-6 bg-red-50">
-              <div className="flex items-center gap-3 mb-4">
-                <Target className="w-6 h-6 text-red-600" />
-                <h4 className="text-lg font-bold text-red-700 uppercase">Task Difficulty</h4>
-              </div>
-              <p className="text-red-800 font-bold text-sm">
-                How complex the final skill is to master completely.
-              </p>
-            </div>
-          </div>
-
           <div className="border-4 border-purple-600 rounded-xl p-6 bg-purple-50">
             <div className="flex items-center gap-3 mb-4">
               <Brain className="w-8 h-8 text-purple-600" />
               <h3 className="text-xl font-bold text-purple-700 uppercase tracking-wide">Example: Chess</h3>
             </div>
             <p className="text-black text-lg font-bold leading-relaxed">
-              You learn the rules quickly (fast learning rate), but mastery takes years (high difficulty).
+              Chess moves are initially confusing (high difficulty - low success on first try), but once you start learning, you pick up patterns quickly (fast learning rate). High difficulty + Fast learning rate can coexist!
+            </p>
+          </div>
+
+          <div className="border-4 border-orange-600 rounded-xl p-6 bg-orange-50">
+            <div className="flex items-center gap-3 mb-4">
+              <Lightbulb className="w-8 h-8 text-orange-600" />
+              <h3 className="text-xl font-bold text-orange-700 uppercase tracking-wide">Practical Implications</h3>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-green-100 border-2 border-green-600 rounded-lg p-4">
+                <div className="font-bold text-green-800 mb-2">Fast Learning Rate Skills</div>
+                <div className="text-green-900 text-sm">Practice frequently with shorter sessions - you'll see rapid improvement</div>
+              </div>
+              <div className="bg-purple-100 border-2 border-purple-600 rounded-lg p-4">
+                <div className="font-bold text-purple-800 mb-2">Slow Learning Rate Skills</div>
+                <div className="text-purple-900 text-sm">Be patient - consistent practice over time leads to gradual mastery</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-4 border-blue-600 rounded-xl p-6 bg-blue-50">
+            <div className="flex items-center gap-3 mb-4">
+              <Users className="w-8 h-8 text-blue-600" />
+              <h3 className="text-xl font-bold text-blue-700 uppercase tracking-wide">Individual Differences</h3>
+            </div>
+            <p className="text-black text-lg font-bold leading-relaxed">
+              Remember: learning rates can vary between individuals based on prior knowledge, cognitive abilities, and learning strategies. The AFM model accounts for these individual differences through the θᵢ (student ability) parameter.
             </p>
           </div>
         </div>
@@ -218,159 +226,6 @@ export const Slide17LearningRateExplanation = ({ scroll }) => {
       setCurrentStep(currentStep - 1);
     }
   };
-
-  const FastLearningTooltip = () => (
-    <div 
-      className="fixed z-50 bg-white border-4 border-black rounded-xl shadow-lg p-6 w-96 font-['IBM_Plex_Mono',monospace]"
-      style={{ 
-        left: `${tooltipPosition.x}px`, 
-        top: `${tooltipPosition.y}px`,
-        maxWidth: '384px'
-      }}
-    >
-      <div className="border-4 border-green-600 rounded-xl p-4 bg-green-50 mb-4">
-        <div className="flex items-center gap-2 mb-3">
-          <Zap className="w-5 h-5 text-green-700" />
-          <span className="font-bold text-green-700 uppercase tracking-wide">Fast Learning Rate</span>
-        </div>
-      </div>
-      
-      <div className="space-y-3">
-        <div className="border-4 border-green-600 rounded-xl p-3 bg-green-50">
-          <div className="font-bold text-green-800 text-sm mb-2">Characteristics:</div>
-          <ul className="text-xs text-green-700 font-mono space-y-1">
-            <li>• Immediate feedback loops</li>
-            <li>• Clear success/failure indicators</li>
-            <li>• Incremental skill building</li>
-            <li>• Concrete, testable results</li>
-          </ul>
-        </div>
-        
-        <div className="border-4 border-blue-600 rounded-xl p-3 bg-blue-50">
-          <div className="font-bold text-blue-800 text-sm mb-1">Example:</div>
-          <div className="text-xs text-blue-700 font-mono">
-            Programming: Each function either compiles and works, or it doesn't. Quick feedback!
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const SlowLearningTooltip = () => (
-    <div 
-      className="fixed z-50 bg-white border-4 border-black rounded-xl shadow-lg p-6 w-96 font-['IBM_Plex_Mono',monospace]"
-      style={{ 
-        left: `${tooltipPosition.x}px`, 
-        top: `${tooltipPosition.y}px`,
-        maxWidth: '384px'
-      }}
-    >
-      <div className="border-4 border-purple-600 rounded-xl p-4 bg-purple-50 mb-4">
-        <div className="flex items-center gap-2 mb-3">
-          <Clock className="w-5 h-5 text-purple-700" />
-          <span className="font-bold text-purple-700 uppercase tracking-wide">Slow Learning Rate</span>
-        </div>
-      </div>
-      
-      <div className="space-y-3">
-        <div className="border-4 border-purple-600 rounded-xl p-3 bg-purple-50">
-          <div className="font-bold text-purple-800 text-sm mb-2">Characteristics:</div>
-          <ul className="text-xs text-purple-700 font-mono space-y-1">
-            <li>• Abstract mental models required</li>
-            <li>• Pattern recognition takes time</li>
-            <li>• Multiple concepts must integrate</li>
-            <li>• Delayed "aha!" moments</li>
-          </ul>
-        </div>
-        
-        <div className="border-4 border-orange-600 rounded-xl p-3 bg-orange-50">
-          <div className="font-bold text-orange-800 text-sm mb-1">Example:</div>
-          <div className="text-xs text-orange-700 font-mono">
-            Mathematical proofs: Requires developing intuition for when to apply different approaches
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const AFMTooltip = () => (
-    <div 
-      className="fixed z-50 bg-white border-4 border-black rounded-xl shadow-lg p-6 w-96 font-['IBM_Plex_Mono',monospace]"
-      style={{ 
-        left: `${tooltipPosition.x}px`, 
-        top: `${tooltipPosition.y}px`,
-        maxWidth: '384px'
-      }}
-    >
-      <div className="border-4 border-orange-600 rounded-xl p-4 bg-orange-50 mb-4">
-        <div className="flex items-center gap-2 mb-3">
-          <TrendingUp className="w-5 h-5 text-orange-700" />
-          <span className="font-bold text-orange-700 uppercase tracking-wide">AFM Mathematical Relationship</span>
-        </div>
-        
-        <div className="bg-black text-orange-400 p-3 rounded-lg border-2 border-orange-600 font-mono text-xs">
-          <div className="text-orange-300 mb-2">INVERSE RELATIONSHIP:</div>
-          <div className="text-white">γ ∝ 1/T</div>
-        </div>
-      </div>
-      
-      <div className="space-y-2 text-sm text-black">
-        <div className="border-l-4 border-blue-600 bg-blue-100 px-3 py-1 rounded-r-lg">
-          <strong>γ (gamma):</strong> Learning rate parameter
-        </div>
-        <div className="border-l-4 border-purple-600 bg-purple-100 px-3 py-1 rounded-r-lg">
-          <strong>T:</strong> Number of practice opportunities
-        </div>
-      </div>
-      
-      <div className="border-4 border-green-600 rounded-xl p-4 bg-green-50 mt-4">
-        <div className="flex items-center gap-2 mb-2">
-          <Brain className="w-5 h-5 text-green-700" />
-          <span className="font-bold text-green-700 uppercase tracking-wide">Key Insight</span>
-        </div>
-        <p className="text-green-800 text-sm font-mono">
-          Learning rate is bound to opportunities - they're mathematically connected in AFM!
-        </p>
-      </div>
-    </div>
-  );
-
-  const DifficultyTooltip = () => (
-    <div 
-      className="fixed z-50 bg-white border-4 border-black rounded-xl shadow-lg p-6 w-80 font-['IBM_Plex_Mono',monospace]"
-      style={{ 
-        left: `${tooltipPosition.x}px`, 
-        top: `${tooltipPosition.y}px`,
-        maxWidth: '320px'
-      }}
-    >
-      <div className="border-4 border-yellow-600 rounded-xl p-4 bg-yellow-50 mb-4">
-        <div className="flex items-center gap-2 mb-2">
-          <Target className="w-5 h-5 text-yellow-700" />
-          <span className="font-bold text-yellow-700 uppercase tracking-wide text-sm">Critical Distinction</span>
-        </div>
-      </div>
-      
-      <div className="space-y-3">
-        <div className="border-4 border-green-600 rounded-xl p-3 bg-green-50">
-          <div className="font-bold text-green-800 text-sm">LEARNING RATE</div>
-          <div className="text-xs text-green-700 font-mono">Speed of progress per practice session</div>
-        </div>
-        
-        <div className="border-4 border-red-600 rounded-xl p-3 bg-red-50">
-          <div className="font-bold text-red-800 text-sm">TASK DIFFICULTY</div>
-          <div className="text-xs text-red-700 font-mono">Overall complexity to achieve mastery</div>
-        </div>
-      </div>
-      
-      <div className="border-4 border-purple-600 rounded-xl p-3 bg-purple-50 mt-4">
-        <div className="font-bold text-purple-800 text-xs mb-1">CHESS EXAMPLE:</div>
-        <div className="text-xs text-purple-700 font-mono">
-          Fast learning rate (rules learned quickly) + High difficulty (mastery takes years)
-        </div>
-      </div>
-    </div>
-  );
 
   return (
     <div className="bg-white min-h-screen flex flex-col text-black font-['IBM_Plex_Mono',monospace]">
@@ -392,14 +247,12 @@ export const Slide17LearningRateExplanation = ({ scroll }) => {
               {steps.map((_, index) => (
                 <div key={index} className="flex items-center">
                   <div
-                    className={`w-4 h-4 rounded-full border-2 border-black ${
-                      index <= currentStep ? 'bg-blue-600' : 'bg-gray-200'
-                    }`}
+                    className={`w-4 h-4 rounded-full border-2 border-black ${index <= currentStep ? 'bg-blue-600' : 'bg-gray-200'
+                      }`}
                   />
                   {index < steps.length - 1 && (
-                    <div className={`w-12 h-1 border-t-2 border-black ${
-                      index < currentStep ? 'bg-blue-600' : 'bg-gray-200'
-                    }`} />
+                    <div className={`w-12 h-1 border-t-2 border-black ${index < currentStep ? 'bg-blue-600' : 'bg-gray-200'
+                      }`} />
                   )}
                 </div>
               ))}
@@ -411,7 +264,7 @@ export const Slide17LearningRateExplanation = ({ scroll }) => {
             <h2 className="text-3xl font-bold text-center mb-8 text-black uppercase tracking-tight">
               {steps[currentStep].title}
             </h2>
-            
+
             {steps[currentStep].content}
           </div>
 
@@ -438,7 +291,7 @@ export const Slide17LearningRateExplanation = ({ scroll }) => {
               </button>
             ) : (
               <button
-                onClick={() => scroll(18)}
+                onClick={() => scroll(15)}
                 className="px-8 py-4 bg-green-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-green-600 transition-all transform hover:scale-105 flex items-center gap-3"
               >
                 <span>Continue</span>
@@ -448,12 +301,6 @@ export const Slide17LearningRateExplanation = ({ scroll }) => {
           </div>
         </div>
       </div>
-
-      {/* Tooltips */}
-      {hoveredTerm === 'fast' && <FastLearningTooltip />}
-      {hoveredTerm === 'slow' && <SlowLearningTooltip />}
-      {hoveredTerm === 'afm' && <AFMTooltip />}
-      {hoveredTerm === 'difficulty' && <DifficultyTooltip />}
     </div>
   );
-};
+}

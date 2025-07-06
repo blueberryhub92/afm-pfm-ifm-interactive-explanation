@@ -6,14 +6,403 @@ import {
   TrendingUp,
   Play,
   BookOpen,
+  Code,
+  X,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
-export const Slide19AFMFormula = ({scroll}) => {
+export const Slide19AFMFormula = ({ scroll }) => {
   const [showMath, setShowMath] = useState(false);
   const [hoveredTerm, setHoveredTerm] = useState(null);
+  const [showQMatrix, setShowQMatrix] = useState(false);
+  const [currentTask, setCurrentTask] = useState(0);
+
+  // Python programming tasks and their required skills
+  const pythonTasks = [
+    {
+      name: "Print Hello World",
+      code: 'print("Hello, World!")',
+      description: "Basic output statement",
+      skills: {
+        "Basic Syntax": 1,
+        Variables: 0,
+        Loops: 0,
+        Functions: 0,
+        "Data Structures": 0,
+        "File I/O": 0,
+        "String Operations": 1,
+        Conditionals: 0,
+      },
+    },
+    {
+      name: "Variable Assignment",
+      code: 'name = "Alice"\nage = 25\nprint(f"Name: {name}, Age: {age}")',
+      description: "Variables and string formatting",
+      skills: {
+        "Basic Syntax": 1,
+        Variables: 1,
+        Loops: 0,
+        Functions: 0,
+        "Data Structures": 0,
+        "File I/O": 0,
+        "String Operations": 1,
+        Conditionals: 0,
+      },
+    },
+    {
+      name: "For Loop with List",
+      code: "numbers = [1, 2, 3, 4, 5]\nfor num in numbers:\n    print(num * 2)",
+      description: "Iteration and list processing",
+      skills: {
+        "Basic Syntax": 1,
+        Variables: 1,
+        Loops: 1,
+        Functions: 0,
+        "Data Structures": 1,
+        "File I/O": 0,
+        "String Operations": 0,
+        Conditionals: 0,
+      },
+    },
+    {
+      name: "Function Definition",
+      code: 'def calculate_area(length, width):\n    return length * width\n\narea = calculate_area(5, 3)\nprint(f"Area: {area}")',
+      description: "Function creation and parameters",
+      skills: {
+        "Basic Syntax": 1,
+        Variables: 1,
+        Loops: 0,
+        Functions: 1,
+        "Data Structures": 0,
+        "File I/O": 0,
+        "String Operations": 1,
+        Conditionals: 0,
+      },
+    },
+    {
+      name: "Conditional Logic",
+      code: 'score = 85\nif score >= 90:\n    grade = "A"\nelif score >= 80:\n    grade = "B"\nelse:\n    grade = "C"\nprint(f"Grade: {grade}")',
+      description: "If-else statements and comparison",
+      skills: {
+        "Basic Syntax": 1,
+        Variables: 1,
+        Loops: 0,
+        Functions: 0,
+        "Data Structures": 0,
+        "File I/O": 0,
+        "String Operations": 1,
+        Conditionals: 1,
+      },
+    },
+    {
+      name: "File Reading",
+      code: 'with open("data.txt", "r") as file:\n    content = file.read()\n    lines = content.split("\\n")\n    for line in lines:\n        print(line.strip())',
+      description: "File operations and string processing",
+      skills: {
+        "Basic Syntax": 1,
+        Variables: 1,
+        Loops: 1,
+        Functions: 0,
+        "Data Structures": 1,
+        "File I/O": 1,
+        "String Operations": 1,
+        Conditionals: 0,
+      },
+    },
+  ];
+
+  const skillNames = Object.keys(pythonTasks[0].skills);
+
+  const QMatrixVisualization = ({ onClose }) => {
+  const [currentTask, setCurrentTask] = useState(0);
+
+  // Python programming tasks and their required skills
+  const pythonTasks = [
+    {
+      name: "Print Hello World",
+      code: 'print("Hello, World!")',
+      description: "Basic output statement",
+      skills: {
+        "Basic Syntax": 1,
+        Variables: 0,
+        Loops: 0,
+        Functions: 0,
+        "Data Structures": 0,
+        "File I/O": 0,
+        "String Operations": 1,
+        Conditionals: 0,
+      },
+    },
+    {
+      name: "Variable Assignment",
+      code: 'name = "Alice"\nage = 25\nprint(f"Name: {name}, Age: {age}")',
+      description: "Variables and string formatting",
+      skills: {
+        "Basic Syntax": 1,
+        Variables: 1,
+        Loops: 0,
+        Functions: 0,
+        "Data Structures": 0,
+        "File I/O": 0,
+        "String Operations": 1,
+        Conditionals: 0,
+      },
+    },
+    {
+      name: "For Loop with List",
+      code: "numbers = [1, 2, 3, 4, 5]\nfor num in numbers:\n    print(num * 2)",
+      description: "Iteration and list processing",
+      skills: {
+        "Basic Syntax": 1,
+        Variables: 1,
+        Loops: 1,
+        Functions: 0,
+        "Data Structures": 1,
+        "File I/O": 0,
+        "String Operations": 0,
+        Conditionals: 0,
+      },
+    },
+    {
+      name: "Function Definition",
+      code: 'def calculate_area(length, width):\n    return length * width\n\narea = calculate_area(5, 3)\nprint(f"Area: {area}")',
+      description: "Function creation and parameters",
+      skills: {
+        "Basic Syntax": 1,
+        Variables: 1,
+        Loops: 0,
+        Functions: 1,
+        "Data Structures": 0,
+        "File I/O": 0,
+        "String Operations": 1,
+        Conditionals: 0,
+      },
+    },
+    {
+      name: "Conditional Logic",
+      code: 'score = 85\nif score >= 90:\n    grade = "A"\nelif score >= 80:\n    grade = "B"\nelse:\n    grade = "C"\nprint(f"Grade: {grade}")',
+      description: "If-else statements and comparison",
+      skills: {
+        "Basic Syntax": 1,
+        Variables: 1,
+        Loops: 0,
+        Functions: 0,
+        "Data Structures": 0,
+        "File I/O": 0,
+        "String Operations": 1,
+        Conditionals: 1,
+      },
+    },
+    {
+      name: "File Reading",
+      code: 'with open("data.txt", "r") as file:\n    content = file.read()\n    lines = content.split("\\n")\n    for line in lines:\n        print(line.strip())',
+      description: "File operations and string processing",
+      skills: {
+        "Basic Syntax": 1,
+        Variables: 1,
+        Loops: 1,
+        Functions: 0,
+        "Data Structures": 1,
+        "File I/O": 1,
+        "String Operations": 1,
+        Conditionals: 0,
+      },
+    },
+  ];
+
+  const skillNames = Object.keys(pythonTasks[0].skills);
+  const currentTaskData = pythonTasks[currentTask];
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white border-4 border-black rounded-xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto font-mono">
+        {/* Header */}
+        <div className="bg-black text-white p-6 border-b-4 border-black rounded-t-lg">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Code className="w-8 h-8" />
+              <h3 className="text-2xl font-bold tracking-wide">
+                Q-Matrix Visualization
+              </h3>
+            </div>
+            <button
+              onClick={() => setShowQMatrix(false)}
+              className="p-2 hover:bg-white hover:text-black border-2 border-white rounded-lg transition-colors font-bold"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+        </div>
+
+        <div className="p-8 space-y-8">
+          {/* Task Selector */}
+          <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
+            <div className="flex items-center justify-between mb-6">
+              <h4 className="text-xl font-bold text-black tracking-tight">
+                Current Programming Task:
+              </h4>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setCurrentTask(Math.max(0, currentTask - 1))}
+                  disabled={currentTask === 0}
+                  className="p-2 border-2 border-black rounded-lg hover:bg-black hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-bold"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+                <span className="font-mono text-sm bg-gray-100 px-3 py-1 border-2 border-black rounded-lg font-bold">
+                  {currentTask + 1} / {pythonTasks.length}
+                </span>
+                <button
+                  onClick={() =>
+                    setCurrentTask(
+                      Math.min(pythonTasks.length - 1, currentTask + 1)
+                    )
+                  }
+                  disabled={currentTask === pythonTasks.length - 1}
+                  className="p-2 border-2 border-black rounded-lg hover:bg-black hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-bold"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            <div className="bg-blue-50 border-2 border-blue-600 rounded-lg p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-4 h-4 bg-blue-600 rounded-full"></div>
+                <strong className="text-black text-lg font-bold">
+                  {currentTaskData.name}
+                </strong>
+              </div>
+              <p className="text-black text-sm mb-4 font-mono">
+                {currentTaskData.description}
+              </p>
+              <div className="bg-black text-green-400 p-4 border-2 border-gray-600 rounded-lg font-mono text-sm overflow-x-auto">
+                <pre>{currentTaskData.code}</pre>
+              </div>
+            </div>
+          </div>
+
+          {/* Q-Matrix Table */}
+          <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
+            <h4 className="text-xl font-bold text-black mb-6 flex items-center gap-3 tracking-tight">
+              <Target className="w-6 h-6" />
+              Q-Matrix: Skills Required for This Task
+            </h4>
+
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="bg-gray-100">
+                    <th className="border-2 border-black p-3 text-left font-bold text-black text-sm">
+                      Skill (Knowledge Component)
+                    </th>
+                    <th className="border-2 border-black p-3 text-center font-bold text-black text-sm">
+                      q<sub>jk</sub> Value
+                    </th>
+                    <th className="border-2 border-black p-3 text-center font-bold text-black text-sm">
+                      Required?
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {skillNames.map((skill, index) => {
+                    const isRequired = currentTaskData.skills[skill] === 1;
+                    return (
+                      <tr
+                        key={skill}
+                        className={isRequired ? "bg-green-50" : "bg-red-50"}
+                      >
+                        <td className="border-2 border-black p-3 font-mono text-sm font-bold text-black">
+                          {skill}
+                        </td>
+                        <td className="border-2 border-black p-3 text-center">
+                          <span
+                            className={`inline-block w-8 h-8 border-2 border-black rounded-lg flex items-center justify-center font-bold text-lg ${
+                              isRequired
+                                ? "bg-green-600 text-white"
+                                : "bg-red-600 text-white"
+                            }`}
+                          >
+                            {currentTaskData.skills[skill]}
+                          </span>
+                        </td>
+                        <td className="border-2 border-black p-3 text-center">
+                          <span
+                            className={`px-4 py-1 border-2 border-black rounded-lg text-sm font-bold ${
+                              isRequired
+                                ? "bg-green-600 text-white"
+                                : "bg-red-600 text-white"
+                            }`}
+                          >
+                            {isRequired ? "YES" : "NO"}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Formula Context */}
+          <div className="bg-blue-50 border-4 border-blue-600 rounded-xl p-6 shadow-lg">
+            <h4 className="text-xl font-bold text-black mb-6 flex items-center gap-3 tracking-tight">
+              <Calculator className="w-6 h-6" />
+              How This Affects the AFM Formula
+            </h4>
+            <div className="space-y-4">
+              <p className="text-black text-sm font-mono leading-relaxed">
+                In the AFM formula, only skills where{" "}
+                <span className="bg-gray-100 px-2 py-1 border-2 border-black rounded font-bold">
+                  q<sub>jk</sub> = 1
+                </span>{" "}
+                contribute to the calculation:
+              </p>
+              <div className="bg-white border-2 border-gray-600 rounded-lg p-4 font-mono">
+                {skillNames.filter(
+                  (skill) => currentTaskData.skills[skill] === 1
+                ).length > 0 ? (
+                  <div>
+                    <div className="text-black font-bold mb-3 text-sm">
+                      Active terms for "{currentTaskData.name}":
+                    </div>
+                    <div className="space-y-2">
+                      {skillNames
+                        .filter((skill) => currentTaskData.skills[skill] === 1)
+                        .map((skill, index) => (
+                          <div key={skill} className="text-black font-mono text-sm bg-gray-100 p-2 border-2 border-gray-600 rounded">
+                            • q<sub>j,{skill}</sub> × β<sub>{skill}</sub> + q
+                            <sub>j,{skill}</sub> × γ<sub>{skill}</sub> × T
+                            <sub>i,{skill}</sub>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-black font-bold text-sm">
+                    No skills required for this task
+                  </div>
+                )}
+              </div>
+              <div className="bg-red-50 border-2 border-red-600 rounded-lg p-4">
+                <p className="text-black font-mono text-sm leading-relaxed">
+                  Skills with q<sub>jk</sub> = 0 are multiplied by zero, so they
+                  don't contribute to the student's predicted performance on
+                  this task.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
   const AFMFormulaTooltip = () => (
-    <div className="fixed z-50 top-4 left-4 bg-white border-4 border-blue-700 rounded-xl shadow-lg p-6 w-96 font-['IBM_Plex_Mono',monospace]">
+    <div className="fixed z-50 top-55 left-4 bg-white border-4 border-blue-700 rounded-xl shadow-lg p-6 max-w-sm w-auto font-mono">
       <div className="absolute -top-6 left-4 px-3 py-1 bg-blue-700 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
         <Calculator className="w-4 h-4" />
         AFM FORMULA EXPLAINED
@@ -98,7 +487,7 @@ export const Slide19AFMFormula = ({scroll}) => {
   );
 
   const LogOddsTooltip = () => (
-    <div className="fixed z-50 top-4 left-4 bg-white border-4 border-green-700 rounded-xl shadow-lg p-6 w-96 font-['IBM_Plex_Mono',monospace]">
+    <div className="fixed z-50 top-8 left-4 bg-white border-4 border-green-700 rounded-xl shadow-lg p-6 w-96 font-mono">
       <div className="absolute -top-6 left-4 px-3 py-1 bg-green-700 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
         <Calculator className="w-4 h-4" />
         LOG-ODDS EXPLAINED
@@ -167,7 +556,7 @@ export const Slide19AFMFormula = ({scroll}) => {
   );
 
   return (
-    <div className="bg-white min-h-screen flex flex-col items-center py-8 px-4 md:px-10 text-black font-['IBM_Plex_Mono',monospace]">
+    <div className="bg-white min-h-screen flex flex-col items-center py-8 px-4 md:px-10 text-black font-mono">
       <div className="w-full max-w-6xl mx-auto flex flex-col gap-8">
         {/* Header */}
         <div className="text-center border-4 border-black rounded-xl p-6 bg-white shadow-lg">
@@ -330,8 +719,8 @@ export const Slide19AFMFormula = ({scroll}) => {
                         </strong>
                       </div>
                       <p className="text-black font-mono text-sm">
-                        whether item <em>j</em> requires skill <em>k</em> (1 if
-                        yes, 0 if no)
+                        binary indicator: 1 if item <em>j</em> requires skill{" "}
+                        <em>k</em>, 0 otherwise (from the Q-matrix)
                       </p>
                     </div>
                   </div>
@@ -379,21 +768,59 @@ export const Slide19AFMFormula = ({scroll}) => {
                 </div>
               </div>
 
-              {/* Key Insight */}
-              <div className="border-l-8 border-black bg-gradient-to-r from-yellow-100 to-orange-100 rounded-xl p-6 shadow-lg">
-                <div className="flex items-center gap-2 mb-3 font-bold text-lg text-black">
-                  <div className="w-6 h-6 bg-black rounded-full flex items-center justify-center">
-                    <span className="text-white text-sm">!</span>
-                  </div>
-                  KEY INSIGHT
+              {/* New Q-matrix explanation */}
+              <div
+                onClick={() => setShowQMatrix(true)}
+                className="border-4 border-orange-600 rounded-xl p-6 bg-orange-50 shadow-lg cursor-pointer hover:shadow-2xl hover:border-orange-700 hover:bg-orange-100 transition-all duration-300 transform hover:scale-[1.02]"
+              >
+                <div className="flex items-center gap-2 mb-4">
+                  <Target className="w-6 h-6 text-orange-600" />
+                  <span className="font-bold text-xl text-orange-800 tracking-tight">
+                    THE Q-MATRIX: MAPPING TASKS TO SKILLS (Click this box for
+                    Details)
+                  </span>
                 </div>
-                <p className="text-black leading-relaxed font-mono">
-                  <strong>AFM models learning as additive</strong> - each
-                  practice opportunity (T) contributes to improving performance,
-                  with the improvement rate determined by the learning parameter
-                  (γ) for each skill. The model accounts for both inherent skill
-                  difficulty (β) and individual student ability (θ).
-                </p>
+                <div className="space-y-4">
+                  <p className="text-black font-mono text-sm leading-relaxed">
+                    The{" "}
+                    <strong>
+                      q<sub>jk</sub>
+                    </strong>{" "}
+                    parameter comes from the <strong>Q-matrix</strong>, which
+                    specifies which skills (knowledge components) are required
+                    for each task.
+                  </p>
+                  <div className="bg-white border-2 border-orange-400 rounded-lg p-4">
+                    <div className="font-bold text-orange-800 mb-2">
+                      Important: Tasks Usually Involve Multiple Skills
+                    </div>
+                    <p className="text-black font-mono text-sm">
+                      In practice, most educational tasks require{" "}
+                      <strong>more than one skill/KC</strong>. For example, a
+                      fraction division problem might require: (1) fraction
+                      concepts, (2) division operations, and (3) simplification
+                      skills. The formula <strong>adds up</strong> the
+                      contributions from all required skills.
+                    </p>
+                  </div>
+                  <div className="bg-white border-2 border-orange-400 rounded-lg p-4">
+                    <div className="font-bold text-orange-800 mb-2">
+                      How q works:
+                    </div>
+                    <div className="font-mono text-sm space-y-1">
+                      <div>
+                        • q<sub>jk</sub> = 1 if task j requires skill k
+                      </div>
+                      <div>
+                        • q<sub>jk</sub> = 0 if task j does NOT require skill k
+                      </div>
+                      <div>
+                        • Only skills where q<sub>jk</sub> = 1 get included in
+                        the sum
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -402,7 +829,7 @@ export const Slide19AFMFormula = ({scroll}) => {
         {/* Continue Button */}
         <div className="text-center">
           <button
-            onClick={() => scroll(20)}
+            onClick={() => scroll(16)}
             className="px-12 py-4 bg-black text-white border-4 border-black rounded-xl hover:bg-white hover:text-black transition-all text-xl font-bold uppercase tracking-wider shadow-lg"
           >
             Continue →
@@ -410,9 +837,11 @@ export const Slide19AFMFormula = ({scroll}) => {
         </div>
       </div>
 
+      {showQMatrix && <QMatrixVisualization />}
+
       {/* Tooltips */}
       {hoveredTerm === "log-odds" && <LogOddsTooltip />}
       {hoveredTerm === "afm-formula" && <AFMFormulaTooltip />}
     </div>
   );
-}
+};

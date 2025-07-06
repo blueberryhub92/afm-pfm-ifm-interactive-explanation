@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Brain, Target, CheckCircle, ArrowRight, X } from "lucide-react";
+import { Brain, Target, CheckCircle, ArrowRight, X, List, Users } from "lucide-react";
 
 export const Slide16LearningRateQuestion = ({ 
   taskChoice, 
@@ -20,7 +20,7 @@ export const Slide16LearningRateQuestion = ({
       <div className="w-full max-w-4xl mx-auto flex flex-col gap-8">
         
         {/* Question Header */}
-        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
+        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
           <div className="absolute -top-6 left-4 px-3 py-1 bg-black text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
             <Brain className="w-4 h-4" />
             Learning Rate Question
@@ -46,11 +46,14 @@ export const Slide16LearningRateQuestion = ({
             }`}
           >
             <div className="flex items-center justify-center gap-3 mb-4">
-              <Target className="w-8 h-8" />
+              <List className="w-8 h-8" />
               <span className="text-3xl font-black">A</span>
             </div>
             <div className="text-lg">Task A</div>
             <div className="text-base font-semibold mt-2">List Manipulation</div>
+            <div className="text-sm font-normal mt-1 text-gray-600">
+              Filter grades above 90 & calculate average
+            </div>
             {taskChoice === "A" && (
               <div className="mt-4 flex items-center justify-center gap-2">
                 <CheckCircle className="w-6 h-6" />
@@ -69,11 +72,14 @@ export const Slide16LearningRateQuestion = ({
             }`}
           >
             <div className="flex items-center justify-center gap-3 mb-4">
-              <Brain className="w-8 h-8" />
+              <Users className="w-8 h-8" />
               <span className="text-3xl font-black">B</span>
             </div>
             <div className="text-lg">Task B</div>
-            <div className="text-base font-semibold mt-2">Algorithm Design</div>
+            <div className="text-base font-semibold mt-2">Class Design</div>
+            <div className="text-sm font-normal mt-1 text-gray-600">
+              Create Student class with methods
+            </div>
             {taskChoice === "B" && (
               <div className="mt-4 flex items-center justify-center gap-2">
                 <CheckCircle className="w-6 h-6" />
@@ -85,7 +91,7 @@ export const Slide16LearningRateQuestion = ({
 
         {/* Result Display */}
         {showTaskResult2 && (
-          <div className={`border-4 rounded-xl p-8 shadow-lg animate-pulse ${
+          <div className={`border-4 rounded-xl p-8 shadow-lg animate-pulse relative ${
             isCorrect 
               ? "border-green-600 bg-gradient-to-r from-green-100 to-green-200"
               : "border-red-600 bg-gradient-to-r from-red-100 to-red-200"
@@ -127,7 +133,7 @@ export const Slide16LearningRateQuestion = ({
 
             <div className="flex justify-center">
               <button
-                onClick={() => scroll(17)}
+                onClick={() => scroll(14)}
                 className="px-8 py-4 border-4 border-black bg-blue-600 text-white font-bold text-lg uppercase tracking-wider rounded-xl hover:bg-white hover:text-blue-600 hover:border-blue-600 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center gap-3"
               >
                 Tell me why!
