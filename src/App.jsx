@@ -4,10 +4,8 @@ import { Slide19AFMFormula } from "./components/Slide19AFMFormula";
 import { scrollToSlide } from "./utils/utils";
 import { Slide0IntroductoryQuestion } from "./components/Slide0IntroductoryQuestion";
 import { Slide1GuessResult } from "./components/Slide1GuessResult";
-import { Slide2CodeExplanation } from "./components/Slide2CodeExplanation";
 import { Slide3SliderQuestion } from "./components/Slide3SliderQuestion";
 import { Slide4AFMIntroduction } from "./components/Slide4AFMIntroduction";
-import { Slide5SecondTask } from "./components/Slide5SecondTask";
 import { Slide6Quiz } from "./components/Slide6Quiz";
 import { Slide7QuizResult } from "./components/Slide7QuizResult";
 import { Slide8OpportunityChoices } from "./components/Slide8OpportunityChoices";
@@ -28,16 +26,15 @@ import { Slide22AFMCorrectness } from "./components/Slide22AFMCorrectness";
 import { WelcomePage } from "./components/WelcomePage";
 
 // Constants
-const TOTAL_SLIDES = 24;
+const TOTAL_SLIDES = 23;
 
 // Navigation configuration
 const SLIDE_TITLES = [
-  "Introductory Question",
+  "Welcome Page",
+  "Python Challenge Tasks",
   "Guess Result",
-  "Code Explanation",
   "Slider Question",
   "AFM Introduction",
-  "Second Task",
   "Quiz",
   "Quiz Result",
   "Opportunity Choices",
@@ -52,84 +49,163 @@ const SLIDE_TITLES = [
   "AFM Limitations",
   "AFM Correctness",
   "PFM",
-  "PFM Simulation",
+  "AFM vs. PFM Simulation",
   "IFM Tasks",
   "IFM",
-  "IFM Simulation"
+  "AFM vs. PFM vs. IFM Simulation"
 ];
 
 function NavigationBar({ currentSlide, maxVisitedSlide, onNavigate, isExpanded, setIsExpanded }) {
+  // Check if we're on the WelcomePage (slide 0)
+  const isOnWelcomePage = currentSlide === 0;
+  
   return (
     <>
-      {/* Toggle Button - Moves with navigation state */}
+      {/* Toggle Button - Fixed z-index issue */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className={`fixed top-4 z-60 w-12 h-12 bg-black text-white border-4 border-black rounded-lg font-bold text-xl uppercase tracking-wide hover:bg-white hover:text-black transition-all transform hover:scale-105 flex items-center justify-center shadow-xl ${
+        className={`fixed top-4 z-60 w-12 h-12 bg-white text-black border-2 border-black font-mono font-bold text-xl uppercase tracking-wider hover:bg-black hover:text-white transition-all transform hover:scale-105 flex items-center justify-center relative cursor-pointer ${
           isExpanded ? 'left-[336px]' : 'left-4'
-        }`}
+        } ${isOnWelcomePage ? 'opacity-90' : ''}`}
         title={isExpanded ? "COLLAPSE NAVIGATION" : "EXPAND NAVIGATION"}
       >
-        <span className="font-black text-2xl">
+        {/* Technical corner markers */}
+        <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-black"></div>
+        <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-black"></div>
+        <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-black"></div>
+        <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-black"></div>
+        
+        <span className="font-mono text-lg">
           {isExpanded ? '×' : '☰'}
         </span>
       </button>
 
-      {/* Backdrop/Overlay when navigation is expanded */}
+      {/* Backdrop/Overlay - Only show when navigation is expanded */}
       {isExpanded && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-40"
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 cursor-pointer"
           onClick={() => setIsExpanded(false)}
         />
       )}
 
-      {/* Navigation Panel - Slides in from left and overlays content */}
-      <div className={`fixed top-0 left-0 z-50 h-full w-80 bg-white border-r-8 border-black shadow-2xl transform transition-transform duration-300 ${
-        isExpanded ? 'translate-x-0' : '-translate-x-full'
-      }`}>
-        <div className="pt-20 px-4 h-full overflow-y-auto">
-          <div className="border-4 border-black rounded-xl p-4 bg-gray-100 mb-6">
-            <h3 className="text-2xl font-black text-black uppercase tracking-tight text-center">
-              NAVIGATION
-            </h3>
-          </div>
+      {/* Navigation Panel - Fixed z-index and only visible when expanded */}
+      {isExpanded && (
+        <div className="fixed top-0 left-0 z-50 h-screen w-80 font-mono relative transform transition-transform duration-300 shadow-xl overflow-hidden translate-x-0 bg-white border-r-2 border-black">
+          {/* Grid background for technical feel */}
+          <div 
+            className="absolute inset-0 opacity-20"
+            style={{
+              backgroundImage: 'linear-gradient(to right, #d1d5db 1px, transparent 1px), linear-gradient(to bottom, #d1d5db 1px, transparent 1px)',
+              backgroundSize: '20px 20px'
+            }}
+          />
           
-          <div className="space-y-3">
-            {SLIDE_TITLES.map((title, index) => (
-              <button
-                key={index}
-                onClick={() => onNavigate(index)}
-                className={`w-full text-left border-4 border-black rounded-xl font-bold text-sm uppercase tracking-wide transition-all transform hover:scale-105 ${
-                  index === currentSlide
-                    ? 'bg-purple-600 text-white border-l-8 border-l-yellow-500 p-3'
-                    : 'bg-white text-black hover:bg-gray-100 p-3'
-                }`}
-              >
-                <div className="flex items-center">
-                  <span className="font-black w-8 text-center">{index + 1}.</span>
-                  <span className="flex-1 ml-2">{title}</span>
-                  {index === currentSlide && (
-                    <span className="bg-yellow-500 text-black px-2 py-1 border-2 border-black rounded-xl font-black text-xs">
-                      NOW
-                    </span>
-                  )}
+          {/* Technical corner brackets */}
+          <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-black"></div>
+          <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-black"></div>
+          <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-black"></div>
+          <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-black"></div>
+          
+          {/* Scrollable content container */}
+          <div className="relative h-full overflow-y-auto">
+            <div className="pt-10 px-4 pb-4">
+              {/* Header with technical styling */}
+              <div className="border-2 border-black p-4 bg-white mb-6 relative">
+                <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-black"></div>
+                <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-black"></div>
+                <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-black"></div>
+                <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-black"></div>
+                
+                <div className="text-center">
+                  <h3 className="text-lg font-bold text-black uppercase tracking-wider">
+                    NAVIGATION
+                  </h3>
                 </div>
-              </button>
-            ))}
-          </div>
+              </div>
+              
+              {/* Navigation items with enhanced clickable styling - Show all allowed slides from beginning */}
+              <div className="space-y-3 mb-6">
+                {SLIDE_TITLES.filter((_, index) => {
+                  const allowedSlides = [0, 1, 14, 15, 16, 18, 19, 21, 22];
+                  return allowedSlides.includes(index);
+                }).map((title, displayIndex) => {
+                  // Get the original index from SLIDE_TITLES
+                  const originalIndex = SLIDE_TITLES.findIndex(t => t === title);
+                  return (
+                    <button
+                      key={originalIndex}
+                      onClick={() => onNavigate(originalIndex)}
+                      className={`w-full text-left border-2 border-black font-mono font-bold text-xs uppercase tracking-wider transition-all duration-200 transform relative group cursor-pointer ${
+                        originalIndex === currentSlide
+                          ? 'bg-black text-white scale-105 shadow-lg'
+                          : 'bg-white text-black hover:bg-gray-100 hover:scale-105 hover:shadow-md active:scale-95'
+                      }`}
+                    >
+                      {/* Technical corner markers for active slide */}
+                      {originalIndex === currentSlide && (
+                        <>
+                          <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-white"></div>
+                          <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-white"></div>
+                          <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-white"></div>
+                          <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-white"></div>
+                        </>
+                      )}
+                      
+                      {/* Hover effect overlay for non-active slides */}
+                      {originalIndex !== currentSlide && (
+                        <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-200"></div>
+                      )}
+                      
+                      <div className="flex items-center p-3 relative z-10">
+                        <div className={`w-6 h-6 border flex items-center justify-center mr-3 text-xs font-mono transition-all duration-200 ${
+                          originalIndex === currentSlide 
+                            ? 'border-white bg-black text-white' 
+                            : 'border-black bg-white text-black group-hover:bg-gray-200'
+                        }`}>
+                          {originalIndex + 1}
+                        </div>
+                        <span className="flex-1 transition-colors duration-200">
+                          {title}
+                        </span>
+                        {originalIndex === currentSlide && (
+                          <div className="border border-white px-2 py-1 text-xs font-mono tracking-wider bg-white text-black">
+                            ACTIVE
+                          </div>
+                        )}
+                        {originalIndex !== currentSlide && (
+                          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-xs font-mono tracking-wider">
+                            →
+                          </div>
+                        )}
+                      </div>
+                      
+                      {/* Click ripple effect */}
+                      <div className="absolute inset-0 bg-white opacity-0 group-active:opacity-20 transition-opacity duration-75"></div>
+                    </button>
+                  );
+                })}
+              </div>
 
-          {/* Navigation Instructions */}
-          <div className="mt-6 border-l-8 border-purple-600 bg-purple-100 p-4 rounded-r-xl">
-            <h4 className="font-black text-black mb-2 uppercase tracking-wide text-sm">
-              KEYBOARD SHORTCUTS:
-            </h4>
-            <ul className="text-black font-bold text-xs space-y-1 uppercase">
-              <li>• ALT + ← : PREVIOUS SLIDE</li>
-              <li>• ALT + → : NEXT SLIDE</li>
-              <li>• N : TOGGLE NAVIGATION</li>
-            </ul>
+              {/* Navigation Instructions with technical styling */}
+              <div className="border-2 border-black bg-white p-4 relative">
+                <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-black"></div>
+                <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-black"></div>
+                <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-black"></div>
+                <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-black"></div>
+
+                <h4 className="font-bold text-black mb-2 uppercase tracking-wider text-sm font-mono">
+                  KEYBOARD SHORTCUTS:
+                </h4>
+                <ul className="text-black font-mono text-xs space-y-1">
+                  <li>• ALT + ← : PREVIOUS SLIDE</li>
+                  <li>• ALT + → : NEXT SLIDE</li>
+                  <li>• N : TOGGLE NAVIGATION</li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </>
   );
 }
@@ -248,16 +324,18 @@ function AFMLearningAppContent() {
     switch (currentSlide) {
       case 0:
         return (
+          <WelcomePage scroll={scroll} />
+        )
+      case 1:
+        return (
           <Slide0IntroductoryQuestion
             guess1={guess1}
             setGuess1={setGuess1}
             scroll={scroll}
           />
         );
-      case 1:
-        return <Slide1GuessResult guess1={guess1} scroll={scroll} />;
       case 2:
-        return <Slide2CodeExplanation scroll={scroll} />;
+        return <Slide1GuessResult guess1={guess1} scroll={scroll} />;
       case 3:
         return (
           <Slide3SliderQuestion
@@ -268,12 +346,10 @@ function AFMLearningAppContent() {
       case 4:
         return <Slide4AFMIntroduction scroll={scroll} />;
       case 5:
-        return <Slide5SecondTask scroll={scroll} />;
-      case 6:
         return (
           <Slide6Quiz guess2={guess2} setGuess2={setGuess2} scroll={scroll} />
         );
-      case 7:
+      case 6:
         return (
           <Slide7QuizResult
             guess2={guess2}
@@ -282,11 +358,11 @@ function AFMLearningAppContent() {
             setShowTellMe={setShowTellMe}
           />
         );
-      case 8:
+      case 7:
         return <Slide8OpportunityChoices scroll={scroll} />;
-      case 9:
+      case 8:
         return <Slide10TwoPythonTasks scroll={scroll} />;
-      case 10:
+      case 9:
         return (
           <Slide13TaskDifficultyQuestion
             taskChoice={taskChoice}
@@ -294,11 +370,11 @@ function AFMLearningAppContent() {
             scroll={scroll}
           />
         );
-      case 11:
+      case 10:
         return <Slide14BetaParameter scroll={scroll} />;
-      case 12:
+      case 11:
         return <Slide15TwoMorePythonTasks scroll={scroll} />;
-      case 13:
+      case 12:
         return (
           <Slide16LearningRateQuestion
             taskChoice={taskChoice}
@@ -306,25 +382,25 @@ function AFMLearningAppContent() {
             scroll={scroll}
           />
         );
-      case 14:
+      case 13:
         return <Slide17LearningRateExplanation scroll={scroll} />;
-      case 15:
+      case 14:
         return <Slide19AFMFormula scroll={scroll} />;
-      case 16:
+      case 15:
         return <Slide20AFMSimulator scroll={scroll} />;
-      case 17:
+      case 16:
         return <Slide21AFMLimitations scroll={scroll} />;
-      case 18:
+      case 17:
         return <Slide22AFMCorrectness scroll={scroll} />;
-      case 19:
+      case 18:
         return <Slide23PFM scroll={scroll} />;
-      case 20:
+      case 19:
         return <Slide24PFMSimulation scroll={scroll} />;
-      case 21:
+      case 20:
         return <Slide25IFMTasks scroll={scroll} />;
-      case 22:
+      case 21:
         return <Slide26IFM scroll={scroll} />;
-      case 23:
+      case 22:
         return <Slide27IFMSimulation scroll={scroll} />;
       default:
         return null;
@@ -354,14 +430,16 @@ function AFMLearningAppContent() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
-      {/* Navigation Bar */}
-      <NavigationBar
-        currentSlide={currentSlide}
-        maxVisitedSlide={maxVisitedSlide}
-        onNavigate={handleNavigation}
-        isExpanded={isNavExpanded}
-        setIsExpanded={setIsNavExpanded}
-      />
+      {/* Navigation bar */}
+      <div className="fixed top-0 left-0 w-full z-10">
+        <NavigationBar
+          currentSlide={currentSlide}
+          maxVisitedSlide={maxVisitedSlide}
+          onNavigate={handleNavigation}
+          isExpanded={isNavExpanded}
+          setIsExpanded={setIsNavExpanded}
+        />
+      </div>
 
       {/* Main content - no margin adjustments, always full width */}
       <div className="w-full">

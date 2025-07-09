@@ -12,7 +12,28 @@ import {
   Lightbulb,
   ArrowRight,
 } from "lucide-react";
-import Chart from "chart.js/auto";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import { Line } from 'react-chartjs-2';
+
+// Register Chart.js components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const paramDefaults = {
   theta: 0.0,
@@ -81,7 +102,52 @@ const paramMeta = {
   },
 };
 
-export const Slide20AFMSimulator = ({ scroll }) => {
+const Layout = ({ children }) => (
+  <div className="bg-white min-h-screen font-mono relative">
+    {/* Grid background */}
+    <div 
+      className="absolute inset-0 opacity-60"
+      style={{
+        backgroundImage: 'linear-gradient(to right, #d1d5db 1px, transparent 1px), linear-gradient(to bottom, #d1d5db 1px, transparent 1px)',
+        backgroundSize: '20px 20px'
+      }}
+    />
+    
+    <div className="relative flex-1 px-8 py-8">{children}</div>
+  </div>
+);
+
+const TechnicalCard = ({ title, children, config, icon: Icon, size = "normal" }) => {
+  const sizeClasses = {
+    normal: "",
+    wide: "col-span-2",
+    large: "col-span-2 row-span-2"
+  };
+
+  return (
+    <div className={`${sizeClasses[size]} bg-white text-black border-2 border-black p-6 relative`}>
+      {/* Technical drawing corner marker */}
+      <div className="absolute top-2 right-2 w-2 h-2 border border-black bg-white" />
+      
+      {/* Title section */}
+      <div className="flex items-center gap-2 mb-4">
+        {Icon && <Icon className="w-5 h-5" />}
+        <h3 className="text-lg font-bold text-black tracking-wider uppercase">
+          {title}
+        </h3>
+        {config && (
+          <span className="text-xs font-mono text-gray-600 ml-auto">
+            {config}
+          </span>
+        )}
+      </div>
+      
+      {children}
+    </div>
+  );
+};
+
+export const Slide20AFMSimulator = ({scroll}) => {
   // State
   const [params, setParams] = useState(paramDefaults);
   const [sessionActive, setSessionActive] = useState(true);
@@ -89,85 +155,6 @@ export const Slide20AFMSimulator = ({ scroll }) => {
   const [retrainingData, setRetrainingData] = useState([]);
   const [showTooltip, setShowTooltip] = useState(null);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
-
-  // Chart.js
-  const chartRef = useRef();
-  const chartInstance = useRef();
-
-  // Update Chart
-  useEffect(() => {
-    const labels = Array.from({ length: 21 }, (_, i) => i);
-    const data = labels.map(
-      (i) => calcProb(params.theta, params.beta, params.gamma, i) * 100
-    );
-    if (chartInstance.current) {
-      chartInstance.current.data.labels = labels;
-      chartInstance.current.data.datasets[0].data = data;
-      chartInstance.current.data.datasets[0].pointRadius = labels.map((k) =>
-        k === params.practice ? 8 : 0
-      );
-      chartInstance.current.data.datasets[0].pointBackgroundColor = labels.map(
-        (k) => (k === params.practice ? "#ef4444" : "#3b82f6")
-      );
-      chartInstance.current.update();
-    } else if (chartRef.current) {
-      chartInstance.current = new Chart(chartRef.current, {
-        type: "line",
-        data: {
-          labels,
-          datasets: [
-            {
-              label: "Success Probability (%)",
-              data,
-              borderColor: "#3b82f6",
-              borderWidth: 4,
-              fill: false,
-              tension: 0.3,
-              pointRadius: labels.map((k) => (k === params.practice ? 8 : 0)),
-              pointBackgroundColor: labels.map((k) =>
-                k === params.practice ? "#ef4444" : "#3b82f6"
-              ),
-              pointBorderColor: labels.map((k) =>
-                k === params.practice ? "#dc2626" : "#3b82f6"
-              ),
-              pointBorderWidth: labels.map((k) =>
-                k === params.practice ? 4 : 0
-              ),
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            x: {
-              title: {
-                display: true,
-                text: "Practice (T)",
-                color: "#111",
-                font: { weight: 600, size: 14 },
-              },
-            },
-            y: {
-              title: {
-                display: true,
-                text: "Success Probability (%)",
-                color: "#111",
-                font: { weight: 600, size: 14 },
-              },
-              min: 0,
-              max: 100,
-              ticks: { stepSize: 20 },
-            },
-          },
-          plugins: {
-            legend: { display: false },
-          },
-        },
-      });
-    }
-    // eslint-disable-next-line
-  }, [params.theta, params.beta, params.gamma, params.practice]);
 
   // Keyboard: Escape closes tooltip
   useEffect(() => {
@@ -186,6 +173,86 @@ export const Slide20AFMSimulator = ({ scroll }) => {
     params.gamma,
     params.practice
   );
+
+  // Chart data
+  const chartData = {
+    labels: Array.from({ length: 21 }, (_, i) => i),
+    datasets: [
+      {
+        label: "Success Probability (%)",
+        data: Array.from({ length: 21 }, (_, i) => 
+          calcProb(params.theta, params.beta, params.gamma, i) * 100
+        ),
+        borderColor: "#000000",
+        borderWidth: 3,
+        fill: false,
+        tension: 0.1,
+        pointRadius: Array.from({ length: 21 }, (_, i) => (i === params.practice ? 8 : 0)),
+        pointBackgroundColor: Array.from({ length: 21 }, (_, i) => 
+          (i === params.practice ? "#ef4444" : "#000000")
+        ),
+        pointBorderColor: Array.from({ length: 21 }, (_, i) => 
+          (i === params.practice ? "#dc2626" : "#000000")
+        ),
+        pointBorderWidth: Array.from({ length: 21 }, (_, i) => 
+          (i === params.practice ? 3 : 0)
+        ),
+      },
+    ],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: "PRACTICE (T)",
+          color: "#000",
+          font: { weight: 700, size: 12, family: "monospace" },
+        },
+        grid: {
+          color: "#d1d5db",
+          lineWidth: 1,
+        },
+        ticks: {
+          color: "#000",
+          font: { family: "monospace", weight: 600 },
+        },
+      },
+      y: {
+        title: {
+          display: true,
+          text: "SUCCESS PROBABILITY (%)",
+          color: "#000",
+          font: { weight: 700, size: 12, family: "monospace" },
+        },
+        min: 0,
+        max: 100,
+        ticks: { 
+          stepSize: 20,
+          color: "#000",
+          font: { family: "monospace", weight: 600 },
+        },
+        grid: {
+          color: "#d1d5db",
+          lineWidth: 1,
+        },
+      },
+    },
+    plugins: {
+      legend: { display: false },
+      tooltip: { enabled: false },
+    },
+    interaction: {
+      intersect: false,
+      mode: 'index',
+    },
+    animation: {
+      duration: 200,
+    },
+  };
 
   // Handlers
   function setParam(p, v) {
@@ -228,26 +295,20 @@ export const Slide20AFMSimulator = ({ scroll }) => {
 
     // difficulty adjustment - make β change faster
     if (acc > 0.8) {
-      // Very high accuracy = tasks too easy, make harder (decrease beta)
       beta = Math.max(-2, beta - 0.4);
     } else if (acc > 0.6) {
-      // Good accuracy = slightly harder tasks (decrease beta)
       beta = Math.max(-2, beta - 0.2);
     } else if (acc < 0.3) {
-      // Low accuracy = tasks too hard, make easier (increase beta)
       beta = Math.min(2, beta + 0.4);
     } else if (acc < 0.5) {
-      // Below average accuracy = make tasks easier (increase beta)
       beta = Math.min(2, beta + 0.2);
     }
 
-    // Additional β adjustment based on prediction error
     if (avgErr > 0.3) {
-      // High prediction error suggests difficulty mismatch
       if (acc < 0.5) {
-        beta = Math.min(2, beta + 0.3); // Make easier if struggling
+        beta = Math.min(2, beta + 0.3);
       } else {
-        beta = Math.max(-2, beta - 0.2); // Make harder if too accurate
+        beta = Math.max(-2, beta - 0.2);
       }
     }
 
@@ -300,28 +361,34 @@ export const Slide20AFMSimulator = ({ scroll }) => {
 
     return (
       <div
-        className="fixed z-50 bg-white border-4 border-black rounded-xl shadow-lg p-6 w-96 font-['IBM_Plex_Mono',monospace]"
+        className="fixed z-50 bg-white border-2 border-black shadow-lg p-6 w-96 font-mono"
         style={{
           left: `${tooltipPosition.x}px`,
           top: `${tooltipPosition.y}px`,
           maxWidth: "384px",
         }}
       >
+        {/* Technical corner brackets */}
+        <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-black"></div>
+        <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-black"></div>
+        <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-black"></div>
+        <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-black"></div>
+
         <div className="flex items-center gap-2 mb-4">
           {meta.icon}
-          <h4 className="font-bold text-black text-lg tracking-wide">
+          <h4 className="font-bold text-black text-lg tracking-wide uppercase">
             {meta.tooltip.title}
           </h4>
         </div>
 
-        <div className="border-4 border-black rounded-lg p-4 bg-gray-50 mb-4">
+        <div className="border-2 border-black p-4 bg-gray-100 mb-4">
           <p className="text-black font-mono text-sm leading-relaxed">
             {meta.tooltip.desc}
           </p>
         </div>
 
-        <div className="border-l-8 border-blue-600 bg-blue-100 p-3 rounded-r-lg">
-          <div className="text-blue-800 font-bold text-sm tracking-wide">
+        <div className="border-l-4 border-black bg-gray-200 p-3">
+          <div className="text-black font-bold text-sm tracking-wide uppercase">
             CURRENT VALUE:{" "}
             {showTooltip === "gamma"
               ? params[showTooltip].toFixed(2)
@@ -331,7 +398,7 @@ export const Slide20AFMSimulator = ({ scroll }) => {
 
         <button
           onClick={() => setShowTooltip(null)}
-          className="absolute top-2 right-2 px-2 py-1 rounded border-2 border-black bg-red-600 text-white font-bold hover:bg-white hover:text-red-600 transition-all"
+          className="absolute top-2 right-2 px-2 py-1 border border-black bg-white text-black font-bold hover:bg-black hover:text-white transition-all"
         >
           ×
         </button>
@@ -341,334 +408,281 @@ export const Slide20AFMSimulator = ({ scroll }) => {
 
   // UI
   return (
-    <div className="bg-white min-h-screen flex flex-col text-black font-['IBM_Plex_Mono',monospace]">
-      {/* Header - matching Slide24 pattern */}
-      <div className="border-b-8 border-black bg-purple-400 px-8 py-6 shadow-lg">
-        <div className="flex items-center justify-center">
-          <span className="text-black font-bold text-2xl uppercase tracking-wider">
-            Interactive AFM Simulator
-          </span>
-        </div>
-      </div>
+    <Layout>
+      <div className="max-w-7xl mx-auto space-y-8">
+        
 
-      {/* Content */}
-      <div className="flex-1 px-8 py-8">
-        <div className="max-w-6xl mx-auto space-y-8">
-          {/* Introduction */}
-          <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
-            <p className="text-lg text-black leading-relaxed text-center">
-              Experience the AFM in action! Adjust parameters, simulate student
-              responses, and watch how the model learns and adapts.
-            </p>
-          </div>
-
-          {/* Main Content Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Left Column - Formula & Parameters */}
-            <div className="space-y-8">
-              {/* Formula */}
-              <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
-                <div className="flex items-center gap-3 mb-6">
-                  <Calculator className="w-6 h-6 text-purple-700" />
-                  <h3 className="text-xl font-bold text-black uppercase tracking-wide">
-                    AFM Formula
-                  </h3>
-                </div>
-
-                <div className="text-xl font-bold text-center mb-4 p-4 bg-gray-50 border-4 border-black rounded-lg">
-                  P = {(prob * 100).toFixed(1)}%
-                </div>
-
-                <div className="bg-gray-50 border-4 border-black rounded-lg p-4 space-y-2 font-mono text-sm">
-                  <div>
-                    <strong>Step 1:</strong> Logit = θ - β + γ × T
-                  </div>
-                  <div>
-                    <strong>Step 2:</strong> Logit = {params.theta.toFixed(1)} -
-                    ({params.beta.toFixed(1)}) + {params.gamma.toFixed(2)} ×{" "}
-                    {params.practice}
-                  </div>
-                  <div>
-                    <strong>Step 3:</strong> Logit = {logit.toFixed(3)}
-                  </div>
-                  <div>
-                    <strong>Step 4:</strong> P(success) = 1 / (1 + e⁻ˡᵒᵍⁱᵗ)
-                  </div>
-                  <div className="text-lg font-bold text-blue-600 mt-3">
-                    <strong>Result:</strong> P(success) ={" "}
-                    {(prob * 100).toFixed(1)}%
-                  </div>
-                </div>
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Formula Card */}
+          <TechnicalCard
+            title="AFM Formula"
+            config="CALC-001"
+            icon={Calculator}
+            size="normal"
+          >
+            <div className="space-y-4">
+              <div className="text-center p-4 bg-black text-white font-bold text-xl">
+                P = {(prob * 100).toFixed(1)}%
               </div>
 
-              {/* Parameters */}
-              <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
-                <div className="flex items-center gap-3 mb-6">
-                  <Brain className="w-6 h-6 text-blue-700" />
-                  <h3 className="text-xl font-bold text-black uppercase tracking-wide">
-                    Model Parameters
-                  </h3>
+              <div className="bg-gray-100 border-2 border-black p-4 space-y-1 font-mono text-sm">
+                <div><strong>STEP 1:</strong> LOGIT = θ - β + γ × T</div>
+                <div><strong>STEP 2:</strong> LOGIT = {params.theta.toFixed(1)} - ({params.beta.toFixed(1)}) + {params.gamma.toFixed(2)} × {params.practice}</div>
+                <div><strong>STEP 3:</strong> LOGIT = {logit.toFixed(3)}</div>
+                <div><strong>STEP 4:</strong> P = 1 / (1 + e⁻ˡᵒᵍⁱᵗ)</div>
+                <div className="text-lg font-bold mt-2 p-2 bg-white border border-black">
+                  <strong>RESULT:</strong> P = {(prob * 100).toFixed(1)}%
                 </div>
+              </div>
+            </div>
+          </TechnicalCard>
 
-                <div className="space-y-6">
-                  {Object.entries(paramMeta).map(([key, meta]) => (
-                    <div key={key} className="space-y-3">
-                      <label
-                        className={`font-bold text-${meta.color}-700 flex items-center gap-2 cursor-pointer hover:text-${meta.color}-800 transition-colors`}
-                        onClick={() => handleTooltipShow(key)}
-                      >
-                        {meta.icon}
-                        {meta.label}
-                        <span className="text-sm font-normal text-gray-600">
-                          (click for info)
-                        </span>
-                      </label>
+          {/* Parameters Card */}
+          <TechnicalCard
+            title="Model Parameters"
+            config="PARAM-001"
+            icon={Brain}
+            size="normal"
+          >
+            <div className="space-y-4">
+              {Object.entries(paramMeta).map(([key, meta]) => (
+                <div key={key} className="space-y-2">
+                  <label
+                    className="font-bold text-black flex items-center gap-2 cursor-pointer hover:bg-gray-100 p-1 transition-colors text-sm uppercase tracking-wide"
+                    onClick={() => handleTooltipShow(key)}
+                  >
+                    {meta.icon}
+                    {meta.label}
+                  </label>
 
-                      <div className="flex items-center gap-4">
-                        <input
-                          type="range"
-                          min={meta.min}
-                          max={meta.max}
-                          step={meta.step}
-                          value={params[key]}
-                          disabled={!sessionActive && key !== "practice"}
-                          onChange={(e) => setParam(key, e.target.value)}
-                          className={`flex-1 h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer border-2 border-black ${
-                            !sessionActive && key !== "practice"
-                              ? "opacity-50"
-                              : ""
-                          }`}
-                        />
-                        <span
-                          className={`font-mono w-16 text-center text-${meta.color}-800 font-bold text-lg border-2 border-black rounded px-2 py-1 bg-gray-50`}
-                        >
-                          {key === "gamma"
-                            ? params[key].toFixed(2)
-                            : params[key]}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Success Probability Display */}
-                <div className="mt-8 p-6 border-4 border-blue-600 rounded-xl bg-blue-50">
-                  <div className="text-center mb-4">
-                    <span className="text-black font-bold text-lg">
-                      SUCCESS PROBABILITY
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="range"
+                      min={meta.min}
+                      max={meta.max}
+                      step={meta.step}
+                      value={params[key]}
+                      disabled={!sessionActive && key !== "practice"}
+                      onChange={(e) => setParam(key, e.target.value)}
+                      className={`flex-1 h-2 bg-gray-200 appearance-none cursor-pointer border border-black ${
+                        !sessionActive && key !== "practice"
+                          ? "opacity-50"
+                          : ""
+                      }`}
+                    />
+                    <span className="font-mono w-12 text-center text-black font-bold text-sm border border-black px-2 py-1 bg-white">
+                      {key === "gamma"
+                        ? params[key].toFixed(2)
+                        : params[key]}
                     </span>
                   </div>
-                  <div className="text-4xl font-bold text-blue-600 text-center mb-4">
-                    {(prob * 100).toFixed(1)}%
-                  </div>
-                  <div className="w-full bg-gray-300 border-4 border-black rounded-full h-6">
-                    <div
-                      className="h-full bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 rounded-full transition-all duration-300"
-                      style={{ width: `${(prob * 100).toFixed(0)}%` }}
-                    ></div>
-                  </div>
                 </div>
-              </div>
-            </div>
+              ))}
 
-            {/* Right Column - Chart & Controls */}
-            <div className="space-y-8">
-              {/* Chart */}
-              <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
-                <div className="flex items-center gap-3 mb-6">
-                  <LineChart className="w-6 h-6 text-green-700" />
-                  <h3 className="text-xl font-bold text-black uppercase tracking-wide">
-                    Learning Curve
-                  </h3>
+              {/* Success Probability Display */}
+              <div className="mt-6 p-4 border-2 border-black bg-gray-100">
+                <div className="text-center mb-2">
+                  <span className="text-black font-bold text-sm uppercase tracking-wide">
+                    SUCCESS PROBABILITY
+                  </span>
                 </div>
-
-                <div className="h-80 w-full bg-gray-50 border-4 border-black rounded-lg p-4">
-                  <canvas ref={chartRef} />
+                <div className="text-3xl font-bold text-black text-center mb-2">
+                  {(prob * 100).toFixed(1)}%
                 </div>
-
-                <div className="mt-4 p-4 border-4 border-green-600 rounded-lg bg-green-50 text-center">
-                  <div className="font-bold text-green-800">
-                    CURRENT: Practice {params.practice} | Probability{" "}
-                    {(prob * 100).toFixed(1)}%
-                  </div>
-                </div>
-              </div>
-
-              {/* Session Controls */}
-              <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
-                <div className="flex items-center gap-3 mb-6">
+                <div className="w-full bg-gray-300 border-2 border-black h-4">
                   <div
-                    className={`w-4 h-4 rounded-full border-2 border-black ${
-                      sessionActive
-                        ? "bg-green-500 animate-pulse"
-                        : "bg-gray-400"
-                    }`}
+                    className="h-full bg-black transition-all duration-300"
+                    style={{ width: `${(prob * 100).toFixed(0)}%` }}
                   ></div>
-                  <h3 className="text-xl font-bold text-black uppercase tracking-wide">
-                    {sessionActive
-                      ? "Learning Session Active"
-                      : "Session Ended"}
-                  </h3>
                 </div>
+              </div>
+            </div>
+          </TechnicalCard>
 
-                {/* Action Buttons */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                  <button
-                    onClick={() => simulateResponse(true)}
-                    disabled={!sessionActive}
-                    className={`px-4 py-3 bg-green-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all transform hover:scale-105 ${
-                      !sessionActive
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:bg-white hover:text-green-600"
-                    }`}
-                  >
-                    ✓ Correct
-                  </button>
+          {/* Chart Card */}
+          <TechnicalCard
+            title="Learning Curve"
+            config="CHART-001"
+            icon={LineChart}
+            size="normal"
+          >
+            <div className="space-y-4">
+              <div className="h-64 w-full bg-gray-100 border-2 border-black p-2">
+                <Line data={chartData} options={chartOptions} />
+              </div>
 
-                  <button
-                    onClick={() => simulateResponse(false)}
-                    disabled={!sessionActive}
-                    className={`px-4 py-3 bg-red-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all transform hover:scale-105 ${
-                      !sessionActive
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:bg-white hover:text-red-600"
-                    }`}
-                  >
-                    ✗ Incorrect
-                  </button>
-
-                  <button
-                    onClick={resetAll}
-                    className="px-4 py-3 bg-gray-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide hover:bg-white hover:text-gray-600 transition-all transform hover:scale-105 flex items-center justify-center gap-2"
-                  >
-                    <RotateCcw className="w-5 h-5" />
-                    Reset
-                  </button>
+              <div className="p-3 border-2 border-black bg-gray-100 text-center">
+                <div className="font-bold text-black text-sm uppercase tracking-wide">
+                  CURRENT: T={params.practice} | P={(prob * 100).toFixed(1)}%
                 </div>
+              </div>
+            </div>
+          </TechnicalCard>
+        </div>
 
-                {/* End Session Button */}
-                {sessionActive && (
-                  <div className="mb-6">
-                    <button
-                      onClick={endSession}
-                      className="w-full px-4 py-3 bg-orange-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide hover:bg-white hover:text-orange-600 transition-all transform hover:scale-105"
-                    >
-                      End Session
-                    </button>
-                  </div>
-                )}
+        {/* Session Controls */}
+        <TechnicalCard
+          title={sessionActive ? "Learning Session Active" : "Session Ended"}
+          config="CTRL-001"
+          icon={sessionActive ? Play : Database}
+          size="wide"
+        >
+          <div className="space-y-6">
+            {/* Status Indicator */}
+            <div className="flex items-center gap-3">
+              <div className={`w-4 h-4 border-2 border-black ${sessionActive ? "bg-black animate-pulse" : "bg-gray-400"}`}></div>
+              <span className="font-mono text-sm uppercase tracking-wide">
+                {sessionActive ? "SIMULATION RUNNING" : "AWAITING RETRAIN"}
+              </span>
+            </div>
 
-                {/* Retrain Section */}
-                {!sessionActive && retrainingData.length > 0 && (
-                  <div className="border-4 border-yellow-600 rounded-xl p-6 bg-yellow-100 mb-6">
-                    <div className="flex items-center gap-3 mb-4">
-                      <Database className="w-6 h-6 text-yellow-700" />
-                      <h4 className="font-bold text-yellow-800 text-lg uppercase">
-                        Retraining Ready
-                      </h4>
-                    </div>
-                    <p className="text-yellow-800 font-bold mb-4">
-                      {retrainingData.length} responses collected. Ready to
-                      update model parameters.
-                    </p>
-                    <button
-                      onClick={retrainModel}
-                      className="w-full px-4 py-3 bg-yellow-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide hover:bg-white hover:text-yellow-600 transition-all transform hover:scale-105 flex items-center justify-center gap-2"
-                    >
-                      <RefreshCw className="w-5 h-5" />
-                      Retrain Model
-                    </button>
-                  </div>
-                )}
+            {/* Action Buttons */}
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+              <button
+                onClick={() => simulateResponse(true)}
+                disabled={!sessionActive}
+                className={`px-4 py-3 bg-white text-black border-2 border-black font-bold uppercase tracking-wide transition-all hover:bg-black hover:text-white ${
+                  !sessionActive ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+              >
+                ✓ CORRECT
+              </button>
 
-                {/* Response Log */}
-                <div className="border-l-8 border-purple-600 bg-purple-100 rounded-r-xl p-4">
-                  <h4 className="font-bold text-purple-800 mb-3 text-lg uppercase">
-                    Recent Responses
+              <button
+                onClick={() => simulateResponse(false)}
+                disabled={!sessionActive}
+                className={`px-4 py-3 bg-white text-black border-2 border-black font-bold uppercase tracking-wide transition-all hover:bg-black hover:text-white ${
+                  !sessionActive ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+              >
+                ✗ INCORRECT
+              </button>
+
+              <button
+                onClick={endSession}
+                disabled={!sessionActive}
+                className={`px-4 py-3 bg-white text-black border-2 border-black font-bold uppercase tracking-wide transition-all hover:bg-black hover:text-white ${
+                  !sessionActive ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+              >
+                END SESSION
+              </button>
+
+              <button
+                onClick={resetAll}
+                className="px-4 py-3 bg-white text-black border-2 border-black font-bold uppercase tracking-wide hover:bg-black hover:text-white transition-all flex items-center justify-center gap-2"
+              >
+                <RotateCcw className="w-4 h-4" />
+                RESET
+              </button>
+            </div>
+
+            {/* Retrain Section */}
+            {!sessionActive && retrainingData.length > 0 && (
+              <div className="border-2 border-black p-4 bg-gray-100">
+                <div className="flex items-center gap-3 mb-3">
+                  <RefreshCw className="w-5 h-5" />
+                  <h4 className="font-bold text-black text-lg uppercase tracking-wide">
+                    RETRAINING READY
                   </h4>
-                  <div className="space-y-2 max-h-32 overflow-y-auto">
-                    {responseLog.length === 0 ? (
-                      <div className="text-purple-700 text-center py-2 font-bold">
-                        No responses yet - simulate some answers!
-                      </div>
-                    ) : (
-                      responseLog
-                        .slice(-5)
-                        .reverse()
-                        .map((entry, i) => (
-                          <div
-                            key={i}
-                            className={`${
-                              entry.correct
-                                ? "bg-green-200 border-l-4 border-green-700 text-green-900"
-                                : "bg-red-200 border-l-4 border-red-700 text-red-900"
-                            } rounded-r-lg font-mono px-3 py-2`}
-                          >
-                            <div className="font-bold">
-                              Practice {entry.practice}:{" "}
-                              {entry.correct ? "✓ Correct" : "✗ Incorrect"}
-                            </div>
-                            <div className="text-sm">
-                              Predicted: {(entry.probability * 100).toFixed(1)}%
-                            </div>
-                          </div>
-                        ))
-                    )}
-                  </div>
                 </div>
+                <p className="text-black font-mono text-sm mb-4">
+                  {retrainingData.length} RESPONSES COLLECTED • READY TO UPDATE MODEL PARAMETERS
+                </p>
+                <button
+                  onClick={retrainModel}
+                  className="w-full px-4 py-3 bg-black text-white border-2 border-black font-bold uppercase tracking-wide hover:bg-white hover:text-black transition-all"
+                >
+                  RETRAIN MODEL
+                </button>
+              </div>
+            )}
+
+            {/* Response Log */}
+            <div className="border-l-4 border-black bg-gray-100 p-4">
+              <h4 className="font-bold text-black mb-3 text-lg uppercase tracking-wide">
+                RESPONSE LOG
+              </h4>
+              <div className="space-y-2 max-h-32 overflow-y-auto">
+                {responseLog.length === 0 ? (
+                  <div className="text-black text-center py-2 font-mono text-sm">
+                    NO RESPONSES YET - SIMULATE SOME ANSWERS
+                  </div>
+                ) : (
+                  responseLog
+                    .slice(-5)
+                    .reverse()
+                    .map((entry, i) => (
+                      <div
+                        key={i}
+                        className={`${
+                          entry.correct
+                            ? "bg-white border-l-4 border-black"
+                            : "bg-gray-200 border-l-4 border-black"
+                        } font-mono px-3 py-2 text-sm`}
+                      >
+                        <div className="font-bold">
+                          T={entry.practice}: {entry.correct ? "✓ CORRECT" : "✗ INCORRECT"}
+                        </div>
+                        <div className="text-xs">
+                          PREDICTED: {(entry.probability * 100).toFixed(1)}%
+                        </div>
+                      </div>
+                    ))
+                )}
               </div>
             </div>
           </div>
+        </TechnicalCard>
 
-          {/* Key Insights */}
-          <div className="border-4 border-black rounded-xl p-8 bg-gradient-to-r from-yellow-100 to-orange-100 shadow-lg">
-            <div className="flex items-center gap-3 mb-6">
-              <Lightbulb className="w-6 h-6 text-orange-700" />
-              <h3 className="text-2xl font-bold text-black uppercase tracking-wide">
-                AFM: What Happens When?
-              </h3>
+        {/* Key Insights */}
+        <TechnicalCard
+          title="AFM: What Happens When?"
+          config="INFO-001"
+          icon={Lightbulb}
+          size="wide"
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="border-2 border-black p-4 bg-gray-100">
+              <h4 className="font-bold text-black mb-3 text-lg uppercase tracking-wide">
+                DURING SESSION
+              </h4>
+              <ul className="space-y-2 text-black font-mono text-sm">
+                <li>• θ, β, γ STAY CONSTANT (NO TUNING)</li>
+                <li>• ONLY PRACTICE (T) INCREMENTS PER ATTEMPT</li>
+                <li>• SUCCESS PROBABILITY UPDATES LIVE</li>
+                <li>• MODEL TRACKS PERFORMANCE FOR RETRAINING</li>
+              </ul>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="border-4 border-blue-600 rounded-xl p-6 bg-blue-50">
-                <h4 className="font-bold text-blue-800 mb-4 text-xl uppercase tracking-wide">
-                  During Session
-                </h4>
-                <ul className="space-y-2 text-black font-bold">
-                  <li>• θ, β, γ stay constant (no tuning!)</li>
-                  <li>• Only Practice (T) increments per attempt</li>
-                  <li>• Success probability updates live</li>
-                  <li>• Model tracks performance for later retraining</li>
-                </ul>
-              </div>
-
-              <div className="border-4 border-purple-600 rounded-xl p-6 bg-purple-50">
-                <h4 className="font-bold text-purple-800 mb-4 text-xl uppercase tracking-wide">
-                  During Retrain
-                </h4>
-                <ul className="space-y-2 text-black font-bold">
-                  <li>• θ, β, γ updated based on performance</li>
-                  <li>• Past responses are used for tuning</li>
-                  <li>• Model learns from collected data</li>
-                </ul>
-              </div>
+            <div className="border-2 border-black p-4 bg-gray-100">
+              <h4 className="font-bold text-black mb-3 text-lg uppercase tracking-wide">
+                DURING RETRAIN
+              </h4>
+              <ul className="space-y-2 text-black font-mono text-sm">
+                <li>• θ, β, γ UPDATED BASED ON PERFORMANCE</li>
+                <li>• PAST RESPONSES USED FOR TUNING</li>
+                <li>• MODEL LEARNS FROM COLLECTED DATA</li>
+                <li>• PRACTICE COUNTER RESETS TO ZERO</li>
+              </ul>
             </div>
           </div>
+        </TechnicalCard>
 
-          {/* Navigation */}
-          <div className="flex justify-center">
-            <button
-              onClick={() => scroll(17)}
-              className="px-8 py-4 bg-purple-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-purple-600 transition-all transform hover:scale-105 flex items-center gap-3"
-            >
-              <span>Continue</span>
-              <ArrowRight className="w-5 h-5" />
-            </button>
-          </div>
+        {/* Continue Button */}
+        <div className="flex justify-center pt-2">
+          <button
+            className="px-12 py-4 bg-black text-white border-2 border-black font-bold uppercase tracking-wide hover:bg-white hover:text-black transition-all flex items-center gap-3 text-lg"
+            onClick={() => scroll(16)}
+          >
+            CONTINUE
+            <ArrowRight className="w-6 h-6" />
+          </button>
         </div>
       </div>
 
       <ParameterTooltip />
-    </div>
+    </Layout>
   );
-};
+}

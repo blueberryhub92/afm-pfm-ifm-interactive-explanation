@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { Code, Brain, Target, ArrowRight, CheckCircle, AlertTriangle, Lightbulb, ArrowLeft, HelpCircle, Eye, EyeOff } from 'lucide-react';
 
 // Task data
@@ -113,144 +113,190 @@ print(output)`,
   }
 };
 
-// Overview Component
-const TaskOverview = ({ onNavigate, scroll }) => {
-  const [hoveredTask, setHoveredTask] = useState(null);
-  const [tooltipPosition, setTooltipPosition] = useState({ x: 16, y: 16 });
-
-  const TaskTooltip = ({ task }) => (
+// Technical Layout Component
+const TechnicalLayout = ({ title, children }) => (
+  <div className="bg-white min-h-screen font-mono relative">
+    {/* Grid background */}
     <div 
-      className="fixed z-50 bg-white border-4 border-black rounded-xl shadow-lg p-6 w-96 font-['IBM_Plex_Mono',monospace]"
-      style={{ 
-        left: `${tooltipPosition.x}px`, 
-        top: `${tooltipPosition.y}px`,
-        maxWidth: '384px'
+      className="absolute inset-0 opacity-60"
+      style={{
+        backgroundImage: 'linear-gradient(to right, #d1d5db 1px, transparent 1px), linear-gradient(to bottom, #d1d5db 1px, transparent 1px)',
+        backgroundSize: '20px 20px'
       }}
-    >
-      <div className={`border-4 border-${task.color}-600 rounded-xl p-4 bg-${task.color}-50 mb-4`}>
-        <div className="flex items-center gap-2 mb-3">
-          <Brain className="w-5 h-5" />
-          <span className={`font-bold text-${task.color}-700 uppercase tracking-wide`}>
-            Multiple Choice Task
-          </span>
-        </div>
-        
-        <div className={`bg-black text-green-400 p-3 rounded-lg border-2 border-${task.color}-600 font-mono text-xs`}>
-          <div className="text-green-300 mb-2">TASK:</div>
-          <div className="text-white">{task.problem.title}</div>
-        </div>
-      </div>
-      
-      <div className="space-y-2 text-sm text-black">
-        <div className={`border-l-4 border-${task.color}-600 bg-${task.color}-100 px-3 py-1 rounded-r-lg`}>
-          <strong>Type:</strong> Choose the correct answer
-        </div>
-        <div className={`border-l-4 border-green-600 bg-green-100 px-3 py-1 rounded-r-lg`}>
-          <strong>Difficulty:</strong> {task.difficulty}
-        </div>
-        <div className={`border-l-4 border-purple-600 bg-purple-100 px-3 py-1 rounded-r-lg`}>
-          <strong>Hints:</strong> {task.hasHints ? 'Available' : 'Not available'}
-        </div>
-      </div>
-    </div>
-  );
+    />
+    
+    <div className="relative flex-1 px-8 py-6">{children}</div>
+  </div>
+);
+
+// Technical Card Component
+const TechnicalCard = ({ title, description, icon: Icon, config, onClick, size = "normal", isMain = false, children }) => {
+  const sizeClasses = {
+    normal: "col-span-1 row-span-1",
+    wide: "col-span-2 row-span-1", 
+    tall: "col-span-1 row-span-2",
+    large: "col-span-2 row-span-2"
+  };
+
+  const cardClass = isMain 
+    ? "bg-black text-white border-3 border-black" 
+    : "bg-white text-black border-2 border-black";
 
   return (
-    <div className="bg-white min-h-screen flex flex-col text-black font-['IBM_Plex_Mono',monospace]">
-      {/* Header */}
-      <div className="border-b-8 border-black bg-purple-400 px-8 py-6 shadow-lg">
-        <div className="flex items-center justify-center">
-          <span className="text-black font-bold text-2xl uppercase tracking-wider">
-            Python Challenge Tasks
-          </span>
+    <div
+      onClick={onClick}
+      className={`${sizeClasses[size]} ${cardClass} p-6 cursor-pointer transform transition-all duration-300 hover:scale-105 relative group`}
+    >
+      {/* Technical drawing corner marker */}
+      <div 
+        className={`absolute top-2 right-2 w-2 h-2 border ${isMain ? 'border-white bg-black' : 'border-black bg-white'}`}
+      />
+      
+      {/* Dimension lines for main card */}
+      {isMain && (
+        <>
+          <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+            <span className="bg-black text-white px-3 py-1 text-xs font-mono tracking-wider border border-white">
+              FEATURED TASK
+            </span>
+          </div>
+          <div className="absolute -left-8 top-1/2 transform -translate-y-1/2 rotate-90">
+            <div className="w-4 h-px bg-black"></div>
+          </div>
+        </>
+      )}
+      
+      <div className="h-full flex flex-col justify-between">
+        <div className="flex items-start justify-between mb-4">
+          <div className={`w-8 h-8 border ${isMain ? 'border-white' : 'border-black'} flex items-center justify-center ${isMain ? 'bg-black' : 'bg-white'}`}>
+            <Icon className={`w-4 h-4 ${isMain ? 'text-white' : 'text-black'}`} />
+          </div>
+          <ArrowRight className={`w-4 h-4 ${isMain ? 'text-white' : 'text-black'} opacity-0 group-hover:opacity-100 transition-opacity`} />
         </div>
-      </div>
-
-      {/* Content */}
-      <div className="flex-1 px-8 py-8">
-        <div className="max-w-6xl mx-auto">
-          
-          {/* Introduction */}
-          <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg mb-8">
-            <div className="border-l-8 border-purple-600 bg-purple-100 p-6 rounded-r-xl">
-              <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center uppercase">
-                Let's solve some Python function tasks
-              </div>
-              <p className="text-center text-black font-mono text-lg mt-4">
-                Test your understanding with these multiple choice challenges
-              </p>
+        
+        <div>
+          <div className="flex items-center mb-3">
+            <div>
+              <h3 className={`text-lg font-bold ${isMain ? 'text-white' : 'text-black'} tracking-wider uppercase`}>
+                {title}
+              </h3>
+              <span className={`text-xs font-mono ${isMain ? 'text-gray-300' : 'text-gray-600'}`}>
+                {config}
+              </span>
             </div>
           </div>
-
-          {/* Task Cards */}
-          <div className="grid md:grid-cols-2 gap-8 mb-8">
-            {Object.values(TASKS).map((task) => (
-              <div 
-                key={task.id}
-                className="border-4 border-black rounded-xl p-8 bg-white shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
-                onMouseEnter={() => setHoveredTask(task.id)}
-                onMouseLeave={() => setHoveredTask(null)}
-              >
-                <div className={`border-l-8 border-${task.color}-600 bg-${task.color}-100 p-6 rounded-r-xl mb-6`}>
-                  <div className="flex items-center gap-2 mb-4">
-                    <Brain className="w-8 h-8" />
-                    <span className={`font-bold text-${task.color}-700 text-xl uppercase tracking-wide`}>
-                      {task.title}
-                    </span>
-                  </div>
-                  
-                  <div className="mb-4">
-                    <p className="text-black font-mono leading-relaxed">
-                      {task.description}
-                    </p>
-                  </div>
-                  
-                  {task.hasHints && (
-                    <div className="border-4 border-green-600 rounded-xl p-4 bg-green-50 mb-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Lightbulb className="w-5 h-5 text-green-700" />
-                        <span className="font-bold text-green-700 uppercase tracking-wide text-sm">
-                          Hints Available
-                        </span>
-                      </div>
-                      <p className="text-green-800 text-sm font-mono">
-                        This task includes helpful hints to guide your thinking!
-                      </p>
-                    </div>
-                  )}
-                </div>
-                
-                <button
-                  onClick={() => onNavigate(task.id)}
-                  className={`w-full px-6 py-3 bg-${task.color}-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-${task.color}-600 hover:border-${task.color}-600 transition-all flex items-center justify-center gap-3`}
-                >
-                  <Brain className="w-5 h-5" />
-                  Start Task
-                </button>
-              </div>
-            ))}
-          </div>
-
-          {/* Navigation */}
-          <div className="flex justify-center">
-            <button
-              onClick={() => scroll(22)}
-              className="px-8 py-4 bg-purple-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-purple-600 hover:border-purple-600 transition-all transform hover:scale-105 flex items-center gap-3"
-            >
-              <span>What is this all about?</span>
-              <ArrowRight className="w-5 h-5" />
-            </button>
-          </div>
+          
+          <p className={`${isMain ? 'text-white' : 'text-black'} text-sm font-mono leading-relaxed`}>
+            {description}
+          </p>
+          
+          {children}
         </div>
       </div>
-
-      {/* Tooltips */}
-      {hoveredTask && <TaskTooltip task={TASKS[hoveredTask]} />}
     </div>
   );
 };
 
-// Multiple Choice Task Component (with optional hints)
+// Technical Panel Component
+const TechnicalPanel = ({ title, children, isMain = false }) => (
+  <div className={`border-2 border-black p-6 relative ${isMain ? 'bg-black text-white' : 'bg-white text-black'}`}>
+    {/* Technical corner brackets */}
+    <div className={`absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 ${isMain ? 'border-white' : 'border-black'}`}></div>
+    <div className={`absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 ${isMain ? 'border-white' : 'border-black'}`}></div>
+    <div className={`absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 ${isMain ? 'border-white' : 'border-black'}`}></div>
+    <div className={`absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 ${isMain ? 'border-white' : 'border-black'}`}></div>
+    
+    <div className="text-center space-y-3">
+      <div className={`inline-block border px-3 py-1 mb-2 ${isMain ? 'border-white' : 'border-black'}`}>
+        <span className="text-xs tracking-wider font-mono">{title}</span>
+      </div>
+      {children}
+    </div>
+  </div>
+);
+
+// Overview Component
+const TaskOverview = ({ onNavigate, scroll }) => {
+  return (
+    <TechnicalLayout title="Python Challenge Tasks">
+      <div className="max-w-7xl mx-auto">
+        {/* Hero Section */}
+        <TechnicalPanel title="INSTRUCTIONAL FACTOR MODEL">
+          <h1 className="text-3xl font-bold uppercase tracking-wider text-black">
+            PYTHON CHALLENGE TASKS
+          </h1>
+          <p className="text-sm font-mono leading-relaxed max-w-3xl mx-auto text-black">
+            INTERACTIVE LEARNING ALGORITHM CHALLENGES • MULTIPLE CHOICE ASSESSMENTS
+            <br />
+            SKILL VALIDATION & KNOWLEDGE VERIFICATION PROTOCOLS
+          </p>
+        </TechnicalPanel>
+
+        <div className="mt-8">
+          {/* Technical Grid */}
+          <div className="relative">
+            <div className="absolute -top-4 left-0 right-0 h-3 border-l-2 border-r-2 border-t-2 border-black"></div>
+            
+            <div className="grid grid-cols-4 grid-rows-2 gap-6 h-[500px]">
+              {/* Task A - Large featured card */}
+              <TechnicalCard
+                title="List Comprehension"
+                description="FILTERING & TRANSFORMATION • PYTHON SYNTAX • BEGINNER LEVEL • HINT SYSTEM ENABLED"
+                icon={Code}
+                config="TASK-001"
+                size="large"
+                isMain={true}
+                onClick={() => onNavigate('taskA')}
+              >
+                <div className="mt-4 p-2 border border-white">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Lightbulb className="w-3 h-3 text-white" />
+                    <span className="text-xs font-mono text-white">HINTS AVAILABLE</span>
+                  </div>
+                  <div className="text-xs font-mono text-gray-300">
+                    GUIDED LEARNING PROTOCOL
+                  </div>
+                </div>
+              </TechnicalCard>
+
+              {/* Task B - Normal card */}
+              <TechnicalCard
+                title="Decorator Pattern"
+                description="FUNCTION WRAPPING • ADVANCED PYTHON • INDEPENDENT CHALLENGE"
+                icon={Brain}
+                config="TASK-002"
+                size="normal"
+                onClick={() => onNavigate('taskB')}
+              >
+                <div className="mt-4 p-2 border border-black">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Target className="w-3 h-3 text-black" />
+                    <span className="text-xs font-mono text-black">ADVANCED LEVEL</span>
+                  </div>
+                  <div className="text-xs font-mono text-gray-600">
+                    NO ASSISTANCE MODE
+                  </div>
+                </div>
+              </TechnicalCard>
+
+              {/* Navigation card */}
+              <TechnicalCard
+                title="System Navigation"
+                description="RETURN TO MAIN FRAMEWORK • EDUCATIONAL MODULES • LEARNING PATHWAYS"
+                icon={ArrowRight}
+                config="NAV-001"
+                size="normal"
+                onClick={() => scroll(21)}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </TechnicalLayout>
+  );
+};
+
+// Multiple Choice Task Component
 const MultipleChoiceTask = ({ task, onNavigate }) => {
   const [selectedAnswer, setSelectedAnswer] = useState('');
   const [showResult, setShowResult] = useState(false);
@@ -274,206 +320,176 @@ const MultipleChoiceTask = ({ task, onNavigate }) => {
 
   if (showResult) {
     return (
-      <div className="bg-white min-h-screen flex flex-col text-black font-['IBM_Plex_Mono',monospace]">
-        {/* Header */}
-        <div className={`border-b-8 border-black bg-${task.color}-400 px-8 py-6 shadow-lg`}>
-          <div className="flex items-center justify-center">
-            <span className="text-black font-bold text-2xl uppercase tracking-wider">
-              {task.id.toUpperCase()} - {isCorrect ? 'Correct!' : 'Incorrect'}
-            </span>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="flex-1 px-8 py-8">
-          <div className="max-w-4xl mx-auto">
-            <div className={`border-4 ${isCorrect ? 'border-green-600' : 'border-red-600'} rounded-xl p-8 ${isCorrect ? 'bg-green-50' : 'bg-red-50'} shadow-lg mb-8`}>
-              <div className="text-center">
-                {isCorrect ? (
-                  <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
-                ) : (
-                  <AlertTriangle className="w-16 h-16 text-red-600 mx-auto mb-4" />
-                )}
-                <h2 className={`text-2xl font-bold ${isCorrect ? 'text-green-800' : 'text-red-800'} mb-4 uppercase tracking-wide`}>
-                  {isCorrect ? 'Excellent!' : 'Not Quite Right'}
-                </h2>
-                <p className={`${isCorrect ? 'text-green-700' : 'text-red-700'} font-mono mb-6 text-lg`}>
-                  {task.problem.explanation}
-                </p>
-                <div className="bg-black text-green-400 p-4 rounded-lg border-2 border-gray-600 font-mono text-sm mb-6">
-                  <div className="text-green-300 text-xs mb-2">CORRECT ANSWER:</div>
-                  <pre className="text-white whitespace-pre-wrap">
-                    {task.problem.options.find(opt => opt.isCorrect)?.text}
-                  </pre>
-                </div>
-              </div>
+      <TechnicalLayout title="Task Result">
+        <div className="max-w-6xl mx-auto">
+          <TechnicalPanel title={`${task.id.toUpperCase()} - ${isCorrect ? 'CORRECT RESPONSE' : 'INCORRECT RESPONSE'}`} isMain={isCorrect}>
+            <div className="text-center">
+              {isCorrect ? (
+                <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
+              ) : (
+                <AlertTriangle className="w-16 h-16 text-red-600 mx-auto mb-4" />
+              )}
+              <h2 className="text-2xl font-bold uppercase tracking-wider mb-4">
+                {isCorrect ? 'TASK COMPLETED' : 'TASK INCOMPLETE'}
+              </h2>
+              <p className="text-sm font-mono mb-6 leading-relaxed">
+                {task.problem.explanation}
+              </p>
             </div>
-            
-            <div className="flex justify-center">
-              <button
-                onClick={() => onNavigate('overview')}
-                className={`px-8 py-4 bg-${task.color}-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-${task.color}-600 hover:border-${task.color}-600 transition-all flex items-center gap-3`}
-              >
-                <ArrowLeft className="w-5 h-5" />
-                Back to Tasks
-              </button>
+          </TechnicalPanel>
+          
+          <div className="mt-8 border-2 border-black p-6 bg-white">
+            <div className="mb-4">
+              <span className="text-xs font-mono tracking-wider">CORRECT SOLUTION:</span>
+            </div>
+            <div className="bg-black text-green-400 p-4 border-2 border-gray-600 font-mono text-sm">
+              <pre className="text-white whitespace-pre-wrap">
+                {task.problem.options.find(opt => opt.isCorrect)?.text}
+              </pre>
             </div>
           </div>
+          
+          <div className="mt-8 flex justify-center">
+            <button
+              onClick={() => onNavigate('overview')}
+              className="px-8 py-3 bg-black text-white border-2 border-black font-mono text-sm uppercase tracking-wider hover:bg-white hover:text-black transition-all flex items-center gap-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              RETURN TO OVERVIEW
+            </button>
+          </div>
         </div>
-      </div>
+      </TechnicalLayout>
     );
   }
 
   return (
-    <div className="bg-white min-h-screen flex flex-col text-black font-['IBM_Plex_Mono',monospace]">
-      {/* Header */}
-      <div className={`border-b-8 border-black bg-${task.color}-400 px-8 py-6 shadow-lg`}>
-        <div className="flex items-center justify-center">
-          <span className="text-black font-bold text-2xl uppercase tracking-wider">
-            {task.id.toUpperCase()} - Multiple Choice
-          </span>
-        </div>
-      </div>
+    <TechnicalLayout title="Task Execution">
+      <div className="max-w-7xl mx-auto">
+        {/* Task Title */}
+        <TechnicalPanel title={`${task.id.toUpperCase()} - MULTIPLE CHOICE PROTOCOL`}>
+          <h1 className="text-2xl font-bold uppercase tracking-wider text-black">
+            {task.problem.title}
+          </h1>
+        </TechnicalPanel>
 
-      {/* Content */}
-      <div className="flex-1 px-8 py-8">
-        <div className="max-w-6xl mx-auto">
+        <div className="mt-8 grid lg:grid-cols-2 gap-8">
+          {/* Question Panel */}
+          <div className="space-y-6">
+            <div className="border-2 border-black p-6 bg-white">
+              <div className="mb-4">
+                <span className="text-xs font-mono tracking-wider">ALGORITHM CHALLENGE:</span>
+              </div>
+              <p className="text-sm font-mono leading-relaxed mb-6">
+                {task.problem.description}
+              </p>
+              <div className="bg-black text-green-400 p-4 border-2 border-gray-600 font-mono text-sm">
+                <div className="text-green-300 text-xs mb-2">CODE SEQUENCE:</div>
+                <pre className="text-white whitespace-pre-wrap">{task.problem.code}</pre>
+              </div>
+            </div>
+
+            {/* Options Panel */}
+            <div className="border-2 border-black p-6 bg-white">
+              <div className="mb-4">
+                <span className="text-xs font-mono tracking-wider">SELECT RESPONSE:</span>
+              </div>
+              <div className="space-y-3">
+                {task.problem.options.map((option) => (
+                  <button
+                    key={option.id}
+                    onClick={() => setSelectedAnswer(option.id)}
+                    className={`w-full p-3 text-left border-2 font-mono transition-all text-sm ${
+                      selectedAnswer === option.id
+                        ? 'border-black bg-black text-white'
+                        : 'border-gray-300 bg-gray-50 text-black hover:border-gray-400'
+                    }`}
+                  >
+                    <span className="font-bold mr-3">{option.id})</span>
+                    <pre className="whitespace-pre-wrap inline">{option.text}</pre>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Hints Panel */}
+          <div className="space-y-6">
+            {task.hasHints ? (
+              <div className="border-2 border-black p-6 bg-white">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-xs font-mono tracking-wider">ASSISTANCE PROTOCOL:</span>
+                  <button
+                    onClick={() => setShowHints(!showHints)}
+                    className="flex items-center gap-2 px-3 py-1 bg-black text-white border-2 border-black font-mono text-xs hover:bg-white hover:text-black transition-all"
+                  >
+                    {showHints ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+                    {showHints ? 'HIDE' : 'SHOW'}
+                  </button>
+                </div>
+                
+                {showHints && (
+                  <div className="space-y-3">
+                    {task.hints.map((hint, index) => (
+                      <div key={index} className="border-2 border-gray-300">
+                        <button
+                          onClick={() => toggleHint(index)}
+                          className="w-full p-3 text-left bg-gray-50 hover:bg-gray-100 transition-all flex items-center justify-between"
+                        >
+                          <span className="font-mono text-xs">HINT {index + 1}: {hint.title}</span>
+                          <HelpCircle className="w-3 h-3" />
+                        </button>
+                        {visibleHints.includes(index) && (
+                          <div className="p-3 bg-white border-t-2 border-gray-300">
+                            <p className="font-mono text-xs">{hint.content}</p>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="border-2 border-black p-6 bg-gray-50">
+                <div className="text-center">
+                  <Brain className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                  <span className="text-xs font-mono tracking-wider text-gray-600">
+                    NO ASSISTANCE AVAILABLE
+                  </span>
+                  <p className="text-gray-600 font-mono text-xs mt-2">
+                    ADVANCED LEVEL CHALLENGE
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Controls */}
+        <div className="mt-8 flex justify-between items-center">
+          <button
+            onClick={() => onNavigate('overview')}
+            className="px-6 py-3 bg-white text-black border-2 border-black font-mono text-xs uppercase tracking-wider hover:bg-black hover:text-white transition-all flex items-center gap-2"
+          >
+            <ArrowLeft className="w-3 h-3" />
+            RETURN
+          </button>
           
-          {/* Problem Title */}
-          <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg mb-8">
-            <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center uppercase">
-              {task.problem.title}
-            </div>
-          </div>
-
-          <div className="grid lg:grid-cols-2 gap-8">
-            {/* Question and Options */}
-            <div className="space-y-6">
-              {/* Question */}
-              <div className={`border-4 border-black rounded-xl p-8 bg-${task.color}-50 shadow-lg`}>
-                <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-                  <Target className="w-6 h-6" />
-                  Question
-                </h3>
-                <p className="text-lg text-black leading-relaxed font-mono mb-6">
-                  {task.problem.description}
-                </p>
-                <div className={`bg-black text-green-400 p-4 rounded-lg border-2 border-${task.color}-600 font-mono text-sm`}>
-                  <div className="text-green-300 text-xs mb-2">CODE:</div>
-                  <pre className="text-white whitespace-pre-wrap">{task.problem.code}</pre>
-                </div>
-              </div>
-
-              {/* Options */}
-              <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
-                <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-                  <Brain className="w-6 h-6" />
-                  Choose the correct answer:
-                </h3>
-                <div className="space-y-4">
-                  {task.problem.options.map((option) => (
-                    <button
-                      key={option.id}
-                      onClick={() => setSelectedAnswer(option.id)}
-                      className={`w-full p-4 text-left border-4 rounded-xl font-mono transition-all ${
-                        selectedAnswer === option.id
-                          ? `border-${task.color}-600 bg-${task.color}-100 text-${task.color}-800`
-                          : 'border-gray-300 bg-gray-50 text-black hover:border-gray-400 hover:bg-gray-100'
-                      }`}
-                    >
-                      <span className="font-bold mr-3">{option.id})</span>
-                      <pre className="whitespace-pre-wrap inline">{option.text}</pre>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Hints Section (if available) */}
-            <div className="space-y-6">
-              {task.hasHints && (
-                <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-bold flex items-center gap-2">
-                      <Lightbulb className="w-5 h-5" />
-                      Hints Available
-                    </h3>
-                    <button
-                      onClick={() => setShowHints(!showHints)}
-                      className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white border-4 border-black rounded-lg font-bold hover:bg-white hover:text-green-600 hover:border-green-600 transition-all"
-                    >
-                      {showHints ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                      {showHints ? 'Hide' : 'Show'} Hints
-                    </button>
-                  </div>
-                  
-                  {showHints && (
-                    <div className="space-y-3">
-                      {task.hints.map((hint, index) => (
-                        <div key={index} className="border-4 border-green-600 rounded-xl">
-                          <button
-                            onClick={() => toggleHint(index)}
-                            className="w-full p-3 text-left bg-green-50 hover:bg-green-100 transition-all flex items-center justify-between border-4 border-transparent hover:border-green-300 rounded-xl"
-                          >
-                            <span className="font-bold text-green-800">Hint {index + 1}: {hint.title}</span>
-                            <HelpCircle className="w-4 h-4 text-green-600" />
-                          </button>
-                          {visibleHints.includes(index) && (
-                            <div className="p-4 bg-white border-t-4 border-green-600 rounded-b-xl">
-                              <p className="text-black font-mono text-sm">{hint.content}</p>
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Placeholder for non-hint tasks */}
-              {!task.hasHints && (
-                <div className="border-4 border-black rounded-xl p-8 bg-gray-50 shadow-lg">
-                  <div className="text-center">
-                    <Brain className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-xl font-bold text-gray-600 mb-4 uppercase tracking-wide">
-                      No Hints Available
-                    </h3>
-                    <p className="text-gray-600 font-mono">
-                      This advanced task challenges you to solve it independently. 
-                      Use your knowledge of Python decorators!
-                    </p>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Controls */}
-          <div className="flex justify-between items-center mt-8">
-            <button
-              onClick={() => onNavigate('overview')}
-              className="px-6 py-3 bg-gray-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide hover:bg-white hover:text-gray-600 hover:border-gray-600 transition-all flex items-center gap-2"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back
-            </button>
-            
-            <button
-              onClick={handleSubmit}
-              disabled={!selectedAnswer}
-              className={`px-8 py-3 border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all flex items-center gap-2 ${
-                selectedAnswer
-                  ? `bg-${task.color}-600 text-white hover:bg-white hover:text-${task.color}-600 hover:border-${task.color}-600`
-                  : 'bg-gray-300 text-gray-600 cursor-not-allowed'
-              }`}
-            >
-              Submit Answer
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
+          <button
+            onClick={handleSubmit}
+            disabled={!selectedAnswer}
+            className={`px-8 py-3 border-2 border-black font-mono text-xs uppercase tracking-wider transition-all flex items-center gap-2 ${
+              selectedAnswer
+                ? 'bg-black text-white hover:bg-white hover:text-black'
+                : 'bg-gray-300 text-gray-600 cursor-not-allowed border-gray-300'
+            }`}
+          >
+            SUBMIT RESPONSE
+            <ArrowRight className="w-3 h-3" />
+          </button>
         </div>
       </div>
-    </div>
+    </TechnicalLayout>
   );
 };
 

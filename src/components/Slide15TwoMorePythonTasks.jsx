@@ -1,5 +1,84 @@
-import { Code, Target, Zap, ArrowRight, List, Brain, Users, CheckCircle, XCircle } from "lucide-react";
+import { Code, Target, Zap, ArrowRight, List, Brain, Users, CheckCircle, XCircle, Play } from "lucide-react";
 import { useState } from "react";
+
+const Layout = ({ children }) => (
+  <div className="bg-white min-h-screen font-mono relative">
+    {/* Grid background */}
+    <div 
+      className="absolute inset-0 opacity-60"
+      style={{
+        backgroundImage: 'linear-gradient(to right, #d1d5db 1px, transparent 1px), linear-gradient(to bottom, #d1d5db 1px, transparent 1px)',
+        backgroundSize: '20px 20px'
+      }}
+    />
+    
+    <div className="relative flex-1 px-8 py-6">{children}</div>
+  </div>
+);
+
+const TechnicalCard = ({ title, description, code, icon: Icon, config, onClick, color = "green" }) => {
+  const colorConfig = {
+    green: {
+      accent: "bg-green-600",
+      border: "border-green-600",
+      bg: "bg-green-50"
+    },
+    orange: {
+      accent: "bg-orange-600", 
+      border: "border-orange-600",
+      bg: "bg-orange-50"
+    }
+  };
+
+  const colors = colorConfig[color];
+
+  return (
+    <div
+      onClick={onClick}
+      className="bg-white border-2 border-black p-6 cursor-pointer transform transition-all duration-300 hover:scale-105 relative group"
+    >
+      {/* Technical drawing corner marker */}
+      <div className="absolute top-2 right-2 w-2 h-2 border border-black bg-white" />
+      
+      {/* Module identifier */}
+      <div className="absolute -top-4 left-4">
+        <span className={`${colors.accent} text-white px-3 py-1 text-xs font-mono tracking-wider border border-black`}>
+          {config}
+        </span>
+      </div>
+      
+      <div className="h-full flex flex-col justify-between">
+        <div className="flex items-start justify-between mb-4">
+          <div className="w-8 h-8 border border-black flex items-center justify-center bg-white">
+            <Icon className="w-4 h-4 text-black" />
+          </div>
+          <ArrowRight className="w-4 h-4 text-black opacity-0 group-hover:opacity-100 transition-opacity" />
+        </div>
+        
+        <div>
+          <h3 className="text-lg font-bold text-black tracking-wider uppercase mb-2">
+            {title}
+          </h3>
+          
+          <p className="text-black text-sm font-mono leading-relaxed mb-4">
+            {description}
+          </p>
+          
+          {/* Code preview */}
+          <div className="bg-black text-green-400 p-3 border border-black font-mono text-xs">
+            <pre className="text-white whitespace-pre-wrap overflow-hidden">{code}</pre>
+          </div>
+          
+          <div className="mt-3 text-center">
+            <span className={`inline-block px-3 py-1 ${colors.accent} text-white text-xs font-mono tracking-wider border border-black`}>
+              INITIALIZE PRACTICE
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export const Slide15TwoMorePythonTasks = ({ scroll }) => {
   const [selectedTask, setSelectedTask] = useState(null);
@@ -9,12 +88,12 @@ export const Slide15TwoMorePythonTasks = ({ scroll }) => {
   const tasks = {
     A: {
       title: "List Manipulation",
-      description: "Given a list of student grades [85, 92, 78, 96, 88, 73, 91], write a function that returns only the grades above 90, then calculate their average.",
+      description: "FILTER ALGORITHM • STATISTICAL COMPUTATION • ARRAY PROCESSING • CONDITIONAL LOGIC",
       code: `def filter_and_average(grades):
     # Return high grades and their average
     pass
-# Expected output: ([92, 96, 91], 93.0)`,
-      question: "What would be the correct implementation?",
+# Expected: ([92, 96, 91], 93.0)`,
+      question: "SELECT OPTIMAL IMPLEMENTATION PATTERN:",
       options: [
         {
           id: 'a',
@@ -43,11 +122,12 @@ return high_grades`,
           correct: false
         }
       ],
-      color: 'green'
+      color: 'green',
+      config: 'TASK-A'
     },
     B: {
       title: "Class Design",
-      description: "Create a Student class that stores name, grades, and calculates GPA. Include methods to add grades, get average, and determine if the student is on honor roll (GPA ≥ 3.5).",
+      description: "OBJECT-ORIENTED ARCHITECTURE • ENCAPSULATION • METHOD IMPLEMENTATION • DATA STRUCTURES",
       code: `class Student:
     def __init__(self, name):
         # Initialize with name and empty grades
@@ -57,7 +137,7 @@ return high_grades`,
         # Calculate and return GPA
     def honor_roll(self):
         # Return True if GPA >= 3.5`,
-      question: "What would be the correct __init__ method?",
+      question: "SELECT CORRECT CONSTRUCTOR IMPLEMENTATION:",
       options: [
         {
           id: 'a',
@@ -88,7 +168,8 @@ return high_grades`,
           correct: false
         }
       ],
-      color: 'orange'
+      color: 'orange',
+      config: 'TASK-B'
     }
   };
 
@@ -112,18 +193,14 @@ return high_grades`,
   const getColorClasses = (color) => {
     const colors = {
       green: {
-        bg: 'bg-green-50',
+        accent: 'bg-green-600',
         border: 'border-green-600',
-        text: 'text-green-700',
-        accent: 'bg-green-100',
-        button: 'bg-green-600 hover:bg-green-700'
+        bg: 'bg-green-50'
       },
       orange: {
-        bg: 'bg-orange-50',
-        border: 'border-orange-600',
-        text: 'text-orange-700',
-        accent: 'bg-orange-100',
-        button: 'bg-orange-600 hover:bg-orange-700'
+        accent: 'bg-orange-600',
+        border: 'border-orange-600', 
+        bg: 'bg-orange-50'
       }
     };
     return colors[color];
@@ -136,73 +213,93 @@ return high_grades`,
     const selectedOption = task.options.find(opt => opt.id === selectedAnswer);
 
     return (
-      <div className="bg-white min-h-screen flex flex-col items-center py-8 px-4 md:px-10 text-black font-['IBM_Plex_Mono',monospace]">
-        <div className="w-full max-w-4xl mx-auto flex flex-col gap-8">
+      <Layout>
+        <div className="max-w-4xl mx-auto space-y-6">
           
           {/* Header */}
-          <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg relative">
-            <div className={`absolute -top-6 left-4 px-3 py-1 ${colors.button} text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2`}>
-              <Code className="w-4 h-4" />
-              TASK {selectedTask}
+          <div className="border-2 border-black p-6 bg-white relative">
+            <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-black"></div>
+            <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-black"></div>
+            <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-black"></div>
+            <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-black"></div>
+            
+            <div className="absolute -top-4 left-4">
+              <span className={`${colors.accent} text-white px-3 py-1 text-xs font-mono tracking-wider border border-black`}>
+                {task.config}
+              </span>
             </div>
-            <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center">
-              {task.title}
+            
+            <div className="text-center">
+              <h1 className="text-2xl font-bold uppercase tracking-wider text-black">
+                {task.title}
+              </h1>
+              <p className="text-xs font-mono text-gray-600 mt-2">
+                INTERACTIVE PROGRAMMING EXERCISE
+              </p>
             </div>
           </div>
 
           {/* Task Description */}
-          <div className={`border-4 ${colors.border} rounded-xl p-6 ${colors.bg}`}>
-            <p className="text-black mb-4 leading-relaxed">
-              {task.description}
-            </p>
+          <div className="border-2 border-black p-6 bg-white">
+            <div className="mb-4">
+              <h3 className="text-sm font-mono tracking-wider uppercase text-black mb-2">
+                SYSTEM REQUIREMENTS:
+              </h3>
+              <p className="text-black font-mono text-sm leading-relaxed">
+                {task.description}
+              </p>
+            </div>
             
-            <div className={`bg-black text-green-400 p-4 rounded-lg border-2 ${colors.border} font-mono text-sm`}>
+            <div className="bg-black text-green-400 p-4 border border-black font-mono text-sm">
+              <div className="text-green-300 mb-2"># IMPLEMENTATION TEMPLATE:</div>
               <pre className="text-white whitespace-pre-wrap">{task.code}</pre>
             </div>
           </div>
 
           {/* Question */}
-          <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
-            <h3 className="text-xl font-bold mb-6 text-black">{task.question}</h3>
+          <div className="border-2 border-black p-6 bg-white">
+            <h3 className="text-sm font-mono tracking-wider uppercase text-black mb-6">
+              {task.question}
+            </h3>
             
-            <div className="space-y-4">
+            <div className="space-y-3">
               {task.options.map((option) => (
                 <button
                   key={option.id}
                   onClick={() => handleAnswerSelect(option.id)}
                   disabled={showResult}
-                  className={`w-full text-left p-4 rounded-lg border-2 transition-all ${
+                  className={`w-full text-left p-4 border-2 transition-all ${
                     showResult 
                       ? option.correct 
-                        ? 'border-green-500 bg-green-50' 
+                        ? 'border-green-600 bg-green-50' 
                         : option.id === selectedAnswer 
-                          ? 'border-red-500 bg-red-50' 
+                          ? 'border-red-600 bg-red-50' 
                           : 'border-gray-300 bg-gray-50'
                       : selectedAnswer === option.id
                         ? `${colors.border} ${colors.bg}`
-                        : 'border-gray-300 bg-gray-50 hover:border-gray-400'
+                        : 'border-black bg-white hover:border-gray-600'
                   } ${!showResult ? 'cursor-pointer' : 'cursor-default'}`}
                 >
                   <div className="flex items-start gap-3">
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                    <div className={`w-6 h-6 border flex items-center justify-center text-xs font-bold ${
                       showResult 
                         ? option.correct 
-                          ? 'bg-green-500 text-white' 
+                          ? 'bg-green-600 text-white border-green-600' 
                           : option.id === selectedAnswer 
-                            ? 'bg-red-500 text-white' 
-                            : 'bg-gray-300 text-gray-600'
-                        : 'bg-gray-300 text-gray-600'
+                            ? 'bg-red-600 text-white border-red-600' 
+                            : 'bg-gray-300 text-gray-600 border-gray-300'
+                        : 'bg-white text-black border-black'
                     }`}>
                       {option.id.toUpperCase()}
                     </div>
-                    <pre className="text-sm font-mono text-gray-800 whitespace-pre-wrap flex-1">
+                    <pre className="text-sm font-mono text-black whitespace-pre-wrap flex-1">
                       {option.text}
                     </pre>
                     {showResult && option.correct && (
-                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                      <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
                     )}
                     {showResult && !option.correct && option.id === selectedAnswer && (
-                      <XCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
+                      <XCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
                     )}
                   </div>
                 </button>
@@ -211,26 +308,26 @@ return high_grades`,
 
             {/* Result */}
             {showResult && (
-              <div className={`mt-6 p-4 rounded-lg border-2 ${
+              <div className={`mt-6 p-4 border-2 ${
                 selectedOption?.correct 
-                  ? 'border-green-500 bg-green-50' 
-                  : 'border-red-500 bg-red-50'
+                  ? 'border-green-600 bg-green-50' 
+                  : 'border-red-600 bg-red-50'
               }`}>
                 <div className="flex items-center gap-2 mb-2">
                   {selectedOption?.correct ? (
-                    <CheckCircle className="w-5 h-5 text-green-500" />
+                    <CheckCircle className="w-5 h-5 text-green-600" />
                   ) : (
-                    <XCircle className="w-5 h-5 text-red-500" />
+                    <XCircle className="w-5 h-5 text-red-600" />
                   )}
-                  <span className={`font-bold ${selectedOption?.correct ? 'text-green-700' : 'text-red-700'}`}>
-                    {selectedOption?.correct ? 'Correct!' : 'Incorrect'}
+                  <span className={`font-mono text-sm tracking-wider uppercase ${selectedOption?.correct ? 'text-green-700' : 'text-red-700'}`}>
+                    {selectedOption?.correct ? 'EXECUTION SUCCESSFUL' : 'EXECUTION FAILED'}
                   </span>
                 </div>
                 {!selectedOption?.correct && (
-                  <p className="text-sm text-gray-700">
-                    The correct answer is option {correctAnswer.id.toUpperCase()}. 
-                    {selectedTask === 'A' && " List comprehension with proper average calculation is the most efficient approach."}
-                    {selectedTask === 'B' && " The __init__ method must include 'self' as the first parameter and use 'self.' to create instance variables."}
+                  <p className="text-sm font-mono text-gray-700">
+                    CORRECT IMPLEMENTATION: OPTION {correctAnswer.id.toUpperCase()} • 
+                    {selectedTask === 'A' && " LIST COMPREHENSION WITH PROPER AVERAGE CALCULATION IS OPTIMAL"}
+                    {selectedTask === 'B' && " CONSTRUCTOR MUST INCLUDE 'SELF' PARAMETER AND INSTANCE VARIABLES"}
                   </p>
                 )}
               </div>
@@ -238,138 +335,92 @@ return high_grades`,
           </div>
 
           {/* Back Button */}
-          <div className="flex justify-center">
+          <div className="text-center">
             <button
               onClick={resetTask}
-              className="px-6 py-3 bg-gray-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-gray-600 hover:border-gray-600 transition-all transform hover:scale-105 flex items-center gap-3"
+              className="px-6 py-3 bg-black text-white border-2 border-black font-mono text-sm uppercase tracking-wider hover:bg-white hover:text-black transition-all transform hover:scale-105"
             >
-              <span>← Back to Tasks</span>
+              ← RETURN TO TASK SELECTION
             </button>
           </div>
         </div>
-      </div>
+      </Layout>
     );
   }
 
   return (
-    <div className="bg-white min-h-screen flex flex-col items-center py-8 px-4 md:px-10 text-black font-['IBM_Plex_Mono',monospace]">
-      <div className="w-full max-w-6xl mx-auto flex flex-col gap-8">
+    <Layout>
+      <div className="max-w-6xl mx-auto">
         
         {/* Header */}
-        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
-          <div className="absolute -top-6 left-4 px-3 py-1 bg-black text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
-            <Brain className="w-4 h-4" />
-            Learning Rate Question
+        <div className="border-2 border-black p-6 bg-white mb-6 relative">
+          <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-black"></div>
+          <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-black"></div>
+          <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-black"></div>
+          <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-black"></div>
+          
+          <div className="absolute -top-4 left-4">
+            <span className="bg-black text-white px-3 py-1 text-xs font-mono tracking-wider border border-black">
+              LEARNING RATE ANALYSIS
+            </span>
           </div>
-          <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center mb-4">
-            Which task has a faster learning rate?
-          </div>
-          <div className="bg-neutral-100 border-2 border-black rounded p-4 text-center font-mono text-neutral-700">
-            (Shows quicker improvement with practice)
+          
+          <div className="text-center space-y-3">
+            <h1 className="text-2xl font-bold uppercase tracking-wider text-black">
+              COMPARATIVE TASK ANALYSIS
+            </h1>
+            <p className="text-xs font-mono text-gray-600">
+              DETERMINE OPTIMAL LEARNING PROGRESSION RATE
+            </p>
+            <div className="bg-gray-100 border border-black p-2 inline-block font-mono text-xs">
+              METRIC: IMPROVEMENT VELOCITY PER PRACTICE ITERATION
+            </div>
           </div>
         </div>
 
         {/* Tasks Grid */}
-        <div className="grid md:grid-cols-2 gap-8">
-          
-          {/* Task A */}
-          <div 
-            className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative cursor-pointer hover:shadow-xl transition-all transform hover:scale-105"
+        <div className="grid md:grid-cols-2 gap-8 mb-8">
+          <TechnicalCard
+            title="List Manipulation"
+            description="FILTER ALGORITHM • STATISTICAL COMPUTATION • ARRAY PROCESSING • CONDITIONAL LOGIC"
+            code={`def filter_and_average(grades):
+    # Return high grades and their average
+    pass
+# Expected: ([92, 96, 91], 93.0)`}
+            icon={List}
+            config="TASK-A"
+            color="green"
             onClick={() => handleTaskClick('A')}
-          >
-            <div className="absolute -top-6 left-4 px-3 py-1 bg-green-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
-              <List className="w-4 h-4" />
-              TASK A
-            </div>
-            
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-16 h-16 bg-green-100 border-4 border-green-600 rounded-xl flex items-center justify-center text-green-700 font-bold text-2xl">
-                A
-              </div>
-              <div className="text-2xl font-bold text-black">
-                List Manipulation
-              </div>
-            </div>
-            
-            <div className="border-4 border-green-600 rounded-xl p-6 bg-green-50">
-              <p className="text-black mb-4 leading-relaxed">
-                Given a list of student grades [85, 92, 78, 96, 88, 73, 91], write a function that returns only the grades above 90, then calculate their average.
-              </p>
-              
-              <div className="bg-black text-green-400 p-4 rounded-lg border-2 border-green-600 font-mono text-sm">
-                <div className="text-green-300"># Your task:</div>
-                <div className="text-white">def filter_and_average(grades):</div>
-                <div className="ml-4 text-gray-400"># Return high grades and their average</div>
-                <div className="ml-4 text-yellow-400">pass</div>
-                <div className="mt-2 text-green-300"># Expected output: ([92, 96, 91], 93.0)</div>
-              </div>
-              
-              <div className="mt-4 text-center">
-                <span className="inline-block px-4 py-2 bg-green-600 text-white rounded-lg font-semibold">
-                  Click to Practice
-                </span>
-              </div>
-            </div>
-          </div>
+          />
 
-          {/* Task B */}
-          <div 
-            className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative cursor-pointer hover:shadow-xl transition-all transform hover:scale-105"
+          <TechnicalCard
+            title="Class Design"
+            description="OBJECT-ORIENTED ARCHITECTURE • ENCAPSULATION • METHOD IMPLEMENTATION • DATA STRUCTURES"
+            code={`class Student:
+    def __init__(self, name):
+        # Initialize with name and empty grades
+    def add_grade(self, grade):
+        # Add grade to student's record
+    def get_gpa(self):
+        # Calculate and return GPA`}
+            icon={Users}
+            config="TASK-B"
+            color="orange"
             onClick={() => handleTaskClick('B')}
-          >
-            <div className="absolute -top-6 left-4 px-3 py-1 bg-orange-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
-              <Users className="w-4 h-4" />
-              TASK B
-            </div>
-            
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-16 h-16 bg-orange-100 border-4 border-orange-600 rounded-xl flex items-center justify-center text-orange-700 font-bold text-2xl">
-                B
-              </div>
-              <div className="text-2xl font-bold text-black">
-                Class Design
-              </div>
-            </div>
-            
-            <div className="border-4 border-orange-600 rounded-xl p-6 bg-orange-50">
-              <p className="text-black mb-4 leading-relaxed">
-                Create a Student class that stores name, grades, and calculates GPA. Include methods to add grades, get average, and determine if the student is on honor roll (GPA ≥ 3.5).
-              </p>
-              
-              <div className="bg-black text-green-400 p-4 rounded-lg border-2 border-orange-600 font-mono text-sm">
-                <div className="text-green-300"># Your task:</div>
-                <div className="text-white">class Student:</div>
-                <div className="ml-4 text-white">def __init__(self, name):</div>
-                <div className="ml-8 text-gray-400"># Initialize with name and empty grades</div>
-                <div className="ml-4 text-white">def add_grade(self, grade):</div>
-                <div className="ml-8 text-gray-400"># Add grade to student's record</div>
-                <div className="ml-4 text-white">def get_gpa(self):</div>
-                <div className="ml-8 text-gray-400"># Calculate and return GPA</div>
-                <div className="ml-4 text-white">def honor_roll(self):</div>
-                <div className="ml-8 text-gray-400"># Return True if GPA {'>='} 3.5</div>
-                <div className="mt-2 text-green-300"># Usage: student.add_grade(3.8)</div>
-              </div>
-              
-              <div className="mt-4 text-center">
-                <span className="inline-block px-4 py-2 bg-orange-600 text-white rounded-lg font-semibold">
-                  Click to Practice
-                </span>
-              </div>
-            </div>
-          </div>
+          />
         </div>
 
         {/* Continue Button */}
-        <div className="flex justify-center">
+        <div className="text-center">
           <button
-            onClick={() => scroll(13)}
-            className="px-8 py-4 bg-purple-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-purple-600 hover:border-purple-600 transition-all transform hover:scale-105 flex items-center gap-3"
+            onClick={() => scroll(12)}
+            className="px-8 py-4 bg-black text-white border-2 border-black font-mono text-sm uppercase tracking-wider hover:bg-white hover:text-black transition-all transform hover:scale-105 flex items-center gap-3 mx-auto"
           >
-            <span>Continue</span>
-            <ArrowRight className="w-5 h-5" />
+            <span>CONTINUE SEQUENCE</span>
+            <ArrowRight className="w-4 h-4" />
           </button>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 };

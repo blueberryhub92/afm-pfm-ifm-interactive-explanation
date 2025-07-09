@@ -187,33 +187,88 @@ print(result)`,
     }, 1000);
   };
 
-  // Components
-  const ProbabilityBar = ({
-    actual,
-    label,
-    color,
-    showPredictionError = false,
-    afmPrediction,
-  }) => {
-    const errorSize = showPredictionError
-      ? Math.abs(actual - afmPrediction)
-      : 0;
+  // Technical Layout Component
+  const TechnicalLayout = ({ children }) => (
+  <div className="bg-white min-h-screen font-mono relative">
+    {/* Grid background */}
+    <div 
+      className="absolute inset-0 opacity-60"
+      style={{
+        backgroundImage: 'linear-gradient(to right, #d1d5db 1px, transparent 1px), linear-gradient(to bottom, #d1d5db 1px, transparent 1px)',
+        backgroundSize: '20px 20px'
+      }}
+    />
+    
+    <div className="relative flex-1 px-8 py-6">{children}</div>
+  </div>
+);
+
+  // Technical Card Component
+  const TechnicalCard = ({ title, description, children, size = "normal", accent = "black" }) => {
+    const sizeClasses = {
+      normal: "p-6",
+      large: "p-8",
+      small: "p-4"
+    };
+
+    const accentClasses = {
+      black: "border-black",
+      red: "border-red-600",
+      blue: "border-blue-600",
+      green: "border-green-600",
+      purple: "border-purple-600",
+      orange: "border-orange-600",
+      yellow: "border-yellow-600"
+    };
+
+    return (
+      <div className={`border-2 ${accentClasses[accent]} bg-white ${sizeClasses[size]} relative`}>
+        {/* Technical corner brackets */}
+        <div className={`absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 ${accentClasses[accent]}`}></div>
+        <div className={`absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 ${accentClasses[accent]}`}></div>
+        <div className={`absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 ${accentClasses[accent]}`}></div>
+        <div className={`absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 ${accentClasses[accent]}`}></div>
+        
+        {title && (
+          <div className="mb-4">
+            <h3 className="text-lg font-bold text-black tracking-wider uppercase">{title}</h3>
+            {description && (
+              <p className="text-sm font-mono text-gray-600 mt-2">{description}</p>
+            )}
+          </div>
+        )}
+        
+        {children}
+      </div>
+    );
+  };
+
+  // Progress bar component
+  const TechnicalProgressBar = ({ actual, label, color, showPredictionError = false, afmPrediction }) => {
+    const colorClasses = {
+      green: "bg-green-600",
+      red: "bg-red-600",
+      purple: "bg-purple-600",
+      blue: "bg-blue-600"
+    };
+
+    const errorSize = showPredictionError ? Math.abs(actual - afmPrediction) : 0;
     const isUnderPredicted = actual > afmPrediction;
 
     return (
-      <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
+      <TechnicalCard accent={color === "green" ? "green" : color === "red" ? "red" : "purple"}>
         <div className="flex justify-between items-center mb-4">
-          <span className="text-xl font-bold text-black font-['IBM_Plex_Mono',monospace]">
+          <span className="text-lg font-bold text-black font-mono tracking-wider uppercase">
             {label}
           </span>
-          <span className="text-lg font-bold text-black font-['IBM_Plex_Mono',monospace]">
+          <span className="text-lg font-bold text-black font-mono">
             {(actual * 100).toFixed(0)}%
           </span>
         </div>
         <div className="relative">
-          <div className="w-full bg-gray-200 rounded-none h-8 border-4 border-black overflow-hidden">
+          <div className="w-full bg-gray-200 border-2 border-black h-8 relative">
             <div
-              className={`h-full ${color} transition-all duration-500 ease-out ${
+              className={`h-full ${colorClasses[color]} transition-all duration-500 ease-out ${
                 isAnimating ? "opacity-70" : ""
               }`}
               style={{ width: `${actual * 100}%` }}
@@ -222,14 +277,14 @@ print(result)`,
           {showPredictionError && afmPrediction !== actual && (
             <div className="absolute top-0 left-0 w-full h-8">
               <div
-                className="absolute top-0 h-8 border-4 border-dashed border-black bg-yellow-300 bg-opacity-70"
+                className="absolute top-0 h-8 border-2 border-dashed border-black bg-yellow-300 bg-opacity-70"
                 style={{
                   left: `${Math.min(actual, afmPrediction) * 100}%`,
                   width: `${errorSize * 100}%`,
                 }}
               />
               <div
-                className="absolute top-1/2 transform -translate-y-1/2 text-sm font-bold text-black bg-white px-2 py-1 border-2 border-black rounded-none font-['IBM_Plex_Mono',monospace]"
+                className="absolute top-1/2 transform -translate-y-1/2 text-xs font-bold text-black bg-white px-2 py-1 border border-black font-mono"
                 style={{
                   left: `${afmPrediction * 100}%`,
                   transform: "translateX(-50%) translateY(-50%)",
@@ -243,7 +298,7 @@ print(result)`,
         {showPredictionError && afmPrediction !== actual && (
           <div className="text-center mt-4">
             <span
-              className={`font-bold text-lg font-['IBM_Plex_Mono',monospace] ${
+              className={`font-bold text-sm font-mono tracking-wider uppercase ${
                 isUnderPredicted ? "text-red-600" : "text-blue-600"
               }`}
             >
@@ -252,48 +307,59 @@ print(result)`,
             </span>
           </div>
         )}
-      </div>
+      </TechnicalCard>
     );
   };
 
-  const Layout = ({ title, children }) => (
-    <div className="bg-white min-h-screen flex flex-col text-black font-['IBM_Plex_Mono',monospace]">
-      <div className="border-b-8 border-black bg-yellow-400 px-8 py-6 shadow-lg">
-        <div className="flex items-center justify-center">
-          <span className="text-black font-bold text-2xl uppercase tracking-wider">
-            {title}
-          </span>
-        </div>
-      </div>
-      <div className="flex-1 px-8 py-8">{children}</div>
-    </div>
-  );
+  // Button component
+  const TechnicalButton = ({ children, onClick, variant = "primary", disabled = false, size = "normal" }) => {
+    const baseClasses = "font-mono font-bold tracking-wider uppercase transition-all transform hover:scale-105 border-2 border-black";
+    const sizeClasses = {
+      small: "px-4 py-2 text-sm",
+      normal: "px-6 py-3 text-base",
+      large: "px-8 py-4 text-lg"
+    };
+    const variantClasses = {
+      primary: "bg-black text-white hover:bg-white hover:text-black",
+      secondary: "bg-white text-black hover:bg-black hover:text-white",
+      danger: "bg-red-600 text-white hover:bg-white hover:text-red-600",
+      success: "bg-green-600 text-white hover:bg-white hover:text-green-600",
+      warning: "bg-yellow-600 text-white hover:bg-white hover:text-yellow-600"
+    };
+
+    return (
+      <button
+        onClick={onClick}
+        disabled={disabled}
+        className={`${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]} ${
+          disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+        }`}
+      >
+        {children}
+      </button>
+    );
+  };
 
   // View renderers
   const renderSetup = () => (
-    <Layout title="Task: Uniform Learning Rates">
-      <div className="max-w-4xl mx-auto">
-        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
-          <div className="text-center space-y-8">
-            <h2 className="text-3xl font-bold text-black uppercase tracking-tight">
-              Configure AFM Learning Rate
-            </h2>
-            <p className="text-black text-lg leading-relaxed">
-              Set the learning rate γ (gamma) that AFM will use for both
-              students. This single rate will be applied uniformly regardless of
-              individual learning differences.
-            </p>
-
-            <div className="border-4 border-black rounded-xl p-6 bg-gray-100">
+    <TechnicalLayout title="Uniform Learning Rates" subtitle="CONFIGURATION">
+      <div className="max-w-4xl mx-auto space-y-6">
+        <TechnicalCard 
+          title="Configure AFM Learning Rate"
+          description="Set the learning rate γ (gamma) that AFM will use for both students"
+          size="large"
+        >
+          <div className="space-y-6">
+            <div className="border-2 border-gray-300 p-6 bg-gray-50">
               <div className="text-left max-w-md mx-auto">
-                <label className="block text-lg font-bold text-black mb-4 uppercase tracking-wide">
-                  Try to adapt the Learning Rate y:{" "}
-                  <span className="text-2xl text-purple-600">
+                <label className="block text-base font-bold text-black mb-4 uppercase tracking-wide font-mono">
+                  Learning Rate γ:{" "}
+                  <span className="text-xl text-purple-600">
                     {learningRate.toFixed(2)}
                   </span>
                 </label>
                 <div className="relative">
-                  <div className="w-full h-6 bg-gray-200 border-4 border-black rounded-none">
+                  <div className="w-full h-6 bg-gray-200 border-2 border-black">
                     <div
                       className="h-full bg-purple-600 transition-all duration-300"
                       style={{
@@ -312,7 +378,7 @@ print(result)`,
                     }
                     className="absolute top-0 w-full h-6 opacity-0 cursor-pointer"
                   />
-                  <div className="flex justify-between text-sm font-bold text-black mt-2 uppercase">
+                  <div className="flex justify-between text-xs font-bold text-black mt-2 uppercase font-mono">
                     <span>0.05 (SLOW)</span>
                     <span>0.15 (FAST)</span>
                   </div>
@@ -320,24 +386,25 @@ print(result)`,
               </div>
             </div>
 
-            <div className="border-l-8 border-orange-600 bg-orange-100 p-6 rounded-r-xl">
-              <p className="text-black font-bold text-lg">
-                NOTE: In reality, students have different learning rates, but
-                AFM uses this single value for all learners.
+            <div className="border-l-4 border-orange-600 bg-orange-50 p-4">
+              <p className="text-black font-bold text-sm font-mono">
+                NOTE: In reality, students have different learning rates, but AFM uses this single value for all learners.
               </p>
             </div>
 
-            <button
-              onClick={() => setCurrentView("task")}
-              className="px-8 py-4 bg-purple-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-purple-600 transition-all transform hover:scale-105 flex items-center gap-3 mx-auto"
-            >
-              <span>START SIMULATION</span>
-              <ArrowRight className="w-5 h-5" />
-            </button>
+            <div className="text-center">
+              <TechnicalButton
+                onClick={() => setCurrentView("task")}
+                variant="primary"
+                size="large"
+              >
+                START SIMULATION →
+              </TechnicalButton>
+            </div>
           </div>
-        </div>
+        </TechnicalCard>
       </div>
-    </Layout>
+    </TechnicalLayout>
   );
 
   const renderTask = () => {
@@ -346,295 +413,267 @@ print(result)`,
     const isLastStep = step === simulationSteps.length - 1;
 
     return (
-      <Layout title="Task: Uniform Learning Rates">
-        <div className="max-w-4xl mx-auto space-y-8">
-          <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
+      <TechnicalLayout title="Uniform Learning Rates" subtitle={`STEP ${step + 1}/${simulationSteps.length}`}>
+        <div className="max-w-4xl mx-auto space-y-6">
+          <TechnicalCard title={currentStep.title} description={currentStep.description}>
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-2xl font-bold text-black uppercase tracking-tight">
-                {currentStep.title}
-              </h3>
-              <div className="px-4 py-2 bg-purple-600 text-white font-bold border-4 border-black rounded-xl">
-                γ = {learningRate.toFixed(2)}
+              <div className="border border-black px-3 py-1 bg-purple-100">
+                <span className="font-mono text-sm">γ = {learningRate.toFixed(2)}</span>
               </div>
             </div>
+          </TechnicalCard>
 
-            <p className="text-center text-black mb-8 text-lg font-bold">
-              {currentStep.description}
-            </p>
+          <div className="space-y-4">
+            <TechnicalProgressBar
+              actual={currentStep.fastStudent.actual}
+              label="FAST LEARNER"
+              color="green"
+              showPredictionError={showErrors}
+              afmPrediction={currentStep.afmPrediction}
+            />
+            <TechnicalProgressBar
+              actual={currentStep.slowStudent.actual}
+              label="SLOW LEARNER"
+              color="red"
+              showPredictionError={showErrors}
+              afmPrediction={currentStep.afmPrediction}
+            />
 
-            <div className="space-y-6">
-              <ProbabilityBar
-                actual={currentStep.fastStudent.actual}
-                label="FAST LEARNER"
-                color="bg-green-600"
-                showPredictionError={showErrors}
-                afmPrediction={currentStep.afmPrediction}
-              />
-              <ProbabilityBar
-                actual={currentStep.slowStudent.actual}
-                label="SLOW LEARNER"
-                color="bg-red-600"
-                showPredictionError={showErrors}
-                afmPrediction={currentStep.afmPrediction}
-              />
-
-              {showErrors && (
-                <div className="border-4 border-black rounded-xl p-6 bg-yellow-100">
-                  <div className="text-center space-y-2">
-                    <span className="text-xl font-bold text-black uppercase tracking-wide">
-                      AFM UNIFORM PREDICTION:{" "}
-                      {(currentStep.afmPrediction * 100).toFixed(0)}%
-                    </span>
-                    <p className="text-lg font-bold text-black">
-                      SAME PREDICTION FOR BOTH STUDENTS USING γ ={" "}
-                      {learningRate.toFixed(2)}
-                    </p>
-                  </div>
+            {showErrors && (
+              <TechnicalCard accent="yellow">
+                <div className="text-center space-y-2">
+                  <span className="text-lg font-bold text-black uppercase tracking-wide font-mono">
+                    AFM UNIFORM PREDICTION: {(currentStep.afmPrediction * 100).toFixed(0)}%
+                  </span>
+                  <p className="text-sm font-bold text-black font-mono">
+                    SAME PREDICTION FOR BOTH STUDENTS USING γ = {learningRate.toFixed(2)}
+                  </p>
                 </div>
-              )}
-            </div>
+              </TechnicalCard>
+            )}
           </div>
 
           <div className="flex justify-center space-x-4">
-            <button
+            <TechnicalButton
               onClick={() => navigateStep(-1)}
               disabled={step === 0}
-              className="px-6 py-3 bg-gray-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide hover:bg-white hover:text-gray-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              variant="secondary"
             >
               ← PREVIOUS
-            </button>
+            </TechnicalButton>
 
-            <div className="px-6 py-3 bg-white border-4 border-black rounded-xl font-bold text-black uppercase tracking-wide">
+            <div className="border-2 border-black px-6 py-3 bg-white font-mono font-bold uppercase tracking-wide">
               STEP {step + 1} OF {simulationSteps.length}
             </div>
 
-            <button
+            <TechnicalButton
               onClick={isLastStep ? backToOverview : () => navigateStep(1)}
-              className={`px-6 py-3 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all ${
-                isLastStep
-                  ? "bg-green-600 hover:bg-white hover:text-green-600"
-                  : "bg-purple-600 hover:bg-white hover:text-purple-600"
-              }`}
+              variant={isLastStep ? "success" : "primary"}
             >
               {isLastStep ? "COMPLETE TASK ✓" : "NEXT →"}
-            </button>
+            </TechnicalButton>
           </div>
 
           {isLastStep && showErrors && (
-            <div className="border-l-8 border-orange-600 bg-orange-100 rounded-r-xl p-6">
-              <h4 className="font-bold text-black mb-4 text-xl uppercase tracking-wide">
-                KEY INSIGHTS:
-              </h4>
-              <ul className="text-lg font-bold text-black space-y-2">
+            <TechnicalCard accent="orange" title="Key Insights">
+              <ul className="text-sm font-bold text-black space-y-2 font-mono">
                 <li>• AFM USES THE SAME LEARNING RATE FOR ALL STUDENTS</li>
-                <li>
-                  • FAST LEARNERS EXCEED AFM PREDICTIONS (UNDER-PREDICTED)
-                </li>
-                <li>
-                  • SLOW LEARNERS FALL SHORT OF AFM PREDICTIONS (OVER-PREDICTED)
-                </li>
-                <li>
-                  • INDIVIDUAL DIFFERENCES IN LEARNING SPEED ARE NOT CAPTURED
-                </li>
+                <li>• FAST LEARNERS EXCEED AFM PREDICTIONS (UNDER-PREDICTED)</li>
+                <li>• SLOW LEARNERS FALL SHORT OF AFM PREDICTIONS (OVER-PREDICTED)</li>
+                <li>• INDIVIDUAL DIFFERENCES IN LEARNING SPEED ARE NOT CAPTURED</li>
               </ul>
-            </div>
+            </TechnicalCard>
           )}
         </div>
-      </Layout>
+      </TechnicalLayout>
     );
   };
 
   const renderIncorrectAnswers = () => (
-    <Layout title="How do Incorrect Answers Impact Success Probability?">
-      <div className="max-w-4xl mx-auto space-y-8">
-        <div className="text-center mb-6">
-          <p className="text-black text-xl font-bold leading-relaxed">
-            Answer the multiple-choice question below.{" "}
-            <span className="text-purple-600 font-bold underline decoration-4">
-              Pay attention to what happens to your success probability after
-              you submit your answer.
-            </span>
-          </p>
-        </div>
-
-        <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
+    <TechnicalLayout title="Incorrect Answers Impact" subtitle="ANALYSIS">
+      <div className="max-w-4xl mx-auto space-y-6">
+        <TechnicalCard 
+          title="Observe Success Probability Changes"
+          description="Answer the question below and watch how your success probability changes"
+        >
           <div className="flex justify-between items-center mb-4">
-            <span className="text-2xl font-bold text-black uppercase tracking-wide">
+            <span className="text-lg font-bold text-black uppercase tracking-wide font-mono">
               SUCCESS PROBABILITY: {(initialProb * 100).toFixed(0)}%
             </span>
             <div className="flex items-center space-x-4">
-              <span className="text-lg font-bold text-black">0%</span>
-              <div className="w-64 bg-gray-200 border-4 border-black rounded-none h-8 overflow-hidden">
+              <span className="text-sm font-bold text-black font-mono">0%</span>
+              <div className="w-64 bg-gray-200 border-2 border-black h-6">
                 <div
                   className="h-full bg-purple-600 transition-all duration-1000 ease-out"
                   style={{ width: `${initialProb * 100}%` }}
                 />
               </div>
-              <span className="text-lg font-bold text-black">100%</span>
+              <span className="text-sm font-bold text-black font-mono">100%</span>
             </div>
           </div>
-        </div>
+        </TechnicalCard>
 
-        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
-          <h2 className="text-3xl font-bold text-center mb-6 text-black uppercase tracking-tight">
-            {pythonQuestion.question}
-          </h2>
-          <p className="text-lg font-bold text-orange-600 text-center mb-6 bg-orange-100 p-4 border-4 border-orange-600 rounded-xl">
-            {pythonQuestion.hint}
-          </p>
+        <TechnicalCard title={pythonQuestion.question} accent="blue">
+          <div className="border-2 border-orange-600 bg-orange-50 p-4 mb-6">
+            <p className="text-sm font-bold text-orange-800 font-mono">
+              {pythonQuestion.hint}
+            </p>
+          </div>
 
-          <div className="bg-black text-green-400 p-6 rounded-xl font-['IBM_Plex_Mono',monospace] text-lg mb-8 border-4 border-black">
+          <div className="bg-black text-green-400 p-4 font-mono text-sm mb-6 border-2 border-black">
             <pre className="whitespace-pre-wrap">{pythonQuestion.code}</pre>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 max-w-md mx-auto mb-8">
+          <div className="grid grid-cols-2 gap-4 max-w-md mx-auto mb-6">
             {pythonQuestion.options.map((option, index) => (
-              <button
+              <TechnicalButton
                 key={index}
                 onClick={() => !showFeedback && handleAnswerSelect(option)}
                 disabled={showFeedback}
-                className={`px-6 py-4 border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide transition-all ${
-                  selectedAnswer === option
-                    ? "bg-red-600 text-white"
-                    : showFeedback
-                    ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                    : "bg-white text-black hover:bg-yellow-400 cursor-pointer transform hover:scale-105"
-                }`}
+                variant={selectedAnswer === option ? "danger" : "secondary"}
+                size="normal"
               >
                 {option}
-              </button>
+              </TechnicalButton>
             ))}
           </div>
 
           {showFeedback && (
-            <div className="space-y-6">
-              <div className="border-l-8 border-yellow-600 bg-yellow-100 p-6 rounded-r-xl">
-                <p className="text-black text-xl font-bold">
-                  Did you notice that your success probability increased, even
-                  though you got the answer wrong?{" "}
-                  <span className="text-yellow-700 underline decoration-4">
-                    There really wasn't a correct answer option.
-                  </span>{" "}
-                  This is another interesting characteristic of AFM, but it
-                  isn't necessarily a flaw.
+            <div className="space-y-4">
+              <div className="border-l-4 border-yellow-600 bg-yellow-50 p-4">
+                <p className="text-black text-sm font-bold font-mono">
+                  Did you notice that your success probability increased, even though you got the answer wrong?
+                  There really wasn't a correct answer option. This is an interesting characteristic of AFM.
                 </p>
               </div>
 
-              <div className="border-l-8 border-blue-600 bg-blue-100 p-6 rounded-r-xl">
-                <p className="text-black mb-3 text-xl font-bold">
-                  Why might it make sense for success probability to increase
-                  regardless of the correctness of your answer?{" "}
+              <div className="border-l-4 border-blue-600 bg-blue-50 p-4">
+                <p className="text-black mb-3 text-sm font-bold font-mono">
+                  Why might it make sense for success probability to increase regardless of correctness?{" "}
                   <button
                     onClick={() => setShowExplanation(true)}
-                    className="text-blue-700 font-bold hover:text-blue-800 underline cursor-pointer decoration-4"
+                    className="text-blue-700 font-bold hover:text-blue-800 underline cursor-pointer"
                   >
                     TELL ME!
                   </button>
                 </p>
                 {showExplanation && (
-                  <p className="text-black mt-4 text-lg font-bold bg-white p-4 border-4 border-blue-600 rounded-xl">
-                    Well, AFM considers every answer, wrong or right, as a
-                    learning opportunity that raises your success probability.
-                    As you might have experienced in real life, reviewing
-                    incorrect answers often helps to solidify your knowledge
-                    even more and reduce the chance that you'll make the same
-                    mistake again.
-                  </p>
+                  <div className="border-2 border-blue-600 bg-white p-4 mt-4">
+                    <p className="text-black text-sm font-bold font-mono">
+                      AFM considers every answer as a learning opportunity that raises your success probability.
+                      Reviewing incorrect answers often helps solidify knowledge and reduce future mistakes.
+                    </p>
+                  </div>
                 )}
               </div>
 
-              <div className="flex justify-center">
-                <button
+              <div className="text-center">
+                <TechnicalButton
                   onClick={() => setCurrentView("incorrect-answers-reflection")}
-                  className="px-8 py-4 bg-purple-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-purple-600 transition-all transform hover:scale-105 flex items-center gap-3"
+                  variant="primary"
+                  size="large"
                 >
-                  <span>CONTINUE</span>
-                  <ArrowRight className="w-5 h-5" />
-                </button>
+                  CONTINUE →
+                </TechnicalButton>
               </div>
             </div>
           )}
+        </TechnicalCard>
+      </div>
+    </TechnicalLayout>
+  );
+
+  const renderReflection = () => (
+    <TechnicalLayout title="Incorrect Answers Impact" subtitle="REFLECTION">
+      <div className="max-w-4xl mx-auto space-y-6">
+        <TechnicalCard 
+          title="Critical Analysis" 
+          description="Evaluate AFM's approach to incorrect answers"
+          size="large"
+          accent="orange"
+        >
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-black uppercase tracking-wider font-mono mb-4">
+              Should answering incorrectly always increase success probability?
+            </h2>
+            <p className="text-lg font-bold text-black font-mono">
+              Consider the implications of AFM's current approach
+            </p>
+          </div>
+        </TechnicalCard>
+
+        <TechnicalCard title="Perspective Analysis" accent="blue">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="border-l-4 border-green-600 bg-green-50 p-4">
+              <h3 className="font-bold text-green-700 mb-3 text-lg uppercase tracking-wide font-mono">
+                ARGUMENTS FOR
+              </h3>
+              <ul className="space-y-2 text-black font-mono text-sm">
+                <li>• EVERY INTERACTION = LEARNING OPPORTUNITY</li>
+                <li>• WRONG ANSWERS → DEEPER UNDERSTANDING</li>
+                <li>• ENCOURAGES CONTINUED ENGAGEMENT</li>
+                <li>• MISTAKES PART OF LEARNING PROCESS</li>
+              </ul>
+            </div>
+            
+            <div className="border-l-4 border-red-600 bg-red-50 p-4">
+              <h3 className="font-bold text-red-700 mb-3 text-lg uppercase tracking-wide font-mono">
+                ARGUMENTS AGAINST
+              </h3>
+              <ul className="space-y-2 text-black font-mono text-sm">
+                <li>• RANDOM GUESSING STILL INCREASES PROBABILITY</li>
+                <li>• NO DISTINCTION: THOUGHTFUL VS CARELESS</li>
+                <li>• REINFORCES INCORRECT PATTERNS</li>
+                <li>• UNREALISTIC SUCCESS PREDICTIONS</li>
+              </ul>
+            </div>
+          </div>
+        </TechnicalCard>
+
+        <div className="text-center">
+          <TechnicalButton
+            onClick={backToOverview}
+            variant="primary"
+            size="large"
+          >
+            ← RETURN TO OVERVIEW
+          </TechnicalButton>
         </div>
       </div>
-    </Layout>
+    </TechnicalLayout>
   );
 
   const renderNoForgetting = () => (
-    <div className="bg-white min-h-screen flex flex-col items-center py-8 px-4 md:px-10 text-black font-['IBM_Plex_Mono',monospace]">
-      <div className="w-full max-w-6xl mx-auto flex flex-col gap-8">
-        {/* Header */}
-        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
-          <div className="absolute -top-6 left-4 px-3 py-1 bg-red-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
-            <Brain className="w-4 h-4" />
-            MEMORY EXPERIMENT
-          </div>
-          <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center">
-            When does your success probability decrease?
-          </div>
-        </div>
-
-        {/* Scenario Description */}
-        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
-          <div className="absolute -top-6 left-4 px-3 py-1 bg-blue-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
-            <Clock className="w-4 h-4" />
-            SCENARIO
-          </div>
-
-          <div className="border-4 border-blue-600 rounded-xl p-6 bg-blue-50 mb-6">
-            <p className="text-black text-lg leading-relaxed font-mono">
-              Aileen is a student who has been learning Python for 3 months.
-              Today, she tested her knowledge of programming in Python with AFM
-              and received a success probability of{" "}
-              <span className="bg-yellow-300 px-2 py-1 border-2 border-black rounded font-bold">
-                80%
-              </span>
-              . If Kris doesn't review or practice Python after today, what do
-              you predict her success probability to be in:
+    <TechnicalLayout title="No Forgetting Assumption" subtitle="MEMORY DECAY EXPERIMENT">
+      <div className="max-w-4xl mx-auto space-y-6">
+        <TechnicalCard 
+          title="Memory Decay Scenario"
+          description="Predict how success probability changes over time without practice"
+          size="large"
+        >
+          <div className="border-2 border-blue-600 bg-blue-50 p-6">
+            <p className="text-black text-lg font-mono leading-relaxed">
+              <strong>SCENARIO:</strong> Aileen learned Python for 3 months and achieved an{" "}
+              <span className="bg-yellow-300 px-2 py-1 border-2 border-black font-bold">
+                80% SUCCESS PROBABILITY
+              </span>{" "}
+              in AFM. If she doesn't practice Python after today, predict her success probability:
             </p>
           </div>
-        </div>
+        </TechnicalCard>
 
         {!showAnswer ? (
           <>
-            {/* Time Period Sliders */}
-            <div className="space-y-6">
+            <div className="space-y-4">
               {[
-                {
-                  label: "5 days",
-                  key: "days",
-                  color: "orange-600",
-                  bgColor: "orange-100",
-                  icon: Calendar,
-                },
-                {
-                  label: "2 months",
-                  key: "months",
-                  color: "purple-600",
-                  bgColor: "purple-100",
-                  icon: Calendar,
-                },
-                {
-                  label: "1 year",
-                  key: "year",
-                  color: "red-600",
-                  bgColor: "red-100",
-                  icon: Calendar,
-                },
-              ].map(({ label, key, color, bgColor, icon: Icon }) => (
-                <div
-                  key={key}
-                  className="border-4 border-black rounded-xl p-6 bg-white shadow-lg relative"
-                >
-                  <div
-                    className={`absolute -top-6 left-4 px-3 py-1 bg-${color} text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2`}
-                  >
-                    <Icon className="w-4 h-4" />
-                    {label.toUpperCase()}
-                  </div>
-
+                { label: "5 DAYS", key: "days", accent: "orange" },
+                { label: "2 MONTHS", key: "months", accent: "purple" },
+                { label: "1 YEAR", key: "year", accent: "red" },
+              ].map(({ label, key, accent }) => (
+                <TechnicalCard key={key} title={label} accent={accent}>
                   <div className="flex items-center justify-between mb-4">
-                    <span className="text-black font-bold text-xl font-mono">
-                      Success Rate: {(sliderValues[key] * 100).toFixed(1)}%
+                    <span className="text-lg font-bold text-black font-mono">
+                      PREDICTED SUCCESS: {(sliderValues[key] * 100).toFixed(1)}%
                     </span>
                     <div className="flex items-center space-x-2 text-sm text-gray-600 font-mono">
                       <span>0%</span>
@@ -642,11 +681,11 @@ print(result)`,
                       <span>100%</span>
                     </div>
                   </div>
-
+                  
                   <div className="relative">
-                    <div className="w-full bg-gray-300 border-2 border-black rounded-full h-8 overflow-hidden">
+                    <div className="w-full bg-gray-200 border-2 border-black h-8">
                       <div
-                        className={`h-full bg-${color} transition-all duration-300 border-r-2 border-black`}
+                        className={`h-full bg-${accent === "orange" ? "orange" : accent === "purple" ? "purple" : "red"}-600 transition-all duration-300`}
                         style={{ width: `${sliderValues[key] * 100}%` }}
                       />
                     </div>
@@ -656,333 +695,207 @@ print(result)`,
                       max="1"
                       step="0.1"
                       value={sliderValues[key]}
-                      onChange={(e) =>
-                        handleSliderChange(key, parseFloat(e.target.value))
-                      }
+                      onChange={(e) => handleSliderChange(key, parseFloat(e.target.value))}
                       className="absolute top-0 w-full h-8 opacity-0 cursor-pointer"
                     />
-                    <div
-                      className="absolute top-0 w-8 h-8 bg-black border-2 border-white rounded-full cursor-pointer transform -translate-x-4 flex items-center justify-center"
-                      style={{ left: `${sliderValues[key] * 100}%` }}
-                    >
-                      <div className="w-2 h-2 bg-white rounded-full"></div>
-                    </div>
                   </div>
-                </div>
+                </TechnicalCard>
               ))}
             </div>
 
-            {/* General Question */}
-            <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
-              <div className="absolute -top-6 left-4 px-3 py-1 bg-green-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4" />
-                PREDICTION
-              </div>
-
-              <div className="border-4 border-green-600 rounded-xl p-6 bg-green-50 mb-6">
-                <p className="text-black font-mono text-lg mb-4 font-bold">
-                  In general, when do you think the success probability starts
-                  decreasing?
+            <TechnicalCard title="General Prediction" accent="green">
+              <div className="text-center space-y-4">
+                <p className="text-black font-mono text-lg font-bold">
+                  WHEN DOES SUCCESS PROBABILITY START DECREASING?
                 </p>
-                <div className="flex items-center space-x-4 justify-center flex-wrap gap-4">
-                  <input
-                    type="number"
-                    value={userGuess.value}
-                    onChange={(e) =>
-                      setUserGuess((prev) => ({
-                        ...prev,
-                        value: parseInt(e.target.value) || 0,
-                      }))
-                    }
-                    className="w-24 px-4 py-3 border-4 border-black rounded-lg text-center font-bold text-xl font-mono bg-white focus:bg-yellow-100 focus:outline-none"
-                    min="1"
-                  />
-                  <select
-                    value={userGuess.unit}
-                    onChange={(e) =>
-                      setUserGuess((prev) => ({
-                        ...prev,
-                        unit: e.target.value,
-                      }))
-                    }
-                    className="px-4 py-3 border-4 border-black rounded-lg bg-white font-bold font-mono text-lg focus:bg-yellow-100 focus:outline-none"
-                  >
-                    <option value="days">DAYS</option>
-                    <option value="weeks">WEEKS</option>
-                    <option value="months">MONTHS</option>
-                    <option value="years">YEARS</option>
-                  </select>
+                <div className="flex items-center justify-center space-x-4 flex-wrap gap-4">
+                  <div className="border-2 border-black bg-white">
+                    <input
+                      type="number"
+                      value={userGuess.value}
+                      onChange={(e) => setUserGuess(prev => ({ ...prev, value: parseInt(e.target.value) || 0 }))}
+                      className="w-24 px-4 py-3 text-center font-bold text-xl font-mono bg-white focus:bg-yellow-100 focus:outline-none border-none"
+                      min="1"
+                    />
+                  </div>
+                  <div className="border-2 border-black bg-white">
+                    <select
+                      value={userGuess.unit}
+                      onChange={(e) => setUserGuess(prev => ({ ...prev, unit: e.target.value }))}
+                      className="px-4 py-3 bg-white font-bold font-mono text-lg focus:bg-yellow-100 focus:outline-none border-none"
+                    >
+                      <option value="days">DAYS</option>
+                      <option value="weeks">WEEKS</option>
+                      <option value="months">MONTHS</option>
+                      <option value="years">YEARS</option>
+                    </select>
+                  </div>
                   <span className="text-black font-mono font-bold">
-                    after you stop reviewing the material.
+                    AFTER STOPPING PRACTICE
                   </span>
                 </div>
               </div>
-            </div>
+            </TechnicalCard>
 
-            {/* Submit Button */}
-            <div className="flex justify-center">
-              <button
+            <div className="text-center">
+              <TechnicalButton
                 onClick={handleGuessSubmit}
-                className="px-8 py-4 bg-black text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-black hover:border-black transition-all transform hover:scale-105 font-mono"
+                variant="primary"
+                size="large"
               >
-                Submit Answer
-              </button>
+                SUBMIT PREDICTION
+              </TechnicalButton>
             </div>
           </>
         ) : (
           <div className="space-y-6">
-            {/* User's Guess Display */}
-            <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg relative">
-              <div className="absolute -top-6 left-4 px-3 py-1 bg-orange-600 text-white font-semibold rounded-md text-xs tracking-wider">
-                YOUR GUESS
-              </div>
-              <div className="border-l-8 border-orange-600 bg-orange-100 p-4 rounded-r-lg">
+            <TechnicalCard title="Your Prediction" accent="orange">
+              <div className="text-center">
                 <p className="text-black font-bold font-mono text-lg">
-                  You guessed: {userGuess.value} {userGuess.unit}
+                  YOU PREDICTED: {userGuess.value} {userGuess.unit.toUpperCase()}
                 </p>
               </div>
-            </div>
+            </TechnicalCard>
 
-            {/* Reveal Section */}
-            <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
-              <div className="absolute -top-6 left-4 px-3 py-1 bg-purple-600 text-white font-semibold rounded-md text-xs tracking-wider">
-                THE ANSWER
-              </div>
-
-              <div className="text-black font-mono text-lg mb-6">
-                <p className="mb-4 leading-relaxed">
-                  Alright, now that you've submitted your guesses, it's time to
-                  reveal the answer! AFM will start decreasing your success
-                  probability...
+            <TechnicalCard title="AFM's Reality" accent="red">
+              <div className="text-center space-y-4">
+                <p className="text-black font-mono text-lg">
+                  AFM will start decreasing your success probability...
                 </p>
-                <button
-                  onClick={() => setShowTellMeAnswer(true)}
-                  className="px-6 py-3 bg-purple-600 text-white border-4 border-black rounded-lg font-bold uppercase tracking-wide hover:bg-white hover:text-purple-600 hover:border-purple-600 transition-all transform hover:scale-105"
-                >
-                  Tell me!
-                </button>
+                {!showTellMeAnswer && (
+                  <TechnicalButton
+                    onClick={() => setShowTellMeAnswer(true)}
+                    variant="danger"
+                    size="large"
+                  >
+                    REVEAL ANSWER
+                  </TechnicalButton>
+                )}
               </div>
+            </TechnicalCard>
 
-              {showTellMeAnswer && (
-                <>
-                  {/* The Answer */}
-                  <div className="border-4 border-blue-600 rounded-xl p-6 bg-blue-50 mb-6">
-                    <div className="flex items-center gap-2 mb-4">
-                      <Brain className="w-6 h-6 text-blue-700" />
-                      <span className="font-bold text-blue-700 text-xl uppercase tracking-wide">
-                        The Truth
+            {showTellMeAnswer && (
+              <>
+                <TechnicalCard title="The Truth" accent="blue">
+                  <div className="text-center space-y-4">
+                    <div className="bg-red-300 border-2 border-black px-6 py-4 inline-block">
+                      <span className="text-black font-bold text-2xl font-mono">
+                        NEVER!
                       </span>
                     </div>
-                    <p className="text-black font-mono text-lg leading-relaxed">
-                      <span className="bg-red-300 px-2 py-1 border-2 border-black rounded font-bold">
-                        NEVER!
-                      </span>{" "}
-                      AFM assumes that once you've mastered a skill, you'll
-                      never forget it. Your probability of success will remain
-                      at 80% indefinitely, whether it's been 5 days, 2 months,
-                      or even 1 year since you last practiced Python.
+                    <p className="text-black font-mono text-lg">
+                      AFM assumes once you've mastered a skill, you'll never forget it.
+                      Your 80% success probability remains constant indefinitely.
                     </p>
                   </div>
+                </TechnicalCard>
 
-                  {/* Limitations */}
-                  <div className="border-4 border-yellow-600 rounded-xl p-6 bg-yellow-50">
-                    <div className="flex items-center gap-2 mb-4">
-                      <AlertTriangle className="w-6 h-6 text-yellow-700" />
-                      <span className="font-bold text-yellow-700 text-xl uppercase tracking-wide">
-                        Why is this a limitation?
-                      </span>
+                <TechnicalCard title="Why This Is Problematic" accent="yellow">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="border-l-4 border-yellow-600 bg-white p-4">
+                      <p className="text-black font-mono text-sm font-bold">
+                        • SKILLS DECAY WITHOUT PRACTICE
+                      </p>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="border-l-4 border-yellow-600 bg-white p-4 rounded-r-lg">
-                        <p className="text-black font-mono text-sm">
-                          • Skills can decay over time without practice
-                        </p>
-                      </div>
-                      <div className="border-l-4 border-yellow-600 bg-white p-4 rounded-r-lg">
-                        <p className="text-black font-mono text-sm">
-                          • May lead to overconfident predictions
-                        </p>
-                      </div>
-                      <div className="border-l-4 border-yellow-600 bg-white p-4 rounded-r-lg">
-                        <p className="text-black font-mono text-sm">
-                          • Doesn't match human learning patterns
-                        </p>
-                      </div>
-                      <div className="border-l-4 border-yellow-600 bg-white p-4 rounded-r-lg">
-                        <p className="text-black font-mono text-sm">
-                          • Systems might not provide adequate review
-                        </p>
-                      </div>
+                    <div className="border-l-4 border-yellow-600 bg-white p-4">
+                      <p className="text-black font-mono text-sm font-bold">
+                        • OVERCONFIDENT PREDICTIONS
+                      </p>
+                    </div>
+                    <div className="border-l-4 border-yellow-600 bg-white p-4">
+                      <p className="text-black font-mono text-sm font-bold">
+                        • DOESN'T MATCH HUMAN LEARNING
+                      </p>
+                    </div>
+                    <div className="border-l-4 border-yellow-600 bg-white p-4">
+                      <p className="text-black font-mono text-sm font-bold">
+                        • INADEQUATE REVIEW SCHEDULING
+                      </p>
                     </div>
                   </div>
-                </>
-              )}
-            </div>
+                </TechnicalCard>
+              </>
+            )}
 
-            {/* Back Button */}
-            <div className="flex justify-center">
-              <button
-                onClick={() => backToOverview()}
-                className="px-8 py-4 bg-black text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-black hover:border-black transition-all transform hover:scale-105 flex items-center gap-3 font-mono"
+            <div className="text-center">
+              <TechnicalButton
+                onClick={backToOverview}
+                variant="primary"
+                size="large"
               >
-                <ArrowLeft className="w-5 h-5" />
-                <span>Go Back</span>
-              </button>
+                ← RETURN TO OVERVIEW
+              </TechnicalButton>
             </div>
           </div>
         )}
       </div>
-    </div>
-  );
-
-  const renderReflection = () => (
-    <Layout title="Reflection: Incorrect Answers">
-      <div className="max-w-4xl mx-auto">
-        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg text-center">
-          <h2 className="text-3xl font-bold mb-6 text-black uppercase tracking-tight">
-            Do you think answering incorrectly should always increase success
-            probability?
-          </h2>
-
-          <div className="text-black mb-8 space-y-6">
-            <p className="text-xl font-bold">
-              Take a moment to think about this question and when you're ready,
-              click the button below to return to the main scenario menu.
-            </p>
-
-            <div className="border-4 border-black rounded-xl p-6 bg-gray-100 text-left">
-              <h3 className="font-bold text-black mb-4 text-xl uppercase tracking-wide">
-                Consider these perspectives:
-              </h3>
-              <ul className="space-y-3 text-lg font-bold">
-                <li className="flex items-start gap-2">
-                  <span className="text-green-600 font-bold">PRO:</span>
-                  <span>Every interaction is a learning opportunity</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-green-600 font-bold">PRO:</span>
-                  <span>Wrong answers can lead to deeper understanding</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-red-600 font-bold">CON:</span>
-                  <span>
-                    Guessing randomly would still increase success probability
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-red-600 font-bold">CON:</span>
-                  <span>
-                    No distinction between thoughtful errors and careless
-                    mistakes
-                  </span>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <button
-            onClick={backToOverview}
-            className="px-8 py-4 bg-black text-white border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide hover:bg-white hover:text-black transition-all transform hover:scale-105 flex items-center gap-3 mx-auto"
-          >
-            <ArrowRight className="w-5 h-5 rotate-180" />
-            <span>GO BACK</span>
-          </button>
-        </div>
-      </div>
-    </Layout>
+    </TechnicalLayout>
   );
 
   const renderOverview = () => (
-    <div className="bg-white min-h-screen flex flex-col text-black font-['IBM_Plex_Mono',monospace] py-8 px-4 md:px-10">
-      <div className="w-full max-w-6xl mx-auto flex flex-col gap-8">
-        {/* Header */}
-        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
-          <div className="absolute -top-6 left-4 px-3 py-1 bg-black text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4" />
-            AFM LIMITATIONS
+    <TechnicalLayout>
+      <div className="max-w-6xl mx-auto space-y-6">
+        <TechnicalCard 
+          title="Mission Objective"
+          description="Complete all scenarios to understand AFM's limitations"
+          size="large"
+        >
+          <div className="text-center">
+            <div className="bg-yellow-300 border-2 border-black px-6 py-3 inline-block mb-4">
+              <span className="text-black font-bold text-xl font-mono">
+                PROGRESS: {completedScenarios.size} / 6 SCENARIOS COMPLETE
+              </span>
+            </div>
+            <p className="text-black font-mono text-lg">
+              Explore each limitation through hands-on experimentation
+            </p>
           </div>
-          <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center">
-            Explore AFM's limitations through interactive scenarios
-          </div>
-          <p className="text-lg text-black text-center mt-4 font-bold">
-            Complete all six scenarios below to proceed.
-          </p>
-        </div>
+        </TechnicalCard>
 
-        {/* Progress Indicator */}
-        <div className="border-4 border-black rounded-xl p-4 bg-yellow-400 text-center">
-          <span className="text-black font-bold text-xl uppercase tracking-wide">
-            {completedScenarios.size} / 6 SCENARIOS COMPLETE
-          </span>
-        </div>
-
-        {/* Scenarios Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {scenarios.map((scenario) => {
             const isCompleted = completedScenarios.has(scenario.id);
             const IconComponent = scenario.icon;
-            const colorClasses = {
-              red: "bg-red-100 border-red-600 text-red-700",
-              blue: "bg-blue-100 border-blue-600 text-blue-700",
-              green: "bg-green-100 border-green-600 text-green-700",
-              purple: "bg-purple-100 border-purple-600 text-purple-700",
-              orange: "bg-orange-100 border-orange-600 text-orange-700",
-              pink: "bg-pink-100 border-pink-600 text-pink-700",
-            };
 
             return (
-              <div
+              <TechnicalCard
                 key={scenario.id}
-                className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative"
+                title={scenario.title}
+                accent={scenario.color}
+                size="large"
               >
-                <div
-                  className={`absolute -top-6 left-4 px-3 py-1 font-semibold rounded-md text-xs tracking-wider flex items-center gap-2 border-4 border-black ${
-                    colorClasses[scenario.color]
-                  }`}
-                >
-                  <IconComponent className="w-4 h-4" />
-                  SCENARIO
-                </div>
-
-                <div className="text-center space-y-6">
+                <div className="text-center space-y-4">
                   <div className="flex items-center justify-center space-x-4">
-                    <h3 className="text-2xl font-bold text-black uppercase tracking-tight">
-                      {scenario.title}
-                    </h3>
+                    <IconComponent className="w-8 h-8 text-black" />
                     {isCompleted && (
                       <CheckCircle className="w-8 h-8 text-green-600" />
                     )}
                   </div>
 
-                  <button
-                    className={`w-full px-6 py-4 border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide transition-all transform hover:scale-105 ${
-                      isCompleted
-                        ? "bg-green-600 text-white hover:bg-white hover:text-green-600"
-                        : "bg-purple-600 text-white hover:bg-white hover:text-purple-600"
-                    }`}
+                  <TechnicalButton
                     onClick={() => handleBeginTask(scenario.id)}
+                    variant={isCompleted ? "success" : "primary"}
+                    size="large"
                   >
-                    {isCompleted ? "REVIEW" : "BEGIN"}
-                  </button>
+                    {isCompleted ? "REVIEW SCENARIO" : "BEGIN SCENARIO"}
+                  </TechnicalButton>
                 </div>
-              </div>
+              </TechnicalCard>
             );
           })}
         </div>
-      </div>
 
-        <div className="flex justify-center mt-12">
-            <button
-              className="px-12 py-4 bg-green-600 text-white border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide hover:bg-white hover:text-green-600 hover:border-green-600 transition-all transform hover:scale-105 flex items-center gap-3 font-['IBM_Plex_Mono',monospace]"
-              onClick={() => {
-                scroll(18);
-              }}
-            >
-              <span>Continue to Next Section</span>
-              <ArrowRight className="w-6 h-6" />
-            </button>
+        <div className="text-center mt-12">
+          <TechnicalButton
+            onClick={() => scroll(17)}
+            variant="success"
+            size="large"
+          >
+            CONTINUE TO NEXT SECTION →
+          </TechnicalButton>
         </div>
-    </div>
+      </div>
+    </TechnicalLayout>
   );
 
   // Main render logic

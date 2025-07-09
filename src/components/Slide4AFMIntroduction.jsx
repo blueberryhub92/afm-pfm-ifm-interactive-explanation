@@ -54,36 +54,41 @@ export const Slide4AFMIntroduction = ({ scroll }) => {
   };
 
   const BaselineProficiencyTooltip = () => (
-    <div className="fixed z-50 top-8 right-4 bg-white border-4 border-purple-700 rounded-xl shadow-lg p-6 w-96 font-['IBM_Plex_Mono',monospace]">
-      <div className="absolute -top-6 right-4 px-3 py-1 bg-purple-700 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
-        <Brain className="w-4 h-4" />
+    <div className="fixed z-50 top-8 right-4 bg-white border-2 border-black shadow-lg p-6 w-96 font-mono">
+      {/* Technical corner brackets */}
+      <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-black"></div>
+      <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-black"></div>
+      <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-black"></div>
+      <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-black"></div>
+      
+      <div className="absolute -top-4 left-4 px-3 py-1 bg-black text-white font-mono text-xs tracking-wider border border-white">
         BASELINE PROFICIENCY (θ)
       </div>
       
-      <h4 className="font-bold text-purple-800 mb-4 text-lg uppercase tracking-wide">How AFM Determines Baseline Proficiency</h4>
+      <h4 className="font-bold text-black mb-4 text-lg uppercase tracking-wider">AFM BASELINE DETERMINATION</h4>
       
-      <p className="text-black text-sm leading-relaxed mb-4 font-semibold">
-        Before you attempt any tasks, AFM estimates your baseline proficiency using several methods:
+      <p className="text-black text-sm leading-relaxed mb-4 font-mono">
+        SYSTEM ESTIMATES BASELINE PROFICIENCY VIA MULTIPLE PARAMETERS:
       </p>
       
-      <div className="space-y-3 text-sm">
-        <div className="border-2 border-black rounded p-2 bg-neutral-50">
-          <strong className="text-purple-700">PRIOR ASSESSMENTS:</strong> <span className="text-black">Previous performance on similar skills</span>
+      <div className="space-y-3 text-sm font-mono">
+        <div className="border-2 border-black p-2 bg-white">
+          <span className="text-black font-bold">PRIOR ASSESSMENTS:</span> PREVIOUS SKILL PERFORMANCE
         </div>
-        <div className="border-2 border-black rounded p-2 bg-neutral-50">
-          <strong className="text-purple-700">SELF-REPORTED:</strong> <span className="text-black">Your stated familiarity with Python</span>
+        <div className="border-2 border-black p-2 bg-white">
+          <span className="text-black font-bold">SELF-REPORTED:</span> DECLARED PYTHON FAMILIARITY
         </div>
-        <div className="border-2 border-black rounded p-2 bg-neutral-50">
-          <strong className="text-purple-700">DEMOGRAPHICS:</strong> <span className="text-black">Education level, programming background</span>
+        <div className="border-2 border-black p-2 bg-white">
+          <span className="text-black font-bold">DEMOGRAPHICS:</span> EDUCATION & PROGRAMMING BACKGROUND
         </div>
-        <div className="border-2 border-black rounded p-2 bg-neutral-50">
-          <strong className="text-purple-700">DIAGNOSTIC TESTS:</strong> <span className="text-black">Quick skills assessment</span>
+        <div className="border-2 border-black p-2 bg-white">
+          <span className="text-black font-bold">DIAGNOSTIC TESTS:</span> RAPID SKILLS ASSESSMENT
         </div>
       </div>
       
       <button
         onClick={() => setHoveredTerm(null)}
-        className="absolute top-2 right-2 px-2 py-1 rounded border-2 border-black bg-purple-700 text-white font-bold hover:bg-white hover:text-purple-700 transition-colors"
+        className="absolute top-2 right-2 w-6 h-6 border-2 border-black bg-white text-black font-bold hover:bg-black hover:text-white transition-colors font-mono"
       >
         X
       </button>
@@ -91,78 +96,109 @@ export const Slide4AFMIntroduction = ({ scroll }) => {
   );
 
   return (
-    <div className="bg-white min-h-screen flex flex-col items-center justify-center py-8 px-4 md:px-10 text-black font-['IBM_Plex_Mono',monospace]">
-      <div className="w-full max-w-4xl mx-auto flex flex-col gap-8">
+    <div className="bg-white min-h-screen font-mono relative">
+      {/* Grid background */}
+      <div 
+        className="absolute inset-0 opacity-60"
+        style={{
+          backgroundImage: 'linear-gradient(to right, #d1d5db 1px, transparent 1px), linear-gradient(to bottom, #d1d5db 1px, transparent 1px)',
+          backgroundSize: '20px 20px'
+        }}
+      />
+      
+      <div className="relative flex flex-col items-center justify-center py-8 px-4 md:px-10 text-black">
+        <div className="w-full max-w-4xl mx-auto flex flex-col gap-8">
 
-        {/* Adaptive Learning Block */}
-        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
-          <div className="absolute -top-6 left-6 px-4 py-2 bg-orange-600 text-white font-semibold rounded-md text-sm tracking-wider flex items-center gap-2">
-            <Zap className="w-4 h-4" />
-            ADAPTIVE LEARNING
-          </div>
-          
-          <div className="space-y-6 text-lg font-semibold leading-relaxed">
-            <p className="text-black">
-              But why is knowing this success probability so valuable? It enables <span className="bg-orange-200 px-2 py-1 border-2 border-black rounded font-bold uppercase">adaptive learning</span> – the system can automatically adjust the difficulty and type of questions based on your predicted performance.
-            </p>
+          {/* Adaptive Learning Block */}
+          <div className="border-2 border-black p-8 bg-white shadow-lg relative">
+            {/* Technical corner brackets */}
+            <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-black"></div>
+            <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-black"></div>
+            <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-black"></div>
+            <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-black"></div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="border-4 border-red-600 rounded-xl p-4 bg-red-50">
-                <div className="font-bold text-red-800 text-center mb-2 uppercase tracking-wide">Low (e.g., &lt;30%)</div>
-                <div className="text-sm text-red-700 text-center font-semibold">Easier tasks to build confidence</div>
-              </div>
-              <div className="border-4 border-yellow-600 rounded-xl p-4 bg-yellow-50">
-                <div className="font-bold text-yellow-800 text-center mb-2 uppercase tracking-wide">Medium (e.g., 30-80%)</div>
-                <div className="text-sm text-yellow-700 text-center font-semibold">Balanced practice problems</div>
-              </div>
-              <div className="border-4 border-green-600 rounded-xl p-4 bg-green-50">
-                <div className="font-bold text-green-800 text-center mb-2 uppercase tracking-wide">High (e.g., &gt;80%)</div>
-                <div className="text-sm text-green-700 text-center font-semibold">Challenging problems to accelerate</div>
+            <div className="absolute -top-4 left-6 px-3 py-1 bg-black text-white font-mono text-xs tracking-wider border border-white">
+              ADAPTIVE LEARNING SYSTEM
+            </div>
+            
+            <div className="space-y-6 text-lg font-mono leading-relaxed">
+              <p className="text-black">
+                SUCCESS PROBABILITY ENABLES <span className="bg-white border-2 border-black px-2 py-1 font-bold uppercase">ADAPTIVE LEARNING</span> – 
+                AUTOMATIC DIFFICULTY ADJUSTMENT BASED ON PREDICTED PERFORMANCE METRICS.
+              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="border-2 border-black p-4 bg-white relative">
+                  <div className="absolute top-1 right-1 w-2 h-2 border border-black bg-white"></div>
+                  <div className="font-bold text-black text-center mb-2 uppercase tracking-wider">LOW (&lt;30%)</div>
+                  <div className="text-sm text-black text-center font-mono">EASIER TASKS • CONFIDENCE BUILDING</div>
+                </div>
+                <div className="border-2 border-black p-4 bg-white relative">
+                  <div className="absolute top-1 right-1 w-2 h-2 border border-black bg-white"></div>
+                  <div className="font-bold text-black text-center mb-2 uppercase tracking-wider">MEDIUM (30-80%)</div>
+                  <div className="text-sm text-black text-center font-mono">BALANCED PRACTICE • SKILL DEVELOPMENT</div>
+                </div>
+                <div className="border-2 border-black p-4 bg-white relative">
+                  <div className="absolute top-1 right-1 w-2 h-2 border border-black bg-white"></div>
+                  <div className="font-bold text-black text-center mb-2 uppercase tracking-wider">HIGH (&gt;80%)</div>
+                  <div className="text-sm text-black text-center font-mono">CHALLENGING PROBLEMS • ACCELERATION</div>
+                </div>
               </div>
             </div>
           </div>
+
+          {/* Parameters Block */}
+          <div className="border-2 border-black p-8 bg-white shadow-lg relative">
+            {/* Technical corner brackets */}
+            <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-black"></div>
+            <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-black"></div>
+            <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-black"></div>
+            <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-black"></div>
+            
+            <div className="absolute -top-4 left-6 px-3 py-1 bg-black text-white font-mono text-xs tracking-wider border border-white">
+              PARAMETER ANALYSIS
+            </div>
+            
+            <div className="space-y-6 text-lg font-mono leading-relaxed">
+              <div className="border border-black p-1 inline-block">
+                <h3 className="font-bold text-lg text-black tracking-wider uppercase px-2">
+                  SYSTEM IDENTIFICATION
+                </h3>
+              </div>
+              
+              <div className="border border-black p-4 bg-gray-50">
+                <p className="text-black leading-relaxed font-mono text-sm">
+                  First <span className="bg-purple-200 px-1 border border-black font-bold">AFM PARAMETER</span> is <span className="bg-yellow-200 px-1 border border-black font-bold">θ (THETA)</span>, representing{' '}
+                  <span 
+                    ref={baselineRef}
+                    className="cursor-pointer bg-blue-200 px-1 border border-black font-bold hover:bg-blue-300 transition-colors"
+                    onMouseEnter={() => handleMouseEnter('baseline-proficiency')}
+                    onMouseLeave={() => setHoveredTerm(null)}
+                  >
+                    BASELINE PROFICIENCY
+                  </span>
+                  . Model estimates <span className="bg-green-200 px-1 border border-black font-bold">ABILITY</span> before specific <span className="bg-red-200 px-1 border border-black font-bold">SKILL EXECUTION</span>. <span className="bg-purple-200 px-1 border border-black font-bold">AFM</span> formula construction proceeding in <span className="bg-orange-200 px-1 border border-black font-bold">LOWER RIGHT QUADRANT</span>.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Navigation Control */}
+          <div className="text-center">
+            <button
+              onClick={() => scroll(5)}
+              className="px-12 py-4 bg-black text-white border-2 border-black font-bold text-xl uppercase tracking-wider hover:bg-white hover:text-black transition-all duration-200 shadow-lg font-mono relative"
+            >
+              {/* Technical corner marker */}
+              <div className="absolute top-1 right-1 w-2 h-2 border border-white bg-black"></div>
+              NEXT MODULE →
+            </button>
+          </div>
         </div>
 
-        {/* Parameters Block */}
-        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
-          <div className="absolute -top-6 left-6 px-4 py-2 bg-purple-600 text-white font-semibold rounded-md text-sm tracking-wider flex items-center gap-2">
-            <Target className="w-4 h-4" />
-            PARAMETERS
-          </div>
-          
-          <div className="space-y-6 text-lg font-semibold leading-relaxed">
-            <p className="text-black">
-              And <em className="font-bold text-purple-700 uppercase">guess what?</em> You already know about the first parameter of AFM, <span 
-                className="bg-purple-300 px-2 py-1 border-2 border-black rounded font-bold uppercase transition-colors"
-              >
-                θ
-              </span>, which is the{' '}
-              <span 
-                ref={baselineRef}
-                className="relative cursor-pointer border-4 border-purple-600 bg-purple-100 px-2 py-1 rounded font-bold text-purple-800 uppercase hover:bg-purple-200 transition-colors"
-                onMouseEnter={() => handleMouseEnter('baseline-proficiency')}
-                onMouseLeave={() => setHoveredTerm(null)}
-              >
-                baseline proficiency
-              </span>
-              . This is what the model estimates about your ability before seeing you work on specific skills. Watch the AFM formula build up in the lower right corner as we progress!
-            </p>
-          </div>
-        </div>
-
-        {/* Action Button */}
-        <div className="text-center">
-          <button
-            onClick={() => scroll(6)}
-            className="px-12 py-4 bg-purple-600 text-white border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide hover:bg-white hover:text-purple-600 hover:border-purple-600 transition-all duration-200 shadow-lg"
-          >
-            Next →
-          </button>
-        </div>
+        {/* Tooltip System */}
+        {hoveredTerm === 'baseline-proficiency' && <BaselineProficiencyTooltip />}
       </div>
-
-      {/* Tooltips */}
-      {hoveredTerm === 'baseline-proficiency' && <BaselineProficiencyTooltip />}
     </div>
   );
 };

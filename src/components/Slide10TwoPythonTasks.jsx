@@ -17,7 +17,66 @@ const useProbability = () => ({
   updateProbability: (prob) => console.log(`Probability updated to: ${prob}`)
 });
 
-export const Slide10TwoPythonTasks = ({ scroll = (n) => console.log(`Scroll to: ${n}`) }) => {
+const Layout = ({ children }) => (
+  <div className="bg-white min-h-screen font-mono relative">
+    {/* Grid background */}
+    <div 
+      className="absolute inset-0 opacity-60"
+      style={{
+        backgroundImage: 'linear-gradient(to right, #d1d5db 1px, transparent 1px), linear-gradient(to bottom, #d1d5db 1px, transparent 1px)',
+        backgroundSize: '20px 20px'
+      }}
+    />
+    
+    <div className="relative flex-1 px-8 py-6">{children}</div>
+  </div>
+);
+
+const TechnicalCard = ({ title, description, icon: Icon, config, onClick, children, className = "" }) => {
+  return (
+    <div
+      onClick={onClick}
+      className={`bg-white text-black border-2 border-black p-6 cursor-pointer transform transition-all duration-300 hover:scale-105 relative group ${className}`}
+    >
+      {/* Technical drawing corner marker */}
+      <div className="absolute top-2 right-2 w-2 h-2 border border-black bg-white" />
+      
+      <div className="h-full flex flex-col justify-between">
+        <div className="flex items-start justify-between mb-4">
+          <div className="w-8 h-8 border border-black flex items-center justify-center bg-white">
+            <Icon className="w-4 h-4 text-black" />
+          </div>
+          <ArrowRight className="w-4 h-4 text-black opacity-0 group-hover:opacity-100 transition-opacity" />
+        </div>
+        
+        <div>
+          <div className="flex items-center mb-3">
+            <div>
+              <h3 className="text-lg font-bold text-black tracking-wider uppercase">
+                {title}
+              </h3>
+              <span className="text-xs font-mono text-gray-600">
+                {config}
+              </span>
+            </div>
+          </div>
+          
+          <p className="text-black text-sm font-mono leading-relaxed">
+            {description}
+          </p>
+        </div>
+        
+        {children && (
+          <div className="mt-4">
+            {children}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export const Slide10TwoPythonTasks = ({ scroll }) => {
   const { updateProbability } = useProbability();
   
   const [selectedTask, setSelectedTask] = useState(null);
@@ -29,14 +88,15 @@ export const Slide10TwoPythonTasks = ({ scroll = (n) => console.log(`Scroll to: 
 
   const tasks = {
     1: {
-      title: "Variable Declaration Task",
-      description: "Create three variables with the following information:",
+      title: "Variable Declaration Protocol",
+      description: "Initialize data structures with specified parameters",
       color: 'green',
       icon: FileText,
+      config: "TASK-001",
       requirements: [
-        { label: 'Variable 1', code: 'name = "Alice"', color: 'green' },
-        { label: 'Variable 2', code: 'age = 25', color: 'orange' },
-        { label: 'Variable 3', code: 'city = "New York"', color: 'purple' }
+        { label: 'String Variable', code: 'name = "Alice"', type: 'STRING' },
+        { label: 'Integer Variable', code: 'age = 25', type: 'INTEGER' },
+        { label: 'Location Variable', code: 'city = "New York"', type: 'STRING' }
       ],
       solution: `name = "Alice"
 age = 25
@@ -48,7 +108,7 @@ city = "New York"`,
           .filter(line => line.length > 0);
         
         if (lines.length !== 3) {
-          return { valid: false, error: "Please provide exactly 3 lines of code" };
+          return { valid: false, error: "Protocol requires exactly 3 variable declarations" };
         }
         
         const expectedLines = [
@@ -63,21 +123,22 @@ city = "New York"`,
         });
         
         if (!isCorrect) {
-          return { valid: false, error: "Make sure you assign the exact values as shown in the requirements" };
+          return { valid: false, error: "Variable assignment parameters do not match specifications" };
         }
         
         return { valid: true };
       }
     },
     2: {
-      title: "For Loop Task",
-      description: "Write a Python program that accomplishes the following:",
+      title: "Iteration Loop Protocol",
+      description: "Execute summation algorithm with sequential processing",
       color: 'orange',
       icon: RotateCcw,
+      config: "TASK-002",
       requirements: [
-        { label: 'Use a for loop', code: 'for i in range(1, 11):', color: 'blue' },
-        { label: 'Calculate sum', code: 'total += i', color: 'green' },
-        { label: 'Print result', code: 'print(total)', color: 'purple' }
+        { label: 'Loop Structure', code: 'for i in range(1, 11):', type: 'CONTROL' },
+        { label: 'Accumulator Function', code: 'total += i', type: 'OPERATION' },
+        { label: 'Output Display', code: 'print(total)', type: 'DISPLAY' }
       ],
       solution: `total = 0
 for number in range(1, 11):
@@ -88,10 +149,9 @@ print(total)
         const code = answer.toLowerCase();
         
         if (!code.trim()) {
-          return { valid: false, error: "Please enter some code first!" };
+          return { valid: false, error: "No code input detected" };
         }
 
-        // Check for for loop with range
         const hasForLoop = code.includes('for') && 
                           code.includes('in') && 
                           code.includes('range') &&
@@ -111,19 +171,19 @@ print(total)
                        /\w+\s*=\s*0/.test(code);
         
         if (!hasForLoop) {
-          return { valid: false, error: "Missing: for loop with range(1, 11)" };
+          return { valid: false, error: "Missing loop structure with range(1, 11)" };
         }
         
         if (!hasInit) {
-          return { valid: false, error: "Missing: Initialize a variable to 0 (e.g., total = 0)" };
+          return { valid: false, error: "Missing accumulator initialization (variable = 0)" };
         }
         
         if (!hasSum) {
-          return { valid: false, error: "Missing: Add numbers together (use += or similar)" };
+          return { valid: false, error: "Missing accumulation operation (use += operator)" };
         }
         
         if (!hasPrint) {
-          return { valid: false, error: "Missing: print() statement to display the result" };
+          return { valid: false, error: "Missing output display function" };
         }
         
         return { valid: true };
@@ -181,103 +241,88 @@ print(total)
     setErrorMessage("");
   };
 
-  const getColorClasses = (color) => {
-    const colors = {
-      green: {
-        bg: 'bg-green-50',
-        border: 'border-green-600',
-        text: 'text-green-700',
-        accent: 'bg-green-100',
-        button: 'bg-green-600 hover:bg-green-700',
-        tag: 'bg-green-600'
-      },
-      orange: {
-        bg: 'bg-orange-50',
-        border: 'border-orange-600',
-        text: 'text-orange-700',
-        accent: 'bg-orange-100',
-        button: 'bg-orange-600 hover:bg-orange-700',
-        tag: 'bg-orange-600'
-      }
-    };
-    return colors[color];
-  };
-
   // Task Detail View
   if (selectedTask) {
     const task = tasks[selectedTask];
-    const colors = getColorClasses(task.color);
     const IconComponent = task.icon;
 
     return (
-      <div className="bg-white min-h-screen flex flex-col items-center py-8 px-4 text-black font-['IBM_Plex_Mono',monospace]">
-        <div className="w-full max-w-4xl mx-auto flex flex-col gap-8">
-
+      <Layout>
+        <div className="max-w-6xl mx-auto space-y-6">
           {/* Header */}
-          <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg relative">
-            <div className={`absolute -top-6 left-4 px-3 py-1 ${colors.tag} text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2`}>
-              <Target className="w-4 h-4" />
-              TASK {selectedTask} OF 2
-            </div>
-            <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center">
-              {task.title}
+          <div className="border-2 border-black p-4 bg-white relative">
+            <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-black"></div>
+            <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-black"></div>
+            <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-black"></div>
+            <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-black"></div>
+            
+            <div className="text-center space-y-3">
+              <div className="inline-block border border-black px-3 py-1 mb-2">
+                <span className="text-xs tracking-wider font-mono">{task.config}</span>
+              </div>
+              <h1 className="text-3xl font-bold uppercase tracking-wider text-black">
+                {task.title}
+              </h1>
+              <p className="text-sm font-mono leading-relaxed text-black">
+                {task.description.toUpperCase()}
+              </p>
             </div>
           </div>
 
           {/* Instructions */}
-          <div className={`border-4 ${colors.border} rounded-xl p-6 ${colors.bg}`}>
+          <div className="border-2 border-black p-6 bg-white relative">
+            <div className="absolute top-2 right-2 w-2 h-2 border border-black bg-white" />
+            
             <div className="flex items-center gap-2 mb-4">
-              <IconComponent className="w-6 h-6 text-blue-700" />
-              <h3 className="text-xl font-bold text-black tracking-tight">
-                Mission Instructions
+              <div className="w-8 h-8 border border-black flex items-center justify-center bg-white">
+                <IconComponent className="w-4 h-4 text-black" />
+              </div>
+              <h3 className="text-lg font-bold text-black tracking-wider uppercase">
+                Protocol Specifications
               </h3>
             </div>
             
-            <p className="text-black font-semibold mb-4">
-              {task.description}
-            </p>
-            
-            <div className="space-y-3">
+            <div className="space-y-4">
               {task.requirements.map((req, index) => (
-                <div key={index} className="bg-white border-2 border-black rounded-lg p-4 flex items-center gap-3">
-                  <div className={`w-8 h-8 bg-${req.color}-500 border-2 border-black rounded-full flex items-center justify-center text-white font-bold text-sm`}>
-                    {index + 1}
+                <div key={index} className="border border-black p-4 bg-white relative">
+                  <div className="absolute top-1 right-1 w-1 h-1 border border-black bg-white" />
+                  
+                  <div className="flex items-center gap-4">
+                    <div className="w-8 h-8 border border-black flex items-center justify-center bg-white text-black font-bold text-sm">
+                      {index + 1}
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-bold text-black uppercase tracking-wide text-sm">{req.label}</div>
+                      <div className="text-xs font-mono text-gray-600">{req.type}</div>
+                    </div>
+                    <div className="bg-black text-white px-2 py-1 font-mono text-xs">
+                      {req.code}
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <div className={`font-bold text-${req.color}-700`}>{req.label}</div>
-                    {selectedTask === 2 && index === 0 && (
-                      <div className="text-sm text-blue-600">Iterate through numbers from 1 to 10</div>
-                    )}
-                    {selectedTask === 2 && index === 1 && (
-                      <div className="text-sm text-green-600">Add all numbers together</div>
-                    )}
-                    {selectedTask === 2 && index === 2 && (
-                      <div className="text-sm text-purple-600">Display the final sum</div>
-                    )}
-                  </div>
-                  <code className={`bg-black text-${req.color}-400 px-2 py-1 rounded font-mono text-xs`}>
-                    {req.code}
-                  </code>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Code Input */}
-          <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
+          <div className="border-2 border-black p-6 bg-white relative">
+            <div className="absolute top-2 right-2 w-2 h-2 border border-black bg-white" />
+            
             <div className="flex items-center gap-2 mb-4">
-              <Code className="w-5 h-5 text-black" />
-              <label className="font-bold text-lg text-black">
-                Your Python Code:
-              </label>
+              <div className="w-8 h-8 border border-black flex items-center justify-center bg-white">
+                <Code className="w-4 h-4 text-black" />
+              </div>
+              <h3 className="text-lg font-bold text-black tracking-wider uppercase">
+                Code Input Terminal
+              </h3>
             </div>
             
-            <div className="border-4 border-black rounded-xl overflow-hidden mb-4">
-              <div className="bg-black text-white px-4 py-2 flex items-center gap-2 font-bold text-sm">
-                <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                <span className="ml-2">task_{selectedTask}.py</span>
+            <div className="border-2 border-black overflow-hidden mb-4">
+              <div className="bg-black text-white px-4 py-2 flex items-center gap-2 font-mono text-xs">
+                <div className="w-2 h-2 bg-red-500 border border-white"></div>
+                <div className="w-2 h-2 bg-yellow-500 border border-white"></div>
+                <div className="w-2 h-2 bg-green-500 border border-white"></div>
+                <span className="ml-2 tracking-wider">TASK_{selectedTask}.PY</span>
               </div>
               <div style={{ backgroundColor: '#000000' }}>
                 <textarea
@@ -289,221 +334,226 @@ print(total)
                     backgroundColor: '#000000',
                     background: '#000000'
                   }}
-                  placeholder="# Write your Python code here..."
+                  placeholder="# ENTER PYTHON CODE HERE..."
                 />
               </div>
             </div>
             
             <button
               onClick={handleCheckAnswer}
-              className={`w-full px-8 py-4 ${colors.button} text-white border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wider hover:bg-white hover:text-black transition-all duration-300 shadow-lg hover:shadow-2xl flex items-center justify-center gap-3`}
+              className="w-full px-8 py-4 bg-black text-white border-2 border-black font-bold text-lg uppercase tracking-wider hover:bg-white hover:text-black transition-all duration-300 flex items-center justify-center gap-3"
             >
-              <Play className="w-6 h-6" />
-              RUN & CHECK CODE
+              <Play className="w-5 h-5" />
+              EXECUTE & VALIDATE
             </button>
           </div>
 
-          {/* Error Message */}
+          {/* Error Display */}
           {showError && (
-            <div className="border-4 border-red-700 rounded-xl p-6 bg-red-50 shadow-lg animate-pulse">
+            <div className="border-2 border-black p-6 bg-white relative">
+              <div className="absolute top-2 right-2 w-2 h-2 border border-black bg-white" />
+              
               <div className="flex items-center gap-3 mb-3">
-                <AlertCircle className="w-6 h-6 text-red-700" />
-                <h4 className="font-bold text-red-800 text-lg">
-                  ✗ Code Error Detected!
+                <div className="w-8 h-8 border border-black flex items-center justify-center bg-white">
+                  <AlertCircle className="w-4 h-4 text-black" />
+                </div>
+                <h4 className="font-bold text-black text-lg uppercase tracking-wide">
+                  Error Detected
                 </h4>
               </div>
-              <div className="bg-red-100 border-2 border-red-700 rounded-lg p-4 font-mono text-sm">
-                <div className="font-bold mb-2 text-red-900">ERROR:</div>
-                <div className="text-red-800 mb-4 p-2 bg-red-50 rounded">
-                  {errorMessage}
+              
+              <div className="border border-black p-4 bg-white">
+                <div className="font-mono text-sm">
+                  <div className="font-bold mb-2 text-black uppercase">SYSTEM ERROR:</div>
+                  <div className="text-black">
+                    {errorMessage}
+                  </div>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Success Message */}
+          {/* Success Display */}
           {showSolution && (
-            <div className={`border-4 ${colors.border} rounded-xl p-6 ${colors.bg} shadow-lg`}>
+            <div className="border-2 border-black p-6 bg-black text-white relative">
+              <div className="absolute top-2 right-2 w-2 h-2 border border-white bg-black" />
+              
               <div className="flex items-center gap-3 mb-4">
-                <CheckCircle className={`w-8 h-8 ${colors.text}`} />
-                <h4 className={`font-bold text-2xl ${colors.text}`}>
-                  ✓ {selectedTask === 1 ? 'PERFECT! Task Complete' : 'EXCELLENT! Loop Mastery Achieved'}
+                <div className="w-8 h-8 border border-white flex items-center justify-center bg-black">
+                  <CheckCircle className="w-4 h-4 text-white" />
+                </div>
+                <h4 className="font-bold text-white text-xl uppercase tracking-wide">
+                  Protocol Executed Successfully
                 </h4>
               </div>
               
-              <div className={`bg-white border-2 ${colors.border} rounded-lg p-4 mb-6`}>
-                <div className={`font-bold ${colors.text} mb-3 flex items-center gap-2`}>
-                  {selectedTask === 1 ? <Lightbulb className="w-5 h-5" /> : <Calculator className="w-5 h-5" />}
-                  {selectedTask === 1 ? 'Correct Solution:' : 'Perfect Solution:'}
+              <div className="border border-white p-4 bg-black mb-4">
+                <div className="font-bold text-white mb-3 flex items-center gap-2 uppercase tracking-wide">
+                  <Lightbulb className="w-4 h-4" />
+                  Reference Implementation:
                 </div>
-                <div className={`bg-black text-${task.color}-400 p-4 rounded-lg font-mono text-sm border-2 ${colors.border}`}>
+                <div className="bg-white text-black p-4 border border-white font-mono text-sm">
                   <pre>{task.solution}</pre>
                 </div>
                 {selectedTask === 2 && (
-                  <div className={`mt-3 p-3 ${colors.accent} border-2 ${colors.border} rounded-lg`}>
-                    <div className={`font-bold ${colors.text} mb-1`}>How it works:</div>
-                    <div className="text-sm text-orange-700 font-mono">
-                      1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 = <span className="font-bold text-orange-900">55</span>
+                  <div className="mt-3 p-3 border border-white bg-black">
+                    <div className="font-bold text-white mb-1 uppercase tracking-wide">Algorithm Analysis:</div>
+                    <div className="text-sm text-white font-mono">
+                      SEQUENTIAL SUMMATION: 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 = <span className="font-bold">55</span>
                     </div>
                   </div>
                 )}
               </div>
-              
-             
             </div>
           )}
 
-          {/* Action Buttons at Bottom */}
-          <div className="border-4 border-gray-300 rounded-xl p-6 bg-gray-50 shadow-lg">
+          {/* Navigation */}
+          <div className="border-2 border-black p-6 bg-white relative">
+            <div className="absolute top-2 right-2 w-2 h-2 border border-black bg-white" />
+            
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <ArrowRight className="w-6 h-6 text-gray-600" />
+                <div className="w-8 h-8 border border-black flex items-center justify-center bg-white">
+                  <ArrowRight className="w-4 h-4 text-black" />
+                </div>
                 <div>
-                  <div className="font-bold text-gray-800">Want to skip this task?</div>
-                  <div className="text-sm text-gray-600">You can always come back to it later</div>
+                  <div className="font-bold text-black uppercase tracking-wide">Navigation Options</div>
+                  <div className="text-xs font-mono text-gray-600">Return to task selection or continue</div>
                 </div>
               </div>
-              <div className="flex gap-3">
-                <button
-                  onClick={resetTask}
-                  className="px-6 py-2 bg-gray-600 text-white border-2 border-black rounded-lg font-bold text-sm uppercase tracking-wide hover:bg-white hover:text-gray-600 transition-all"
-                >
-                  ← Back to Tasks
-                </button>
-              </div>
+              <button
+                onClick={resetTask}
+                className="px-6 py-2 bg-white text-black border-2 border-black font-bold text-sm uppercase tracking-wide hover:bg-black hover:text-white transition-all"
+              >
+                ← Return to Tasks
+              </button>
             </div>
           </div>
         </div>
-      </div>
+      </Layout>
     );
   }
 
   // Main Task Selection View
   return (
-    <div className="bg-white min-h-screen flex flex-col items-center py-8 px-4 md:px-10 text-black font-['IBM_Plex_Mono',monospace]">
-      <div className="w-full max-w-4xl mx-auto flex flex-col gap-8">
-        
-        {/* Main Header */}
-        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
-          <div className="absolute -top-6 left-4 px-3 py-1 bg-black text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
-            <Code className="w-4 h-4" />
-            PYTHON CHALLENGE
+    <Layout>
+      <div className="max-w-6xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="border-2 border-black p-4 bg-white relative">
+          <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-black"></div>
+          <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-black"></div>
+          <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-black"></div>
+          <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-black"></div>
+          
+          <div className="text-center space-y-3">
+            <div className="inline-block border border-black px-3 py-1 mb-2">
+              <span className="text-xs tracking-wider font-mono">PYTHON PROTOCOL SUITE</span>
+            </div>
+            <h1 className="text-3xl font-bold uppercase tracking-wider text-black">
+              Task Execution Framework
+            </h1>
+            <p className="text-sm font-mono leading-relaxed text-black">
+              INTERACTIVE PROGRAMMING PROTOCOLS • OPTIONAL EXECUTION MODULES
+            </p>
           </div>
-          <h1 className="text-2xl md:text-4xl font-bold text-black text-center tracking-tight mb-2">
-            Try the following two Python tasks:
-          </h1>
-          <p className="text-center text-gray-600 font-mono text-sm">
-            These tasks are optional - you can skip them and continue to the next section anytime
-          </p>
         </div>
 
-        {/* Task Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          
+        {/* Task Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Task 1 */}
-          <div 
-            className="border-4 border-black rounded-xl p-6 bg-white shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+          <TechnicalCard
+            title="Variable Protocol"
+            description="DATA INITIALIZATION • MEMORY ALLOCATION • TYPE ASSIGNMENT • VARIABLE DECLARATION SEQUENCES"
+            icon={FileText}
+            config="TASK-001"
             onClick={() => handleTaskClick(1)}
           >
-            <div className="flex flex-col items-center text-center">
-              <div className="w-20 h-20 bg-green-500 border-4 border-black rounded-full flex items-center justify-center text-white font-bold text-3xl mb-4 shadow-lg relative">
-                1
-                {completedTasks.includes(1) && (
-                  <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-600 border-2 border-white rounded-full flex items-center justify-center">
-                    <CheckCircle className="w-4 h-4 text-white" />
-                  </div>
-                )}
-              </div>
-              <div className="flex items-center gap-2 mb-3">
-                <FileText className="w-6 h-6 text-green-700" />
-                <h3 className="text-xl font-bold text-black tracking-tight">
-                  Variable Declaration Task
-                </h3>
-              </div>
-              <div className="bg-green-50 border-2 border-green-700 rounded-lg p-4 font-mono text-sm text-green-900 w-full">
-                <div className="font-bold mb-2">TASK OVERVIEW:</div>
-                <div>• Declare variables</div>
-                <div>• Assign values</div>
-                <div>• Basic data types</div>
-              </div>
+            <div className="border border-black p-3 bg-white font-mono text-xs">
+              <div className="font-bold mb-2 uppercase tracking-wide">Module Overview:</div>
+              <div>• STRING INITIALIZATION</div>
+              <div>• INTEGER ASSIGNMENT</div>
+              <div>• MEMORY ALLOCATION</div>
+              {completedTasks.includes(1) && (
+                <div className="mt-2 flex items-center gap-1 text-black">
+                  <CheckCircle className="w-3 h-3" />
+                  <span className="font-bold">COMPLETED</span>
+                </div>
+              )}
             </div>
-          </div>
+          </TechnicalCard>
 
           {/* Task 2 */}
-          <div 
-            className="border-4 border-black rounded-xl p-6 bg-white shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+          <TechnicalCard
+            title="Iteration Protocol"
+            description="LOOP STRUCTURES • SEQUENTIAL PROCESSING • ACCUMULATION ALGORITHMS • CONTROL FLOW MANAGEMENT"
+            icon={RotateCcw}
+            config="TASK-002"
             onClick={() => handleTaskClick(2)}
           >
-            <div className="flex flex-col items-center text-center">
-              <div className="w-20 h-20 bg-orange-500 border-4 border-black rounded-full flex items-center justify-center text-white font-bold text-3xl mb-4 shadow-lg relative">
-                2
-                {completedTasks.includes(2) && (
-                  <div className="absolute -top-2 -right-2 w-6 h-6 bg-orange-600 border-2 border-white rounded-full flex items-center justify-center">
-                    <CheckCircle className="w-4 h-4 text-white" />
-                  </div>
-                )}
-              </div>
-              <div className="flex items-center gap-2 mb-3">
-                <Target className="w-6 h-6 text-orange-700" />
-                <h3 className="text-xl font-bold text-black tracking-tight">
-                  For Loop Task
-                </h3>
-              </div>
-              <div className="bg-orange-50 border-2 border-orange-700 rounded-lg p-4 font-mono text-sm text-orange-900 w-full">
-                <div className="font-bold mb-2">TASK OVERVIEW:</div>
-                <div>• Iterate through data</div>
-                <div>• Control flow logic</div>
-                <div>• Loop operations</div>
-              </div>
+            <div className="border border-black p-3 bg-white font-mono text-xs">
+              <div className="font-bold mb-2 uppercase tracking-wide">Module Overview:</div>
+              <div>• LOOP INITIALIZATION</div>
+              <div>• RANGE PROCESSING</div>
+              <div>• ACCUMULATION LOGIC</div>
+              {completedTasks.includes(2) && (
+                <div className="mt-2 flex items-center gap-1 text-black">
+                  <CheckCircle className="w-3 h-3" />
+                  <span className="font-bold">COMPLETED</span>
+                </div>
+              )}
             </div>
-          </div>
+          </TechnicalCard>
         </div>
 
         {/* Progress Section */}
-        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg text-center">
-          <div className="mb-4">
-            <div className="text-lg font-semibold text-neutral-600 mb-2">
-              {completedTasks.length === 0 && "Ready to begin your Python journey?"}
-              {completedTasks.length === 1 && "Great progress! One more task to go."}
-              {completedTasks.length === 2 && "Excellent! All tasks completed!"}
+        <div className="border-2 border-black p-6 bg-white relative">
+          <div className="absolute top-2 right-2 w-2 h-2 border border-black bg-white" />
+          
+          <div className="text-center space-y-4">
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <div className="w-8 h-8 border border-black flex items-center justify-center bg-white">
+                <Calculator className="w-4 h-4 text-black" />
+              </div>
+              <h3 className="text-lg font-bold text-black tracking-wider uppercase">
+                Progress Analysis
+              </h3>
             </div>
-            <div className="text-sm text-neutral-500 font-mono">
-              {completedTasks.length === 0 && "Click on any task above to start coding, or skip to continue"}
-              {completedTasks.length === 1 && "Click on the remaining task to continue, or skip ahead"}
-              {completedTasks.length === 2 && "You've mastered both Python concepts!"}
+            
+            <div className="text-sm font-mono text-black mb-4">
+              {completedTasks.length === 0 && "READY TO INITIALIZE PROTOCOL EXECUTION"}
+              {completedTasks.length === 1 && "PROGRESS: 50% COMPLETE • ONE MODULE REMAINING"}
+              {completedTasks.length === 2 && "ALL PROTOCOLS EXECUTED SUCCESSFULLY"}
             </div>
-          </div>
-          
-          {/* Progress Bar */}
-          <div className="w-full bg-gray-200 rounded-full h-4 mb-4 border-2 border-black">
-            <div 
-              className="bg-gradient-to-r from-green-500 to-orange-500 h-full rounded-full transition-all duration-500 border-r-2 border-black"
-              style={{ width: `${(completedTasks.length / 2) * 100}%` }}
-            ></div>
-          </div>
-          
-          <div className="text-sm font-mono text-gray-600 mb-4">
-            Progress: {completedTasks.length}/2 tasks completed
-          </div>
-          
-          {/* Always show continue button */}
-          <div className="flex justify-center gap-4">
+            
+            {/* Progress Bar */}
+            <div className="w-full border-2 border-black h-6 mb-4 bg-white relative">
+              <div 
+                className="bg-black h-full transition-all duration-500"
+                style={{ width: `${(completedTasks.length / 2) * 100}%` }}
+              ></div>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-xs font-mono font-bold mix-blend-difference text-white">
+                  {completedTasks.length}/2 MODULES
+                </span>
+              </div>
+            </div>
+            
             <button
-              onClick={() => scroll(10)}
-              className="px-8 py-3 bg-purple-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-purple-600 hover:border-purple-600 transition-all transform hover:scale-105 flex items-center gap-3"
+              onClick={() => scroll(9)}
+              className="px-8 py-3 bg-black text-white border-2 border-black font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-black transition-all flex items-center justify-center gap-3 mx-auto"
             >
-              <span>Continue to Next Section</span>
+              <span>Continue Protocol</span>
               <ArrowRight className="w-5 h-5" />
             </button>
+            
+            {completedTasks.length < 2 && (
+              <div className="text-xs text-gray-600 font-mono mt-2">
+                OPTIONAL MODULES • EXECUTION NOT REQUIRED FOR PROGRESSION
+              </div>
+            )}
           </div>
-          
-          {completedTasks.length < 2 && (
-            <div className="mt-4 text-xs text-gray-500 font-mono">
-              Tasks are optional - you can always come back to complete them later
-            </div>
-          )}
         </div>
       </div>
-    </div>
+    </Layout>
   );
 };
