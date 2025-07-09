@@ -54,41 +54,49 @@ export const Slide4AFMIntroduction = ({ scroll }) => {
   };
 
   const BaselineProficiencyTooltip = () => (
-    <div className="fixed z-50 top-8 right-4 bg-white border-2 border-black shadow-lg p-6 w-96 font-mono">
-      {/* Technical corner brackets */}
-      <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-black"></div>
-      <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-black"></div>
-      <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-black"></div>
-      <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-black"></div>
+    <div className="fixed z-50 top-8 right-4 bg-gray-800 border-4 border-cyan-400 p-6 w-96 font-mono pixel-shadow">
+      {/* Pixel corner brackets */}
+      <div className="absolute top-0 left-0 w-6 h-6 border-t-4 border-l-4 border-cyan-400"></div>
+      <div className="absolute top-0 right-0 w-6 h-6 border-t-4 border-r-4 border-cyan-400"></div>
+      <div className="absolute bottom-0 left-0 w-6 h-6 border-b-4 border-l-4 border-cyan-400"></div>
+      <div className="absolute bottom-0 right-0 w-6 h-6 border-b-4 border-r-4 border-cyan-400"></div>
       
-      <div className="absolute -top-4 left-4 px-3 py-1 bg-black text-white font-mono text-xs tracking-wider border border-white">
+      <div className="absolute -top-6 left-4 bg-yellow-400 text-black px-4 py-2 font-mono text-xs tracking-wider border-2 border-yellow-300 pixel-shadow">
         BASELINE PROFICIENCY (θ)
       </div>
       
-      <h4 className="font-bold text-black mb-4 text-lg uppercase tracking-wider">AFM BASELINE DETERMINATION</h4>
+      {/* Retro scan lines effect */}
+      <div 
+        className="absolute inset-0 opacity-20 pointer-events-none"
+        style={{
+          backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.1) 2px, rgba(255,255,255,0.1) 4px)',
+        }}
+      />
       
-      <p className="text-black text-sm leading-relaxed mb-4 font-mono">
-        SYSTEM ESTIMATES BASELINE PROFICIENCY VIA MULTIPLE PARAMETERS:
+      <h4 className="font-bold text-cyan-400 mb-4 text-lg uppercase tracking-wider pixel-text">AFM BASELINE DETERMINATION</h4>
+      
+      <p className="text-green-400 text-sm leading-relaxed mb-4 font-mono pixel-text">
+        &gt; SYSTEM ESTIMATES BASELINE PROFICIENCY VIA MULTIPLE PARAMETERS:
       </p>
       
       <div className="space-y-3 text-sm font-mono">
-        <div className="border-2 border-black p-2 bg-white">
-          <span className="text-black font-bold">PRIOR ASSESSMENTS:</span> PREVIOUS SKILL PERFORMANCE
+        <div className="border-2 border-blue-400 p-2 bg-gray-700 pixel-shadow">
+          <span className="text-yellow-400 font-bold">PRIOR ASSESSMENTS:</span> <span className="text-white">PREVIOUS SKILL PERFORMANCE</span>
         </div>
-        <div className="border-2 border-black p-2 bg-white">
-          <span className="text-black font-bold">SELF-REPORTED:</span> DECLARED PYTHON FAMILIARITY
+        <div className="border-2 border-purple-400 p-2 bg-gray-700 pixel-shadow">
+          <span className="text-yellow-400 font-bold">SELF-REPORTED:</span> <span className="text-white">DECLARED PYTHON FAMILIARITY</span>
         </div>
-        <div className="border-2 border-black p-2 bg-white">
-          <span className="text-black font-bold">DEMOGRAPHICS:</span> EDUCATION & PROGRAMMING BACKGROUND
+        <div className="border-2 border-red-400 p-2 bg-gray-700 pixel-shadow">
+          <span className="text-yellow-400 font-bold">DEMOGRAPHICS:</span> <span className="text-white">EDUCATION & PROGRAMMING BACKGROUND</span>
         </div>
-        <div className="border-2 border-black p-2 bg-white">
-          <span className="text-black font-bold">DIAGNOSTIC TESTS:</span> RAPID SKILLS ASSESSMENT
+        <div className="border-2 border-green-400 p-2 bg-gray-700 pixel-shadow">
+          <span className="text-yellow-400 font-bold">DIAGNOSTIC TESTS:</span> <span className="text-white">RAPID SKILLS ASSESSMENT</span>
         </div>
       </div>
       
       <button
         onClick={() => setHoveredTerm(null)}
-        className="absolute top-2 right-2 w-6 h-6 border-2 border-black bg-white text-black font-bold hover:bg-black hover:text-white transition-colors font-mono"
+        className="absolute top-2 right-2 w-8 h-8 border-2 border-red-400 bg-red-600 text-white font-bold hover:bg-red-700 transition-colors font-mono pixel-shadow"
       >
         X
       </button>
@@ -96,88 +104,119 @@ export const Slide4AFMIntroduction = ({ scroll }) => {
   );
 
   return (
-    <div className="bg-white min-h-screen font-mono relative">
-      {/* Grid background */}
+    <div className="bg-gray-900 min-h-screen font-mono relative overflow-hidden">
+      {/* Pixel grid background */}
       <div 
-        className="absolute inset-0 opacity-60"
+        className="absolute inset-0 opacity-30"
         style={{
-          backgroundImage: 'linear-gradient(to right, #d1d5db 1px, transparent 1px), linear-gradient(to bottom, #d1d5db 1px, transparent 1px)',
-          backgroundSize: '20px 20px'
+          backgroundImage: 'linear-gradient(to right, #1f2937 1px, transparent 1px), linear-gradient(to bottom, #1f2937 1px, transparent 1px)',
+          backgroundSize: '8px 8px'
         }}
       />
       
-      <div className="relative flex flex-col items-center justify-center py-8 px-4 md:px-10 text-black">
+      {/* Animated pixel stars */}
+      <div className="absolute inset-0">
+        {[...Array(20)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-2 h-2 bg-yellow-400 animate-pulse"
+            style={{
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 2}s`
+            }}
+          />
+        ))}
+      </div>
+      
+      <div className="relative flex flex-col items-center justify-center py-8 px-4 md:px-10 text-white">
         <div className="w-full max-w-4xl mx-auto flex flex-col gap-8">
 
           {/* Adaptive Learning Block */}
-          <div className="border-2 border-black p-8 bg-white shadow-lg relative">
-            {/* Technical corner brackets */}
-            <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-black"></div>
-            <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-black"></div>
-            <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-black"></div>
-            <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-black"></div>
+          <div className="border-4 border-cyan-400 p-8 bg-gray-800 pixel-shadow relative">
+            {/* Pixel corner brackets */}
+            <div className="absolute top-0 left-0 w-6 h-6 border-t-4 border-l-4 border-cyan-400"></div>
+            <div className="absolute top-0 right-0 w-6 h-6 border-t-4 border-r-4 border-cyan-400"></div>
+            <div className="absolute bottom-0 left-0 w-6 h-6 border-b-4 border-l-4 border-cyan-400"></div>
+            <div className="absolute bottom-0 right-0 w-6 h-6 border-b-4 border-r-4 border-cyan-400"></div>
             
-            <div className="absolute -top-4 left-6 px-3 py-1 bg-black text-white font-mono text-xs tracking-wider border border-white">
+            <div className="absolute -top-6 left-6 bg-yellow-400 text-black px-4 py-2 font-mono text-xs tracking-wider border-2 border-yellow-300 pixel-shadow">
               ADAPTIVE LEARNING SYSTEM
             </div>
             
-            <div className="space-y-6 text-lg font-mono leading-relaxed">
-              <p className="text-black">
-                SUCCESS PROBABILITY ENABLES <span className="bg-white border-2 border-black px-2 py-1 font-bold uppercase">ADAPTIVE LEARNING</span> – 
+            {/* Retro scan lines effect */}
+            <div 
+              className="absolute inset-0 opacity-20 pointer-events-none"
+              style={{
+                backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.1) 2px, rgba(255,255,255,0.1) 4px)',
+              }}
+            />
+            
+            <div className="space-y-6 text-lg font-mono leading-relaxed relative z-10">
+              <p className="text-green-400 pixel-text">
+                &gt; SUCCESS PROBABILITY ENABLES <span className="bg-purple-600 border-2 border-purple-400 px-2 py-1 font-bold uppercase text-white pixel-shadow">ADAPTIVE LEARNING</span> – 
                 AUTOMATIC DIFFICULTY ADJUSTMENT BASED ON PREDICTED PERFORMANCE METRICS.
               </p>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="border-2 border-black p-4 bg-white relative">
-                  <div className="absolute top-1 right-1 w-2 h-2 border border-black bg-white"></div>
-                  <div className="font-bold text-black text-center mb-2 uppercase tracking-wider">LOW (&lt;30%)</div>
-                  <div className="text-sm text-black text-center font-mono">EASIER TASKS • CONFIDENCE BUILDING</div>
+                <div className="border-4 border-red-400 p-4 bg-red-600 relative pixel-shadow">
+                  <div className="absolute top-1 right-1 w-3 h-3 bg-white opacity-60" />
+                  <div className="font-bold text-white text-center mb-2 uppercase tracking-wider pixel-text">LOW (&lt;30%)</div>
+                  <div className="text-sm text-white text-center font-mono">EASIER TASKS • CONFIDENCE BUILDING</div>
                 </div>
-                <div className="border-2 border-black p-4 bg-white relative">
-                  <div className="absolute top-1 right-1 w-2 h-2 border border-black bg-white"></div>
-                  <div className="font-bold text-black text-center mb-2 uppercase tracking-wider">MEDIUM (30-80%)</div>
-                  <div className="text-sm text-black text-center font-mono">BALANCED PRACTICE • SKILL DEVELOPMENT</div>
+                <div className="border-4 border-yellow-400 p-4 bg-yellow-600 relative pixel-shadow">
+                  <div className="absolute top-1 right-1 w-3 h-3 bg-white opacity-60" />
+                  <div className="font-bold text-white text-center mb-2 uppercase tracking-wider pixel-text">MEDIUM (30-80%)</div>
+                  <div className="text-sm text-white text-center font-mono">BALANCED PRACTICE • SKILL DEVELOPMENT</div>
                 </div>
-                <div className="border-2 border-black p-4 bg-white relative">
-                  <div className="absolute top-1 right-1 w-2 h-2 border border-black bg-white"></div>
-                  <div className="font-bold text-black text-center mb-2 uppercase tracking-wider">HIGH (&gt;80%)</div>
-                  <div className="text-sm text-black text-center font-mono">CHALLENGING PROBLEMS • ACCELERATION</div>
+                <div className="border-4 border-green-400 p-4 bg-green-600 relative pixel-shadow">
+                  <div className="absolute top-1 right-1 w-3 h-3 bg-white opacity-60" />
+                  <div className="font-bold text-white text-center mb-2 uppercase tracking-wider pixel-text">HIGH (&gt;80%)</div>
+                  <div className="text-sm text-white text-center font-mono">CHALLENGING PROBLEMS • ACCELERATION</div>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Parameters Block */}
-          <div className="border-2 border-black p-8 bg-white shadow-lg relative">
-            {/* Technical corner brackets */}
-            <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-black"></div>
-            <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-black"></div>
-            <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-black"></div>
-            <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-black"></div>
+          <div className="border-4 border-purple-400 p-8 bg-gray-800 pixel-shadow relative">
+            {/* Pixel corner brackets */}
+            <div className="absolute top-0 left-0 w-6 h-6 border-t-4 border-l-4 border-purple-400"></div>
+            <div className="absolute top-0 right-0 w-6 h-6 border-t-4 border-r-4 border-purple-400"></div>
+            <div className="absolute bottom-0 left-0 w-6 h-6 border-b-4 border-l-4 border-purple-400"></div>
+            <div className="absolute bottom-0 right-0 w-6 h-6 border-b-4 border-r-4 border-purple-400"></div>
             
-            <div className="absolute -top-4 left-6 px-3 py-1 bg-black text-white font-mono text-xs tracking-wider border border-white">
+            <div className="absolute -top-6 left-6 bg-yellow-400 text-black px-4 py-2 font-mono text-xs tracking-wider border-2 border-yellow-300 pixel-shadow">
               PARAMETER ANALYSIS
             </div>
             
-            <div className="space-y-6 text-lg font-mono leading-relaxed">
-              <div className="border border-black p-1 inline-block">
-                <h3 className="font-bold text-lg text-black tracking-wider uppercase px-2">
+            {/* Retro scan lines effect */}
+            <div 
+              className="absolute inset-0 opacity-20 pointer-events-none"
+              style={{
+                backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.1) 2px, rgba(255,255,255,0.1) 4px)',
+              }}
+            />
+            
+            <div className="space-y-6 text-lg font-mono leading-relaxed relative z-10">
+              <div className="border-2 border-cyan-400 bg-cyan-400 p-2 inline-block pixel-shadow">
+                <h3 className="font-bold text-lg text-black tracking-wider uppercase px-2 pixel-text">
                   SYSTEM IDENTIFICATION
                 </h3>
               </div>
               
-              <div className="border border-black p-4 bg-gray-50">
-                <p className="text-black leading-relaxed font-mono text-sm">
-                  First <span className="bg-purple-200 px-1 border border-black font-bold">AFM PARAMETER</span> is <span className="bg-yellow-200 px-1 border border-black font-bold">θ (THETA)</span>, representing{' '}
+              <div className="border-4 border-blue-400 p-4 bg-gray-700 pixel-shadow">
+                <p className="text-green-400 leading-relaxed font-mono text-sm pixel-text">
+                  &gt; First <span className="bg-purple-600 border-2 border-purple-400 px-1 font-bold text-white pixel-shadow">AFM PARAMETER</span> is <span className="bg-yellow-600 border-2 border-yellow-400 px-1 font-bold text-white pixel-shadow">θ (THETA)</span>, representing{' '}
                   <span 
                     ref={baselineRef}
-                    className="cursor-pointer bg-blue-200 px-1 border border-black font-bold hover:bg-blue-300 transition-colors"
+                    className="cursor-pointer bg-blue-600 border-2 border-blue-400 px-1 font-bold text-white hover:bg-blue-700 transition-colors pixel-shadow"
                     onMouseEnter={() => handleMouseEnter('baseline-proficiency')}
                     onMouseLeave={() => setHoveredTerm(null)}
                   >
                     BASELINE PROFICIENCY
                   </span>
-                  . Model estimates <span className="bg-green-200 px-1 border border-black font-bold">ABILITY</span> before specific <span className="bg-red-200 px-1 border border-black font-bold">SKILL EXECUTION</span>. <span className="bg-purple-200 px-1 border border-black font-bold">AFM</span> formula construction proceeding in <span className="bg-orange-200 px-1 border border-black font-bold">LOWER RIGHT QUADRANT</span>.
+                  . Model estimates <span className="bg-green-600 border-2 border-green-400 px-1 font-bold text-white pixel-shadow">ABILITY</span> before specific <span className="bg-red-600 border-2 border-red-400 px-1 font-bold text-white pixel-shadow">SKILL EXECUTION</span>. <span className="bg-purple-600 border-2 border-purple-400 px-1 font-bold text-white pixel-shadow">AFM</span> formula construction proceeding in <span className="bg-orange-600 border-2 border-orange-400 px-1 font-bold text-white pixel-shadow">LOWER RIGHT QUADRANT</span>.
                 </p>
               </div>
             </div>
@@ -187,11 +226,12 @@ export const Slide4AFMIntroduction = ({ scroll }) => {
           <div className="text-center">
             <button
               onClick={() => scroll(5)}
-              className="px-12 py-4 bg-black text-white border-2 border-black font-bold text-xl uppercase tracking-wider hover:bg-white hover:text-black transition-all duration-200 shadow-lg font-mono relative"
+              className="px-12 py-4 bg-red-600 text-white border-4 border-red-400 font-bold text-xl uppercase tracking-wider hover:bg-red-700 transition-all duration-200 pixel-shadow font-mono relative transform hover:scale-105"
             >
-              {/* Technical corner marker */}
-              <div className="absolute top-1 right-1 w-2 h-2 border border-white bg-black"></div>
-              NEXT MODULE →
+              {/* Pixel corner marker */}
+              <div className="absolute top-1 right-1 w-3 h-3 bg-white opacity-60" />
+              <ArrowRight className="inline-block w-6 h-6 ml-2 animate-bounce" />
+              NEXT MODULE
             </button>
           </div>
         </div>
@@ -199,6 +239,20 @@ export const Slide4AFMIntroduction = ({ scroll }) => {
         {/* Tooltip System */}
         {hoveredTerm === 'baseline-proficiency' && <BaselineProficiencyTooltip />}
       </div>
+
+      <style jsx>{`
+        .pixel-shadow {
+          box-shadow: 
+            4px 4px 0px rgba(0, 0, 0, 0.8),
+            8px 8px 0px rgba(0, 0, 0, 0.4);
+        }
+        
+        .pixel-text {
+          text-shadow: 
+            2px 2px 0px rgba(0, 0, 0, 0.8),
+            4px 4px 0px rgba(0, 0, 0, 0.4);
+        }
+      `}</style>
     </div>
   );
 };
