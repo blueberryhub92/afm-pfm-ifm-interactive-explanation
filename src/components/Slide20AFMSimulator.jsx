@@ -11,6 +11,8 @@ import {
   LineChart,
   Lightbulb,
   ArrowRight,
+  Zap,
+  Activity,
 } from "lucide-react";
 import {
   Chart as ChartJS,
@@ -53,10 +55,10 @@ const paramMeta = {
     min: -3,
     max: 3,
     step: 0.1,
-    color: "blue",
-    icon: <Brain className="w-5 h-5" />,
+    color: "cyan",
+    icon: <Brain className="w-4 h-4" />,
     tooltip: {
-      color: "blue",
+      color: "cyan",
       title: "Student Ability (θ)",
       desc: "Range: -3 (low) to +3 (high). Higher θ = higher skill. 0 = average.",
     },
@@ -67,7 +69,7 @@ const paramMeta = {
     max: 2,
     step: 0.1,
     color: "purple",
-    icon: <Target className="w-5 h-5" />,
+    icon: <Target className="w-4 h-4" />,
     tooltip: {
       color: "purple",
       title: "Task Difficulty (β)",
@@ -80,7 +82,7 @@ const paramMeta = {
     max: 1,
     step: 0.01,
     color: "green",
-    icon: <TrendingUp className="w-5 h-5" />,
+    icon: <TrendingUp className="w-4 h-4" />,
     tooltip: {
       color: "green",
       title: "Learning Rate (γ)",
@@ -93,7 +95,7 @@ const paramMeta = {
     max: 20,
     step: 1,
     color: "orange",
-    icon: <Play className="w-5 h-5" />,
+    icon: <Play className="w-4 h-4" />,
     tooltip: {
       color: "orange",
       title: "Practice Opportunities (T)",
@@ -102,22 +104,7 @@ const paramMeta = {
   },
 };
 
-const Layout = ({ children }) => (
-  <div className="bg-white min-h-screen font-mono relative">
-    {/* Grid background */}
-    <div 
-      className="absolute inset-0 opacity-60"
-      style={{
-        backgroundImage: 'linear-gradient(to right, #d1d5db 1px, transparent 1px), linear-gradient(to bottom, #d1d5db 1px, transparent 1px)',
-        backgroundSize: '20px 20px'
-      }}
-    />
-    
-    <div className="relative flex-1 px-8 py-8">{children}</div>
-  </div>
-);
-
-const TechnicalCard = ({ title, children, config, icon: Icon, size = "normal" }) => {
+const PixelCard = ({ title, children, tagColor, tagIcon: TagIcon, size = "normal" }) => {
   const sizeClasses = {
     normal: "",
     wide: "col-span-2",
@@ -125,24 +112,26 @@ const TechnicalCard = ({ title, children, config, icon: Icon, size = "normal" })
   };
 
   return (
-    <div className={`${sizeClasses[size]} bg-white text-black border-2 border-black p-6 relative`}>
-      {/* Technical drawing corner marker */}
-      <div className="absolute top-2 right-2 w-2 h-2 border border-black bg-white" />
+    <div className={`${sizeClasses[size]} bg-gray-800 border-4 border-${tagColor}-400 p-6 pixel-shadow relative`}>
+      {/* Pixel corner brackets */}
+      <div className={`absolute top-0 left-0 w-6 h-6 border-t-4 border-l-4 border-${tagColor}-400`}></div>
+      <div className={`absolute top-0 right-0 w-6 h-6 border-t-4 border-r-4 border-${tagColor}-400`}></div>
+      <div className={`absolute bottom-0 left-0 w-6 h-6 border-b-4 border-l-4 border-${tagColor}-400`}></div>
+      <div className={`absolute bottom-0 right-0 w-6 h-6 border-b-4 border-r-4 border-${tagColor}-400`}></div>
       
-      {/* Title section */}
-      <div className="flex items-center gap-2 mb-4">
-        {Icon && <Icon className="w-5 h-5" />}
-        <h3 className="text-lg font-bold text-black tracking-wider uppercase">
-          {title}
-        </h3>
-        {config && (
-          <span className="text-xs font-mono text-gray-600 ml-auto">
-            {config}
-          </span>
-        )}
+      {/* Animated background pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <div className={`w-full h-full bg-gradient-to-r from-${tagColor}-400 via-blue-500 to-purple-600 animate-pulse`} />
       </div>
       
-      {children}
+      <div className={`bg-${tagColor}-600 border-2 border-${tagColor}-400 px-4 py-2 mb-6 pixel-shadow inline-flex items-center gap-2`}>
+        {TagIcon && <TagIcon className="w-4 h-4 text-white" />}
+        <span className="text-white font-bold text-sm tracking-wider uppercase">{title}</span>
+      </div>
+      
+      <div className="relative z-10">
+        {children}
+      </div>
     </div>
   );
 };
@@ -154,12 +143,15 @@ export const Slide20AFMSimulator = ({scroll}) => {
   const [responseLog, setResponseLog] = useState([]);
   const [retrainingData, setRetrainingData] = useState([]);
   const [showTooltip, setShowTooltip] = useState(null);
-  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
+  const [hoveredTerm, setHoveredTerm] = useState(null);
 
   // Keyboard: Escape closes tooltip
   useEffect(() => {
     const handler = (e) => {
-      if (e.key === "Escape") setShowTooltip(null);
+      if (e.key === "Escape") {
+        setShowTooltip(null);
+        setHoveredTerm(null);
+      }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
@@ -174,7 +166,7 @@ export const Slide20AFMSimulator = ({scroll}) => {
     params.practice
   );
 
-  // Chart data
+  // Chart data with pixel-style colors
   const chartData = {
     labels: Array.from({ length: 21 }, (_, i) => i),
     datasets: [
@@ -183,16 +175,16 @@ export const Slide20AFMSimulator = ({scroll}) => {
         data: Array.from({ length: 21 }, (_, i) => 
           calcProb(params.theta, params.beta, params.gamma, i) * 100
         ),
-        borderColor: "#000000",
+        borderColor: "#00ffff",
         borderWidth: 3,
         fill: false,
         tension: 0.1,
         pointRadius: Array.from({ length: 21 }, (_, i) => (i === params.practice ? 8 : 0)),
         pointBackgroundColor: Array.from({ length: 21 }, (_, i) => 
-          (i === params.practice ? "#ef4444" : "#000000")
+          (i === params.practice ? "#ff0080" : "#00ffff")
         ),
         pointBorderColor: Array.from({ length: 21 }, (_, i) => 
-          (i === params.practice ? "#dc2626" : "#000000")
+          (i === params.practice ? "#ff0080" : "#00ffff")
         ),
         pointBorderWidth: Array.from({ length: 21 }, (_, i) => 
           (i === params.practice ? 3 : 0)
@@ -209,15 +201,15 @@ export const Slide20AFMSimulator = ({scroll}) => {
         title: {
           display: true,
           text: "PRACTICE (T)",
-          color: "#000",
+          color: "#00ffff",
           font: { weight: 700, size: 12, family: "monospace" },
         },
         grid: {
-          color: "#d1d5db",
+          color: "#374151",
           lineWidth: 1,
         },
         ticks: {
-          color: "#000",
+          color: "#ffffff",
           font: { family: "monospace", weight: 600 },
         },
       },
@@ -225,18 +217,18 @@ export const Slide20AFMSimulator = ({scroll}) => {
         title: {
           display: true,
           text: "SUCCESS PROBABILITY (%)",
-          color: "#000",
+          color: "#00ffff",
           font: { weight: 700, size: 12, family: "monospace" },
         },
         min: 0,
         max: 100,
         ticks: { 
           stepSize: 20,
-          color: "#000",
+          color: "#ffffff",
           font: { family: "monospace", weight: 600 },
         },
         grid: {
-          color: "#d1d5db",
+          color: "#374151",
           lineWidth: 1,
         },
       },
@@ -344,345 +336,373 @@ export const Slide20AFMSimulator = ({scroll}) => {
     setSessionActive(false);
   }
 
-  const calculateTooltipPosition = () => {
-    const margin = 16;
-    return { x: margin, y: margin };
+  const handleMouseEnter = (term) => {
+    setHoveredTerm(term);
   };
 
-  const handleTooltipShow = (param) => {
-    setShowTooltip(param);
-    const position = calculateTooltipPosition();
-    setTooltipPosition(position);
-  };
-
-  const ParameterTooltip = () => {
-    if (!showTooltip) return null;
-    const meta = paramMeta[showTooltip];
+  const ParameterTooltip = ({ param }) => {
+    const meta = paramMeta[param];
+    const colorMap = {
+      cyan: 'cyan',
+      purple: 'purple',
+      green: 'green',
+      orange: 'orange'
+    };
+    const color = colorMap[meta.color] || 'cyan';
 
     return (
-      <div
-        className="fixed z-50 bg-white border-2 border-black shadow-lg p-6 w-96 font-mono"
-        style={{
-          left: `${tooltipPosition.x}px`,
-          top: `${tooltipPosition.y}px`,
-          maxWidth: "384px",
-        }}
-      >
-        {/* Technical corner brackets */}
-        <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-black"></div>
-        <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-black"></div>
-        <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-black"></div>
-        <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-black"></div>
-
-        <div className="flex items-center gap-2 mb-4">
-          {meta.icon}
-          <h4 className="font-bold text-black text-lg tracking-wide uppercase">
-            {meta.tooltip.title}
-          </h4>
+      <div className={`fixed z-50 top-8 right-4 bg-gray-800 border-4 border-${color}-400 pixel-shadow font-mono w-96`}>
+        {/* Pixel corner brackets */}
+        <div className={`absolute top-0 left-0 w-6 h-6 border-t-4 border-l-4 border-${color}-400`}></div>
+        <div className={`absolute top-0 right-0 w-6 h-6 border-t-4 border-r-4 border-${color}-400`}></div>
+        <div className={`absolute bottom-0 left-0 w-6 h-6 border-b-4 border-l-4 border-${color}-400`}></div>
+        <div className={`absolute bottom-0 right-0 w-6 h-6 border-b-4 border-r-4 border-${color}-400`}></div>
+        
+        {/* Animated background pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className={`w-full h-full bg-gradient-to-r from-${color}-400 via-blue-500 to-purple-600 animate-pulse`} />
         </div>
-
-        <div className="border-2 border-black p-4 bg-gray-100 mb-4">
-          <p className="text-black font-mono text-sm leading-relaxed">
-            {meta.tooltip.desc}
-          </p>
-        </div>
-
-        <div className="border-l-4 border-black bg-gray-200 p-3">
-          <div className="text-black font-bold text-sm tracking-wide uppercase">
-            CURRENT VALUE:{" "}
-            {showTooltip === "gamma"
-              ? params[showTooltip].toFixed(2)
-              : params[showTooltip]}
+        
+        <div className="relative z-10 p-6">
+          <div className={`bg-${color}-600 border-2 border-${color}-400 px-3 py-1 mb-4 pixel-shadow inline-flex items-center gap-2`}>
+            {meta.icon}
+            <span className="text-white font-bold text-xs tracking-wider uppercase">{meta.tooltip.title}</span>
           </div>
+          
+          <p className="text-green-400 text-sm leading-relaxed mb-4 font-mono pixel-text">
+            &gt; {meta.tooltip.desc.toUpperCase()}
+          </p>
+          
+          <div className="border-2 border-yellow-400 bg-gray-700 p-3 pixel-shadow">
+            <strong className="text-yellow-400">CURRENT VALUE:</strong>{" "}
+            <span className="text-white">
+              {param === "gamma" ? params[param].toFixed(2) : params[param]}
+            </span>
+          </div>
+          
+          <button
+            onClick={() => setHoveredTerm(null)}
+            className="absolute top-2 right-2 w-8 h-8 bg-red-600 border-2 border-red-400 text-white font-bold hover:bg-red-400 transition-colors pixel-shadow flex items-center justify-center"
+          >
+            X
+          </button>
         </div>
-
-        <button
-          onClick={() => setShowTooltip(null)}
-          className="absolute top-2 right-2 px-2 py-1 border border-black bg-white text-black font-bold hover:bg-black hover:text-white transition-all"
-        >
-          ×
-        </button>
       </div>
     );
   };
 
   // UI
   return (
-    <Layout>
-      <div className="max-w-7xl mx-auto space-y-8">
-        
+    <div className="bg-gray-900 min-h-screen font-mono relative overflow-hidden">
+      {/* Pixel grid background */}
+      <div 
+        className="absolute inset-0 opacity-30"
+        style={{
+          backgroundImage: 'linear-gradient(to right, #1f2937 1px, transparent 1px), linear-gradient(to bottom, #1f2937 1px, transparent 1px)',
+          backgroundSize: '8px 8px'
+        }}
+      />
+      
+      {/* Animated pixel stars */}
+      <div className="absolute inset-0">
+        {[...Array(20)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-2 h-2 bg-yellow-400 animate-pulse"
+            style={{
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 2}s`
+            }}
+          />
+        ))}
+      </div>
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Formula Card */}
-          <TechnicalCard
-            title="AFM Formula"
-            config="CALC-001"
-            icon={Calculator}
-            size="normal"
-          >
-            <div className="space-y-4">
-              <div className="text-center p-4 bg-black text-white font-bold text-xl">
-                P = {(prob * 100).toFixed(1)}%
-              </div>
+      <div className="relative flex flex-col items-center justify-center py-8 px-4 md:px-10 min-h-screen">
+        <div className="w-full max-w-7xl mx-auto space-y-8">
+          {/* Title */}
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-bold text-cyan-400 mb-2 pixel-text uppercase tracking-wide">
+              AFM SIMULATOR
+            </h1>
+            <p className="text-green-400 font-mono pixel-text">
+              &gt; INTERACTIVE ADAPTIVE FACTOR MODEL
+            </p>
+          </div>
 
-              <div className="bg-gray-100 border-2 border-black p-4 space-y-1 font-mono text-sm">
-                <div><strong>STEP 1:</strong> LOGIT = θ - β + γ × T</div>
-                <div><strong>STEP 2:</strong> LOGIT = {params.theta.toFixed(1)} - ({params.beta.toFixed(1)}) + {params.gamma.toFixed(2)} × {params.practice}</div>
-                <div><strong>STEP 3:</strong> LOGIT = {logit.toFixed(3)}</div>
-                <div><strong>STEP 4:</strong> P = 1 / (1 + e⁻ˡᵒᵍⁱᵗ)</div>
-                <div className="text-lg font-bold mt-2 p-2 bg-white border border-black">
-                  <strong>RESULT:</strong> P = {(prob * 100).toFixed(1)}%
+          {/* Main Content Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Formula Card */}
+            <PixelCard
+              title="AFM Formula"
+              tagColor="cyan"
+              tagIcon={Calculator}
+              size="normal"
+            >
+              <div className="space-y-4">
+                <div className="text-center p-4 bg-gray-700 border-2 border-cyan-400 text-cyan-400 font-bold text-xl pixel-shadow">
+                  P = {(prob * 100).toFixed(1)}%
                 </div>
-              </div>
-            </div>
-          </TechnicalCard>
 
-          {/* Parameters Card */}
-          <TechnicalCard
-            title="Model Parameters"
-            config="PARAM-001"
-            icon={Brain}
-            size="normal"
-          >
-            <div className="space-y-4">
-              {Object.entries(paramMeta).map(([key, meta]) => (
-                <div key={key} className="space-y-2">
-                  <label
-                    className="font-bold text-black flex items-center gap-2 cursor-pointer hover:bg-gray-100 p-1 transition-colors text-sm uppercase tracking-wide"
-                    onClick={() => handleTooltipShow(key)}
-                  >
-                    {meta.icon}
-                    {meta.label}
-                  </label>
-
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="range"
-                      min={meta.min}
-                      max={meta.max}
-                      step={meta.step}
-                      value={params[key]}
-                      disabled={!sessionActive && key !== "practice"}
-                      onChange={(e) => setParam(key, e.target.value)}
-                      className={`flex-1 h-2 bg-gray-200 appearance-none cursor-pointer border border-black ${
-                        !sessionActive && key !== "practice"
-                          ? "opacity-50"
-                          : ""
-                      }`}
-                    />
-                    <span className="font-mono w-12 text-center text-black font-bold text-sm border border-black px-2 py-1 bg-white">
-                      {key === "gamma"
-                        ? params[key].toFixed(2)
-                        : params[key]}
+                <div className="bg-gray-700 border-2 border-gray-600 p-4 space-y-2 font-mono text-sm pixel-shadow">
+                  <div className="text-green-400 pixel-text">
+                    <strong>&gt; STEP 1:</strong> <span className="text-white">LOGIT = θ - β + γ × T</span>
+                  </div>
+                  <div className="text-green-400 pixel-text">
+                    <strong>&gt; STEP 2:</strong> <span className="text-white">LOGIT = {params.theta.toFixed(1)} - ({params.beta.toFixed(1)}) + {params.gamma.toFixed(2)} × {params.practice}</span>
+                  </div>
+                  <div className="text-green-400 pixel-text">
+                    <strong>&gt; STEP 3:</strong> <span className="text-white">LOGIT = {logit.toFixed(3)}</span>
+                  </div>
+                  <div className="text-green-400 pixel-text">
+                    <strong>&gt; STEP 4:</strong> <span className="text-white">P = 1 / (1 + e⁻ˡᵒᵍⁱᵗ)</span>
+                  </div>
+                  <div className="text-lg font-bold mt-2 p-2 bg-gray-600 border-2 border-cyan-400 pixel-shadow">
+                    <span className="text-yellow-400 pixel-text">
+                      <strong>&gt; RESULT:</strong> <span className="text-cyan-400">P = {(prob * 100).toFixed(1)}%</span>
                     </span>
                   </div>
                 </div>
-              ))}
+              </div>
+            </PixelCard>
 
-              {/* Success Probability Display */}
-              <div className="mt-6 p-4 border-2 border-black bg-gray-100">
-                <div className="text-center mb-2">
-                  <span className="text-black font-bold text-sm uppercase tracking-wide">
-                    SUCCESS PROBABILITY
-                  </span>
-                </div>
-                <div className="text-3xl font-bold text-black text-center mb-2">
-                  {(prob * 100).toFixed(1)}%
-                </div>
-                <div className="w-full bg-gray-300 border-2 border-black h-4">
-                  <div
-                    className="h-full bg-black transition-all duration-300"
-                    style={{ width: `${(prob * 100).toFixed(0)}%` }}
-                  ></div>
+            {/* Parameters Card */}
+            <PixelCard
+              title="Model Parameters"
+              tagColor="purple"
+              tagIcon={Brain}
+              size="normal"
+            >
+              <div className="space-y-4">
+                {Object.entries(paramMeta).map(([key, meta]) => (
+                  <div key={key} className="space-y-2">
+                    <label
+                      className="font-bold text-cyan-400 flex items-center gap-2 cursor-pointer hover:bg-gray-700 p-2 transition-colors text-sm uppercase tracking-wide pixel-text pixel-shadow"
+                      onClick={() => handleMouseEnter(key)}
+                    >
+                      {meta.icon}
+                      {meta.label}
+                    </label>
+
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="range"
+                        min={meta.min}
+                        max={meta.max}
+                        step={meta.step}
+                        value={params[key]}
+                        disabled={!sessionActive && key !== "practice"}
+                        onChange={(e) => setParam(key, e.target.value)}
+                        className={`flex-1 h-3 bg-gray-700 appearance-none cursor-pointer border-2 border-gray-600 ${
+                          !sessionActive && key !== "practice"
+                            ? "opacity-50"
+                            : ""
+                        }`}
+                        style={{
+                          background: `linear-gradient(to right, #00ffff 0%, #00ffff ${((params[key] - meta.min) / (meta.max - meta.min)) * 100}%, #374151 ${((params[key] - meta.min) / (meta.max - meta.min)) * 100}%, #374151 100%)`
+                        }}
+                      />
+                      <span className="font-mono w-12 text-center text-white font-bold text-sm border-2 border-gray-600 px-2 py-1 bg-gray-700 pixel-shadow">
+                        {key === "gamma"
+                          ? params[key].toFixed(2)
+                          : params[key]}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+
+                {/* Success Probability Display */}
+                <div className="mt-6 p-4 border-2 border-green-400 bg-gray-700 pixel-shadow">
+                  <div className="text-center mb-2">
+                    <span className="text-green-400 font-bold text-sm uppercase tracking-wide pixel-text">
+                      SUCCESS PROBABILITY
+                    </span>
+                  </div>
+                  <div className="text-3xl font-bold text-cyan-400 text-center mb-2 pixel-text">
+                    {(prob * 100).toFixed(1)}%
+                  </div>
+                  <div className="w-full bg-gray-600 border-2 border-gray-500 h-4 pixel-shadow">
+                    <div
+                      className="h-full bg-gradient-to-r from-cyan-400 to-green-400 transition-all duration-300"
+                      style={{ width: `${(prob * 100).toFixed(0)}%` }}
+                    ></div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </TechnicalCard>
+            </PixelCard>
 
-          {/* Chart Card */}
-          <TechnicalCard
-            title="Learning Curve"
-            config="CHART-001"
-            icon={LineChart}
-            size="normal"
+            {/* Chart Card */}
+            <PixelCard
+              title="Learning Curve"
+              tagColor="green"
+              tagIcon={LineChart}
+              size="normal"
+            >
+              <div className="space-y-4">
+                <div className="h-64 w-full bg-gray-700 border-2 border-green-400 p-2 pixel-shadow">
+                  <Line data={chartData} options={chartOptions} />
+                </div>
+
+                <div className="p-3 border-2 border-green-400 bg-gray-700 text-center pixel-shadow">
+                  <div className="font-bold text-green-400 text-sm uppercase tracking-wide pixel-text">
+                    CURRENT: T={params.practice} | P={(prob * 100).toFixed(1)}%
+                  </div>
+                </div>
+              </div>
+            </PixelCard>
+          </div>
+
+          {/* Session Controls */}
+          <PixelCard
+            title={sessionActive ? "Learning Session Active" : "Session Ended"}
+            tagColor="orange"
+            tagIcon={sessionActive ? Play : Database}
+            size="wide"
           >
-            <div className="space-y-4">
-              <div className="h-64 w-full bg-gray-100 border-2 border-black p-2">
-                <Line data={chartData} options={chartOptions} />
+            <div className="space-y-6">
+              {/* Status Indicator */}
+              <div className="flex items-center gap-3">
+                <div className={`w-4 h-4 border-2 border-orange-400 pixel-shadow ${sessionActive ? "bg-orange-400 animate-pulse" : "bg-gray-600"}`}></div>
+                <span className="font-mono text-sm uppercase tracking-wide text-orange-400 pixel-text">
+                  {sessionActive ? "&gt; SIMULATION RUNNING" : "&gt; AWAITING RETRAIN"}
+                </span>
               </div>
 
-              <div className="p-3 border-2 border-black bg-gray-100 text-center">
-                <div className="font-bold text-black text-sm uppercase tracking-wide">
-                  CURRENT: T={params.practice} | P={(prob * 100).toFixed(1)}%
-                </div>
-              </div>
-            </div>
-          </TechnicalCard>
-        </div>
-
-        {/* Session Controls */}
-        <TechnicalCard
-          title={sessionActive ? "Learning Session Active" : "Session Ended"}
-          config="CTRL-001"
-          icon={sessionActive ? Play : Database}
-          size="wide"
-        >
-          <div className="space-y-6">
-            {/* Status Indicator */}
-            <div className="flex items-center gap-3">
-              <div className={`w-4 h-4 border-2 border-black ${sessionActive ? "bg-black animate-pulse" : "bg-gray-400"}`}></div>
-              <span className="font-mono text-sm uppercase tracking-wide">
-                {sessionActive ? "SIMULATION RUNNING" : "AWAITING RETRAIN"}
-              </span>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-              <button
-                onClick={() => simulateResponse(true)}
-                disabled={!sessionActive}
-                className={`px-4 py-3 bg-white text-black border-2 border-black font-bold uppercase tracking-wide transition-all hover:bg-black hover:text-white ${
-                  !sessionActive ? "opacity-50 cursor-not-allowed" : ""
-                }`}
-              >
-                ✓ CORRECT
-              </button>
-
-              <button
-                onClick={() => simulateResponse(false)}
-                disabled={!sessionActive}
-                className={`px-4 py-3 bg-white text-black border-2 border-black font-bold uppercase tracking-wide transition-all hover:bg-black hover:text-white ${
-                  !sessionActive ? "opacity-50 cursor-not-allowed" : ""
-                }`}
-              >
-                ✗ INCORRECT
-              </button>
-
-              <button
-                onClick={endSession}
-                disabled={!sessionActive}
-                className={`px-4 py-3 bg-white text-black border-2 border-black font-bold uppercase tracking-wide transition-all hover:bg-black hover:text-white ${
-                  !sessionActive ? "opacity-50 cursor-not-allowed" : ""
-                }`}
-              >
-                END SESSION
-              </button>
-
-              <button
-                onClick={resetAll}
-                className="px-4 py-3 bg-white text-black border-2 border-black font-bold uppercase tracking-wide hover:bg-black hover:text-white transition-all flex items-center justify-center gap-2"
-              >
-                <RotateCcw className="w-4 h-4" />
-                RESET
-              </button>
-            </div>
-
-            {/* Retrain Section */}
-            {!sessionActive && retrainingData.length > 0 && (
-              <div className="border-2 border-black p-4 bg-gray-100">
-                <div className="flex items-center gap-3 mb-3">
-                  <RefreshCw className="w-5 h-5" />
-                  <h4 className="font-bold text-black text-lg uppercase tracking-wide">
-                    RETRAINING READY
-                  </h4>
-                </div>
-                <p className="text-black font-mono text-sm mb-4">
-                  {retrainingData.length} RESPONSES COLLECTED • READY TO UPDATE MODEL PARAMETERS
-                </p>
+              {/* Action Buttons */}
+              <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
                 <button
-                  onClick={retrainModel}
-                  className="w-full px-4 py-3 bg-black text-white border-2 border-black font-bold uppercase tracking-wide hover:bg-white hover:text-black transition-all"
+                  onClick={() => simulateResponse(true)}
+                  disabled={!sessionActive}
+                  className={`px-4 py-3 bg-gray-700 text-green-400 border-2 border-green-400 font-bold uppercase tracking-wide transition-all hover:bg-green-400 hover:text-black pixel-shadow pixel-text ${
+                    !sessionActive ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
                 >
-                  RETRAIN MODEL
+                  ✓ CORRECT
+                </button>
+
+                <button
+                  onClick={() => simulateResponse(false)}
+                  disabled={!sessionActive}
+                  className={`px-4 py-3 bg-gray-700 text-red-400 border-2 border-red-400 font-bold uppercase tracking-wide transition-all hover:bg-red-400 hover:text-black pixel-shadow pixel-text ${
+                    !sessionActive ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                >
+                  ✗ INCORRECT
+                </button>
+
+                <button
+                  onClick={endSession}
+                  disabled={!sessionActive}
+                  className={`px-4 py-3 bg-gray-700 text-yellow-400 border-2 border-yellow-400 font-bold uppercase tracking-wide transition-all hover:bg-yellow-400 hover:text-black pixel-shadow pixel-text ${
+                    !sessionActive ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                >
+                  END SESSION
+                </button>
+
+                <button
+                  onClick={resetAll}
+                  className="px-4 py-3 bg-gray-700 text-cyan-400 border-2 border-cyan-400 font-bold uppercase tracking-wide hover:bg-cyan-400 hover:text-black transition-all flex items-center justify-center gap-2 pixel-shadow pixel-text"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                  RESET
                 </button>
               </div>
-            )}
 
-            {/* Response Log */}
-            <div className="border-l-4 border-black bg-gray-100 p-4">
-              <h4 className="font-bold text-black mb-3 text-lg uppercase tracking-wide">
-                RESPONSE LOG
-              </h4>
-              <div className="space-y-2 max-h-32 overflow-y-auto">
-                {responseLog.length === 0 ? (
-                  <div className="text-black text-center py-2 font-mono text-sm">
-                    NO RESPONSES YET - SIMULATE SOME ANSWERS
+              {/* Retrain Section */}
+              {!sessionActive && retrainingData.length > 0 && (
+                <div className="border-2 border-purple-400 p-4 bg-gray-700 pixel-shadow">
+                  <div className="flex items-center gap-3 mb-3">
+                    <RefreshCw className="w-5 h-5 text-purple-400" />
+                    <h4 className="font-bold text-purple-400 text-lg uppercase tracking-wide pixel-text">
+                      RETRAINING READY
+                    </h4>
                   </div>
-                ) : (
-                  responseLog
-                    .slice(-5)
-                    .reverse()
-                    .map((entry, i) => (
-                      <div
-                        key={i}
-                        className={`${
-                          entry.correct
-                            ? "bg-white border-l-4 border-black"
-                            : "bg-gray-200 border-l-4 border-black"
-                        } font-mono px-3 py-2 text-sm`}
-                      >
-                        <div className="font-bold">
-                          T={entry.practice}: {entry.correct ? "✓ CORRECT" : "✗ INCORRECT"}
+                  <p className="text-white font-mono text-sm mb-4 pixel-text">
+                    &gt; {retrainingData.length} RESPONSES COLLECTED
+                    <br />
+                    &gt; READY TO UPDATE MODEL PARAMETERS
+                  </p>
+                  <button
+                    onClick={retrainModel}
+                    className="w-full px-4 py-3 bg-purple-600 text-white border-2 border-purple-400 font-bold uppercase tracking-wide hover:bg-purple-400 transition-all pixel-shadow pixel-text"
+                  >
+                    RETRAIN MODEL
+                  </button>
+                </div>
+              )}
+
+              {/* Response Log */}
+              <div className="border-l-4 border-cyan-400 bg-gray-700 p-4 pixel-shadow">
+                <h4 className="font-bold text-cyan-400 mb-3 text-lg uppercase tracking-wide pixel-text">
+                  RESPONSE LOG
+                </h4>
+                <div className="space-y-2 max-h-32 overflow-y-auto">
+                  {responseLog.length === 0 ? (
+                    <div className="text-gray-400 text-center py-2 font-mono text-sm pixel-text">
+                      &gt; NO RESPONSES YET - SIMULATE SOME ANSWERS
+                    </div>
+                  ) : (
+                    responseLog
+                      .slice(-5)
+                      .reverse()
+                      .map((entry, i) => (
+                        <div
+                          key={i}
+                          className={`${
+                            entry.correct
+                              ? "bg-gray-600 border-l-4 border-green-400"
+                              : "bg-gray-600 border-l-4 border-red-400"
+                          } font-mono px-3 py-2 text-sm pixel-shadow`}
+                        >
+                          <div className="font-bold text-white pixel-text">
+                            &gt; T={entry.practice}: {entry.correct ? "✓ CORRECT" : "✗ INCORRECT"}
+                          </div>
+                          <div className="text-xs text-gray-300 pixel-text">
+                            &gt; PREDICTED: {(entry.probability * 100).toFixed(1)}%
+                          </div>
                         </div>
-                        <div className="text-xs">
-                          PREDICTED: {(entry.probability * 100).toFixed(1)}%
-                        </div>
-                      </div>
-                    ))
-                )}
+                      ))
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        </TechnicalCard>
+          </PixelCard>
 
-        {/* Key Insights */}
-        <TechnicalCard
-          title="AFM: What Happens When?"
-          config="INFO-001"
-          icon={Lightbulb}
-          size="wide"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="border-2 border-black p-4 bg-gray-100">
-              <h4 className="font-bold text-black mb-3 text-lg uppercase tracking-wide">
-                DURING SESSION
-              </h4>
-              <ul className="space-y-2 text-black font-mono text-sm">
-                <li>• θ, β, γ STAY CONSTANT (NO TUNING)</li>
-                <li>• ONLY PRACTICE (T) INCREMENTS PER ATTEMPT</li>
-                <li>• SUCCESS PROBABILITY UPDATES LIVE</li>
-                <li>• MODEL TRACKS PERFORMANCE FOR RETRAINING</li>
-              </ul>
-            </div>
-
-            <div className="border-2 border-black p-4 bg-gray-100">
-              <h4 className="font-bold text-black mb-3 text-lg uppercase tracking-wide">
-                DURING RETRAIN
-              </h4>
-              <ul className="space-y-2 text-black font-mono text-sm">
-                <li>• θ, β, γ UPDATED BASED ON PERFORMANCE</li>
-                <li>• PAST RESPONSES USED FOR TUNING</li>
-                <li>• MODEL LEARNS FROM COLLECTED DATA</li>
-                <li>• PRACTICE COUNTER RESETS TO ZERO</li>
-              </ul>
-            </div>
-          </div>
-        </TechnicalCard>
-
-        {/* Continue Button */}
-        <div className="flex justify-center pt-2">
-          <button
-            className="px-12 py-4 bg-black text-white border-2 border-black font-bold uppercase tracking-wide hover:bg-white hover:text-black transition-all flex items-center gap-3 text-lg"
-            onClick={() => scroll(16)}
+          {/* Key Insights */}
+          <PixelCard
+            title="AFM: What Happens When?"
+            tagColor="blue"
+            tagIcon={Lightbulb}
+            size="wide"
           >
-            CONTINUE
-            <ArrowRight className="w-6 h-6" />
-          </button>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="border-2 border-blue-400 p-4 bg-gray-700 pixel-shadow">
+                <h4 className="font-bold text-blue-400 mb-3 text-lg uppercase tracking-wide pixel-text">
+                  DURING SESSION
+                </h4>
+                <ul className="space-y-2 text-white font-mono text-sm">
+                  <li className="pixel-text">&gt; θ, β, γ STAY CONSTANT (NO TUNING)</li>
+                  <li className="pixel-text">&gt; ONLY PRACTICE (T) INCREMENTS PER ATTEMPT</li>
+                  <li className="pixel-text">&gt; SUCCESS PROBABILITY UPDATES LIVE</li>
+                  <li className="pixel-text">&gt; MODEL TRACKS PERFORMANCE FOR RETRAINING</li>
+                </ul>
+              </div>
+
+              <div className="border-2 border-purple-400 p-4 bg-gray-700 pixel-shadow">
+                <h4 className="font-bold text-purple-400 mb-3 text-lg uppercase tracking-wide pixel-text">
+                  AFTER SESSION
+                </h4>
+                <ul className="space-y-2 text-white font-mono text-sm">
+                  <li className="pixel-text">&gt; θ, β, γ UPDATE FOR EACH RESPONSE</li>
+                  <li className="pixel-text">&gt; SUCCESS PROBABILITY UPDATES LIVE</li>
+                  <li className="pixel-text">&gt; MODEL TRACKS PERFORMANCE FOR RETRAINING</li>
+                </ul>
+              </div>
+            </div>
+          </PixelCard>
         </div>
       </div>
-
-      <ParameterTooltip />
-    </Layout>
+    </div>
   );
-}
+};
