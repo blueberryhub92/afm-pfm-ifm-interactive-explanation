@@ -1,11 +1,11 @@
 import { useState, useRef } from "react";
-import { 
-  Brain, 
-  Target, 
-  TrendingUp, 
-  Play, 
-  CheckCircle, 
-  XCircle, 
+import {
+  Brain,
+  Target,
+  TrendingUp,
+  Play,
+  CheckCircle,
+  XCircle,
   ArrowRight,
   Lightbulb,
   Calculator,
@@ -65,7 +65,7 @@ export const Slide18PredictorQuestion = ({ scroll }) => {
               Which of the following <span className="text-red-600 font-black">changes throughout a learning session</span>?
             </p>
           </div>
-          
+
           <div className="border-4 border-blue-600 rounded-xl p-6 bg-blue-50">
             <div className="flex items-center gap-3 mb-4">
               <Calculator className="w-8 h-8 text-blue-600" />
@@ -73,7 +73,7 @@ export const Slide18PredictorQuestion = ({ scroll }) => {
             </div>
             <p className="text-black text-lg font-bold leading-relaxed">
               This question is asking about dynamic vs. static parameters during a{' '}
-              <span 
+              <span
                 ref={learningSessionRef}
                 className="cursor-help bg-blue-200 px-2 py-1 border-2 border-blue-600 rounded text-blue-800 font-bold hover:bg-blue-300 transition-all"
                 onMouseEnter={() => handleMouseEnter('learning-session', learningSessionRef)}
@@ -89,11 +89,10 @@ export const Slide18PredictorQuestion = ({ scroll }) => {
             {options.map((option) => (
               <label
                 key={option.value}
-                className={`border-4 rounded-xl p-6 cursor-pointer transition-all font-bold text-lg uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center gap-4 ${
-                  selectedAnswer === option.value
-                    ? `bg-${option.color}-500 text-white border-${option.color}-700`
-                    : `bg-white text-black border-black hover:bg-${option.color}-50`
-                }`}
+                className={`border-4 rounded-xl p-6 cursor-pointer transition-all font-bold text-lg uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center gap-4 ${selectedAnswer === option.value
+                  ? `bg-${option.color}-500 text-white border-${option.color}-700`
+                  : `bg-white text-black border-black hover:bg-${option.color}-50`
+                  }`}
               >
                 <input
                   type="radio"
@@ -103,11 +102,10 @@ export const Slide18PredictorQuestion = ({ scroll }) => {
                   onChange={(e) => setSelectedAnswer(e.target.value)}
                   className="sr-only"
                 />
-                <div className={`p-2 rounded-lg border-2 ${
-                  selectedAnswer === option.value 
-                    ? 'bg-white text-black border-white' 
-                    : `bg-${option.color}-100 border-${option.color}-600`
-                }`}>
+                <div className={`p-2 rounded-lg border-2 ${selectedAnswer === option.value
+                  ? 'bg-white text-black border-white'
+                  : `bg-${option.color}-100 border-${option.color}-600`
+                  }`}>
                   {option.icon}
                 </div>
                 <span className="flex-1">{option.label}</span>
@@ -125,14 +123,12 @@ export const Slide18PredictorQuestion = ({ scroll }) => {
       content: (
         <div className="space-y-6">
           {/* Result Header */}
-          <div className={`border-4 rounded-xl p-8 shadow-lg relative ${
-            selectedAnswer === "practice opportunities" 
-              ? "border-green-600 bg-gradient-to-r from-green-100 to-green-200" 
-              : "border-red-600 bg-gradient-to-r from-red-100 to-red-200"
-          }`}>
-            <div className={`absolute -top-6 left-4 px-3 py-1 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2 ${
-              selectedAnswer === "practice opportunities" ? "bg-green-600" : "bg-red-600"
+          <div className={`border-4 rounded-xl p-8 shadow-lg relative ${selectedAnswer === "practice opportunities"
+            ? "border-green-600 bg-gradient-to-r from-green-100 to-green-200"
+            : "border-red-600 bg-gradient-to-r from-red-100 to-red-200"
             }`}>
+            <div className={`absolute -top-6 left-4 px-3 py-1 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2 ${selectedAnswer === "practice opportunities" ? "bg-green-600" : "bg-red-600"
+              }`}>
               {selectedAnswer === "practice opportunities" ? (
                 <CheckCircle className="w-4 h-4" />
               ) : (
@@ -140,7 +136,7 @@ export const Slide18PredictorQuestion = ({ scroll }) => {
               )}
               Result
             </div>
-            
+
             <div className="text-center">
               {selectedAnswer === "practice opportunities" ? (
                 <div className="text-4xl font-black text-green-800 uppercase tracking-wider">
@@ -161,7 +157,7 @@ export const Slide18PredictorQuestion = ({ scroll }) => {
               <h3 className="text-xl font-bold text-green-700 uppercase tracking-wide">Correct Answer</h3>
             </div>
             <p className="text-black text-lg font-bold leading-relaxed mb-4">
-              <span 
+              <span
                 ref={practiceOpportunitiesRef}
                 className="cursor-help bg-green-200 px-2 py-1 border-2 border-green-600 rounded text-green-800 font-bold hover:bg-green-300 transition-all"
                 onMouseEnter={() => handleMouseEnter('practice-opportunities', practiceOpportunitiesRef)}
@@ -171,7 +167,7 @@ export const Slide18PredictorQuestion = ({ scroll }) => {
               </span>
               {' '}is the only parameter that changes during a learning session.
             </p>
-            
+
             <div className="bg-white border-2 border-green-600 rounded-lg p-4">
               <div className="font-bold text-green-800 mb-2">Why Practice Opportunities?</div>
               <div className="text-green-900 text-sm space-y-1">
@@ -188,16 +184,16 @@ export const Slide18PredictorQuestion = ({ scroll }) => {
               <Lightbulb className="w-8 h-8 text-blue-600" />
               <h3 className="text-xl font-bold text-blue-700 uppercase tracking-wide">Mathematical Impact</h3>
             </div>
-            
+
             <div className="bg-black text-blue-400 p-4 rounded-lg border-2 border-blue-600 font-mono text-sm text-center mb-4">
               <div className="text-blue-300 mb-2">DYNAMIC COMPONENT:</div>
               <div className="text-white">γₖ × Tᵢₖ</div>
               <div className="text-blue-300 text-xs mt-2">Only T changes during session</div>
             </div>
-            
+
             <p className="text-black text-lg font-bold leading-relaxed mb-4">
               In the{' '}
-              <span 
+              <span
                 ref={afmModelRef}
                 className="cursor-help bg-blue-200 px-2 py-1 border-2 border-blue-600 rounded text-blue-800 font-bold hover:bg-blue-300 transition-all"
                 onMouseEnter={() => handleMouseEnter('afm-model', afmModelRef)}
@@ -207,7 +203,7 @@ export const Slide18PredictorQuestion = ({ scroll }) => {
               </span>
               , success probability increases through practice accumulation, not ability growth during the session.
             </p>
-            
+
             <div className="space-y-2">
               <div className="bg-white border-2 border-blue-600 rounded-lg p-3">
                 <div className="font-mono text-blue-900 text-sm">
@@ -233,10 +229,10 @@ export const Slide18PredictorQuestion = ({ scroll }) => {
 
   // Tooltips
   const LearningSessionTooltip = () => (
-    <div 
+    <div
       className="fixed z-50 bg-white border-4 border-black rounded-xl shadow-lg p-6 w-96 font-['IBM_Plex_Mono',monospace]"
-      style={{ 
-        left: `${tooltipPosition.x}px`, 
+      style={{
+        left: `${tooltipPosition.x}px`,
         top: `${tooltipPosition.y}px`,
         maxWidth: '384px'
       }}
@@ -247,7 +243,7 @@ export const Slide18PredictorQuestion = ({ scroll }) => {
           <span className="font-bold text-blue-700 uppercase tracking-wide">Learning Session</span>
         </div>
       </div>
-      
+
       <div className="space-y-3">
         <div className="border-4 border-green-600 rounded-xl p-3 bg-green-50">
           <div className="font-bold text-green-800 text-sm mb-2">During Session:</div>
@@ -257,7 +253,7 @@ export const Slide18PredictorQuestion = ({ scroll }) => {
             <li>• Continuous progression through tasks</li>
           </ul>
         </div>
-        
+
         <div className="border-4 border-purple-600 rounded-xl p-3 bg-purple-50">
           <div className="font-bold text-purple-800 text-sm mb-2">Between Sessions:</div>
           <ul className="text-xs text-purple-700 font-mono space-y-1">
@@ -270,10 +266,10 @@ export const Slide18PredictorQuestion = ({ scroll }) => {
   );
 
   const ParametersTooltip = () => (
-    <div 
+    <div
       className="fixed z-50 bg-white border-4 border-black rounded-xl shadow-lg p-6 w-96 font-['IBM_Plex_Mono',monospace]"
-      style={{ 
-        left: `${tooltipPosition.x}px`, 
+      style={{
+        left: `${tooltipPosition.x}px`,
         top: `${tooltipPosition.y}px`,
         maxWidth: '384px'
       }}
@@ -284,7 +280,7 @@ export const Slide18PredictorQuestion = ({ scroll }) => {
           <span className="font-bold text-orange-700 uppercase tracking-wide">AFM Parameters</span>
         </div>
       </div>
-      
+
       <div className="space-y-2">
         <div className="border-l-4 border-blue-600 bg-blue-100 px-3 py-2 rounded-r-lg">
           <div className="font-bold text-blue-800 text-sm">θ (theta)</div>
@@ -307,10 +303,10 @@ export const Slide18PredictorQuestion = ({ scroll }) => {
   );
 
   const PracticeOpportunitiesTooltip = () => (
-    <div 
+    <div
       className="fixed z-50 bg-white border-4 border-black rounded-xl shadow-lg p-6 w-96 font-['IBM_Plex_Mono',monospace]"
-      style={{ 
-        left: `${tooltipPosition.x}px`, 
+      style={{
+        left: `${tooltipPosition.x}px`,
         top: `${tooltipPosition.y}px`,
         maxWidth: '384px'
       }}
@@ -321,7 +317,7 @@ export const Slide18PredictorQuestion = ({ scroll }) => {
           <span className="font-bold text-green-700 uppercase tracking-wide">Practice Opportunities (T)</span>
         </div>
       </div>
-      
+
       <div className="space-y-3">
         <div className="border-4 border-green-600 rounded-xl p-3 bg-green-50">
           <div className="font-bold text-green-800 text-sm mb-2">How it Changes:</div>
@@ -329,7 +325,7 @@ export const Slide18PredictorQuestion = ({ scroll }) => {
             T₀ = 0 → T₁ = 1 → T₂ = 2 → T₃ = 3...
           </div>
         </div>
-        
+
         <div className="border-4 border-blue-600 rounded-xl p-3 bg-blue-50">
           <div className="font-bold text-blue-800 text-sm mb-2">Mathematical Impact:</div>
           <div className="text-xs text-blue-700 font-mono">
@@ -341,10 +337,10 @@ export const Slide18PredictorQuestion = ({ scroll }) => {
   );
 
   const AFMModelTooltip = () => (
-    <div 
+    <div
       className="fixed z-50 bg-white border-4 border-black rounded-xl shadow-lg p-6 w-96 font-['IBM_Plex_Mono',monospace]"
-      style={{ 
-        left: `${tooltipPosition.x}px`, 
+      style={{
+        left: `${tooltipPosition.x}px`,
         top: `${tooltipPosition.y}px`,
         maxWidth: '384px'
       }}
@@ -355,7 +351,7 @@ export const Slide18PredictorQuestion = ({ scroll }) => {
           <span className="font-bold text-blue-700 uppercase tracking-wide">AFM Model Assumption</span>
         </div>
       </div>
-      
+
       <div className="space-y-3">
         <div className="border-4 border-green-600 rounded-xl p-3 bg-green-50">
           <div className="font-bold text-green-800 text-sm mb-2">Key Assumption:</div>
@@ -363,7 +359,7 @@ export const Slide18PredictorQuestion = ({ scroll }) => {
             Underlying ability doesn't change mid-session - only practice accumulates
           </div>
         </div>
-        
+
         <div className="border-4 border-purple-600 rounded-xl p-3 bg-purple-50">
           <div className="font-bold text-purple-800 text-sm mb-2">Implication:</div>
           <div className="text-xs text-purple-700 font-mono">
@@ -394,14 +390,12 @@ export const Slide18PredictorQuestion = ({ scroll }) => {
               {steps.map((_, index) => (
                 <div key={index} className="flex items-center">
                   <div
-                    className={`w-4 h-4 rounded-full border-2 border-black ${
-                      index <= currentStep ? 'bg-red-600' : 'bg-gray-200'
-                    }`}
+                    className={`w-4 h-4 rounded-full border-2 border-black ${index <= currentStep ? 'bg-red-600' : 'bg-gray-200'
+                      }`}
                   />
                   {index < steps.length - 1 && (
-                    <div className={`w-12 h-1 border-t-2 border-black ${
-                      index < currentStep ? 'bg-red-600' : 'bg-gray-200'
-                    }`} />
+                    <div className={`w-12 h-1 border-t-2 border-black ${index < currentStep ? 'bg-red-600' : 'bg-gray-200'
+                      }`} />
                   )}
                 </div>
               ))}
@@ -413,7 +407,7 @@ export const Slide18PredictorQuestion = ({ scroll }) => {
             <h2 className="text-3xl font-bold text-center mb-8 text-black uppercase tracking-tight">
               {steps[currentStep].title}
             </h2>
-            
+
             {steps[currentStep].content}
           </div>
 
@@ -441,7 +435,7 @@ export const Slide18PredictorQuestion = ({ scroll }) => {
               </button>
             ) : (
               <button
-                onClick={() => scroll(19)}
+                onClick={() => scroll(20)}
                 className="px-8 py-4 bg-green-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-green-600 transition-all transform hover:scale-105 flex items-center gap-3"
               >
                 <span>Continue</span>

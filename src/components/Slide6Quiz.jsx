@@ -2,7 +2,7 @@ import React from 'react';
 import { Brain, Terminal, Zap, ArrowRight, Target, Code } from 'lucide-react';
 
 export const Slide6Quiz = ({ guess2, setGuess2, scroll }) => {
-  const handleSubmitGuess2 = () => guess2.trim() && scroll(7);
+  const handleSubmitGuess2 = () => guess2.trim() && scroll(8);
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
@@ -13,8 +13,8 @@ export const Slide6Quiz = ({ guess2, setGuess2, scroll }) => {
   return (
     <div className="bg-white min-h-screen flex flex-col items-center justify-center py-8 px-4 md:px-10 text-black font-['IBM_Plex_Mono',monospace]">
       <div className="w-full max-w-5xl mx-auto flex flex-col gap-8">
-        
-        
+
+
 
         {/* Quiz Section */}
         <div className="border-4 border-black rounded-xl p-6 bg-white relative shadow-lg">
@@ -22,7 +22,7 @@ export const Slide6Quiz = ({ guess2, setGuess2, scroll }) => {
             <Brain className="w-4 h-4" />
             QUIZ MODE
           </div>
-          
+
           <div className="text-center mb-6">
             <h3 className="text-2xl md:text-3xl font-bold tracking-tight text-black mb-4">
               Let's tackle another task on the same skill
@@ -38,9 +38,9 @@ export const Slide6Quiz = ({ guess2, setGuess2, scroll }) => {
           {/* Code Block */}
           <div className="border-4 border-black rounded-xl p-6 bg-gray-900 mb-8 relative shadow-lg">
             <div className="absolute -top-6 left-4 px-3 py-1 bg-black text-white font-semibold text-xs tracking-wider flex items-center gap-2">
-                          <Code className="w-4 h-4" />
-                          PYTHON CODE
-                        </div>
+              <Code className="w-4 h-4" />
+              PYTHON CODE
+            </div>
             <div className="text-green-400 font-mono text-lg md:text-xl leading-relaxed">
               <div className="mb-2">message = "dlokgm"</div>
               <div className="mb-2">result = message[::2]</div>
@@ -81,11 +81,10 @@ export const Slide6Quiz = ({ guess2, setGuess2, scroll }) => {
               <button
                 onClick={handleSubmitGuess2}
                 disabled={!guess2.trim()}
-                className={`px-6 py-3 border-4 border-black rounded-lg font-semibold uppercase tracking-wide transition-all shadow-lg flex items-center gap-3 text-lg ${
-                  guess2.trim() 
-                    ? 'bg-purple-600 text-white hover:bg-white hover:text-purple-600 hover:border-purple-600' 
-                    : 'bg-neutral-300 text-neutral-500 cursor-not-allowed'
-                }`}
+                className={`px-6 py-3 border-4 border-black rounded-lg font-semibold uppercase tracking-wide transition-all shadow-lg flex items-center gap-3 text-lg ${guess2.trim()
+                  ? 'bg-purple-600 text-white hover:bg-white hover:text-purple-600 hover:border-purple-600'
+                  : 'bg-neutral-300 text-neutral-500 cursor-not-allowed'
+                  }`}
               >
                 Submit Guess!
                 <ArrowRight className="w-5 h-5" />
@@ -94,7 +93,7 @@ export const Slide6Quiz = ({ guess2, setGuess2, scroll }) => {
           </div>
         </div>
 
-        
+
       </div>
     </div>
   );

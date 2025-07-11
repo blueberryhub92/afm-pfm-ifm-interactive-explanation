@@ -9,7 +9,7 @@ export const Slide4AFMIntroduction = ({ scroll }) => {
   const [difficultyLevel, setDifficultyLevel] = useState('Easy');
   const [currentTask, setCurrentTask] = useState(1);
   const [maxTasks] = useState(8);
-  
+
   const baselineRef = useRef(null);
   const successRef = useRef(null);
 
@@ -18,12 +18,12 @@ export const Slide4AFMIntroduction = ({ scroll }) => {
     const interval = setInterval(() => {
       setCurrentTask(prev => {
         const nextTask = prev >= maxTasks ? 1 : prev + 1;
-        
+
         // Realistic AFM progression: start from baseline θ, grow with each opportunity
         const baseGrowth = nextTask * 0.08; // Each task adds ~8% base growth
         const randomVariation = (Math.random() - 0.3) * 0.06; // Small random component, slightly negative bias
         const newProbability = Math.max(0.12, Math.min(0.88, baselineProficiency + baseGrowth + randomVariation));
-        
+
         setProbability(newProbability);
         return nextTask;
       });
@@ -59,13 +59,13 @@ export const Slide4AFMIntroduction = ({ scroll }) => {
         <Brain className="w-4 h-4" />
         BASELINE PROFICIENCY (θ)
       </div>
-      
+
       <h4 className="font-bold text-purple-800 mb-4 text-lg uppercase tracking-wide">How AFM Determines Baseline Proficiency</h4>
-      
+
       <p className="text-black text-sm leading-relaxed mb-4 font-semibold">
         Before you attempt any tasks, AFM estimates your baseline proficiency using several methods:
       </p>
-      
+
       <div className="space-y-3 text-sm">
         <div className="border-2 border-black rounded p-2 bg-neutral-50">
           <strong className="text-purple-700">PRIOR ASSESSMENTS:</strong> <span className="text-black">Previous performance on similar skills</span>
@@ -80,7 +80,7 @@ export const Slide4AFMIntroduction = ({ scroll }) => {
           <strong className="text-purple-700">DIAGNOSTIC TESTS:</strong> <span className="text-black">Quick skills assessment</span>
         </div>
       </div>
-      
+
       <button
         onClick={() => setHoveredTerm(null)}
         className="absolute top-2 right-2 px-2 py-1 rounded border-2 border-black bg-purple-700 text-white font-bold hover:bg-white hover:text-purple-700 transition-colors"
@@ -100,12 +100,12 @@ export const Slide4AFMIntroduction = ({ scroll }) => {
             <Zap className="w-4 h-4" />
             ADAPTIVE LEARNING
           </div>
-          
+
           <div className="space-y-6 text-lg font-semibold leading-relaxed">
             <p className="text-black">
               But why is knowing this success probability so valuable? It enables <span className="bg-orange-200 px-2 py-1 border-2 border-black rounded font-bold uppercase">adaptive learning</span> – the system can automatically adjust the difficulty and type of questions based on your predicted performance.
             </p>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="border-4 border-red-600 rounded-xl p-4 bg-red-50">
                 <div className="font-bold text-red-800 text-center mb-2 uppercase tracking-wide">Low (e.g., &lt;30%)</div>
@@ -129,15 +129,15 @@ export const Slide4AFMIntroduction = ({ scroll }) => {
             <Target className="w-4 h-4" />
             PARAMETERS
           </div>
-          
+
           <div className="space-y-6 text-lg font-semibold leading-relaxed">
             <p className="text-black">
-              And <em className="font-bold text-purple-700 uppercase">guess what?</em> You already know about the first parameter of AFM, <span 
+              And <em className="font-bold text-purple-700 uppercase">guess what?</em> You already know about the first parameter of AFM, <span
                 className="bg-purple-300 px-2 py-1 border-2 border-black rounded font-bold uppercase transition-colors"
               >
                 θ
               </span>, which is the{' '}
-              <span 
+              <span
                 ref={baselineRef}
                 className="relative cursor-pointer border-4 border-purple-600 bg-purple-100 px-2 py-1 rounded font-bold text-purple-800 uppercase hover:bg-purple-200 transition-colors"
                 onMouseEnter={() => handleMouseEnter('baseline-proficiency')}
@@ -153,7 +153,7 @@ export const Slide4AFMIntroduction = ({ scroll }) => {
         {/* Action Button */}
         <div className="text-center">
           <button
-            onClick={() => scroll(6)}
+            onClick={() => scroll(7)}
             className="px-12 py-4 bg-purple-600 text-white border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide hover:bg-white hover:text-purple-600 hover:border-purple-600 transition-all duration-200 shadow-lg"
           >
             Next →

@@ -4,10 +4,8 @@ import { Slide19AFMFormula } from "./components/Slide19AFMFormula";
 import { scrollToSlide } from "./utils/utils";
 import { Slide0IntroductoryQuestion } from "./components/Slide0IntroductoryQuestion";
 import { Slide1GuessResult } from "./components/Slide1GuessResult";
-import { Slide2CodeExplanation } from "./components/Slide2CodeExplanation";
 import { Slide3SliderQuestion } from "./components/Slide3SliderQuestion";
 import { Slide4AFMIntroduction } from "./components/Slide4AFMIntroduction";
-import { Slide5SecondTask } from "./components/Slide5SecondTask";
 import { Slide6Quiz } from "./components/Slide6Quiz";
 import { Slide7QuizResult } from "./components/Slide7QuizResult";
 import { Slide8OpportunityChoices } from "./components/Slide8OpportunityChoices";
@@ -28,10 +26,11 @@ import { Slide22AFMCorrectness } from "./components/Slide22AFMCorrectness";
 import { WelcomePage } from "./components/WelcomePage";
 
 // Constants
-const TOTAL_SLIDES = 24;
+const TOTAL_SLIDES = 25;
 
 // Navigation configuration
 const SLIDE_TITLES = [
+  "Welcome",
   "Introductory Question",
   "Guess Result",
   "Code Explanation",
@@ -64,9 +63,8 @@ function NavigationBar({ currentSlide, maxVisitedSlide, onNavigate, isExpanded, 
       {/* Toggle Button - Moves with navigation state */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className={`fixed top-4 z-60 w-12 h-12 bg-black text-white border-4 border-black rounded-lg font-bold text-xl uppercase tracking-wide hover:bg-white hover:text-black transition-all transform hover:scale-105 flex items-center justify-center shadow-xl ${
-          isExpanded ? 'left-[336px]' : 'left-4'
-        }`}
+        className={`fixed top-4 z-60 w-12 h-12 bg-black text-white border-4 border-black rounded-lg font-bold text-xl uppercase tracking-wide hover:bg-white hover:text-black transition-all transform hover:scale-105 flex items-center justify-center shadow-xl ${isExpanded ? 'left-[336px]' : 'left-4'
+          }`}
         title={isExpanded ? "COLLAPSE NAVIGATION" : "EXPAND NAVIGATION"}
       >
         <span className="font-black text-2xl">
@@ -76,33 +74,31 @@ function NavigationBar({ currentSlide, maxVisitedSlide, onNavigate, isExpanded, 
 
       {/* Backdrop/Overlay when navigation is expanded */}
       {isExpanded && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-50 z-40"
           onClick={() => setIsExpanded(false)}
         />
       )}
 
       {/* Navigation Panel - Slides in from left and overlays content */}
-      <div className={`fixed top-0 left-0 z-50 h-full w-80 bg-white border-r-8 border-black shadow-2xl transform transition-transform duration-300 ${
-        isExpanded ? 'translate-x-0' : '-translate-x-full'
-      }`}>
+      <div className={`fixed top-0 left-0 z-50 h-full w-80 bg-white border-r-8 border-black shadow-2xl transform transition-transform duration-300 ${isExpanded ? 'translate-x-0' : '-translate-x-full'
+        }`}>
         <div className="pt-20 px-4 h-full overflow-y-auto">
           <div className="border-4 border-black rounded-xl p-4 bg-gray-100 mb-6">
             <h3 className="text-2xl font-black text-black uppercase tracking-tight text-center">
               NAVIGATION
             </h3>
           </div>
-          
+
           <div className="space-y-3">
             {SLIDE_TITLES.map((title, index) => (
               <button
                 key={index}
                 onClick={() => onNavigate(index)}
-                className={`w-full text-left border-4 border-black rounded-xl font-bold text-sm uppercase tracking-wide transition-all transform hover:scale-105 ${
-                  index === currentSlide
-                    ? 'bg-purple-600 text-white border-l-8 border-l-yellow-500 p-3'
-                    : 'bg-white text-black hover:bg-gray-100 p-3'
-                }`}
+                className={`w-full text-left border-4 border-black rounded-xl font-bold text-sm uppercase tracking-wide transition-all transform hover:scale-105 ${index === currentSlide
+                  ? 'bg-purple-600 text-white border-l-8 border-l-yellow-500 p-3'
+                  : 'bg-white text-black hover:bg-gray-100 p-3'
+                  }`}
               >
                 <div className="flex items-center">
                   <span className="font-black w-8 text-center">{index + 1}.</span>
@@ -155,8 +151,8 @@ function AFMLearningAppContent() {
     if (index > maxVisitedSlide) {
       setMaxVisitedSlide(index);
     }
-    // Reset slide3DoneClicked if we're not on slide 3
-    if (index !== 3) {
+    // Reset slide3DoneClicked if we're not on slide 4 (which was slide 3 before)
+    if (index !== 4) {
       setSlide3DoneClicked(false);
     }
     // Close navigation when navigating to a new slide
@@ -172,8 +168,8 @@ function AFMLearningAppContent() {
       if (targetSlide > maxVisitedSlide) {
         setMaxVisitedSlide(targetSlide);
       }
-      // Reset slide3DoneClicked if we're not on slide 3
-      if (targetSlide !== 3) {
+      // Reset slide3DoneClicked if we're not on slide 4 (which was slide 3 before)
+      if (targetSlide !== 4) {
         setSlide3DoneClicked(false);
       }
       // Close navigation when navigating to a new slide
@@ -198,7 +194,7 @@ function AFMLearningAppContent() {
           }
         }
       }
-      
+
       // Toggle navigation with 'n' key
       if (event.key === 'n' && !event.ctrlKey && !event.altKey && !event.shiftKey) {
         // Only if not focused on an input field
@@ -247,6 +243,8 @@ function AFMLearningAppContent() {
 
     switch (currentSlide) {
       case 0:
+        return <WelcomePage scroll={scroll} />;
+      case 1:
         return (
           <Slide0IntroductoryQuestion
             guess1={guess1}
@@ -254,26 +252,22 @@ function AFMLearningAppContent() {
             scroll={scroll}
           />
         );
-      case 1:
-        return <Slide1GuessResult guess1={guess1} scroll={scroll} />;
       case 2:
-        return <Slide2CodeExplanation scroll={scroll} />;
-      case 3:
+        return <Slide1GuessResult guess1={guess1} scroll={scroll} />;
+      case 4:
         return (
           <Slide3SliderQuestion
             scroll={scroll}
             onDoneClick={() => setSlide3DoneClicked(true)}
           />
         );
-      case 4:
-        return <Slide4AFMIntroduction scroll={scroll} />;
       case 5:
-        return <Slide5SecondTask scroll={scroll} />;
-      case 6:
+        return <Slide4AFMIntroduction scroll={scroll} />;
+      case 7:
         return (
           <Slide6Quiz guess2={guess2} setGuess2={setGuess2} scroll={scroll} />
         );
-      case 7:
+      case 8:
         return (
           <Slide7QuizResult
             guess2={guess2}
@@ -282,11 +276,11 @@ function AFMLearningAppContent() {
             setShowTellMe={setShowTellMe}
           />
         );
-      case 8:
-        return <Slide8OpportunityChoices scroll={scroll} />;
       case 9:
-        return <Slide10TwoPythonTasks scroll={scroll} />;
+        return <Slide8OpportunityChoices scroll={scroll} />;
       case 10:
+        return <Slide10TwoPythonTasks scroll={scroll} />;
+      case 11:
         return (
           <Slide13TaskDifficultyQuestion
             taskChoice={taskChoice}
@@ -294,11 +288,11 @@ function AFMLearningAppContent() {
             scroll={scroll}
           />
         );
-      case 11:
-        return <Slide14BetaParameter scroll={scroll} />;
       case 12:
-        return <Slide15TwoMorePythonTasks scroll={scroll} />;
+        return <Slide14BetaParameter scroll={scroll} />;
       case 13:
+        return <Slide15TwoMorePythonTasks scroll={scroll} />;
+      case 14:
         return (
           <Slide16LearningRateQuestion
             taskChoice={taskChoice}
@@ -306,25 +300,25 @@ function AFMLearningAppContent() {
             scroll={scroll}
           />
         );
-      case 14:
-        return <Slide17LearningRateExplanation scroll={scroll} />;
       case 15:
-        return <Slide19AFMFormula scroll={scroll} />;
+        return <Slide17LearningRateExplanation scroll={scroll} />;
       case 16:
-        return <Slide20AFMSimulator scroll={scroll} />;
+        return <Slide19AFMFormula scroll={scroll} />;
       case 17:
-        return <Slide21AFMLimitations scroll={scroll} />;
+        return <Slide20AFMSimulator scroll={scroll} />;
       case 18:
-        return <Slide22AFMCorrectness scroll={scroll} />;
+        return <Slide21AFMLimitations scroll={scroll} />;
       case 19:
-        return <Slide23PFM scroll={scroll} />;
+        return <Slide22AFMCorrectness scroll={scroll} />;
       case 20:
-        return <Slide24PFMSimulation scroll={scroll} />;
+        return <Slide23PFM scroll={scroll} />;
       case 21:
-        return <Slide25IFMTasks scroll={scroll} />;
+        return <Slide24PFMSimulation scroll={scroll} />;
       case 22:
-        return <Slide26IFM scroll={scroll} />;
+        return <Slide25IFMTasks scroll={scroll} />;
       case 23:
+        return <Slide26IFM scroll={scroll} />;
+      case 24:
         return <Slide27IFMSimulation scroll={scroll} />;
       default:
         return null;
@@ -332,21 +326,21 @@ function AFMLearningAppContent() {
   };
 
   const getFormulaStage = (slideIndex) => {
-    if (slideIndex === 3) return 1;
-    if (slideIndex > 3 && slideIndex < 7) return 2; // θ only
-    if (slideIndex === 7) {
-      // On slide 7, show stage 2 (θ only) until "Tell me" is clicked, then stage 3 (θ + T)
+    if (slideIndex === 4) return 1;
+    if (slideIndex > 4 && slideIndex < 8) return 2; // θ only
+    if (slideIndex === 8) {
+      // On slide 8, show stage 2 (θ only) until "Tell me" is clicked, then stage 3 (θ + T)
       return showTellMe ? 3 : 2;
     }
-    if (slideIndex > 7 && slideIndex < 14) return 3; // θ + T
-    if (slideIndex >= 14 && slideIndex < 16) return 4; // θ + β + T
-    if (slideIndex >= 16 && slideIndex < 19) return 5;
-    if (slideIndex >= 19 && slideIndex < 20) return 6;
+    if (slideIndex > 8 && slideIndex < 15) return 3; // θ + T
+    if (slideIndex >= 15 && slideIndex < 17) return 4; // θ + β + T
+    if (slideIndex >= 17 && slideIndex < 20) return 5;
+    if (slideIndex >= 20 && slideIndex < 21) return 6;
     return 0; // No formula
   };
 
   const shouldShowTooltip = () => {
-    if (currentSlide === 3) {
+    if (currentSlide === 4) {
       return slide3DoneClicked;
     }
     return getFormulaStage(currentSlide) > 0;

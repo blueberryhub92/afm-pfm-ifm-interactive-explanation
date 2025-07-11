@@ -4,7 +4,7 @@ import { TrendingUp, TrendingDown, Minus, Lightbulb, ArrowRight, HelpCircle } fr
 export const Slide8OpportunityChoices = ({ scroll }) => {
   const [opportunityChoice, setOpportunityChoice] = useState("");
   const [showOpportunityResult, setShowOpportunityResult] = useState(false);
-  
+
   const handleOpportunityChoice = (choice) => {
     setOpportunityChoice(choice);
     setShowOpportunityResult(true);
@@ -28,7 +28,7 @@ export const Slide8OpportunityChoices = ({ scroll }) => {
   return (
     <div className="bg-white min-h-screen flex flex-col items-center py-8 px-4 md:px-10 text-black font-['IBM_Plex_Mono',monospace]">
       <div className="w-full max-w-4xl mx-auto flex flex-col gap-8">
-        
+
         {/* Question Header */}
         <div className="border-4 border-black rounded-xl p-6 bg-gradient-to-r from-blue-100 to-purple-100 shadow-lg relative">
           <div className="absolute -top-6 left-4 px-3 py-1 bg-blue-600 text-white font-bold rounded-md text-xs tracking-wider flex items-center gap-2">
@@ -37,7 +37,7 @@ export const Slide8OpportunityChoices = ({ scroll }) => {
           </div>
           <div className="text-center space-y-4">
             <h2 className="text-2xl font-bold text-black tracking-tight leading-tight">
-              How do you think opportunities changed from the first question to the second?
+              How do you think your practice opportunities changed from the first question to the second?
             </h2>
             <p className="text-xl font-semibold text-gray-700 bg-white px-4 py-2 rounded border-2 border-black inline-block">
               I think it:
@@ -70,13 +70,13 @@ export const Slide8OpportunityChoices = ({ scroll }) => {
           <div className="border-l-8 border-green-600 bg-gradient-to-r from-green-50 to-green-100 rounded-xl p-6 shadow-lg animate-fadeIn">
             <div className="flex items-center gap-2 mb-4 font-bold text-xl text-green-800">
               <Lightbulb className="w-6 h-6" />
-              Your opportunities increased!
+              Your practice opportunities increased!
             </div>
             <div className="bg-white border-2 border-black rounded-lg p-4">
               <p className="text-black leading-relaxed font-mono">
-                After the first question, you had <span className="bg-yellow-300 px-1 font-bold">1 opportunity</span> in <span className="bg-blue-200 px-1 font-bold">Index Slicing in Python</span>. After the second question, you had <span className="bg-yellow-300 px-1 font-bold">2 opportunities</span> in that same skill. Each time you work on a task for a <span className="bg-green-200 px-1 font-bold">specific skill</span>, your opportunities in that skill <span className="bg-yellow-300 px-1 font-bold">increase by 1</span>. However, your opportunities in <span className="bg-red-200 px-1 font-bold">different skills</span> (like loops) stay the same, as tasks are <span className="bg-green-200 px-1 font-bold">skill-specific</span>.
+                After the first question, you had <span className="bg-yellow-300 px-1 font-bold">1 opportunity</span> in <span className="bg-blue-200 px-1 font-bold">Index Slicing in Python</span>. After the second question, you had <span className="bg-yellow-300 px-1 font-bold">2 opportunities</span> in that same skill. Each time you work on a task for a <span className="bg-green-200 px-1 font-bold">specific skill</span>, your opportunities in that skill <span className="bg-yellow-300 px-1 font-bold">increase by 1</span>. However, your opportunities in <span className="bg-red-200 px-1 font-bold">different skills</span> (like loops or functions) remain the same, as tasks are <span className="bg-green-200 px-1 font-bold">skill-specific</span>.
                 <br /><br />
-                <span className="bg-purple-200 px-1 font-bold">AFM</span> estimates the <span className="bg-orange-200 px-1 font-bold">probability</span> that a student answers the next task on a specific skill correctly. As it will turn out, <span className="bg-purple-200 px-1 font-bold">T</span> helps to update the <span className="bg-orange-200 px-1 font-bold">success probability</span> over time.
+                <span className="bg-purple-200 px-1 font-bold">AFM</span> estimates the <span className="bg-orange-200 px-1 font-bold">probability</span> that a student answers the next task on a specific skill correctly.
               </p>
             </div>
           </div>
@@ -86,7 +86,7 @@ export const Slide8OpportunityChoices = ({ scroll }) => {
         {showOpportunityResult && (
           <div className="text-center">
             <button
-              onClick={() => scroll(9)}
+              onClick={() => scroll(10)}
               className="px-8 py-4 bg-purple-600 text-white border-4 border-black rounded-lg font-bold uppercase hover:bg-white hover:text-purple-700 hover:border-purple-800 transition-all shadow-lg flex items-center gap-2 mx-auto text-lg"
             >
               Next

@@ -1,5 +1,5 @@
-import { Code, Target, Zap, ArrowRight, List, Brain, Users, CheckCircle, XCircle } from "lucide-react";
-import { useState } from "react";
+import React, { useState } from "react";
+import { Code, Target, Zap, ArrowRight, List, Brain, Users, CheckCircle, XCircle, Clock, TrendingUp } from "lucide-react";
 
 export const Slide15TwoMorePythonTasks = ({ scroll }) => {
   const [selectedTask, setSelectedTask] = useState(null);
@@ -8,87 +8,84 @@ export const Slide15TwoMorePythonTasks = ({ scroll }) => {
 
   const tasks = {
     A: {
-      title: "List Manipulation",
-      description: "Given a list of student grades [85, 92, 78, 96, 88, 73, 91], write a function that returns only the grades above 90, then calculate their average.",
-      code: `def filter_and_average(grades):
-    # Return high grades and their average
-    pass
-# Expected output: ([92, 96, 91], 93.0)`,
+      title: "String Formatting",
+      description: "Format user data into a readable string. Given a user dictionary with name, age, and city, create a formatted introduction string.",
+      code: `def format_user_intro(user):
+    # Create formatted introduction
+    # Input: user = {"name": "Alice", "age": 25, "city": "New York"}
+    # Output: "Hi, I'm Alice, 25 years old, from New York!"
+    pass`,
       question: "What would be the correct implementation?",
       options: [
         {
           id: 'a',
-          text: `high_grades = [g for g in grades if g > 90]
-return high_grades, sum(high_grades) / len(high_grades)`,
+          text: `return f"Hi, I'm {user['name']}, {user['age']} years old, from {user['city']}!"`,
           correct: true
         },
         {
           id: 'b',
-          text: `high_grades = filter(lambda x: x >= 90, grades)
-return high_grades, sum(high_grades) / len(high_grades)`,
+          text: `return "Hi, I'm " + user.name + ", " + user.age + " years old, from " + user.city + "!"`,
           correct: false
         },
         {
           id: 'c',
-          text: `high_grades = []
-for grade in grades:
-    if grade > 90:
-        high_grades.append(grade)
-return high_grades`,
+          text: `return f"Hi, I'm {user.name}, {user.age} years old, from {user.city}!"`,
           correct: false
         },
         {
           id: 'd',
-          text: `return [g for g in grades if g > 90], 93.0`,
+          text: `return "Hi, I'm {}, {} years old, from {}!".format(user['name'], user['age'], user['city'])`,
           correct: false
         }
       ],
-      color: 'green'
+      color: 'green',
+      learningRate: 'high',
+      explanation: "String formatting has clear patterns and immediate visual feedback. Each practice attempt builds directly on the previous one."
     },
     B: {
-      title: "Class Design",
-      description: "Create a Student class that stores name, grades, and calculates GPA. Include methods to add grades, get average, and determine if the student is on honor roll (GPA ≥ 3.5).",
-      code: `class Student:
-    def __init__(self, name):
-        # Initialize with name and empty grades
-    def add_grade(self, grade):
-        # Add grade to student's record
-    def get_gpa(self):
-        # Calculate and return GPA
-    def honor_roll(self):
-        # Return True if GPA >= 3.5`,
-      question: "What would be the correct __init__ method?",
+      title: "Recursive Fibonacci",
+      description: "Calculate the nth Fibonacci number using recursion. The Fibonacci sequence starts with 0, 1, and each subsequent number is the sum of the two preceding ones.",
+      code: `def fibonacci(n):
+    # Calculate nth Fibonacci number recursively
+    # fibonacci(0) = 0, fibonacci(1) = 1
+    # fibonacci(n) = fibonacci(n-1) + fibonacci(n-2)
+    # Example: fibonacci(5) = 5 (sequence: 0,1,1,2,3,5)
+    pass`,
+      question: "What would be the correct recursive implementation?",
       options: [
         {
           id: 'a',
-          text: `def __init__(self, name):
-    self.name = name
-    self.grades = []`,
+          text: `if n <= 1:
+    return n
+return fibonacci(n-1) + fibonacci(n-2)`,
           correct: true
         },
         {
           id: 'b',
-          text: `def __init__(name):
-    self.name = name
-    self.grades = []`,
+          text: `if n == 0:
+    return 0
+elif n == 1:
+    return 1
+else:
+    return fibonacci(n-1) + fibonacci(n+1)`,
           correct: false
         },
         {
           id: 'c',
-          text: `def __init__(self, name):
-    name = name
-    grades = []`,
+          text: `if n <= 1:
+    return 1
+return fibonacci(n-1) + fibonacci(n-2)`,
           correct: false
         },
         {
           id: 'd',
-          text: `def __init__(self, name, grades):
-    self.name = name
-    self.grades = grades`,
+          text: `return fibonacci(n-1) + fibonacci(n-2)`,
           correct: false
         }
       ],
-      color: 'orange'
+      color: 'orange',
+      learningRate: 'low',
+      explanation: "Recursive thinking requires understanding abstract concepts like function calls within functions. Mastery comes slowly even with practice."
     }
   };
 
@@ -109,41 +106,28 @@ return high_grades`,
     setShowResult(false);
   };
 
-  const getColorClasses = (color) => {
-    const colors = {
-      green: {
-        bg: 'bg-green-50',
-        border: 'border-green-600',
-        text: 'text-green-700',
-        accent: 'bg-green-100',
-        button: 'bg-green-600 hover:bg-green-700'
-      },
-      orange: {
-        bg: 'bg-orange-50',
-        border: 'border-orange-600',
-        text: 'text-orange-700',
-        accent: 'bg-orange-100',
-        button: 'bg-orange-600 hover:bg-orange-700'
-      }
-    };
-    return colors[color];
+  // Color classes matching AFMLimitations style
+  const colorClasses = {
+    green: "bg-green-100 border-green-600 text-green-700",
+    orange: "bg-orange-100 border-orange-600 text-orange-700",
   };
 
+  // Task Detail View
   if (selectedTask) {
     const task = tasks[selectedTask];
-    const colors = getColorClasses(task.color);
+    const IconComponent = task.learningRate === 'high' ? TrendingUp : Clock;
     const correctAnswer = task.options.find(opt => opt.correct);
     const selectedOption = task.options.find(opt => opt.id === selectedAnswer);
 
     return (
-      <div className="bg-white min-h-screen flex flex-col items-center py-8 px-4 md:px-10 text-black font-['IBM_Plex_Mono',monospace]">
+      <div className="bg-white min-h-screen flex flex-col text-black font-['IBM_Plex_Mono',monospace] py-8 px-4 md:px-10">
         <div className="w-full max-w-4xl mx-auto flex flex-col gap-8">
-          
+
           {/* Header */}
-          <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg relative">
-            <div className={`absolute -top-6 left-4 px-3 py-1 ${colors.button} text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2`}>
-              <Code className="w-4 h-4" />
-              TASK {selectedTask}
+          <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
+            <div className={`absolute -top-6 left-4 px-3 py-1 font-semibold rounded-md text-xs tracking-wider flex items-center gap-2 border-4 border-black ${colorClasses[task.color]}`}>
+              <Target className="w-4 h-4" />
+              TASK {selectedTask} OF 2
             </div>
             <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center">
               {task.title}
@@ -151,58 +135,73 @@ return high_grades`,
           </div>
 
           {/* Task Description */}
-          <div className={`border-4 ${colors.border} rounded-xl p-6 ${colors.bg}`}>
-            <p className="text-black mb-4 leading-relaxed">
-              {task.description}
-            </p>
-            
-            <div className={`bg-black text-green-400 p-4 rounded-lg border-2 ${colors.border} font-mono text-sm`}>
-              <pre className="text-white whitespace-pre-wrap">{task.code}</pre>
+          <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
+            <div className="text-center space-y-6">
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <IconComponent className="w-6 h-6 text-black" />
+                <h3 className="text-xl font-bold text-black uppercase tracking-tight">
+                  Instructions
+                </h3>
+              </div>
+
+              <p className="text-black font-bold text-lg mb-6">
+                {task.description}
+              </p>
+
+              <div className="bg-black text-green-400 p-6 rounded-lg font-mono text-sm border-4 border-gray-600 shadow-lg">
+                <div className="flex items-center gap-2 mb-3 text-gray-400">
+                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                  <span className="ml-2 text-xs">code_editor.py</span>
+                </div>
+                <pre className="text-white whitespace-pre-wrap leading-relaxed">{task.code}</pre>
+              </div>
             </div>
           </div>
 
           {/* Question */}
-          <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
-            <h3 className="text-xl font-bold mb-6 text-black">{task.question}</h3>
-            
+          <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
+            <h3 className="text-xl font-bold mb-6 text-black uppercase tracking-tight">
+              {task.question}
+            </h3>
+
             <div className="space-y-4">
               {task.options.map((option) => (
                 <button
                   key={option.id}
                   onClick={() => handleAnswerSelect(option.id)}
                   disabled={showResult}
-                  className={`w-full text-left p-4 rounded-lg border-2 transition-all ${
-                    showResult 
-                      ? option.correct 
-                        ? 'border-green-500 bg-green-50' 
-                        : option.id === selectedAnswer 
-                          ? 'border-red-500 bg-red-50' 
-                          : 'border-gray-300 bg-gray-50'
-                      : selectedAnswer === option.id
-                        ? `${colors.border} ${colors.bg}`
-                        : 'border-gray-300 bg-gray-50 hover:border-gray-400'
-                  } ${!showResult ? 'cursor-pointer' : 'cursor-default'}`}
+                  className={`w-full text-left p-4 rounded-lg border-4 border-black transition-all ${showResult
+                    ? option.correct
+                      ? 'bg-green-100 border-green-600'
+                      : option.id === selectedAnswer
+                        ? 'bg-red-100 border-red-600'
+                        : 'bg-gray-50'
+                    : selectedAnswer === option.id
+                      ? colorClasses[task.color]
+                      : 'bg-gray-50 hover:bg-gray-100'
+                    } ${!showResult ? 'cursor-pointer hover:scale-105 transition-transform' : 'cursor-default'}`}
                 >
                   <div className="flex items-start gap-3">
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                      showResult 
-                        ? option.correct 
-                          ? 'bg-green-500 text-white' 
-                          : option.id === selectedAnswer 
-                            ? 'bg-red-500 text-white' 
-                            : 'bg-gray-300 text-gray-600'
-                        : 'bg-gray-300 text-gray-600'
-                    }`}>
+                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold border-2 border-black ${showResult
+                      ? option.correct
+                        ? 'bg-green-600 text-white'
+                        : option.id === selectedAnswer
+                          ? 'bg-red-600 text-white'
+                          : 'bg-gray-300 text-gray-600'
+                      : 'bg-black text-white'
+                      }`}>
                       {option.id.toUpperCase()}
                     </div>
-                    <pre className="text-sm font-mono text-gray-800 whitespace-pre-wrap flex-1">
+                    <pre className="text-sm font-mono text-black whitespace-pre-wrap flex-1 font-bold">
                       {option.text}
                     </pre>
                     {showResult && option.correct && (
-                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                      <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
                     )}
                     {showResult && !option.correct && option.id === selectedAnswer && (
-                      <XCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
+                      <XCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
                     )}
                   </div>
                 </button>
@@ -211,26 +210,25 @@ return high_grades`,
 
             {/* Result */}
             {showResult && (
-              <div className={`mt-6 p-4 rounded-lg border-2 ${
-                selectedOption?.correct 
-                  ? 'border-green-500 bg-green-50' 
-                  : 'border-red-500 bg-red-50'
-              }`}>
+              <div className={`mt-8 p-6 rounded-xl border-4 border-black shadow-lg ${selectedOption?.correct
+                ? 'bg-green-100'
+                : 'bg-red-100'
+                }`}>
                 <div className="flex items-center gap-2 mb-2">
                   {selectedOption?.correct ? (
-                    <CheckCircle className="w-5 h-5 text-green-500" />
+                    <CheckCircle className="w-6 h-6 text-green-600" />
                   ) : (
-                    <XCircle className="w-5 h-5 text-red-500" />
+                    <XCircle className="w-6 h-6 text-red-600" />
                   )}
-                  <span className={`font-bold ${selectedOption?.correct ? 'text-green-700' : 'text-red-700'}`}>
+                  <span className={`font-bold text-lg uppercase tracking-wide ${selectedOption?.correct ? 'text-green-700' : 'text-red-700'}`}>
                     {selectedOption?.correct ? 'Correct!' : 'Incorrect'}
                   </span>
                 </div>
                 {!selectedOption?.correct && (
-                  <p className="text-sm text-gray-700">
-                    The correct answer is option {correctAnswer.id.toUpperCase()}. 
-                    {selectedTask === 'A' && " List comprehension with proper average calculation is the most efficient approach."}
-                    {selectedTask === 'B' && " The __init__ method must include 'self' as the first parameter and use 'self.' to create instance variables."}
+                  <p className="text-black font-bold">
+                    The correct answer is option {correctAnswer.id.toUpperCase()}.
+                    {selectedTask === 'A' && " F-string formatting with dictionary key access is the most readable and efficient approach."}
+                    {selectedTask === 'B' && " Recursive functions need base cases (n <= 1) and must call themselves with smaller values (n-1, n-2)."}
                   </p>
                 )}
               </div>
@@ -241,9 +239,9 @@ return high_grades`,
           <div className="flex justify-center">
             <button
               onClick={resetTask}
-              className="px-6 py-3 bg-gray-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-gray-600 hover:border-gray-600 transition-all transform hover:scale-105 flex items-center gap-3"
+              className="px-8 py-4 bg-black text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-black transition-all transform hover:scale-105"
             >
-              <span>← Back to Tasks</span>
+              ← Back to Tasks
             </button>
           </div>
         </div>
@@ -251,124 +249,95 @@ return high_grades`,
     );
   }
 
+  // Main Task Selection View
   return (
-    <div className="bg-white min-h-screen flex flex-col items-center py-8 px-4 md:px-10 text-black font-['IBM_Plex_Mono',monospace]">
+    <div className="bg-white min-h-screen flex flex-col text-black font-['IBM_Plex_Mono',monospace] py-8 px-4 md:px-10">
       <div className="w-full max-w-6xl mx-auto flex flex-col gap-8">
-        
+
         {/* Header */}
         <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
           <div className="absolute -top-6 left-4 px-3 py-1 bg-black text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
             <Brain className="w-4 h-4" />
-            Learning Rate Question
+            LEARNING RATE COMPARISON
           </div>
-          <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center mb-4">
+          <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center">
             Which task has a faster learning rate?
           </div>
-          <div className="bg-neutral-100 border-2 border-black rounded p-4 text-center font-mono text-neutral-700">
-            (Shows quicker improvement with practice)
-          </div>
+          <p className="text-lg text-black text-center mt-4 font-bold">
+            Choose a task to practice and see how learning rate affects skill acquisition.
+          </p>
+          <p className="text-md text-black text-center mt-2 font-bold">
+            Learning rate measures how quickly someone improves with practice.
+          </p>
         </div>
 
-        {/* Tasks Grid */}
-        <div className="grid md:grid-cols-2 gap-8">
-          
-          {/* Task A */}
-          <div 
-            className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative cursor-pointer hover:shadow-xl transition-all transform hover:scale-105"
-            onClick={() => handleTaskClick('A')}
-          >
-            <div className="absolute -top-6 left-4 px-3 py-1 bg-green-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
-              <List className="w-4 h-4" />
-              TASK A
-            </div>
-            
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-16 h-16 bg-green-100 border-4 border-green-600 rounded-xl flex items-center justify-center text-green-700 font-bold text-2xl">
-                A
-              </div>
-              <div className="text-2xl font-bold text-black">
-                List Manipulation
-              </div>
-            </div>
-            
-            <div className="border-4 border-green-600 rounded-xl p-6 bg-green-50">
-              <p className="text-black mb-4 leading-relaxed">
-                Given a list of student grades [85, 92, 78, 96, 88, 73, 91], write a function that returns only the grades above 90, then calculate their average.
-              </p>
-              
-              <div className="bg-black text-green-400 p-4 rounded-lg border-2 border-green-600 font-mono text-sm">
-                <div className="text-green-300"># Your task:</div>
-                <div className="text-white">def filter_and_average(grades):</div>
-                <div className="ml-4 text-gray-400"># Return high grades and their average</div>
-                <div className="ml-4 text-yellow-400">pass</div>
-                <div className="mt-2 text-green-300"># Expected output: ([92, 96, 91], 93.0)</div>
-              </div>
-              
-              <div className="mt-4 text-center">
-                <span className="inline-block px-4 py-2 bg-green-600 text-white rounded-lg font-semibold">
-                  Click to Practice
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Task B */}
-          <div 
-            className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative cursor-pointer hover:shadow-xl transition-all transform hover:scale-105"
-            onClick={() => handleTaskClick('B')}
-          >
-            <div className="absolute -top-6 left-4 px-3 py-1 bg-orange-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
-              <Users className="w-4 h-4" />
-              TASK B
-            </div>
-            
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-16 h-16 bg-orange-100 border-4 border-orange-600 rounded-xl flex items-center justify-center text-orange-700 font-bold text-2xl">
-                B
-              </div>
-              <div className="text-2xl font-bold text-black">
-                Class Design
-              </div>
-            </div>
-            
-            <div className="border-4 border-orange-600 rounded-xl p-6 bg-orange-50">
-              <p className="text-black mb-4 leading-relaxed">
-                Create a Student class that stores name, grades, and calculates GPA. Include methods to add grades, get average, and determine if the student is on honor roll (GPA ≥ 3.5).
-              </p>
-              
-              <div className="bg-black text-green-400 p-4 rounded-lg border-2 border-orange-600 font-mono text-sm">
-                <div className="text-green-300"># Your task:</div>
-                <div className="text-white">class Student:</div>
-                <div className="ml-4 text-white">def __init__(self, name):</div>
-                <div className="ml-8 text-gray-400"># Initialize with name and empty grades</div>
-                <div className="ml-4 text-white">def add_grade(self, grade):</div>
-                <div className="ml-8 text-gray-400"># Add grade to student's record</div>
-                <div className="ml-4 text-white">def get_gpa(self):</div>
-                <div className="ml-8 text-gray-400"># Calculate and return GPA</div>
-                <div className="ml-4 text-white">def honor_roll(self):</div>
-                <div className="ml-8 text-gray-400"># Return True if GPA {'>='} 3.5</div>
-                <div className="mt-2 text-green-300"># Usage: student.add_grade(3.8)</div>
-              </div>
-              
-              <div className="mt-4 text-center">
-                <span className="inline-block px-4 py-2 bg-orange-600 text-white rounded-lg font-semibold">
-                  Click to Practice
-                </span>
-              </div>
-            </div>
-          </div>
+        {/* Progress Indicator */}
+        <div className="border-4 border-black rounded-xl p-4 bg-yellow-400 text-center">
+          <span className="text-black font-bold text-xl uppercase tracking-wide">
+            EXPLORE DIFFERENT LEARNING RATES
+          </span>
         </div>
 
-        {/* Continue Button */}
-        <div className="flex justify-center">
-          <button
-            onClick={() => scroll(13)}
-            className="px-8 py-4 bg-purple-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-purple-600 hover:border-purple-600 transition-all transform hover:scale-105 flex items-center gap-3"
-          >
-            <span>Continue</span>
-            <ArrowRight className="w-5 h-5" />
-          </button>
+        {/* Task Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {Object.entries(tasks).map(([taskId, task]) => {
+            const IconComponent = task.learningRate === 'high' ? TrendingUp : Clock;
+            const learningRateColor = task.learningRate === 'high' ? 'bg-blue-100 border-blue-600 text-blue-700' : 'bg-red-100 border-red-600 text-red-700';
+
+            return (
+              <div
+                key={taskId}
+                className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-xl hover:-translate-y-2"
+                onClick={() => handleTaskClick(taskId)}
+              >
+                <div
+                  className={`absolute -top-6 left-4 px-3 py-1 font-semibold rounded-md text-xs tracking-wider flex items-center gap-2 border-4 border-black ${colorClasses[task.color]}`}
+                >
+                  <IconComponent className="w-4 h-4" />
+                  TASK
+                </div>
+
+                <div className="text-center space-y-6">
+                  <div className="flex items-center justify-center space-x-4">
+                    <h3 className="text-2xl font-bold text-black uppercase tracking-tight">
+                      {task.title}
+                    </h3>
+                  </div>
+
+                  {/* Task Description */}
+                  <div className="text-left space-y-4">
+                    <p className="text-black font-bold text-md">
+                      {task.description}
+                    </p>
+
+                    {/* Learning Rate Indicator */}
+                    <div className={`border-4 border-black rounded-xl p-4 ${learningRateColor}`}>
+                      <div className="flex items-center justify-center gap-2 mb-2">
+                        <IconComponent className="w-5 h-5" />
+                        <span className="font-bold text-sm uppercase tracking-wide">
+                          {task.learningRate === 'high' ? 'High Learning Rate' : 'Low Learning Rate'}
+                        </span>
+                      </div>
+                      <p className="text-sm text-center font-bold">
+                        {task.explanation}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
+      </div>
+
+      <div className="flex justify-center mt-12">
+        <button
+          className="px-12 py-4 bg-green-600 text-white border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide hover:bg-white hover:text-green-600 hover:border-green-600 transition-all transform hover:scale-105 flex items-center gap-3"
+          onClick={() => scroll(14)}
+        >
+          <span>Continue to Next Section</span>
+          <ArrowRight className="w-6 h-6" />
+        </button>
       </div>
     </div>
   );

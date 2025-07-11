@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import { 
-  FileText, 
-  CheckCircle, 
-  Code, 
-  Play, 
-  ArrowRight, 
+import {
+  FileText,
+  CheckCircle,
+  Code,
+  Play,
+  ArrowRight,
   AlertCircle,
   Target,
-  Lightbulb 
+  Lightbulb
 } from "lucide-react";
 
 export const Slide11VariableDeclaration = ({ scroll }) => {
@@ -21,11 +21,11 @@ export const Slide11VariableDeclaration = ({ scroll }) => {
       const textarea = e.target;
       const start = textarea.selectionStart;
       const end = textarea.selectionEnd;
-      
+
       // Insert 4 spaces at cursor position
       const newValue = task1Answer.substring(0, start) + '    ' + task1Answer.substring(end);
       setTask1Answer(newValue);
-      
+
       // Move cursor to after the inserted spaces
       setTimeout(() => {
         textarea.selectionStart = textarea.selectionEnd = start + 4;
@@ -36,32 +36,32 @@ export const Slide11VariableDeclaration = ({ scroll }) => {
   const checkTask1Answer = () => {
     // Remove all whitespace and normalize the input
     const normalizedInput = task1Answer.trim().toLowerCase();
-    
+
     // Split by lines and clean each line
     const lines = normalizedInput.split('\n')
       .map(line => line.trim())
       .filter(line => line.length > 0); // Remove empty lines
-    
+
     // Check if we have exactly 3 lines
     if (lines.length !== 3) {
       setShowError(true);
       setTimeout(() => setShowError(false), 4000);
       return;
     }
-    
+
     // Check each line for exact match (allowing for minor spacing variations)
     const expectedLines = [
       'name = "alice"',
       'age = 25',
       'city = "new york"'
     ];
-    
+
     const isCorrect = lines.every((line, index) => {
       // Remove extra spaces around the equals sign
       const cleanLine = line.replace(/\s*=\s*/, ' = ');
       return cleanLine === expectedLines[index];
     });
-    
+
     if (isCorrect) {
       setShowTask1Solution(true);
       setShowError(false);
@@ -81,12 +81,12 @@ export const Slide11VariableDeclaration = ({ scroll }) => {
             <Target className="w-4 h-4" />
             TASK 1 OF 2
           </div>
-          
+
           <div className="bg-blue-50 border-2 border-blue-700 rounded-lg p-4 mb-6">
             <p className="text-blue-900 font-semibold mb-4">
               Create three variables with the following information:
             </p>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="bg-white border-2 border-black rounded-lg p-3">
                 <div className="font-bold text-green-700 mb-1">Variable 1:</div>
@@ -117,7 +117,7 @@ export const Slide11VariableDeclaration = ({ scroll }) => {
                 Your Python Code:
               </label>
             </div>
-            
+
             <div className="border-4 border-black rounded-xl overflow-hidden">
               <div className="bg-black text-white px-4 py-2 flex items-center gap-2 font-bold text-sm">
                 <div className="w-3 h-3 bg-red-500 rounded-full"></div>
@@ -131,7 +131,7 @@ export const Slide11VariableDeclaration = ({ scroll }) => {
                   onChange={(e) => setTask1Answer(e.target.value)}
                   onKeyDown={handleKeyDown}
                   className="w-full h-40 p-4 text-white font-mono text-sm border-none resize-none focus:outline-none"
-                  style={{ 
+                  style={{
                     backgroundColor: '#000000',
                     background: '#000000'
                   }}
@@ -139,7 +139,7 @@ export const Slide11VariableDeclaration = ({ scroll }) => {
                 />
               </div>
             </div>
-            
+
             <button
               onClick={checkTask1Answer}
               className="w-full px-8 py-4 bg-green-600 text-white border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wider hover:bg-white hover:text-green-700 hover:border-green-800 transition-all duration-300 shadow-lg hover:shadow-2xl flex items-center justify-center gap-3"
@@ -180,7 +180,7 @@ export const Slide11VariableDeclaration = ({ scroll }) => {
                 ✓ PERFECT! Task Complete
               </h4>
             </div>
-            
+
             <div className="bg-white border-2 border-green-700 rounded-lg p-4 mb-6">
               <div className="font-bold text-green-800 mb-3 flex items-center gap-2">
                 <Lightbulb className="w-5 h-5" />
@@ -192,14 +192,14 @@ age = 25
 city = "New York"`}</pre>
               </div>
             </div>
-            
+
             <div className="flex items-center justify-between p-4 bg-green-100 border-2 border-green-700 rounded-lg">
               <div className="flex items-center gap-3">
                 <div className="w-4 h-4 bg-green-500 border-2 border-black rounded-full"></div>
                 <span className="font-mono text-sm text-green-800">Task 1: Complete</span>
               </div>
               <button
-                onClick={() => scroll(12)}
+                onClick={() => scroll(13)}
                 className="px-8 py-3 bg-black text-white border-4 border-black rounded-xl font-bold uppercase tracking-wider hover:bg-green-600 hover:border-green-800 transition-all duration-300 shadow-lg flex items-center gap-3"
               >
                 Continue to Task

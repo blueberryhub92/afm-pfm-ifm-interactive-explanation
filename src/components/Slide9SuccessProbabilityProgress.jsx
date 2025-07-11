@@ -3,7 +3,7 @@ import { Target, Eye, ArrowRight, BarChart3 } from 'lucide-react';
 
 export const Slide9SuccessProbabilityProgress = ({ scroll }) => {
   const [gotItClicked, setGotItClicked] = useState(false);
-  
+
   return (
     <div className="bg-white min-h-screen flex flex-col items-center py-8 px-4 md:px-10 text-black font-['IBM_Plex_Mono',monospace]">
       <div className="w-full max-w-4xl mx-auto flex flex-col gap-8">
@@ -13,7 +13,7 @@ export const Slide9SuccessProbabilityProgress = ({ scroll }) => {
             <Target className="w-4 h-4" />
             SUCCESS PROBABILITY
           </div>
-          
+
           <div className="space-y-6 text-center">
             <div className="bg-orange-50 border-2 border-black rounded-lg p-4">
               <p className="text-lg font-semibold text-black leading-relaxed">
@@ -23,7 +23,7 @@ export const Slide9SuccessProbabilityProgress = ({ scroll }) => {
                 {" "}helps to update the success probability over time.
               </p>
             </div>
-            
+
             <div className="bg-blue-50 border-2 border-black rounded-lg p-4">
               <p className="text-lg font-semibold text-black leading-relaxed">
                 Let's track your own journey to mastery! You can see your current
@@ -36,7 +36,7 @@ export const Slide9SuccessProbabilityProgress = ({ scroll }) => {
                 </span>
               </p>
             </div>
-            
+
             {!gotItClicked && (
               <button
                 onClick={() => setGotItClicked(true)}
@@ -48,7 +48,7 @@ export const Slide9SuccessProbabilityProgress = ({ scroll }) => {
             )}
           </div>
         </div>
-        
+
         {/* Next Section */}
         {gotItClicked && (
           <div className="border-l-8 border-blue-600 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-6 shadow-lg animate-fadeIn">
@@ -56,16 +56,16 @@ export const Slide9SuccessProbabilityProgress = ({ scroll }) => {
               <BarChart3 className="w-6 h-6" />
               Ready to Continue
             </div>
-            
+
             <div className="bg-white border-2 border-black rounded-lg p-4 mb-4">
               <p className="text-lg font-semibold text-black">
                 Alright, let's continue learning about more parameters!
               </p>
             </div>
-            
+
             <div className="text-center">
               <button
-                onClick={() => scroll(10)}
+                onClick={() => scroll(11)}
                 className="px-8 py-4 bg-blue-600 text-white border-4 border-black rounded-lg font-bold uppercase hover:bg-white hover:text-blue-700 hover:border-blue-800 transition-all shadow-lg flex items-center gap-2 mx-auto text-lg"
               >
                 Next

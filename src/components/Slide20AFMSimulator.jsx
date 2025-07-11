@@ -89,6 +89,7 @@ export const Slide20AFMSimulator = ({ scroll }) => {
   const [retrainingData, setRetrainingData] = useState([]);
   const [showTooltip, setShowTooltip] = useState(null);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
+  const [lastChangedParam, setLastChangedParam] = useState(null);
 
   // Chart.js
   const chartRef = useRef();
@@ -169,6 +170,16 @@ export const Slide20AFMSimulator = ({ scroll }) => {
     // eslint-disable-next-line
   }, [params.theta, params.beta, params.gamma, params.practice]);
 
+  // Clear highlight after 3 seconds
+  useEffect(() => {
+    if (lastChangedParam) {
+      const timer = setTimeout(() => {
+        setLastChangedParam(null);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [lastChangedParam]);
+
   // Keyboard: Escape closes tooltip
   useEffect(() => {
     const handler = (e) => {
@@ -194,6 +205,7 @@ export const Slide20AFMSimulator = ({ scroll }) => {
       ...prev,
       [p]: p === "practice" ? parseInt(v, 10) : parseFloat(v),
     }));
+    setLastChangedParam(p);
   }
 
   function simulateResponse(isCorrect) {
@@ -207,6 +219,7 @@ export const Slide20AFMSimulator = ({ scroll }) => {
     setResponseLog((prev) => [...prev, entry]);
     setRetrainingData((prev) => [...prev, entry]);
     setParams((prev) => ({ ...prev, practice: prev.practice + 1 }));
+    setLastChangedParam("practice");
   }
 
   function retrainModel() {
@@ -270,6 +283,7 @@ export const Slide20AFMSimulator = ({ scroll }) => {
     });
     setRetrainingData([]);
     setSessionActive(true);
+    setLastChangedParam(null); // Clear highlight after retrain
   }
 
   function resetAll() {
@@ -277,6 +291,7 @@ export const Slide20AFMSimulator = ({ scroll }) => {
     setSessionActive(true);
     setResponseLog([]);
     setRetrainingData([]);
+    setLastChangedParam(null);
   }
 
   function endSession() {
@@ -339,6 +354,20 @@ export const Slide20AFMSimulator = ({ scroll }) => {
     );
   };
 
+  // Helper function to get parameter color based on highlight state
+  const getParamColor = (param) => {
+    if (lastChangedParam === param) {
+      return "bg-yellow-300 text-yellow-900 border-yellow-500";
+    }
+    const colors = {
+      theta: "text-blue-700",
+      beta: "text-purple-700",
+      gamma: "text-green-700",
+      practice: "text-orange-700"
+    };
+    return colors[param] || "text-black";
+  };
+
   // UI
   return (
     <div className="bg-white min-h-screen flex flex-col text-black font-['IBM_Plex_Mono',monospace]">
@@ -359,6 +388,8 @@ export const Slide20AFMSimulator = ({ scroll }) => {
             <p className="text-lg text-black leading-relaxed text-center">
               Experience the AFM in action! Adjust parameters, simulate student
               responses, and watch how the model learns and adapts.
+              <br />
+              Disclaimer: For this simulation only the practice opportunities change during practice.
             </p>
           </div>
 
@@ -375,28 +406,78 @@ export const Slide20AFMSimulator = ({ scroll }) => {
                   </h3>
                 </div>
 
-                <div className="text-xl font-bold text-center mb-4 p-4 bg-gray-50 border-4 border-black rounded-lg">
-                  P = {(prob * 100).toFixed(1)}%
+                {/* Live Formula Display */}
+                <div className="text-center mb-6 p-6 bg-gray-50 border-4 border-black rounded-lg space-y-4">
+                  <div className="text-2xl font-bold text-black mb-4">
+                    P(success) = {(prob * 100).toFixed(1)}%
+                  </div>
+
+                  <div className="border-t-2 border-gray-300 pt-4">
+                    <div className="text-lg font-bold mb-2">Step-by-step:</div>
+
+                    {/* Step 1: Formula */}
+                    <div className="text-base font-mono mb-2">
+                      <strong>1.</strong> P(success) = 1 / (1 + e<sup>-logit</sup>)
+                    </div>
+
+                    {/* Step 2: Logit formula */}
+                    <div className="text-base font-mono mb-2">
+                      <strong>2.</strong> logit = θ - β + γ × T
+                    </div>
+
+                    {/* Step 3: Substitute values */}
+                    <div className="text-base font-mono mb-2">
+                      <strong>3.</strong> logit =
+                      <span className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor('theta')}`}>
+                        {params.theta.toFixed(1)}
+                      </span>
+                      -
+                      <span className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor('beta')}`}>
+                        ({params.beta.toFixed(1)})
+                      </span>
+                      +
+                      <span className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor('gamma')}`}>
+                        {params.gamma.toFixed(2)}
+                      </span>
+                      ×
+                      <span className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor('practice')}`}>
+                        {params.practice}
+                      </span>
+                    </div>
+
+                    {/* Step 4: Calculate logit */}
+                    <div className="text-base font-mono mb-2">
+                      <strong>4.</strong> logit = {logit.toFixed(3)}
+                    </div>
+
+                    {/* Step 5: Final probability */}
+                    <div className="text-lg font-bold text-blue-600 border-t-2 border-blue-300 pt-2">
+                      <strong>5.</strong> P(success) = {(prob * 100).toFixed(1)}%
+                    </div>
+                  </div>
                 </div>
 
-                <div className="bg-gray-50 border-4 border-black rounded-lg p-4 space-y-2 font-mono text-sm">
-                  <div>
-                    <strong>Step 1:</strong> Logit = θ - β + γ × T
+                {/* Parameter Legend */}
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 bg-blue-200 border-2 border-blue-700 rounded"></div>
+                      <span className="font-bold text-blue-700">θ = Student Ability</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 bg-purple-200 border-2 border-purple-700 rounded"></div>
+                      <span className="font-bold text-purple-700">β = Task Difficulty</span>
+                    </div>
                   </div>
-                  <div>
-                    <strong>Step 2:</strong> Logit = {params.theta.toFixed(1)} -
-                    ({params.beta.toFixed(1)}) + {params.gamma.toFixed(2)} ×{" "}
-                    {params.practice}
-                  </div>
-                  <div>
-                    <strong>Step 3:</strong> Logit = {logit.toFixed(3)}
-                  </div>
-                  <div>
-                    <strong>Step 4:</strong> P(success) = 1 / (1 + e⁻ˡᵒᵍⁱᵗ)
-                  </div>
-                  <div className="text-lg font-bold text-blue-600 mt-3">
-                    <strong>Result:</strong> P(success) ={" "}
-                    {(prob * 100).toFixed(1)}%
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 bg-green-200 border-2 border-green-700 rounded"></div>
+                      <span className="font-bold text-green-700">γ = Learning Rate</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 bg-orange-200 border-2 border-orange-700 rounded"></div>
+                      <span className="font-bold text-orange-700">T = Practice</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -433,14 +514,16 @@ export const Slide20AFMSimulator = ({ scroll }) => {
                           value={params[key]}
                           disabled={!sessionActive && key !== "practice"}
                           onChange={(e) => setParam(key, e.target.value)}
-                          className={`flex-1 h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer border-2 border-black ${
-                            !sessionActive && key !== "practice"
-                              ? "opacity-50"
-                              : ""
-                          }`}
+                          className={`flex-1 h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer border-2 border-black ${!sessionActive && key !== "practice"
+                            ? "opacity-50"
+                            : ""
+                            }`}
                         />
                         <span
-                          className={`font-mono w-16 text-center text-${meta.color}-800 font-bold text-lg border-2 border-black rounded px-2 py-1 bg-gray-50`}
+                          className={`font-mono w-16 text-center font-bold text-lg border-2 border-black rounded px-2 py-1 bg-gray-50 transition-all duration-500 ${lastChangedParam === key
+                            ? "bg-yellow-300 text-yellow-900 border-yellow-500 scale-110"
+                            : `text-${meta.color}-800`
+                            }`}
                         >
                           {key === "gamma"
                             ? params[key].toFixed(2)
@@ -498,11 +581,10 @@ export const Slide20AFMSimulator = ({ scroll }) => {
               <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
                 <div className="flex items-center gap-3 mb-6">
                   <div
-                    className={`w-4 h-4 rounded-full border-2 border-black ${
-                      sessionActive
-                        ? "bg-green-500 animate-pulse"
-                        : "bg-gray-400"
-                    }`}
+                    className={`w-4 h-4 rounded-full border-2 border-black ${sessionActive
+                      ? "bg-green-500 animate-pulse"
+                      : "bg-gray-400"
+                      }`}
                   ></div>
                   <h3 className="text-xl font-bold text-black uppercase tracking-wide">
                     {sessionActive
@@ -516,11 +598,10 @@ export const Slide20AFMSimulator = ({ scroll }) => {
                   <button
                     onClick={() => simulateResponse(true)}
                     disabled={!sessionActive}
-                    className={`px-4 py-3 bg-green-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all transform hover:scale-105 ${
-                      !sessionActive
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:bg-white hover:text-green-600"
-                    }`}
+                    className={`px-4 py-3 bg-green-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all transform hover:scale-105 ${!sessionActive
+                      ? "opacity-50 cursor-not-allowed"
+                      : "hover:bg-white hover:text-green-600"
+                      }`}
                   >
                     ✓ Correct
                   </button>
@@ -528,11 +609,10 @@ export const Slide20AFMSimulator = ({ scroll }) => {
                   <button
                     onClick={() => simulateResponse(false)}
                     disabled={!sessionActive}
-                    className={`px-4 py-3 bg-red-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all transform hover:scale-105 ${
-                      !sessionActive
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:bg-white hover:text-red-600"
-                    }`}
+                    className={`px-4 py-3 bg-red-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all transform hover:scale-105 ${!sessionActive
+                      ? "opacity-50 cursor-not-allowed"
+                      : "hover:bg-white hover:text-red-600"
+                      }`}
                   >
                     ✗ Incorrect
                   </button>
@@ -598,11 +678,10 @@ export const Slide20AFMSimulator = ({ scroll }) => {
                         .map((entry, i) => (
                           <div
                             key={i}
-                            className={`${
-                              entry.correct
-                                ? "bg-green-200 border-l-4 border-green-700 text-green-900"
-                                : "bg-red-200 border-l-4 border-red-700 text-red-900"
-                            } rounded-r-lg font-mono px-3 py-2`}
+                            className={`${entry.correct
+                              ? "bg-green-200 border-l-4 border-green-700 text-green-900"
+                              : "bg-red-200 border-l-4 border-red-700 text-red-900"
+                              } rounded-r-lg font-mono px-3 py-2`}
                           >
                             <div className="font-bold">
                               Practice {entry.practice}:{" "}
@@ -658,7 +737,7 @@ export const Slide20AFMSimulator = ({ scroll }) => {
           {/* Navigation */}
           <div className="flex justify-center">
             <button
-              onClick={() => scroll(17)}
+              onClick={() => scroll(18)}
               className="px-8 py-4 bg-purple-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-purple-600 transition-all transform hover:scale-105 flex items-center gap-3"
             >
               <span>Continue</span>

@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { 
-  RotateCcw, 
-  CheckCircle, 
-  Code, 
-  Play, 
-  ArrowRight, 
+import {
+  RotateCcw,
+  CheckCircle,
+  Code,
+  Play,
+  ArrowRight,
   AlertCircle,
   Target,
   Lightbulb,
@@ -24,11 +24,11 @@ export const Slide12ForLoops = ({ scroll }) => {
       const textarea = e.target;
       const start = textarea.selectionStart;
       const end = textarea.selectionEnd;
-      
+
       // Insert 4 spaces at cursor position
       const newValue = task2Answer.substring(0, start) + '    ' + task2Answer.substring(end);
       setTask2Answer(newValue);
-      
+
       // Move cursor to after the inserted spaces
       setTimeout(() => {
         textarea.selectionStart = textarea.selectionEnd = start + 4;
@@ -39,15 +39,15 @@ export const Slide12ForLoops = ({ scroll }) => {
   const validatePythonSyntax = (code) => {
     // Remove comments and extra whitespace
     const cleanCode = code.replace(/#.*$/gm, '').trim();
-    
+
     // Check for basic Python syntax errors
     const lines = cleanCode.split('\n').filter(line => line.trim() !== '');
-    
+
     // Check for unbalanced parentheses, brackets, braces
     let parenCount = 0;
     let bracketCount = 0;
     let braceCount = 0;
-    
+
     for (const char of cleanCode) {
       if (char === '(') parenCount++;
       if (char === ')') parenCount--;
@@ -56,11 +56,11 @@ export const Slide12ForLoops = ({ scroll }) => {
       if (char === '{') braceCount++;
       if (char === '}') braceCount--;
     }
-    
+
     if (parenCount !== 0 || bracketCount !== 0 || braceCount !== 0) {
       return { valid: false, error: "Syntax Error: Unbalanced parentheses, brackets, or braces" };
     }
-    
+
     // Check for proper indentation in for loop
     const forLineIndex = lines.findIndex(line => line.includes('for') && line.includes('in'));
     if (forLineIndex !== -1) {
@@ -68,18 +68,18 @@ export const Slide12ForLoops = ({ scroll }) => {
       if (!forLine.trim().endsWith(':')) {
         return { valid: false, error: "Syntax Error: For loop must end with a colon (:)" };
       }
-      
+
       // Check if there are indented lines after the for loop
       const hasIndentedLines = lines.slice(forLineIndex + 1).some(line => {
         // Check if line has leading whitespace and content
         return /^\s+\S/.test(line);
       });
-      
+
       if (!hasIndentedLines) {
         return { valid: false, error: "Syntax Error: For loop body must be indented" };
       }
     }
-    
+
     return { valid: true };
   };
 
@@ -102,57 +102,57 @@ export const Slide12ForLoops = ({ scroll }) => {
 
     // Then check for required components
     const code = task2Answer.toLowerCase();
-    
+
     // Check for for loop with range - more flexible pattern
-    const hasForLoop = code.includes('for') && 
-                      code.includes('in') && 
-                      code.includes('range') &&
-                      (code.includes('range(1,11)') || 
-                       code.includes('range(1, 11)') ||
-                       code.includes('range( 1, 11 )') ||
-                       code.includes('range( 1,11 )'));
-    
+    const hasForLoop = code.includes('for') &&
+      code.includes('in') &&
+      code.includes('range') &&
+      (code.includes('range(1,11)') ||
+        code.includes('range(1, 11)') ||
+        code.includes('range( 1, 11 )') ||
+        code.includes('range( 1,11 )'));
+
     // Check for sum calculation (+=, sum variable, or explicit addition)
-    const hasSum = code.includes('+=') || 
-                  code.includes('total') || 
-                  code.includes('sum');
-    
+    const hasSum = code.includes('+=') ||
+      code.includes('total') ||
+      code.includes('sum');
+
     // Check for print statement
     const hasPrint = code.includes('print');
-    
+
     // Check for initialization of sum variable
-    const hasInit = code.includes('total = 0') || 
-                   code.includes('sum = 0') ||
-                   /\w+\s*=\s*0/.test(code);
-    
+    const hasInit = code.includes('total = 0') ||
+      code.includes('sum = 0') ||
+      /\w+\s*=\s*0/.test(code);
+
     if (!hasForLoop) {
       setErrorMessage("Missing: for loop with range(1, 11)");
       setShowError(true);
       setTimeout(() => setShowError(false), 5000);
       return;
     }
-    
+
     if (!hasInit) {
       setErrorMessage("Missing: Initialize a variable to 0 (e.g., total = 0)");
       setShowError(true);
       setTimeout(() => setShowError(false), 5000);
       return;
     }
-    
+
     if (!hasSum) {
       setErrorMessage("Missing: Add numbers together (use += or similar)");
       setShowError(true);
       setTimeout(() => setShowError(false), 5000);
       return;
     }
-    
+
     if (!hasPrint) {
       setErrorMessage("Missing: print() statement to display the result");
       setShowError(true);
       setTimeout(() => setShowError(false), 5000);
       return;
     }
-    
+
     // If all checks pass
     setShowTask2Solution(true);
     setShowError(false);
@@ -161,26 +161,26 @@ export const Slide12ForLoops = ({ scroll }) => {
   return (
     <div className="bg-white min-h-screen flex flex-col items-center py-8 px-4 text-black font-['IBM_Plex_Mono',monospace]">
       <div className="w-full max-w-4xl mx-auto flex flex-col gap-8">
-        
+
         {/* Instructions Section */}
         <div className="relative border-4 border-black rounded-xl p-6 bg-white shadow-lg">
           <div className="absolute -top-6 left-4 px-3 py-1 bg-orange-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
             <RotateCcw className="w-4 h-4" />
             TASK 2 OF 2
           </div>
-          
+
           <div className="flex items-center gap-2 mb-4">
             <Target className="w-6 h-6 text-blue-700" />
             <h3 className="text-xl font-bold text-black tracking-tight">
               Mission Instructions
             </h3>
           </div>
-          
+
           <div className="bg-orange-50 border-2 border-orange-700 rounded-lg p-4 mb-6">
             <p className="text-orange-900 font-semibold mb-4">
               Write a Python program that accomplishes the following:
             </p>
-            
+
             <div className="space-y-3">
               <div className="bg-white border-2 border-black rounded-lg p-4 flex items-center gap-3">
                 <div className="w-8 h-8 bg-blue-500 border-2 border-black rounded-full flex items-center justify-center text-white font-bold text-sm">
@@ -194,7 +194,7 @@ export const Slide12ForLoops = ({ scroll }) => {
                   for i in range(1, 11):
                 </code>
               </div>
-              
+
               <div className="bg-white border-2 border-black rounded-lg p-4 flex items-center gap-3">
                 <div className="w-8 h-8 bg-green-500 border-2 border-black rounded-full flex items-center justify-center text-white font-bold text-sm">
                   2
@@ -207,7 +207,7 @@ export const Slide12ForLoops = ({ scroll }) => {
                   total += i
                 </code>
               </div>
-              
+
               <div className="bg-white border-2 border-black rounded-lg p-4 flex items-center gap-3">
                 <div className="w-8 h-8 bg-purple-500 border-2 border-black rounded-full flex items-center justify-center text-white font-bold text-sm">
                   3
@@ -231,7 +231,7 @@ export const Slide12ForLoops = ({ scroll }) => {
                 Your Python Code:
               </label>
             </div>
-            
+
             <div className="border-4 border-black rounded-xl overflow-hidden">
               <div className="bg-black text-white px-4 py-2 flex items-center gap-2 font-bold text-sm">
                 <div className="w-3 h-3 bg-red-500 rounded-full"></div>
@@ -245,7 +245,7 @@ export const Slide12ForLoops = ({ scroll }) => {
                   onChange={(e) => setTask2Answer(e.target.value)}
                   onKeyDown={handleKeyDown}
                   className="w-full h-48 p-4 text-white font-mono text-sm border-none resize-none focus:outline-none"
-                  style={{ 
+                  style={{
                     backgroundColor: '#000000',
                     background: '#000000'
                   }}
@@ -253,7 +253,7 @@ export const Slide12ForLoops = ({ scroll }) => {
                 />
               </div>
             </div>
-            
+
             <button
               onClick={checkTask2Answer}
               className="w-full px-8 py-4 bg-orange-600 text-white border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wider hover:bg-white hover:text-orange-700 hover:border-orange-800 transition-all duration-300 shadow-lg hover:shadow-2xl flex items-center justify-center gap-3"
@@ -300,7 +300,7 @@ export const Slide12ForLoops = ({ scroll }) => {
                 ✓ EXCELLENT! Loop Mastery Achieved
               </h4>
             </div>
-            
+
             <div className="bg-white border-2 border-orange-700 rounded-lg p-4 mb-6">
               <div className="font-bold text-orange-800 mb-3 flex items-center gap-2">
                 <Calculator className="w-5 h-5" />
@@ -320,7 +320,7 @@ print(total)
                 </div>
               </div>
             </div>
-            
+
             <div className="flex items-center justify-between p-4 bg-orange-100 border-2 border-orange-700 rounded-lg">
               <div className="flex items-center gap-3">
                 <div className="w-4 h-4 bg-orange-500 border-2 border-black rounded-full"></div>
@@ -329,7 +329,7 @@ print(total)
                 <span className="font-mono text-sm text-green-800">All Tasks Done!</span>
               </div>
               <button
-                onClick={() => scroll(13)}
+                onClick={() => scroll(14)}
                 className="px-8 py-3 bg-black text-white border-4 border-black rounded-xl font-bold uppercase tracking-wider hover:bg-purple-600 hover:border-purple-800 transition-all duration-300 shadow-lg flex items-center gap-3"
               >
                 Compare Results
@@ -346,7 +346,7 @@ print(total)
 // Demo component to show both slides
 export default function SlidesDemo() {
   const [currentSlide, setCurrentSlide] = useState(11);
-  
+
   const scroll = (slideNumber) => {
     setCurrentSlide(slideNumber);
   };
@@ -356,26 +356,24 @@ export default function SlidesDemo() {
       <div className="flex gap-4 p-4 bg-gray-100 border-b-2 border-gray-300">
         <button
           onClick={() => setCurrentSlide(11)}
-          className={`px-4 py-2 rounded font-bold ${
-            currentSlide === 11 
-              ? 'bg-green-600 text-white' 
-              : 'bg-gray-300 text-gray-700'
-          }`}
+          className={`px-4 py-2 rounded font-bold ${currentSlide === 11
+            ? 'bg-green-600 text-white'
+            : 'bg-gray-300 text-gray-700'
+            }`}
         >
           Slide 11 - Variables
         </button>
         <button
           onClick={() => setCurrentSlide(12)}
-          className={`px-4 py-2 rounded font-bold ${
-            currentSlide === 12 
-              ? 'bg-orange-600 text-white' 
-              : 'bg-gray-300 text-gray-700'
-          }`}
+          className={`px-4 py-2 rounded font-bold ${currentSlide === 12
+            ? 'bg-orange-600 text-white'
+            : 'bg-gray-300 text-gray-700'
+            }`}
         >
           Slide 12 - For Loops
         </button>
       </div>
-      
+
       {currentSlide === 11 && <Slide11VariableDeclaration scroll={scroll} />}
       {currentSlide === 12 && <Slide12ForLoops scroll={scroll} />}
     </div>

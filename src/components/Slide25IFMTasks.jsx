@@ -18,23 +18,23 @@ const TASKS = {
 result = [num ** 2 for num in numbers if num % 2 == 0]
 print(result)`,
       options: [
-        { 
-          id: 'A', 
+        {
+          id: 'A',
           text: '[1, 4, 9, 16, 25, 36]',
           isCorrect: false
         },
-        { 
-          id: 'B', 
+        {
+          id: 'B',
           text: '[4, 16, 36]',
           isCorrect: true
         },
-        { 
-          id: 'C', 
+        {
+          id: 'C',
           text: '[2, 4, 6]',
           isCorrect: false
         },
-        { 
-          id: 'D', 
+        {
+          id: 'D',
           text: '[1, 9, 25]',
           isCorrect: false
         }
@@ -87,23 +87,23 @@ def greet(name):
 output = greet("Alice")
 print(output)`,
       options: [
-        { 
-          id: 'A', 
+        {
+          id: 'A',
           text: 'Hello, Alice!\nGreeting for Alice',
           isCorrect: false
         },
-        { 
-          id: 'B', 
+        {
+          id: 'B',
           text: 'Before function call\nHello, Alice!\nAfter function call\nGreeting for Alice',
           isCorrect: true
         },
-        { 
-          id: 'C', 
+        {
+          id: 'C',
           text: 'Before function call\nAfter function call\nHello, Alice!\nGreeting for Alice',
           isCorrect: false
         },
-        { 
-          id: 'D', 
+        {
+          id: 'D',
           text: 'Error: decorator syntax is incorrect',
           isCorrect: false
         }
@@ -119,10 +119,10 @@ const TaskOverview = ({ onNavigate, scroll }) => {
   const [tooltipPosition, setTooltipPosition] = useState({ x: 16, y: 16 });
 
   const TaskTooltip = ({ task }) => (
-    <div 
+    <div
       className="fixed z-50 bg-white border-4 border-black rounded-xl shadow-lg p-6 w-96 font-['IBM_Plex_Mono',monospace]"
-      style={{ 
-        left: `${tooltipPosition.x}px`, 
+      style={{
+        left: `${tooltipPosition.x}px`,
         top: `${tooltipPosition.y}px`,
         maxWidth: '384px'
       }}
@@ -134,13 +134,13 @@ const TaskOverview = ({ onNavigate, scroll }) => {
             Multiple Choice Task
           </span>
         </div>
-        
+
         <div className={`bg-black text-green-400 p-3 rounded-lg border-2 border-${task.color}-600 font-mono text-xs`}>
           <div className="text-green-300 mb-2">TASK:</div>
           <div className="text-white">{task.problem.title}</div>
         </div>
       </div>
-      
+
       <div className="space-y-2 text-sm text-black">
         <div className={`border-l-4 border-${task.color}-600 bg-${task.color}-100 px-3 py-1 rounded-r-lg`}>
           <strong>Type:</strong> Choose the correct answer
@@ -169,7 +169,7 @@ const TaskOverview = ({ onNavigate, scroll }) => {
       {/* Content */}
       <div className="flex-1 px-8 py-8">
         <div className="max-w-6xl mx-auto">
-          
+
           {/* Introduction */}
           <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg mb-8">
             <div className="border-l-8 border-purple-600 bg-purple-100 p-6 rounded-r-xl">
@@ -185,7 +185,7 @@ const TaskOverview = ({ onNavigate, scroll }) => {
           {/* Task Cards */}
           <div className="grid md:grid-cols-2 gap-8 mb-8">
             {Object.values(TASKS).map((task) => (
-              <div 
+              <div
                 key={task.id}
                 className="border-4 border-black rounded-xl p-8 bg-white shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
                 onMouseEnter={() => setHoveredTask(task.id)}
@@ -198,13 +198,13 @@ const TaskOverview = ({ onNavigate, scroll }) => {
                       {task.title}
                     </span>
                   </div>
-                  
+
                   <div className="mb-4">
                     <p className="text-black font-mono leading-relaxed">
                       {task.description}
                     </p>
                   </div>
-                  
+
                   {task.hasHints && (
                     <div className="border-4 border-green-600 rounded-xl p-4 bg-green-50 mb-4">
                       <div className="flex items-center gap-2 mb-2">
@@ -219,7 +219,7 @@ const TaskOverview = ({ onNavigate, scroll }) => {
                     </div>
                   )}
                 </div>
-                
+
                 <button
                   onClick={() => onNavigate(task.id)}
                   className={`w-full px-6 py-3 bg-${task.color}-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-${task.color}-600 hover:border-${task.color}-600 transition-all flex items-center justify-center gap-3`}
@@ -234,7 +234,7 @@ const TaskOverview = ({ onNavigate, scroll }) => {
           {/* Navigation */}
           <div className="flex justify-center">
             <button
-              onClick={() => scroll(22)}
+              onClick={() => scroll(23)}
               className="px-8 py-4 bg-purple-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-purple-600 hover:border-purple-600 transition-all transform hover:scale-105 flex items-center gap-3"
             >
               <span>What is this all about?</span>
@@ -259,8 +259,8 @@ const MultipleChoiceTask = ({ task, onNavigate }) => {
   const [visibleHints, setVisibleHints] = useState([]);
 
   const toggleHint = (index) => {
-    setVisibleHints(prev => 
-      prev.includes(index) 
+    setVisibleHints(prev =>
+      prev.includes(index)
         ? prev.filter(i => i !== index)
         : [...prev, index]
     );
@@ -308,7 +308,7 @@ const MultipleChoiceTask = ({ task, onNavigate }) => {
                 </div>
               </div>
             </div>
-            
+
             <div className="flex justify-center">
               <button
                 onClick={() => onNavigate('overview')}
@@ -338,7 +338,7 @@ const MultipleChoiceTask = ({ task, onNavigate }) => {
       {/* Content */}
       <div className="flex-1 px-8 py-8">
         <div className="max-w-6xl mx-auto">
-          
+
           {/* Problem Title */}
           <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg mb-8">
             <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center uppercase">
@@ -375,11 +375,10 @@ const MultipleChoiceTask = ({ task, onNavigate }) => {
                     <button
                       key={option.id}
                       onClick={() => setSelectedAnswer(option.id)}
-                      className={`w-full p-4 text-left border-4 rounded-xl font-mono transition-all ${
-                        selectedAnswer === option.id
-                          ? `border-${task.color}-600 bg-${task.color}-100 text-${task.color}-800`
-                          : 'border-gray-300 bg-gray-50 text-black hover:border-gray-400 hover:bg-gray-100'
-                      }`}
+                      className={`w-full p-4 text-left border-4 rounded-xl font-mono transition-all ${selectedAnswer === option.id
+                        ? `border-${task.color}-600 bg-${task.color}-100 text-${task.color}-800`
+                        : 'border-gray-300 bg-gray-50 text-black hover:border-gray-400 hover:bg-gray-100'
+                        }`}
                     >
                       <span className="font-bold mr-3">{option.id})</span>
                       <pre className="whitespace-pre-wrap inline">{option.text}</pre>
@@ -406,7 +405,7 @@ const MultipleChoiceTask = ({ task, onNavigate }) => {
                       {showHints ? 'Hide' : 'Show'} Hints
                     </button>
                   </div>
-                  
+
                   {showHints && (
                     <div className="space-y-3">
                       {task.hints.map((hint, index) => (
@@ -439,7 +438,7 @@ const MultipleChoiceTask = ({ task, onNavigate }) => {
                       No Hints Available
                     </h3>
                     <p className="text-gray-600 font-mono">
-                      This advanced task challenges you to solve it independently. 
+                      This advanced task challenges you to solve it independently.
                       Use your knowledge of Python decorators!
                     </p>
                   </div>
@@ -457,15 +456,14 @@ const MultipleChoiceTask = ({ task, onNavigate }) => {
               <ArrowLeft className="w-4 h-4" />
               Back
             </button>
-            
+
             <button
               onClick={handleSubmit}
               disabled={!selectedAnswer}
-              className={`px-8 py-3 border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all flex items-center gap-2 ${
-                selectedAnswer
-                  ? `bg-${task.color}-600 text-white hover:bg-white hover:text-${task.color}-600 hover:border-${task.color}-600`
-                  : 'bg-gray-300 text-gray-600 cursor-not-allowed'
-              }`}
+              className={`px-8 py-3 border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all flex items-center gap-2 ${selectedAnswer
+                ? `bg-${task.color}-600 text-white hover:bg-white hover:text-${task.color}-600 hover:border-${task.color}-600`
+                : 'bg-gray-300 text-gray-600 cursor-not-allowed'
+                }`}
             >
               Submit Answer
               <ArrowRight className="w-4 h-4" />
@@ -478,7 +476,7 @@ const MultipleChoiceTask = ({ task, onNavigate }) => {
 };
 
 // Main App Component
-export const Slide25IFMTasks = ({scroll}) => {
+export const Slide25IFMTasks = ({ scroll }) => {
   const [currentPage, setCurrentPage] = useState('overview');
 
   const handleNavigate = (page) => {

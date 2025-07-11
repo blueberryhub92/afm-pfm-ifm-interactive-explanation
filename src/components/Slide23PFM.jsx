@@ -5,7 +5,7 @@ export const Slide23PFM = ({ scroll }) => {
   const [hoveredTerm, setHoveredTerm] = useState(null);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0, side: 'right' });
   const [currentStep, setCurrentStep] = useState(0);
-  
+
   const pfmRef = useRef(null);
   const afmRef = useRef(null);
   const gammaRef = useRef(null);
@@ -30,7 +30,7 @@ export const Slide23PFM = ({ scroll }) => {
           <div className="border-l-8 border-purple-600 bg-purple-100 p-6 rounded-r-xl">
             <p className="text-black text-xl font-bold leading-relaxed">
               Let's compare AFM to PFM: the{' '}
-              <span 
+              <span
                 ref={pfmRef}
                 className="cursor-help bg-purple-200 px-3 py-2 border-2 border-purple-600 rounded text-purple-800 font-bold hover:bg-purple-300 transition-all"
                 onMouseEnter={() => handleMouseEnter('pfm', pfmRef)}
@@ -41,7 +41,7 @@ export const Slide23PFM = ({ scroll }) => {
               . While they look similar at first glance, PFM has a crucial innovation.
             </p>
           </div>
-          
+
           <div className="border-4 border-gray-600 rounded-xl p-6 bg-gray-50">
             <div className="flex items-center gap-3 mb-4">
               <Brain className="w-8 h-8 text-gray-600" />
@@ -72,7 +72,7 @@ export const Slide23PFM = ({ scroll }) => {
                 <h4 className="font-bold text-green-700 text-lg uppercase tracking-wide mb-3">Equal Treatment</h4>
                 <p className="text-black font-bold text-lg leading-relaxed">
                   The{' '}
-                  <span 
+                  <span
                     ref={afmRef}
                     className="cursor-help bg-green-200 px-2 py-1 border-2 border-green-600 rounded text-green-800 font-bold hover:bg-green-300 transition-all"
                     onMouseEnter={() => handleMouseEnter('afm', afmRef)}
@@ -95,7 +95,7 @@ export const Slide23PFM = ({ scroll }) => {
                 <h4 className="font-bold text-purple-700 text-lg uppercase tracking-wide mb-3">Separate Learning</h4>
                 <p className="text-black font-bold text-lg leading-relaxed">
                   PFM recognizes: <em>we might learn differently from successes vs failures</em>. Uses separate{' '}
-                  <span 
+                  <span
                     ref={gammaRef}
                     className="cursor-help bg-purple-200 px-2 py-1 border-2 border-purple-600 rounded text-purple-800 font-bold hover:bg-purple-300 transition-all"
                     onMouseEnter={() => handleMouseEnter('gamma', gammaRef)}
@@ -152,10 +152,10 @@ export const Slide23PFM = ({ scroll }) => {
   };
 
   const PFMTooltip = () => (
-    <div 
+    <div
       className="fixed z-50 bg-white border-4 border-black rounded-xl shadow-lg p-6 w-96 font-['IBM_Plex_Mono',monospace]"
-      style={{ 
-        left: `${tooltipPosition.x}px`, 
+      style={{
+        left: `${tooltipPosition.x}px`,
         top: `${tooltipPosition.y}px`,
         maxWidth: '384px'
       }}
@@ -165,13 +165,13 @@ export const Slide23PFM = ({ scroll }) => {
           <Calculator className="w-6 h-6 text-blue-600" />
           <span className="font-bold text-blue-700 uppercase tracking-wide text-xl">Performance Factor Model</span>
         </div>
-        
+
         <div className="bg-black text-green-400 p-4 rounded-lg border-2 border-blue-600 font-mono text-sm">
           <div className="text-green-300 mb-2 font-bold">PFM FORMULA:</div>
           <div className="text-white font-bold">log(p/(1-p)) = θᵢ + Σₖ qⱼₖ(βₖ + γₖˢᵘᶜᶜ·Sᵢₖ + γₖᶠᵃⁱˡ·Fᵢₖ)</div>
         </div>
       </div>
-      
+
       <div className="space-y-3 text-sm text-black">
         <div className="border-l-4 border-blue-600 bg-blue-100 px-4 py-2 rounded-r-lg">
           <strong className="text-black font-bold">θᵢ:</strong> <span className="font-bold">Student i's baseline proficiency</span>
@@ -186,7 +186,7 @@ export const Slide23PFM = ({ scroll }) => {
           <strong className="text-black font-bold">γₖᶠᵃⁱˡ:</strong> <span className="font-bold">Learning rate from failures</span>
         </div>
       </div>
-      
+
       <div className="border-4 border-green-600 rounded-xl p-4 bg-green-50 mt-4">
         <div className="flex items-center gap-3 mb-2">
           <Brain className="w-6 h-6 text-green-600" />
@@ -200,10 +200,10 @@ export const Slide23PFM = ({ scroll }) => {
   );
 
   const AFMTooltip = () => (
-    <div 
+    <div
       className="fixed z-50 bg-white border-4 border-black rounded-xl shadow-lg p-6 w-96 font-['IBM_Plex_Mono',monospace]"
-      style={{ 
-        left: `${tooltipPosition.x}px`, 
+      style={{
+        left: `${tooltipPosition.x}px`,
         top: `${tooltipPosition.y}px`,
         maxWidth: '384px'
       }}
@@ -213,13 +213,13 @@ export const Slide23PFM = ({ scroll }) => {
           <TrendingUp className="w-6 h-6 text-green-600" />
           <span className="font-bold text-green-700 uppercase tracking-wide text-xl">Additive Factor Model</span>
         </div>
-        
+
         <div className="bg-black text-green-400 p-4 rounded-lg border-2 border-green-600 font-mono text-sm">
           <div className="text-green-300 mb-2 font-bold">AFM FORMULA:</div>
           <div className="text-white font-bold">log(p/(1-p)) = θᵢ + Σₖ qⱼₖ(βₖ + γₖ·Tᵢₖ)</div>
         </div>
       </div>
-      
+
       <div className="space-y-3 text-sm text-black">
         <div className="border-l-4 border-blue-600 bg-blue-100 px-4 py-2 rounded-r-lg">
           <strong className="text-black font-bold">θᵢ:</strong> <span className="font-bold">Student i's baseline proficiency</span>
@@ -234,7 +234,7 @@ export const Slide23PFM = ({ scroll }) => {
           <strong className="text-black font-bold">Tᵢₖ:</strong> <span className="font-bold">Practice opportunities count</span>
         </div>
       </div>
-      
+
       <div className="border-4 border-blue-600 rounded-xl p-4 bg-blue-50 mt-4">
         <div className="flex items-center gap-3 mb-2">
           <Target className="w-6 h-6 text-blue-600" />
@@ -248,10 +248,10 @@ export const Slide23PFM = ({ scroll }) => {
   );
 
   const GammaTooltip = () => (
-    <div 
+    <div
       className="fixed z-50 bg-white border-4 border-black rounded-xl shadow-lg p-6 w-80 font-['IBM_Plex_Mono',monospace]"
-      style={{ 
-        left: `${tooltipPosition.x}px`, 
+      style={{
+        left: `${tooltipPosition.x}px`,
         top: `${tooltipPosition.y}px`,
         maxWidth: '320px'
       }}
@@ -262,19 +262,19 @@ export const Slide23PFM = ({ scroll }) => {
           <span className="font-bold text-purple-700 uppercase tracking-wide text-lg">Separate Gamma Values</span>
         </div>
       </div>
-      
+
       <div className="space-y-4">
         <div className="border-4 border-green-600 rounded-xl p-4 bg-green-50">
           <div className="font-bold text-green-700 text-lg uppercase tracking-wide">yₖˢᵘᶜᶜ (SUCCESS RATE)</div>
           <div className="text-black font-bold">Learning from getting answers RIGHT</div>
         </div>
-        
+
         <div className="border-4 border-red-600 rounded-xl p-4 bg-red-50">
           <div className="font-bold text-red-700 text-lg uppercase tracking-wide">yₖᶠᵃⁱˡ (FAILURE RATE)</div>
           <div className="text-black font-bold">Learning from getting answers WRONG</div>
         </div>
       </div>
-      
+
       <div className="border-4 border-yellow-600 rounded-xl p-4 bg-yellow-50 mt-4">
         <div className="font-bold text-yellow-700 text-sm mb-2 uppercase tracking-wide">EXAMPLE:</div>
         <div className="text-black font-bold text-sm">
@@ -304,14 +304,12 @@ export const Slide23PFM = ({ scroll }) => {
               {steps.map((_, index) => (
                 <div key={index} className="flex items-center">
                   <div
-                    className={`w-4 h-4 rounded-full border-2 border-black ${
-                      index <= currentStep ? 'bg-purple-600' : 'bg-gray-200'
-                    }`}
+                    className={`w-4 h-4 rounded-full border-2 border-black ${index <= currentStep ? 'bg-purple-600' : 'bg-gray-200'
+                      }`}
                   />
                   {index < steps.length - 1 && (
-                    <div className={`w-12 h-1 border-t-2 border-black ${
-                      index < currentStep ? 'bg-purple-600' : 'bg-gray-200'
-                    }`} />
+                    <div className={`w-12 h-1 border-t-2 border-black ${index < currentStep ? 'bg-purple-600' : 'bg-gray-200'
+                      }`} />
                   )}
                 </div>
               ))}
@@ -323,7 +321,7 @@ export const Slide23PFM = ({ scroll }) => {
             <h2 className="text-3xl font-bold text-center mb-8 text-black uppercase tracking-tight">
               {steps[currentStep].title}
             </h2>
-            
+
             {steps[currentStep].content}
           </div>
 
@@ -350,7 +348,7 @@ export const Slide23PFM = ({ scroll }) => {
               </button>
             ) : (
               <button
-                onClick={() => scroll(20)}
+                onClick={() => scroll(21)}
                 className="px-8 py-4 bg-green-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-green-600 transition-all transform hover:scale-105 flex items-center gap-3"
               >
                 <span>Discover the Comparison</span>

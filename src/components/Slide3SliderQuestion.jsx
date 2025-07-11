@@ -17,18 +17,18 @@ export const Slide3SliderQuestion = ({ scroll, onDoneClick }) => {
   return (
     <div className="bg-white min-h-screen flex flex-col items-center justify-center py-8 px-4 md:px-10 text-black font-['IBM_Plex_Mono',monospace]">
       <div className="w-full max-w-4xl mx-auto flex flex-col items-center gap-8">
-        
+
         {/* Main Question Block with Slider */}
         <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg w-full max-w-3xl relative">
           <div className="absolute -top-6 left-6 px-4 py-2 bg-black text-white font-semibold rounded-md text-sm tracking-wider flex items-center gap-2">
             <Target className="w-4 h-4" />
             PROBABILITY ESTIMATION
           </div>
-          
+
           <div className="text-xl md:text-2xl font-semibold tracking-tight text-black text-center mb-6 leading-relaxed">
-            Don't worry if you got it wrong, though. What do you think the chances are that someone who doesn't know Python would have guessed the answer correctly by chance?
+            What do you think the chances are that someone who doesn't know Python would have guessed the answer correctly by chance?
           </div>
-          
+
           {/* Single Slider Container Box */}
           <div className="border-2 border-black rounded-xl p-6 bg-neutral-50 space-y-6">
 
@@ -110,7 +110,7 @@ export const Slide3SliderQuestion = ({ scroll, onDoneClick }) => {
                 </p>
                 <p className="text-black">
                   Like many other algorithms, AFM relies on parameters to compute its output, which in this case is the success probability that a student answers the next question on a specific{' '}
-                  <span 
+                  <span
                     className="relative border-4 border-green-600 bg-green-100 px-2 py-1 rounded font-bold text-green-800 uppercase hover:bg-green-200 transition-colors"
                   >
                     skill
@@ -122,7 +122,7 @@ export const Slide3SliderQuestion = ({ scroll, onDoneClick }) => {
 
             {/* Next Button */}
             <button
-              onClick={() => scroll(4)}
+              onClick={() => scroll(5)}
               className="px-12 py-4 bg-blue-600 text-white border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide hover:bg-white hover:text-blue-600 hover:border-blue-600 transition-all duration-200 shadow-lg"
             >
               Next

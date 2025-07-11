@@ -2,7 +2,7 @@ import React from 'react';
 import { Code, ArrowRight, Lightbulb } from 'lucide-react';
 
 export const Slide0IntroductoryQuestion = ({ guess1, setGuess1, scroll }) => {
-  const handleSubmitGuess1 = () => guess1.trim() && scroll(1);
+  const handleSubmitGuess1 = () => guess1.trim() && scroll(2);
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
@@ -13,7 +13,7 @@ export const Slide0IntroductoryQuestion = ({ guess1, setGuess1, scroll }) => {
   return (
     <div className="bg-white min-h-screen flex flex-col items-center justify-center py-8 px-4 md:px-10 text-black font-['IBM_Plex_Mono',monospace]">
       <div className="w-full max-w-4xl mx-auto flex flex-col gap-8">
-        
+
         {/* Main Title */}
         <div className="text-center border-b-8 border-black pb-6 mb-2">
           <h1 className="text-4xl md:text-5xl font-semibold tracking-tight uppercase leading-tight mb-4" style={{ letterSpacing: "-0.04em" }}>
@@ -26,7 +26,7 @@ export const Slide0IntroductoryQuestion = ({ guess1, setGuess1, scroll }) => {
 
         {/* Main Content Card */}
         <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
-          
+
           {/* Hint Section */}
           <div className="border-4 border-yellow-400 rounded-xl p-6 bg-yellow-50 mb-8 relative">
             <div className="absolute -top-6 left-4 px-3 py-1 bg-yellow-400 text-black font-semibold rounded-md text-xs tracking-wider flex items-center gap-2 border-2 border-black">

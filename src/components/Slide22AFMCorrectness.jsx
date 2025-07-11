@@ -33,7 +33,7 @@ export const Slide22AFMCorrectness = ({ scroll }) => {
             <h2 className="text-3xl font-bold text-center mb-8 text-black uppercase tracking-tight">
               Why This Matters
             </h2>
-            
+
             <div className="space-y-6">
               <div className="border-4 border-purple-600 rounded-xl p-6 bg-purple-50">
                 <div className="flex items-center gap-3 mb-4">
@@ -54,7 +54,7 @@ export const Slide22AFMCorrectness = ({ scroll }) => {
                     <li>• Strengthen mastery</li>
                   </ul>
                 </div>
-                
+
                 <div className="border-l-4 border-red-600 bg-red-100 p-4 rounded-r-lg">
                   <h4 className="font-bold text-red-700 mb-2 uppercase">Incorrect Answers Should:</h4>
                   <ul className="text-black font-bold space-y-1">
@@ -87,15 +87,15 @@ export const Slide22AFMCorrectness = ({ scroll }) => {
                     Good News!
                   </h3>
                 </div>
-                
+
                 <p className="text-black text-xl font-bold leading-relaxed">
                   There are learning models that <span className="bg-yellow-300 px-2 py-1 border-2 border-black rounded">DO</span> take answer correctness into account when updating success probabilities.
                 </p>
-                
+
                 <div className="border-4 border-green-600 rounded-xl p-6 bg-white">
                   <p className="text-black text-lg font-bold">
-                    These models can differentiate between correct and incorrect responses, 
-                    providing more accurate predictions of student knowledge and more 
+                    These models can differentiate between correct and incorrect responses,
+                    providing more accurate predictions of student knowledge and more
                     effective learning experiences.
                   </p>
                 </div>
@@ -113,7 +113,7 @@ export const Slide22AFMCorrectness = ({ scroll }) => {
           {/* Navigation */}
           <div className="flex justify-center items-center">
             <button
-              onClick={() => scroll(19)}
+              onClick={() => scroll(20)}
               disabled={!showModelTeaser}
               className="px-8 py-4 bg-green-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-green-600 transition-all transform hover:scale-105 flex items-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
             >

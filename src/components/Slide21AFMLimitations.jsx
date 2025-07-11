@@ -16,9 +16,15 @@ import { ArrowLeft, TrendingDown, Calendar } from "lucide-react";
 export const Slide21AFMLimitations = ({ scroll }) => {
   const [currentView, setCurrentView] = useState("overview");
   const [completedScenarios, setCompletedScenarios] = useState(new Set());
-  const [step, setStep] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [learningRate, setLearningRate] = useState(0.1);
+  const [simStep, setSimStep] = useState(0);
+  const [selectedStudent, setSelectedStudent] = useState(null);
+  const [showComparison, setShowComparison] = useState(false);
+  const [animating, setAnimating] = useState(false);
+
+  const [contextStep, setContextStep] = useState(0);
+  const [selectedStrategy, setSelectedStrategy] = useState(null);
+  const [showTrajectory, setShowTrajectory] = useState(false);
+  const [animateSequence, setAnimateSequence] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [showFeedback, setShowFeedback] = useState(false);
   const [initialProb, setInitialProb] = useState(0.25);
@@ -31,6 +37,7 @@ export const Slide21AFMLimitations = ({ scroll }) => {
   const [showAnswer, setShowAnswer] = useState(false);
   const [showTellMeAnswer, setShowTellMeAnswer] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
+  const [step, setStep] = useState(0);
 
   const handleSliderChange = (period, value) => {
     setSliderValues((prev) => ({ ...prev, [period]: value }));
@@ -48,18 +55,6 @@ export const Slide21AFMLimitations = ({ scroll }) => {
       id: "context-blind",
       icon: Brain,
       color: "green",
-    },
-    {
-      title: "Cold Start Problem",
-      id: "cold-start-problem",
-      icon: Zap,
-      color: "purple",
-    },
-    {
-      title: "Uniform Learning Rates",
-      id: "uniform-learning-rates",
-      icon: TrendingUp,
-      color: "orange",
     },
     {
       title: "Incorrect Answers",
@@ -84,45 +79,11 @@ print(result)`,
     hint: "There may not be a correct answer option.",
   };
 
-  // Generate simulation data
-  const generateSimulationSteps = (rate) => {
-    const rates = { fast: rate * 2.5, slow: rate * 0.6, afm: rate };
-    const steps = [0, 3, 6, 10];
-    const titles = [
-      "Initial State",
-      "After 3 Practice Attempts",
-      "After 6 Practice Attempts",
-      "After 10 Practice Attempts",
-    ];
-    const descriptions = [
-      "Both students start with the same initial success probability",
-      "Students show different learning patterns based on their individual rates",
-      "Learning differences become more apparent",
-      "AFM's uniform rate creates significant prediction errors for both students",
-    ];
 
-    return steps.map((practiceCount, i) => ({
-      title: titles[i],
-      description: descriptions[i],
-      practiceCount,
-      fastStudent: {
-        actual: Math.min(0.95, 0.25 + rates.fast * practiceCount),
-      },
-      slowStudent: {
-        actual: Math.min(0.95, 0.25 + rates.slow * practiceCount),
-      },
-      afmPrediction: Math.min(0.95, 0.25 + rates.afm * practiceCount),
-    }));
-  };
-
-  const simulationSteps = generateSimulationSteps(learningRate);
 
   // Event handlers
   const handleBeginTask = (taskId) => {
-    if (taskId === "uniform-learning-rates") {
-      setCurrentView("setup");
-      setStep(0);
-    } else if (taskId === "incorrect-answers") {
+    if (taskId === "incorrect-answers") {
       setCurrentView("incorrect-answers");
       setStep(0);
       setSelectedAnswer(null);
@@ -136,25 +97,19 @@ print(result)`,
       setShowExplanation(false);
       setSliderValues({ days: 0.8, months: 0.8, year: 0.8 });
       setUserGuess({ value: 4, unit: "weeks" });
-      setStep(0);
-    } else if (
-      ["binary-skills", "context-blind", "cold-start-problem"].includes(taskId)
-    ) {
-      // Placeholder for other scenarios - implement these views later
-      alert(`${taskId} scenario coming soon!`);
-      // For now, mark as completed immediately for testing
-      setCompletedScenarios((prev) => new Set([...prev, taskId]));
-    }
-  };
-
-  const navigateStep = (direction) => {
-    const newStep = step + direction;
-    if (newStep >= 0 && newStep < simulationSteps.length) {
-      setIsAnimating(true);
-      setTimeout(() => {
-        setStep(newStep);
-        setIsAnimating(false);
-      }, 300);
+    } else if (taskId === "binary-skills") {
+      setCurrentView("binary-skills");
+      setSimStep(0);
+      setSelectedStudent(null);
+      setShowComparison(false);
+      setAnimating(false);
+    } else if (taskId === "context-blind") {
+      setCurrentView("context-blind");
+      setContextStep(0);
+      setSelectedStrategy(null);
+      setShowTrajectory(false);
+      setAnimateSequence(false);
+      setSelectedStudent(null);
     }
   };
 
@@ -163,15 +118,16 @@ print(result)`,
 
     // Track completion for specific scenarios
     if (
-      ["task", "incorrect-answers-reflection", "no-forgetting"].includes(
+      ["incorrect-answers-reflection", "no-forgetting", "binary-skills", "context-blind"].includes(
         currentView
       )
     ) {
       let scenarioId;
-      if (currentView === "task") scenarioId = "uniform-learning-rates";
-      else if (currentView === "incorrect-answers-reflection")
+      if (currentView === "incorrect-answers-reflection")
         scenarioId = "incorrect-answers";
       else if (currentView === "no-forgetting") scenarioId = "no-forgetting";
+      else if (currentView === "binary-skills") scenarioId = "binary-skills";
+      else if (currentView === "context-blind") scenarioId = "context-blind";
 
       if (scenarioId) {
         setCompletedScenarios((prev) => new Set([...prev, scenarioId]));
@@ -187,265 +143,1088 @@ print(result)`,
     }, 1000);
   };
 
-  // Components
-  const ProbabilityBar = ({
-    actual,
-    label,
-    color,
-    showPredictionError = false,
-    afmPrediction,
-  }) => {
-    const errorSize = showPredictionError
-      ? Math.abs(actual - afmPrediction)
-      : 0;
-    const isUnderPredicted = actual > afmPrediction;
+  // Technical Layout Component
+  const TechnicalLayout = ({ children }) => (
+    <div className="bg-white min-h-screen font-mono relative">
+      {/* Grid background */}
+      <div
+        className="absolute inset-0 opacity-60"
+        style={{
+          backgroundImage: 'linear-gradient(to right, #d1d5db 1px, transparent 1px), linear-gradient(to bottom, #d1d5db 1px, transparent 1px)',
+          backgroundSize: '20px 20px'
+        }}
+      />
+
+      <div className="relative flex-1 px-8 py-6">{children}</div>
+    </div>
+  );
+
+  // Technical Card Component
+  const TechnicalCard = ({ title, description, children, size = "normal", accent = "black" }) => {
+    const sizeClasses = {
+      normal: "p-6",
+      large: "p-8",
+      small: "p-4"
+    };
+
+    const accentClasses = {
+      black: "border-black",
+      red: "border-red-600",
+      blue: "border-blue-600",
+      green: "border-green-600",
+      purple: "border-purple-600",
+      orange: "border-orange-600",
+      yellow: "border-yellow-600"
+    };
 
     return (
-      <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
-        <div className="flex justify-between items-center mb-4">
-          <span className="text-xl font-bold text-black font-['IBM_Plex_Mono',monospace]">
-            {label}
-          </span>
-          <span className="text-lg font-bold text-black font-['IBM_Plex_Mono',monospace]">
-            {(actual * 100).toFixed(0)}%
-          </span>
-        </div>
-        <div className="relative">
-          <div className="w-full bg-gray-200 rounded-none h-8 border-4 border-black overflow-hidden">
-            <div
-              className={`h-full ${color} transition-all duration-500 ease-out ${
-                isAnimating ? "opacity-70" : ""
-              }`}
-              style={{ width: `${actual * 100}%` }}
-            />
-          </div>
-          {showPredictionError && afmPrediction !== actual && (
-            <div className="absolute top-0 left-0 w-full h-8">
-              <div
-                className="absolute top-0 h-8 border-4 border-dashed border-black bg-yellow-300 bg-opacity-70"
-                style={{
-                  left: `${Math.min(actual, afmPrediction) * 100}%`,
-                  width: `${errorSize * 100}%`,
-                }}
-              />
-              <div
-                className="absolute top-1/2 transform -translate-y-1/2 text-sm font-bold text-black bg-white px-2 py-1 border-2 border-black rounded-none font-['IBM_Plex_Mono',monospace]"
-                style={{
-                  left: `${afmPrediction * 100}%`,
-                  transform: "translateX(-50%) translateY(-50%)",
-                }}
-              >
-                AFM
-              </div>
-            </div>
-          )}
-        </div>
-        {showPredictionError && afmPrediction !== actual && (
-          <div className="text-center mt-4">
-            <span
-              className={`font-bold text-lg font-['IBM_Plex_Mono',monospace] ${
-                isUnderPredicted ? "text-red-600" : "text-blue-600"
-              }`}
-            >
-              {isUnderPredicted ? "UNDER" : "OVER"}-PREDICTED BY{" "}
-              {(errorSize * 100).toFixed(0)}%
-            </span>
+      <div className={`border-2 ${accentClasses[accent]} bg-white ${sizeClasses[size]} relative`}>
+        {/* Technical corner brackets */}
+        <div className={`absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 ${accentClasses[accent]}`}></div>
+        <div className={`absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 ${accentClasses[accent]}`}></div>
+        <div className={`absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 ${accentClasses[accent]}`}></div>
+        <div className={`absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 ${accentClasses[accent]}`}></div>
+
+        {title && (
+          <div className="mb-4">
+            <h3 className="text-lg font-bold text-black tracking-wider uppercase">{title}</h3>
+            {description && (
+              <p className="text-sm font-mono text-gray-600 mt-2">{description}</p>
+            )}
           </div>
         )}
+
+        {children}
       </div>
     );
   };
 
-  const Layout = ({ title, children }) => (
-    <div className="bg-white min-h-screen flex flex-col text-black font-['IBM_Plex_Mono',monospace]">
-      <div className="border-b-8 border-black bg-yellow-400 px-8 py-6 shadow-lg">
-        <div className="flex items-center justify-center">
-          <span className="text-black font-bold text-2xl uppercase tracking-wider">
-            {title}
-          </span>
-        </div>
-      </div>
-      <div className="flex-1 px-8 py-8">{children}</div>
-    </div>
-  );
+  // Button component
+  const TechnicalButton = ({ children, onClick, variant = "primary", disabled = false, size = "normal" }) => {
+    const baseClasses = "font-mono font-bold tracking-wider uppercase transition-all transform hover:scale-105 border-2 border-black";
+    const sizeClasses = {
+      small: "px-4 py-2 text-sm",
+      normal: "px-6 py-3 text-base",
+      large: "px-8 py-4 text-lg"
+    };
+    const variantClasses = {
+      primary: "bg-black text-white hover:bg-white hover:text-black",
+      secondary: "bg-white text-black hover:bg-black hover:text-white",
+      danger: "bg-red-600 text-white hover:bg-white hover:text-red-600",
+      success: "bg-green-600 text-white hover:bg-white hover:text-green-600",
+      warning: "bg-yellow-600 text-white hover:bg-white hover:text-yellow-600"
+    };
 
-  // View renderers
-  const renderSetup = () => (
-    <Layout title="Task: Uniform Learning Rates">
-      <div className="max-w-4xl mx-auto">
-        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
-          <div className="text-center space-y-8">
-            <h2 className="text-3xl font-bold text-black uppercase tracking-tight">
-              Configure AFM Learning Rate
-            </h2>
-            <p className="text-black text-lg leading-relaxed">
-              Set the learning rate γ (gamma) that AFM will use for both
-              students. This single rate will be applied uniformly regardless of
-              individual learning differences.
-            </p>
+    return (
+      <button
+        onClick={onClick}
+        disabled={disabled}
+        className={`${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]} ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+          }`}
+      >
+        {children}
+      </button>
+    );
+  };
 
-            <div className="border-4 border-black rounded-xl p-6 bg-gray-100">
-              <div className="text-left max-w-md mx-auto">
-                <label className="block text-lg font-bold text-black mb-4 uppercase tracking-wide">
-                  Try to adapt the Learning Rate y:{" "}
-                  <span className="text-2xl text-purple-600">
-                    {learningRate.toFixed(2)}
-                  </span>
-                </label>
-                <div className="relative">
-                  <div className="w-full h-6 bg-gray-200 border-4 border-black rounded-none">
-                    <div
-                      className="h-full bg-purple-600 transition-all duration-300"
-                      style={{
-                        width: `${((learningRate - 0.05) / 0.1) * 100}%`,
-                      }}
-                    />
-                  </div>
-                  <input
-                    type="range"
-                    min="0.05"
-                    max="0.15"
-                    step="0.01"
-                    value={learningRate}
-                    onChange={(e) =>
-                      setLearningRate(parseFloat(e.target.value))
-                    }
-                    className="absolute top-0 w-full h-6 opacity-0 cursor-pointer"
-                  />
-                  <div className="flex justify-between text-sm font-bold text-black mt-2 uppercase">
-                    <span>0.05 (SLOW)</span>
-                    <span>0.15 (FAST)</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+  const renderBinarySkills = () => {
+    // Medical diagnosis scenario - more relatable and shows real-world implications
+    const medicalCase = {
+      patientInfo: "22-year-old college student presents with fatigue, difficulty concentrating, and frequent headaches for the past 3 weeks.",
+      symptoms: [
+        { id: 'fatigue', name: 'Chronic Fatigue', identified: true, points: 2 },
+        { id: 'concentration', name: 'Difficulty Concentrating', identified: true, points: 2 },
+        { id: 'headaches', name: 'Frequent Headaches', identified: true, points: 2 },
+        { id: 'sleep', name: 'Sleep Pattern Changes', identified: false, points: 1 },
+        { id: 'appetite', name: 'Appetite Changes', identified: false, points: 1 }
+      ],
+      diagnosis: {
+        primary: 'Stress-related fatigue',
+        differential: ['Depression', 'Sleep disorder', 'Nutritional deficiency'],
+        studentAnswer: 'Stress-related fatigue',
+        correct: true
+      },
+      treatment: {
+        immediate: ['Rest', 'Stress management', 'Regular sleep schedule'],
+        longterm: ['Counseling', 'Lifestyle changes', 'Follow-up'],
+        studentAnswers: ['Rest', 'Sleep better'],
+        partialCredit: 0.4
+      }
+    };
 
-            <div className="border-l-8 border-orange-600 bg-orange-100 p-6 rounded-r-xl">
-              <p className="text-black font-bold text-lg">
-                NOTE: In reality, students have different learning rates, but
-                AFM uses this single value for all learners.
+    const calculateRealScore = () => {
+      const symptomScore = medicalCase.symptoms.reduce((acc, symptom) =>
+        acc + (symptom.identified ? symptom.points : 0), 0
+      );
+      const maxSymptomScore = medicalCase.symptoms.reduce((acc, symptom) => acc + symptom.points, 0);
+      const diagnosisScore = medicalCase.diagnosis.correct ? 3 : 0;
+      const treatmentScore = medicalCase.treatment.partialCredit * 3;
+
+      return ((symptomScore + diagnosisScore + treatmentScore) / (maxSymptomScore + 6)) * 100;
+    };
+
+    const afmScore = medicalCase.diagnosis.correct ? 100 : 0; // Binary: either all correct or all wrong
+    const realScore = calculateRealScore(); // ~73% - shows partial understanding
+
+    const stepLabels = {
+      0: 'Case Overview',
+      1: 'Symptom Analysis',
+      2: 'Diagnosis Assessment',
+      3: 'Treatment Planning',
+      4: 'Results Comparison'
+    };
+
+    const navigateSimStep = (direction) => {
+      const newStep = simStep + direction;
+      if (newStep >= 0 && newStep <= 4) {
+        setAnimating(true);
+        setTimeout(() => {
+          setSimStep(newStep);
+          setAnimating(false);
+        }, 300);
+      }
+    };
+
+    const resetSimulation = () => {
+      setSimStep(0);
+    };
+
+    const renderCaseOverview = () => (
+      <div className="space-y-6">
+        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
+          <div className="absolute -top-6 left-4 px-3 py-1 bg-blue-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
+            <Brain className="w-4 h-4" />
+            MEDICAL CASE STUDY
+          </div>
+          <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center mb-6">
+            Medical Case Study
+          </div>
+          <p className="text-lg text-black text-center mb-8 font-bold">
+            Understand how AFM's binary approach fails in complex assessment scenarios
+          </p>
+
+          <div className="space-y-6">
+            <div className="border-4 border-blue-600 rounded-xl p-6 bg-blue-50">
+              <h3 className="font-bold text-blue-700 text-lg font-mono uppercase mb-3">
+                PATIENT PRESENTATION
+              </h3>
+              <p className="text-black font-mono text-lg">
+                {medicalCase.patientInfo}
               </p>
             </div>
 
-            <button
-              onClick={() => setCurrentView("task")}
-              className="px-8 py-4 bg-purple-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-purple-600 transition-all transform hover:scale-105 flex items-center gap-3 mx-auto"
-            >
-              <span>START SIMULATION</span>
-              <ArrowRight className="w-5 h-5" />
-            </button>
+            <div className="border-4 border-yellow-600 rounded-xl p-6 bg-yellow-50">
+              <h3 className="font-bold text-yellow-700 text-lg font-mono uppercase mb-3">
+                YOUR TASK
+              </h3>
+              <p className="text-black font-mono text-lg">
+                As a medical student, you need to: identify symptoms, make a diagnosis, and propose treatment.
+                We'll see how AFM evaluates your performance vs. a more nuanced approach.
+              </p>
+            </div>
           </div>
         </div>
+
+        <div className="flex justify-center">
+          <button
+            onClick={() => setSimStep(1)}
+            className="px-8 py-4 bg-black text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-black hover:border-black transition-all transform hover:scale-105 font-mono"
+          >
+            START MEDICAL ASSESSMENT →
+          </button>
+        </div>
       </div>
-    </Layout>
-  );
+    );
 
-  const renderTask = () => {
-    const currentStep = simulationSteps[step];
-    const showErrors = step > 0;
-    const isLastStep = step === simulationSteps.length - 1;
+    const renderSymptomAnalysis = () => (
+      <div className="space-y-6">
+        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
+          <div className="absolute -top-6 left-4 px-3 py-1 bg-green-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
+            <List className="w-4 h-4" />
+            STEP 1: SYMPTOM IDENTIFICATION
+          </div>
+          <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center mb-6">
+            Step 1: Symptom Identification
+          </div>
+          <p className="text-lg text-black text-center mb-8 font-bold">
+            Student identifies symptoms from patient presentation
+          </p>
 
-    return (
-      <Layout title="Task: Uniform Learning Rates">
-        <div className="max-w-4xl mx-auto space-y-8">
-          <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-2xl font-bold text-black uppercase tracking-tight">
-                {currentStep.title}
+          <div className="border-4 border-green-600 rounded-xl p-6 bg-green-50">
+            <h3 className="font-bold text-green-700 text-lg font-mono uppercase mb-3">
+              SYMPTOM CHECKLIST
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {medicalCase.symptoms.map((symptom) => (
+                <div key={symptom.id} className="flex items-center justify-between p-3 bg-white border-2 border-green-600 rounded-lg">
+                  <span className="font-mono text-black font-bold">{symptom.name}</span>
+                  <div className="flex items-center space-x-2">
+                    <span className={`px-2 py-1 border-2 border-black font-mono font-bold text-xs ${symptom.identified ? 'bg-green-300' : 'bg-red-300'}`}>
+                      {symptom.identified ? 'IDENTIFIED' : 'MISSED'}
+                    </span>
+                    <span className="text-sm font-mono font-bold">({symptom.points} pts)</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-center space-x-4">
+          <button
+            onClick={() => navigateSimStep(-1)}
+            className="px-6 py-3 bg-white text-black border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-black hover:text-white transition-all transform hover:scale-105 font-mono"
+          >
+            ← PREVIOUS
+          </button>
+
+          <button
+            onClick={() => navigateSimStep(1)}
+            className="px-6 py-3 bg-black text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-black transition-all transform hover:scale-105 font-mono"
+          >
+            NEXT: DIAGNOSIS →
+          </button>
+        </div>
+      </div>
+    );
+
+    const renderDiagnosisAssessment = () => (
+      <div className="space-y-6">
+        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
+          <div className="absolute -top-6 left-4 px-3 py-1 bg-blue-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
+            <Brain className="w-4 h-4" />
+            STEP 2: DIAGNOSIS
+          </div>
+          <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center mb-6">
+            Step 2: Diagnosis
+          </div>
+          <p className="text-lg text-black text-center mb-8 font-bold">
+            Student makes primary diagnosis and considers differentials
+          </p>
+
+          <div className="border-4 border-blue-600 rounded-xl p-6 bg-blue-50">
+            <h3 className="font-bold text-blue-700 text-lg font-mono uppercase mb-3">
+              DIAGNOSIS ASSESSMENT
+            </h3>
+            <div className="space-y-3">
+              <div className="p-3 bg-white border-2 border-blue-600 rounded-lg">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-mono text-black font-bold">Primary Diagnosis:</span>
+                  <span className={`px-2 py-1 border-2 border-black font-mono font-bold text-sm ${medicalCase.diagnosis.correct ? 'bg-green-300' : 'bg-red-300'}`}>
+                    {medicalCase.diagnosis.correct ? 'CORRECT' : 'INCORRECT'}
+                  </span>
+                </div>
+                <p className="font-mono text-black">Student Answer: {medicalCase.diagnosis.studentAnswer}</p>
+                <p className="font-mono text-black">Correct Answer: {medicalCase.diagnosis.primary}</p>
+              </div>
+              <div className="p-3 bg-white border-2 border-blue-600 rounded-lg">
+                <span className="font-mono text-black font-bold">Differential Diagnoses Considered:</span>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {medicalCase.diagnosis.differential.map((diff, index) => (
+                    <span key={index} className="px-2 py-1 bg-gray-200 border border-black font-mono text-xs">
+                      {diff}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-center space-x-4">
+          <button
+            onClick={() => navigateSimStep(-1)}
+            className="px-6 py-3 bg-white text-black border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-black hover:text-white transition-all transform hover:scale-105 font-mono"
+          >
+            ← PREVIOUS
+          </button>
+
+          <button
+            onClick={() => navigateSimStep(1)}
+            className="px-6 py-3 bg-black text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-black transition-all transform hover:scale-105 font-mono"
+          >
+            NEXT: TREATMENT →
+          </button>
+        </div>
+      </div>
+    );
+
+    const renderTreatmentPlanning = () => (
+      <div className="space-y-6">
+        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
+          <div className="absolute -top-6 left-4 px-3 py-1 bg-purple-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
+            <Zap className="w-4 h-4" />
+            STEP 3: TREATMENT PLANNING
+          </div>
+          <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center mb-6">
+            Step 3: Treatment Planning
+          </div>
+          <p className="text-lg text-black text-center mb-8 font-bold">
+            Student proposes treatment plan with partial credit opportunity
+          </p>
+
+          <div className="border-4 border-purple-600 rounded-xl p-6 bg-purple-50">
+            <h3 className="font-bold text-purple-700 text-lg font-mono uppercase mb-3">
+              TREATMENT ASSESSMENT
+            </h3>
+            <div className="space-y-4">
+              <div className="p-3 bg-white border-2 border-purple-600 rounded-lg">
+                <span className="font-mono text-black font-bold">Recommended Treatment:</span>
+                <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {medicalCase.treatment.immediate.concat(medicalCase.treatment.longterm).map((treatment, index) => (
+                    <div key={index} className="flex items-center justify-between p-2 bg-gray-100 border border-gray-400 rounded">
+                      <span className="font-mono text-black text-sm">{treatment}</span>
+                      <span className={`px-2 py-1 border border-black font-mono font-bold text-xs ${medicalCase.treatment.studentAnswers.includes(treatment) ? 'bg-green-300' : 'bg-red-300'}`}>
+                        {medicalCase.treatment.studentAnswers.includes(treatment) ? 'INCLUDED' : 'MISSED'}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="p-3 bg-white border-2 border-purple-600 rounded-lg">
+                <span className="font-mono text-black font-bold">Student's Treatment Plan:</span>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {medicalCase.treatment.studentAnswers.map((answer, index) => (
+                    <span key={index} className="px-2 py-1 bg-blue-200 border border-black font-mono text-xs">
+                      {answer}
+                    </span>
+                  ))}
+                </div>
+                <p className="mt-2 font-mono text-black text-sm">
+                  Partial Credit: {(medicalCase.treatment.partialCredit * 100).toFixed(0)}%
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-center space-x-4">
+          <button
+            onClick={() => navigateSimStep(-1)}
+            className="px-6 py-3 bg-white text-black border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-black hover:text-white transition-all transform hover:scale-105 font-mono"
+          >
+            ← PREVIOUS
+          </button>
+
+          <button
+            onClick={() => navigateSimStep(1)}
+            className="px-6 py-3 bg-green-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-green-600 transition-all transform hover:scale-105 font-mono"
+          >
+            VIEW RESULTS →
+          </button>
+        </div>
+      </div>
+    );
+
+    const renderResults = () => (
+      <div className="space-y-6">
+        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
+          <div className="absolute -top-6 left-4 px-3 py-1 bg-red-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
+            <CheckCircle className="w-4 h-4" />
+            ASSESSMENT COMPARISON
+          </div>
+          <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center mb-6">
+            Assessment Comparison
+          </div>
+          <p className="text-lg text-black text-center mb-8 font-bold">
+            Compare AFM's binary approach vs nuanced evaluation
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="border-4 border-red-600 rounded-xl p-6 bg-red-50">
+              <h3 className="font-bold text-red-700 text-lg font-mono uppercase mb-4 text-center">
+                AFM Binary Assessment
               </h3>
-              <div className="px-4 py-2 bg-purple-600 text-white font-bold border-4 border-black rounded-xl">
-                γ = {learningRate.toFixed(2)}
+              <div className="space-y-4">
+                <div className="bg-red-100 p-4 border-2 border-red-600">
+                  <h4 className="font-bold text-red-700 font-mono mb-2">BINARY LOGIC:</h4>
+                  <p className="text-black font-mono text-sm">
+                    Final diagnosis correct → Student gets 100%
+                  </p>
+                  <p className="text-black font-mono text-sm">
+                    Final diagnosis wrong → Student gets 0%
+                  </p>
+                </div>
+
+                <div className="bg-white p-4 border-2 border-red-600">
+                  <h4 className="font-bold text-black font-mono mb-2">AFM SCORE:</h4>
+                  <div className="text-center">
+                    <div className="text-4xl font-bold text-red-600 font-mono">
+                      {afmScore.toFixed(0)}%
+                    </div>
+                    <div className="w-full bg-gray-200 border-2 border-black h-6 mt-2">
+                      <div
+                        className="h-full bg-red-600 transition-all duration-500"
+                        style={{ width: `${afmScore}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-red-50 p-4 border-2 border-red-600">
+                  <h4 className="font-bold text-red-700 font-mono mb-2">IGNORED FACTORS:</h4>
+                  <ul className="text-black font-mono text-sm space-y-1">
+                    <li>• Partial symptom identification</li>
+                    <li>• Treatment planning skills</li>
+                    <li>• Clinical reasoning process</li>
+                    <li>• Differential considerations</li>
+                  </ul>
+                </div>
               </div>
             </div>
 
-            <p className="text-center text-black mb-8 text-lg font-bold">
-              {currentStep.description}
-            </p>
+            <div className="border-4 border-green-600 rounded-xl p-6 bg-green-50">
+              <h3 className="font-bold text-green-700 text-lg font-mono uppercase mb-4 text-center">
+                Nuanced Assessment
+              </h3>
+              <div className="space-y-4">
+                <div className="bg-green-100 p-4 border-2 border-green-600">
+                  <h4 className="font-bold text-green-700 font-mono mb-2">COMPREHENSIVE LOGIC:</h4>
+                  <p className="text-black font-mono text-sm">
+                    • Symptom identification: 6/8 points
+                  </p>
+                  <p className="text-black font-mono text-sm">
+                    • Diagnosis accuracy: 3/3 points
+                  </p>
+                  <p className="text-black font-mono text-sm">
+                    • Treatment planning: 1.2/3 points
+                  </p>
+                </div>
 
-            <div className="space-y-6">
-              <ProbabilityBar
-                actual={currentStep.fastStudent.actual}
-                label="FAST LEARNER"
-                color="bg-green-600"
-                showPredictionError={showErrors}
-                afmPrediction={currentStep.afmPrediction}
-              />
-              <ProbabilityBar
-                actual={currentStep.slowStudent.actual}
-                label="SLOW LEARNER"
-                color="bg-red-600"
-                showPredictionError={showErrors}
-                afmPrediction={currentStep.afmPrediction}
-              />
-
-              {showErrors && (
-                <div className="border-4 border-black rounded-xl p-6 bg-yellow-100">
-                  <div className="text-center space-y-2">
-                    <span className="text-xl font-bold text-black uppercase tracking-wide">
-                      AFM UNIFORM PREDICTION:{" "}
-                      {(currentStep.afmPrediction * 100).toFixed(0)}%
-                    </span>
-                    <p className="text-lg font-bold text-black">
-                      SAME PREDICTION FOR BOTH STUDENTS USING γ ={" "}
-                      {learningRate.toFixed(2)}
-                    </p>
+                <div className="bg-white p-4 border-2 border-green-600">
+                  <h4 className="font-bold text-black font-mono mb-2">NUANCED SCORE:</h4>
+                  <div className="text-center">
+                    <div className="text-4xl font-bold text-green-600 font-mono">
+                      {realScore.toFixed(0)}%
+                    </div>
+                    <div className="w-full bg-gray-200 border-2 border-black h-6 mt-2">
+                      <div
+                        className="h-full bg-green-600 transition-all duration-500"
+                        style={{ width: `${realScore}%` }}
+                      />
+                    </div>
                   </div>
                 </div>
-              )}
+
+                <div className="bg-green-50 p-4 border-2 border-green-600">
+                  <h4 className="font-bold text-green-700 font-mono mb-2">CAPTURED INSIGHTS:</h4>
+                  <ul className="text-black font-mono text-sm space-y-1">
+                    <li>• Strong diagnostic skills</li>
+                    <li>• Good symptom recognition</li>
+                    <li>• Needs treatment planning work</li>
+                    <li>• Overall solid foundation</li>
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div className="flex justify-center space-x-4">
-            <button
-              onClick={() => navigateStep(-1)}
-              disabled={step === 0}
-              className="px-6 py-3 bg-gray-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide hover:bg-white hover:text-gray-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              ← PREVIOUS
-            </button>
-
-            <div className="px-6 py-3 bg-white border-4 border-black rounded-xl font-bold text-black uppercase tracking-wide">
-              STEP {step + 1} OF {simulationSteps.length}
-            </div>
-
-            <button
-              onClick={isLastStep ? backToOverview : () => navigateStep(1)}
-              className={`px-6 py-3 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all ${
-                isLastStep
-                  ? "bg-green-600 hover:bg-white hover:text-green-600"
-                  : "bg-purple-600 hover:bg-white hover:text-purple-600"
-              }`}
-            >
-              {isLastStep ? "COMPLETE TASK ✓" : "NEXT →"}
-            </button>
-          </div>
-
-          {isLastStep && showErrors && (
-            <div className="border-l-8 border-orange-600 bg-orange-100 rounded-r-xl p-6">
-              <h4 className="font-bold text-black mb-4 text-xl uppercase tracking-wide">
-                KEY INSIGHTS:
-              </h4>
-              <ul className="text-lg font-bold text-black space-y-2">
-                <li>• AFM USES THE SAME LEARNING RATE FOR ALL STUDENTS</li>
-                <li>
-                  • FAST LEARNERS EXCEED AFM PREDICTIONS (UNDER-PREDICTED)
-                </li>
-                <li>
-                  • SLOW LEARNERS FALL SHORT OF AFM PREDICTIONS (OVER-PREDICTED)
-                </li>
-                <li>
-                  • INDIVIDUAL DIFFERENCES IN LEARNING SPEED ARE NOT CAPTURED
-                </li>
-              </ul>
-            </div>
-          )}
         </div>
-      </Layout>
+
+        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
+          <div className="absolute -top-6 left-4 px-3 py-1 bg-yellow-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4" />
+            THE PROBLEM WITH BINARY ASSESSMENT
+          </div>
+          <div className="text-center space-y-4">
+            <div className="bg-yellow-300 border-2 border-black px-6 py-4 inline-block">
+              <span className="text-black font-bold text-xl font-mono">
+                27% DIFFERENCE IN ASSESSMENT
+              </span>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="border-l-4 border-yellow-600 bg-white p-4">
+                <h4 className="font-bold text-yellow-700 mb-2 font-mono">LOST INFORMATION</h4>
+                <ul className="text-black font-mono text-sm space-y-1">
+                  <li>• PARTIAL COMPETENCIES IGNORED</li>
+                  <li>• SKILL DEVELOPMENT UNMEASURED</li>
+                  <li>• LEARNING GAPS HIDDEN</li>
+                  <li>• PROGRESS TRACKING IMPOSSIBLE</li>
+                </ul>
+              </div>
+              <div className="border-l-4 border-yellow-600 bg-white p-4">
+                <h4 className="font-bold text-yellow-700 mb-2 font-mono">EDUCATIONAL IMPACT</h4>
+                <ul className="text-black font-mono text-sm space-y-1">
+                  <li>• STUDENTS RECEIVE POOR FEEDBACK</li>
+                  <li>• TEACHERS MISS LEARNING INSIGHTS</li>
+                  <li>• ADAPTIVE SYSTEMS FAIL</li>
+                  <li>• MOTIVATION DECREASES</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
+          <div className="absolute -top-6 left-4 px-3 py-1 bg-blue-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
+            <TrendingUp className="w-4 h-4" />
+            BETTER ASSESSMENT APPROACHES
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              'RUBRIC-BASED',
+              'MULTI-DIMENSIONAL',
+              'COMPETENCY-BASED',
+              'PORTFOLIO',
+              'AUTHENTIC TASKS',
+              'PEER REVIEW',
+              'SELF-ASSESSMENT',
+              'PROCESS-FOCUSED'
+            ].map((approach) => (
+              <div key={approach} className="border-2 border-blue-600 bg-blue-50 p-3 text-center">
+                <span className="text-black font-mono font-bold text-sm">{approach}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex justify-center space-x-4">
+          <button
+            onClick={resetSimulation}
+            className="px-6 py-3 bg-white text-black border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-black hover:text-white transition-all transform hover:scale-105 font-mono"
+          >
+            RESTART SIMULATION
+          </button>
+          <button
+            onClick={backToOverview}
+            className="px-6 py-3 bg-black text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-black transition-all transform hover:scale-105 font-mono"
+          >
+            ← RETURN TO OVERVIEW
+          </button>
+        </div>
+      </div>
+    );
+
+    // Main simulation flow
+    const simulationViews = {
+      0: renderCaseOverview,
+      1: renderSymptomAnalysis,
+      2: renderDiagnosisAssessment,
+      3: renderTreatmentPlanning,
+      4: renderResults
+    };
+
+    return (
+      <div className="bg-white min-h-screen flex flex-col items-center py-8 px-4 md:px-10 text-black font-['IBM_Plex_Mono',monospace]">
+        <div className="w-full max-w-6xl mx-auto flex flex-col gap-8">
+          <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
+            <div className="absolute -top-6 left-4 px-3 py-1 bg-red-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
+              <Target className="w-4 h-4" />
+              BINARY SKILLS LIMITATION
+            </div>
+            <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center">
+              Binary Skills Limitation
+            </div>
+            <p className="text-lg text-black text-center mt-4 font-bold">
+              {stepLabels[simStep]}
+            </p>
+          </div>
+          {simulationViews[simStep]()}
+        </div>
+      </div>
+    );
+  };
+
+  const renderContextBlind = () => {
+    // Language learning scenario showing how context affects performance
+    const languageScenario = {
+      student: "Maria, learning Spanish vocabulary",
+      skill: "Translating common Spanish words to English",
+      contexts: [
+        {
+          id: 'morning-focused',
+          name: 'Morning Study Session',
+          time: '9:00 AM',
+          condition: 'Well-rested, focused, quiet environment',
+          performance: { correct: 18, total: 20, percentage: 90 },
+          color: 'green'
+        },
+        {
+          id: 'evening-tired',
+          name: 'Evening Study Session',
+          time: '11:00 PM',
+          condition: 'Tired, distracted, noisy environment',
+          performance: { correct: 12, total: 20, percentage: 60 },
+          color: 'red'
+        },
+        {
+          id: 'group-collaborative',
+          name: 'Group Study Session',
+          time: '2:00 PM',
+          condition: 'Collaborative, social learning, peer support',
+          performance: { correct: 16, total: 20, percentage: 80 },
+          color: 'blue'
+        },
+        {
+          id: 'test-anxiety',
+          name: 'Quiz Environment',
+          time: '10:00 AM',
+          condition: 'High pressure, timed, formal assessment',
+          performance: { correct: 11, total: 20, percentage: 55 },
+          color: 'orange'
+        },
+        {
+          id: 'app-gamified',
+          name: 'Mobile App Learning',
+          time: '7:00 PM',
+          condition: 'Gamified, immediate feedback, bite-sized',
+          performance: { correct: 17, total: 20, percentage: 85 },
+          color: 'purple'
+        }
+      ]
+    };
+
+    const calculateContextAFMPrediction = () => {
+      const totalCorrect = languageScenario.contexts.reduce((sum, ctx) => sum + ctx.performance.correct, 0);
+      const totalQuestions = languageScenario.contexts.reduce((sum, ctx) => sum + ctx.performance.total, 0);
+      return (totalCorrect / totalQuestions) * 100;
+    };
+
+    const calculateVariance = () => {
+      const performances = languageScenario.contexts.map(ctx => ctx.performance.percentage);
+      const mean = performances.reduce((sum, perf) => sum + perf, 0) / performances.length;
+      const variance = performances.reduce((sum, perf) => sum + Math.pow(perf - mean, 2), 0) / performances.length;
+      return Math.sqrt(variance);
+    };
+
+    const afmPrediction = calculateContextAFMPrediction();
+    const performanceVariance = calculateVariance();
+
+    const stepLabels = {
+      0: 'Context Overview',
+      1: 'Performance Analysis',
+      2: 'AFM vs Context-Aware',
+      3: 'Educational Implications'
+    };
+
+    const navigateContext = (direction) => {
+      const newStep = contextStep + direction;
+      if (newStep >= 0 && newStep < 4) {
+        setAnimateSequence(true);
+        setTimeout(() => {
+          setContextStep(newStep);
+          setAnimateSequence(false);
+        }, 300);
+      }
+    };
+
+    const handleStrategySelect = (strategy) => {
+      setSelectedStrategy(strategy);
+    };
+
+
+
+    const renderContextOverview = () => (
+      <div className="space-y-6">
+        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
+          <div className="absolute -top-6 left-4 px-3 py-1 bg-blue-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
+            <TrendingUp className="w-4 h-4" />
+            LANGUAGE LEARNING CONTEXT STUDY
+          </div>
+          <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center mb-6">
+            Language Learning Context Study
+          </div>
+          <p className="text-lg text-black text-center mb-8 font-bold">
+            Observe how the same student performs differently across various learning contexts
+          </p>
+
+          <div className="space-y-6">
+            <div className="border-4 border-blue-600 rounded-xl p-6 bg-blue-50">
+              <h3 className="font-bold text-blue-700 text-lg font-mono uppercase mb-3">
+                STUDENT PROFILE
+              </h3>
+              <p className="text-black font-mono text-lg">
+                <strong>Student:</strong> {languageScenario.student}
+              </p>
+              <p className="text-black font-mono text-lg">
+                <strong>Skill:</strong> {languageScenario.skill}
+              </p>
+              <p className="text-black font-mono text-lg">
+                <strong>Assessment:</strong> 20 vocabulary words per session
+              </p>
+            </div>
+
+            <div className="border-4 border-yellow-600 rounded-xl p-6 bg-yellow-50">
+              <h3 className="font-bold text-yellow-700 text-lg font-mono uppercase mb-3">
+                STUDY QUESTION
+              </h3>
+              <p className="text-black font-mono text-lg">
+                How does learning context affect performance? AFM treats all sessions equally,
+                but should context matter for predictions?
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-center">
+          <button
+            onClick={() => setContextStep(1)}
+            className="px-8 py-4 bg-black text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-black hover:border-black transition-all transform hover:scale-105 font-mono"
+          >
+            ANALYZE PERFORMANCE DATA →
+          </button>
+        </div>
+      </div>
+    );
+
+    const renderPerformanceAnalysis = () => (
+      <div className="space-y-6">
+        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
+          <div className="absolute -top-6 left-4 px-3 py-1 bg-purple-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
+            <TrendingDown className="w-4 h-4" />
+            PERFORMANCE ACROSS DIFFERENT CONTEXTS
+          </div>
+          <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center mb-6">
+            Performance Across Different Contexts
+          </div>
+          <p className="text-lg text-black text-center mb-8 font-bold">
+            Same student, same skill, different contexts - notice the variation
+          </p>
+
+          <div className="space-y-4">
+            {languageScenario.contexts.map((context) => (
+              <div
+                key={context.id}
+                className={`border-4 border-${context.color}-600 rounded-xl p-4 bg-${context.color}-50`}
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div>
+                    <h3 className="font-bold text-black text-lg font-mono uppercase">
+                      {context.name}
+                    </h3>
+                    <p className="text-sm font-mono text-black">
+                      {context.time} - {context.condition}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-3xl font-bold text-black font-mono">
+                      {context.performance.percentage}%
+                    </div>
+                    <div className="text-sm font-mono text-black">
+                      {context.performance.correct}/{context.performance.total} correct
+                    </div>
+                  </div>
+                </div>
+                <div className="w-full bg-gray-200 border-2 border-black h-6">
+                  <div
+                    className={`h-full bg-${context.color}-600 transition-all duration-500`}
+                    style={{ width: `${context.performance.percentage}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
+          <div className="absolute -top-6 left-4 px-3 py-1 bg-orange-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4" />
+            PERFORMANCE VARIANCE
+          </div>
+          <div className="text-center space-y-4">
+            <div className="bg-orange-300 border-2 border-black px-6 py-4 inline-block">
+              <span className="text-black font-bold text-xl font-mono">
+                {performanceVariance.toFixed(1)}% STANDARD DEVIATION
+              </span>
+            </div>
+            <p className="text-black font-mono text-lg">
+              High variance indicates context significantly impacts performance
+            </p>
+            <div className="text-sm font-mono text-black">
+              Range: {Math.min(...languageScenario.contexts.map(c => c.performance.percentage))}% - {Math.max(...languageScenario.contexts.map(c => c.performance.percentage))}%
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-center">
+          <button
+            onClick={() => setContextStep(2)}
+            className="px-8 py-4 bg-black text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-black hover:border-black transition-all transform hover:scale-105 font-mono"
+          >
+            COMPARE AFM VS CONTEXT-AWARE →
+          </button>
+        </div>
+      </div>
+    );
+
+    const renderAFMComparison = () => (
+      <div className="space-y-6">
+        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
+          <div className="absolute -top-6 left-4 px-3 py-1 bg-red-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
+            <CheckCircle className="w-4 h-4" />
+            AFM VS CONTEXT-AWARE PREDICTIONS
+          </div>
+          <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center mb-6">
+            AFM vs Context-Aware Predictions
+          </div>
+          <p className="text-lg text-black text-center mb-8 font-bold">
+            Compare how different approaches handle context-dependent performance
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="border-4 border-red-600 rounded-xl p-6 bg-red-50">
+              <h3 className="font-bold text-red-700 text-lg font-mono uppercase mb-4 text-center">
+                AFM Prediction
+              </h3>
+              <div className="space-y-4">
+                <div className="bg-red-100 p-4 border-2 border-red-600">
+                  <h4 className="font-bold text-red-700 font-mono mb-2">CONTEXT-BLIND LOGIC:</h4>
+                  <p className="text-black font-mono text-sm">
+                    All sessions weighted equally regardless of context
+                  </p>
+                  <p className="text-black font-mono text-sm">
+                    Total: {languageScenario.contexts.reduce((sum, ctx) => sum + ctx.performance.correct, 0)}/{languageScenario.contexts.reduce((sum, ctx) => sum + ctx.performance.total, 0)} correct
+                  </p>
+                </div>
+
+                <div className="bg-white p-4 border-2 border-red-600">
+                  <h4 className="font-bold text-black font-mono mb-2">AFM PREDICTION:</h4>
+                  <div className="text-center">
+                    <div className="text-4xl font-bold text-red-600 font-mono">
+                      {afmPrediction.toFixed(0)}%
+                    </div>
+                    <div className="w-full bg-gray-200 border-2 border-black h-6 mt-2">
+                      <div
+                        className="h-full bg-red-600 transition-all duration-500"
+                        style={{ width: `${afmPrediction}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-red-50 p-4 border-2 border-red-600">
+                  <h4 className="font-bold text-red-700 font-mono mb-2">MISSED CONTEXT:</h4>
+                  <ul className="text-black font-mono text-sm space-y-1">
+                    <li>• Time of day effects</li>
+                    <li>• Emotional state variations</li>
+                    <li>• Environmental factors</li>
+                    <li>• Learning mode preferences</li>
+                    <li>• Social context impacts</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div className="border-4 border-green-600 rounded-xl p-6 bg-green-50">
+              <h3 className="font-bold text-green-700 text-lg font-mono uppercase mb-4 text-center">
+                Context-Aware Prediction
+              </h3>
+              <div className="space-y-4">
+                <div className="bg-green-100 p-4 border-2 border-green-600">
+                  <h4 className="font-bold text-green-700 font-mono mb-2">CONTEXT-AWARE LOGIC:</h4>
+                  <p className="text-black font-mono text-sm">
+                    Weight recent performance by context similarity
+                  </p>
+                  <p className="text-black font-mono text-sm">
+                    Predict based on upcoming context conditions
+                  </p>
+                </div>
+
+                <div className="bg-white p-4 border-2 border-green-600">
+                  <h4 className="font-bold text-black font-mono mb-2">CONTEXT PREDICTION:</h4>
+                  <div className="text-center">
+                    <div className="text-4xl font-bold text-green-600 font-mono">
+                      Variable
+                    </div>
+                    <div className="text-sm font-mono text-black mt-2">
+                      Depends on upcoming context:
+                    </div>
+                    <div className="text-sm font-mono text-black">
+                      Morning: ~90% | Evening: ~60%
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-green-50 p-4 border-2 border-green-600">
+                  <h4 className="font-bold text-green-700 font-mono mb-2">CAPTURED INSIGHTS:</h4>
+                  <ul className="text-black font-mono text-sm space-y-1">
+                    <li>• Peak performance times</li>
+                    <li>• Optimal learning conditions</li>
+                    <li>• Environmental sensitivity</li>
+                    <li>• Contextual interventions</li>
+                    <li>• Personalized scheduling</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-center">
+          <button
+            onClick={() => setContextStep(3)}
+            className="px-8 py-4 bg-black text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-black hover:border-black transition-all transform hover:scale-105 font-mono"
+          >
+            EDUCATIONAL IMPLICATIONS →
+          </button>
+        </div>
+      </div>
+    );
+
+    const renderEducationalImplications = () => (
+      <div className="space-y-6">
+        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
+          <div className="absolute -top-6 left-4 px-3 py-1 bg-orange-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
+            <TrendingUp className="w-4 h-4" />
+            EDUCATIONAL IMPLICATIONS OF CONTEXT BLINDNESS
+          </div>
+          <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center mb-6">
+            Educational Implications of Context Blindness
+          </div>
+          <p className="text-lg text-black text-center mb-8 font-bold">
+            How ignoring context affects learning systems and outcomes
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <h3 className="font-bold text-orange-700 text-lg font-mono uppercase">
+                MISSED OPPORTUNITIES
+              </h3>
+              <div className="space-y-3">
+                {[
+                  'OPTIMAL LEARNING TIMES',
+                  'ENVIRONMENTAL PREFERENCES',
+                  'PERSONALIZED SCHEDULING',
+                  'CONTEXTUAL INTERVENTIONS',
+                  'ADAPTIVE CONTENT DELIVERY'
+                ].map((item, index) => (
+                  <div key={index} className="border-l-4 border-orange-600 bg-orange-50 p-3">
+                    <span className="text-black font-mono font-bold text-sm">
+                      {item}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="font-bold text-red-700 text-lg font-mono uppercase">
+                NEGATIVE IMPACTS
+              </h3>
+              <div className="space-y-3">
+                {[
+                  'INACCURATE PREDICTIONS',
+                  'POOR TIMING OF INTERVENTIONS',
+                  'INEFFECTIVE SCHEDULING',
+                  'REDUCED PERSONALIZATION',
+                  'MISSED OPTIMIZATION OPPORTUNITIES'
+                ].map((item, index) => (
+                  <div key={index} className="border-l-4 border-red-600 bg-red-50 p-3">
+                    <span className="text-black font-mono font-bold text-sm">
+                      {item}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
+          <div className="absolute -top-6 left-4 px-3 py-1 bg-green-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
+            <CheckCircle className="w-4 h-4" />
+            CONTEXT-AWARE LEARNING SYSTEMS
+          </div>
+          <div className="space-y-4">
+            <div className="text-center">
+              <div className="bg-green-300 border-2 border-black px-6 py-4 inline-block">
+                <span className="text-black font-bold text-xl font-mono">
+                  BETTER LEARNING OUTCOMES
+                </span>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[
+                'TIME-AWARE SCHEDULING',
+                'ENVIRONMENTAL ADAPTATION',
+                'MOOD-BASED CONTENT',
+                'SOCIAL CONTEXT INTEGRATION',
+                'PERSONALIZED TIMING',
+                'CONTEXTUAL FEEDBACK',
+                'ADAPTIVE DIFFICULTY',
+                'SITUATIONAL SUPPORT'
+              ].map((approach, index) => (
+                <div key={index} className="border-2 border-green-600 bg-green-50 p-3 text-center">
+                  <span className="text-black font-mono font-bold text-sm">{approach}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
+          <div className="absolute -top-6 left-4 px-3 py-1 bg-blue-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
+            <Zap className="w-4 h-4" />
+            REAL-WORLD APPLICATIONS
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="border-2 border-blue-600 bg-blue-50 p-4">
+              <h4 className="font-bold text-blue-700 mb-2 font-mono">LANGUAGE LEARNING</h4>
+              <p className="text-black font-mono text-sm">
+                Schedule practice sessions during peak attention times, adapt to learning environment preferences
+              </p>
+            </div>
+            <div className="border-2 border-blue-600 bg-blue-50 p-4">
+              <h4 className="font-bold text-blue-700 mb-2 font-mono">PROGRAMMING EDUCATION</h4>
+              <p className="text-black font-mono text-sm">
+                Consider debugging vs. coding contexts, collaborative vs. individual learning modes
+              </p>
+            </div>
+            <div className="border-2 border-blue-600 bg-blue-50 p-4">
+              <h4 className="font-bold text-blue-700 mb-2 font-mono">MEDICAL TRAINING</h4>
+              <p className="text-black font-mono text-sm">
+                Account for high-pressure vs. low-pressure learning environments, simulation vs. real-world contexts
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-center space-x-4">
+          <button
+            onClick={() => setContextStep(0)}
+            className="px-6 py-3 bg-white text-black border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-black hover:text-white transition-all transform hover:scale-105 font-mono"
+          >
+            RESTART ANALYSIS
+          </button>
+          <button
+            onClick={backToOverview}
+            className="px-6 py-3 bg-black text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-black transition-all transform hover:scale-105 font-mono"
+          >
+            ← RETURN TO OVERVIEW
+          </button>
+        </div>
+      </div>
+    );
+
+    const contextViews = {
+      0: renderContextOverview,
+      1: renderPerformanceAnalysis,
+      2: renderAFMComparison,
+      3: renderEducationalImplications
+    };
+
+    return (
+      <div className="bg-white min-h-screen flex flex-col items-center py-8 px-4 md:px-10 text-black font-['IBM_Plex_Mono',monospace]">
+        <div className="w-full max-w-6xl mx-auto flex flex-col gap-8">
+          <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
+            <div className="absolute -top-6 left-4 px-3 py-1 bg-green-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
+              <Brain className="w-4 h-4" />
+              CONTEXT BLIND LIMITATION
+            </div>
+            <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center">
+              Context Blind Limitation
+            </div>
+            <p className="text-lg text-black text-center mt-4 font-bold">
+              {stepLabels[contextStep]}
+            </p>
+          </div>
+          {contextViews[contextStep]()}
+        </div>
+      </div>
     );
   };
 
   const renderIncorrectAnswers = () => (
-    <Layout title="How do Incorrect Answers Impact Success Probability?">
+    <TechnicalLayout title="How do Incorrect Answers Impact Success Probability?">
       <div className="max-w-4xl mx-auto space-y-8">
         <div className="text-center mb-6">
           <p className="text-black text-xl font-bold leading-relaxed">
@@ -493,13 +1272,12 @@ print(result)`,
                 key={index}
                 onClick={() => !showFeedback && handleAnswerSelect(option)}
                 disabled={showFeedback}
-                className={`px-6 py-4 border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide transition-all ${
-                  selectedAnswer === option
-                    ? "bg-red-600 text-white"
-                    : showFeedback
+                className={`px-6 py-4 border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide transition-all ${selectedAnswer === option
+                  ? "bg-red-600 text-white"
+                  : showFeedback
                     ? "bg-gray-200 text-gray-500 cursor-not-allowed"
                     : "bg-white text-black hover:bg-yellow-400 cursor-pointer transform hover:scale-105"
-                }`}
+                  }`}
               >
                 {option}
               </button>
@@ -556,7 +1334,7 @@ print(result)`,
           )}
         </div>
       </div>
-    </Layout>
+    </TechnicalLayout>
   );
 
   const renderNoForgetting = () => (
@@ -836,7 +1614,7 @@ print(result)`,
   );
 
   const renderReflection = () => (
-    <Layout title="Reflection: Incorrect Answers">
+    <TechnicalLayout title="Reflection: Incorrect Answers">
       <div className="max-w-4xl mx-auto">
         <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg text-center">
           <h2 className="text-3xl font-bold mb-6 text-black uppercase tracking-tight">
@@ -889,7 +1667,7 @@ print(result)`,
           </button>
         </div>
       </div>
-    </Layout>
+    </TechnicalLayout>
   );
 
   const renderOverview = () => (
@@ -905,14 +1683,14 @@ print(result)`,
             Explore AFM's limitations through interactive scenarios
           </div>
           <p className="text-lg text-black text-center mt-4 font-bold">
-            Complete all six scenarios below to proceed.
+            Complete all four scenarios below to proceed.
           </p>
         </div>
 
         {/* Progress Indicator */}
         <div className="border-4 border-black rounded-xl p-4 bg-yellow-400 text-center">
           <span className="text-black font-bold text-xl uppercase tracking-wide">
-            {completedScenarios.size} / 6 SCENARIOS COMPLETE
+            {completedScenarios.size} / 4 SCENARIOS COMPLETE
           </span>
         </div>
 
@@ -936,9 +1714,8 @@ print(result)`,
                 className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative"
               >
                 <div
-                  className={`absolute -top-6 left-4 px-3 py-1 font-semibold rounded-md text-xs tracking-wider flex items-center gap-2 border-4 border-black ${
-                    colorClasses[scenario.color]
-                  }`}
+                  className={`absolute -top-6 left-4 px-3 py-1 font-semibold rounded-md text-xs tracking-wider flex items-center gap-2 border-4 border-black ${colorClasses[scenario.color]
+                    }`}
                 >
                   <IconComponent className="w-4 h-4" />
                   SCENARIO
@@ -955,12 +1732,17 @@ print(result)`,
                   </div>
 
                   <button
-                    className={`w-full px-6 py-4 border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide transition-all transform hover:scale-105 ${
-                      isCompleted
-                        ? "bg-green-600 text-white hover:bg-white hover:text-green-600"
-                        : "bg-purple-600 text-white hover:bg-white hover:text-purple-600"
-                    }`}
-                    onClick={() => handleBeginTask(scenario.id)}
+                    className={`w-full px-6 py-4 border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide transition-all transform hover:scale-105 ${isCompleted
+                      ? "bg-green-600 text-white hover:bg-white hover:text-green-600"
+                      : "bg-purple-600 text-white hover:bg-white hover:text-purple-600"
+                      }`}
+                    onClick={() => {
+                      if (scenario.id === 'binary-skills' || scenario.id === 'context-blind') {
+                        alert(`${scenario.title} scenario is currently under development. Please try the other scenarios.`);
+                      } else {
+                        handleBeginTask(scenario.id);
+                      }
+                    }}
                   >
                     {isCompleted ? "REVIEW" : "BEGIN"}
                   </button>
@@ -971,28 +1753,28 @@ print(result)`,
         </div>
       </div>
 
-        <div className="flex justify-center mt-12">
-            <button
-              className="px-12 py-4 bg-green-600 text-white border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide hover:bg-white hover:text-green-600 hover:border-green-600 transition-all transform hover:scale-105 flex items-center gap-3 font-['IBM_Plex_Mono',monospace]"
-              onClick={() => {
-                scroll(18);
-              }}
-            >
-              <span>Continue to Next Section</span>
-              <ArrowRight className="w-6 h-6" />
-            </button>
-        </div>
+      <div className="flex justify-center mt-12">
+        <button
+          className="px-12 py-4 bg-green-600 text-white border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide hover:bg-white hover:text-green-600 hover:border-green-600 transition-all transform hover:scale-105 flex items-center gap-3 font-['IBM_Plex_Mono',monospace]"
+          onClick={() => {
+            scroll(19);
+          }}
+        >
+          <span>Continue to Next Section</span>
+          <ArrowRight className="w-6 h-6" />
+        </button>
+      </div>
     </div>
   );
 
   // Main render logic
   const views = {
-    setup: renderSetup,
-    task: renderTask,
     "incorrect-answers": renderIncorrectAnswers,
     "incorrect-answers-reflection": renderReflection,
     overview: renderOverview,
     "no-forgetting": renderNoForgetting,
+    "binary-skills": renderBinarySkills,
+    "context-blind": renderContextBlind,
   };
 
   return views[currentView]?.() || renderOverview();
