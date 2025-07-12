@@ -84,8 +84,8 @@ export const ExampleTrackedComponent = ({ scroll }) => {
                             onClick={() => handleQuizSubmit(option.value)}
                             disabled={showFeedback}
                             className={`w-full p-3 text-left border rounded ${selectedAnswer === option.value
-                                    ? 'bg-blue-100 border-blue-500'
-                                    : 'border-gray-300 hover:bg-gray-50'
+                                ? 'bg-blue-100 border-blue-500'
+                                : 'border-gray-300 hover:bg-gray-50'
                                 }`}
                         >
                             {option.text}

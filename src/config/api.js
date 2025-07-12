@@ -10,7 +10,7 @@ export const API_CONFIG = {
     ? 'http://localhost:3001'  // Local development
     : isVercel || isNetlify
       ? window.location.origin  // Vercel/Netlify: Same domain (serverless functions)
-      : 'https://afm-analytics-backend-production.up.railway.app', // Replace with your deployed backend URL
+      : 'afm-pfm-ifm-interactive-explanation-production.up.railway.app', // Replace with your deployed backend URL
   
   // API Endpoints
   ENDPOINTS: {
