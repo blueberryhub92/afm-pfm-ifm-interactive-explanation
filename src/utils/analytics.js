@@ -78,8 +78,14 @@ class Analytics {
   // Send event to backend (implement your backend endpoint)
   async sendToBackend(event) {
     try {
-      // Backend endpoint with environment-aware URL
-      const response = await fetch(API_CONFIG.getFullUrl(API_CONFIG.ENDPOINTS.EVENTS), {
+      const backendUrl = API_CONFIG.getFullUrl(API_CONFIG.ENDPOINTS.EVENTS);
+      console.log('📡 Sending event to backend:', {
+        url: backendUrl,
+        eventName: event.eventName,
+        userId: event.userId
+      });
+      
+      const response = await fetch(backendUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -88,10 +94,22 @@ class Analytics {
       });
       
       if (!response.ok) {
+        console.error('❌ Backend response error:', {
+          status: response.status,
+          statusText: response.statusText,
+          url: response.url
+        });
         throw new Error(`HTTP error! status: ${response.status}`);
       }
+      
+      const result = await response.json();
+      console.log('✅ Event sent successfully:', result);
     } catch (error) {
-      console.warn('Failed to send event to backend:', error);
+      console.error('❌ Failed to send event to backend:', {
+        error: error.message,
+        url: API_CONFIG.getFullUrl(API_CONFIG.ENDPOINTS.EVENTS),
+        eventName: event.eventName
+      });
       // Event is still persisted locally, so can be retried later
     }
   }

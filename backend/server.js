@@ -215,42 +215,68 @@ app.get('/api/analytics/stats', async (req, res) => {
   }
 });
 
-// GET /api/analytics/export - Export all data as CSV
+// GET /api/analytics/export - Download all data as JSON
 app.get('/api/analytics/export', async (req, res) => {
+  try {
+    const files = await fs.readdir(DATA_DIR);
+    const jsonFiles = files.filter(file => file.endsWith('.json'));
+    
+    const exportData = {};
+    
+    for (const file of jsonFiles) {
+      const filePath = path.join(DATA_DIR, file);
+      const data = await fs.readFile(filePath, 'utf8');
+      const fileName = file.replace('.json', '');
+      exportData[fileName] = JSON.parse(data);
+    }
+    
+    // Set headers for file download
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Disposition', 'attachment; filename="analytics-export.json"');
+    res.json(exportData);
+  } catch (error) {
+    console.error('Error exporting data:', error);
+    res.status(500).json({ success: false, error: 'Failed to export data' });
+  }
+});
+
+// GET /api/analytics/export/csv - Download events as CSV
+app.get('/api/analytics/export/csv', async (req, res) => {
   try {
     const eventsFile = path.join(DATA_DIR, 'events.json');
     const data = await fs.readFile(eventsFile, 'utf8');
     const events = JSON.parse(data);
     
-    // Convert to CSV
-    const headers = [
-      'userId', 'sessionId', 'eventName', 'timestamp', 'serverTimestamp',
-      'url', 'userAgent', 'screenResolution', 'viewportSize', 'timeFromStart'
-    ];
+    if (events.length === 0) {
+      return res.status(404).json({ success: false, error: 'No events found' });
+    }
     
-    const csvRows = [
-      headers.join(','),
-      ...events.map(event => {
-        return headers.map(header => {
-          let value = event[header] || '';
-          if (header === 'eventData') {
-            value = JSON.stringify(event.eventData || {});
-          }
-          // Escape quotes and wrap in quotes if contains comma
-          if (typeof value === 'string' && (value.includes(',') || value.includes('"'))) {
-            value = `"${value.replace(/"/g, '""')}"`;
-          }
-          return value;
-        }).join(',');
-      })
-    ];
+    // Create CSV header from first event keys
+    const headers = Object.keys(events[0]).join(',');
+    const csvRows = [headers];
     
+    // Add data rows
+    events.forEach(event => {
+      const values = Object.values(event).map(value => {
+        // Handle nested objects and arrays
+        if (typeof value === 'object' && value !== null) {
+          return '"' + JSON.stringify(value).replace(/"/g, '""') + '"';
+        }
+        // Escape quotes in strings
+        return '"' + String(value).replace(/"/g, '""') + '"';
+      });
+      csvRows.push(values.join(','));
+    });
+    
+    const csvContent = csvRows.join('\n');
+    
+    // Set headers for CSV download
     res.setHeader('Content-Type', 'text/csv');
-    res.setHeader('Content-Disposition', 'attachment; filename="analytics_export.csv"');
-    res.send(csvRows.join('\n'));
+    res.setHeader('Content-Disposition', 'attachment; filename="analytics-events.csv"');
+    res.send(csvContent);
   } catch (error) {
-    console.error('Error exporting data:', error);
-    res.status(500).json({ success: false, error: 'Failed to export data' });
+    console.error('Error exporting CSV:', error);
+    res.status(500).json({ success: false, error: 'Failed to export CSV' });
   }
 });
 
