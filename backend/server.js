@@ -12,9 +12,9 @@ const corsOptions = {
   origin: [
     'http://localhost:5173', // Local development
     'http://localhost:3000', // Alternative local port
-    'https://blueberryhub92.github.io/afm-pfm-ifm-interactive-explanation/',
-    // Add your Railway backend URL here when you know it
-    // Example: 'https://your-service-name.up.railway.app'
+    'https://blueberryhub92.github.io', // GitHub Pages base domain
+    'https://blueberryhub92.github.io/afm-pfm-ifm-interactive-explanation/', // GitHub Pages full path
+    'https://blueberryhub92.github.io/afm-pfm-ifm-interactive-explanation', // GitHub Pages full path without trailing slash
   ],
   credentials: true,
   optionsSuccessStatus: 200
