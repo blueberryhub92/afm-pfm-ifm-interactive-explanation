@@ -122,7 +122,7 @@ export const Slide3SliderQuestion = ({ scroll, onDoneClick }) => {
 
             {/* Next Button */}
             <button
-              onClick={() => scroll(5)}
+              onClick={() => scroll(4)}
               className="px-12 py-4 bg-blue-600 text-white border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide hover:bg-white hover:text-blue-600 hover:border-blue-600 transition-all duration-200 shadow-lg"
             >
               Next

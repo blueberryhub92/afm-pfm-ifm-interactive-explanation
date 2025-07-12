@@ -333,7 +333,7 @@ return fibonacci(n-1) + fibonacci(n-2)`,
       <div className="flex justify-center mt-12">
         <button
           className="px-12 py-4 bg-green-600 text-white border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide hover:bg-white hover:text-green-600 hover:border-green-600 transition-all transform hover:scale-105 flex items-center gap-3"
-          onClick={() => scroll(14)}
+          onClick={() => scroll(12)}
         >
           <span>Continue to Next Section</span>
           <ArrowRight className="w-6 h-6" />

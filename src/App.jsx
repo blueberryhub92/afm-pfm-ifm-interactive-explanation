@@ -26,17 +26,15 @@ import { Slide22AFMCorrectness } from "./components/Slide22AFMCorrectness";
 import { WelcomePage } from "./components/WelcomePage";
 
 // Constants
-const TOTAL_SLIDES = 25;
+const TOTAL_SLIDES = 23;
 
 // Navigation configuration
 const SLIDE_TITLES = [
   "Welcome",
   "Introductory Question",
   "Guess Result",
-  "Code Explanation",
   "Slider Question",
   "AFM Introduction",
-  "Second Task",
   "Quiz",
   "Quiz Result",
   "Opportunity Choices",
@@ -151,8 +149,8 @@ function AFMLearningAppContent() {
     if (index > maxVisitedSlide) {
       setMaxVisitedSlide(index);
     }
-    // Reset slide3DoneClicked if we're not on slide 4 (which was slide 3 before)
-    if (index !== 4) {
+    // Reset slide3DoneClicked if we're not on slide 3 (Slide3SliderQuestion)
+    if (index !== 3) {
       setSlide3DoneClicked(false);
     }
     // Close navigation when navigating to a new slide
@@ -168,8 +166,8 @@ function AFMLearningAppContent() {
       if (targetSlide > maxVisitedSlide) {
         setMaxVisitedSlide(targetSlide);
       }
-      // Reset slide3DoneClicked if we're not on slide 4 (which was slide 3 before)
-      if (targetSlide !== 4) {
+      // Reset slide3DoneClicked if we're not on slide 3 (Slide3SliderQuestion)
+      if (targetSlide !== 3) {
         setSlide3DoneClicked(false);
       }
       // Close navigation when navigating to a new slide
@@ -254,20 +252,20 @@ function AFMLearningAppContent() {
         );
       case 2:
         return <Slide1GuessResult guess1={guess1} scroll={scroll} />;
-      case 4:
+      case 3:
         return (
           <Slide3SliderQuestion
             scroll={scroll}
             onDoneClick={() => setSlide3DoneClicked(true)}
           />
         );
-      case 5:
+      case 4:
         return <Slide4AFMIntroduction scroll={scroll} />;
-      case 7:
+      case 5:
         return (
           <Slide6Quiz guess2={guess2} setGuess2={setGuess2} scroll={scroll} />
         );
-      case 8:
+      case 6:
         return (
           <Slide7QuizResult
             guess2={guess2}
@@ -276,11 +274,11 @@ function AFMLearningAppContent() {
             setShowTellMe={setShowTellMe}
           />
         );
-      case 9:
+      case 7:
         return <Slide8OpportunityChoices scroll={scroll} />;
-      case 10:
+      case 8:
         return <Slide10TwoPythonTasks scroll={scroll} />;
-      case 11:
+      case 9:
         return (
           <Slide13TaskDifficultyQuestion
             taskChoice={taskChoice}
@@ -288,11 +286,11 @@ function AFMLearningAppContent() {
             scroll={scroll}
           />
         );
-      case 12:
+      case 10:
         return <Slide14BetaParameter scroll={scroll} />;
-      case 13:
+      case 11:
         return <Slide15TwoMorePythonTasks scroll={scroll} />;
-      case 14:
+      case 12:
         return (
           <Slide16LearningRateQuestion
             taskChoice={taskChoice}
@@ -300,25 +298,25 @@ function AFMLearningAppContent() {
             scroll={scroll}
           />
         );
-      case 15:
+      case 13:
         return <Slide17LearningRateExplanation scroll={scroll} />;
-      case 16:
+      case 14:
         return <Slide19AFMFormula scroll={scroll} />;
-      case 17:
+      case 15:
         return <Slide20AFMSimulator scroll={scroll} />;
-      case 18:
+      case 16:
         return <Slide21AFMLimitations scroll={scroll} />;
-      case 19:
+      case 17:
         return <Slide22AFMCorrectness scroll={scroll} />;
-      case 20:
+      case 18:
         return <Slide23PFM scroll={scroll} />;
-      case 21:
+      case 19:
         return <Slide24PFMSimulation scroll={scroll} />;
-      case 22:
+      case 20:
         return <Slide25IFMTasks scroll={scroll} />;
-      case 23:
+      case 21:
         return <Slide26IFM scroll={scroll} />;
-      case 24:
+      case 22:
         return <Slide27IFMSimulation scroll={scroll} />;
       default:
         return null;
@@ -326,21 +324,21 @@ function AFMLearningAppContent() {
   };
 
   const getFormulaStage = (slideIndex) => {
-    if (slideIndex === 4) return 1;
-    if (slideIndex > 4 && slideIndex < 8) return 2; // θ only
-    if (slideIndex === 8) {
-      // On slide 8, show stage 2 (θ only) until "Tell me" is clicked, then stage 3 (θ + T)
+    if (slideIndex === 3) return 1;
+    if (slideIndex > 3 && slideIndex < 6) return 2; // θ only
+    if (slideIndex === 6) {
+      // On slide 6, show stage 2 (θ only) until "Tell me" is clicked, then stage 3 (θ + T)
       return showTellMe ? 3 : 2;
     }
-    if (slideIndex > 8 && slideIndex < 15) return 3; // θ + T
-    if (slideIndex >= 15 && slideIndex < 17) return 4; // θ + β + T
-    if (slideIndex >= 17 && slideIndex < 20) return 5;
-    if (slideIndex >= 20 && slideIndex < 21) return 6;
+    if (slideIndex > 6 && slideIndex < 10) return 3; // θ + T
+    if (slideIndex >= 10 && slideIndex < 13) return 4; // θ + β + T (task difficulty from Slide14)
+    if (slideIndex >= 13 && slideIndex < 14) return 5; // θ + β + γ + T (learning rate from Slide17)
+    if (slideIndex === 14) return 6; // Full formula (from Slide20)
     return 0; // No formula
   };
 
   const shouldShowTooltip = () => {
-    if (currentSlide === 4) {
+    if (currentSlide === 3) {
       return slide3DoneClicked;
     }
     return getFormulaStage(currentSlide) > 0;

@@ -46,7 +46,7 @@ export const Slide1GuessResult = ({ guess1, scroll }) => {
             </p>
 
             <button
-              onClick={() => scroll(4)}
+              onClick={() => scroll(3)}
               className="px-12 py-4 bg-black text-white border-4 border-black rounded-xl font-semibold uppercase tracking-wide hover:bg-white hover:text-black transition-all text-xl flex items-center gap-3 mx-auto shadow-lg"
             >
               <CheckCircle className="w-6 h-6" />

@@ -2,7 +2,7 @@ import React from 'react';
 import { Brain, Terminal, Zap, ArrowRight, Target, Code } from 'lucide-react';
 
 export const Slide6Quiz = ({ guess2, setGuess2, scroll }) => {
-  const handleSubmitGuess2 = () => guess2.trim() && scroll(8);
+  const handleSubmitGuess2 = () => guess2.trim() && scroll(6);
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {

@@ -153,7 +153,7 @@ export const Slide4AFMIntroduction = ({ scroll }) => {
         {/* Action Button */}
         <div className="text-center">
           <button
-            onClick={() => scroll(7)}
+            onClick={() => scroll(5)}
             className="px-12 py-4 bg-purple-600 text-white border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide hover:bg-white hover:text-purple-600 hover:border-purple-600 transition-all duration-200 shadow-lg"
           >
             Next →

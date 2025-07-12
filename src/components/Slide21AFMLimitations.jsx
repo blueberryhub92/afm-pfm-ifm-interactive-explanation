@@ -228,49 +228,48 @@ print(result)`,
   };
 
   const renderBinarySkills = () => {
-    // Medical diagnosis scenario - more relatable and shows real-world implications
-    const medicalCase = {
-      patientInfo: "22-year-old college student presents with fatigue, difficulty concentrating, and frequent headaches for the past 3 weeks.",
-      symptoms: [
-        { id: 'fatigue', name: 'Chronic Fatigue', identified: true, points: 2 },
-        { id: 'concentration', name: 'Difficulty Concentrating', identified: true, points: 2 },
-        { id: 'headaches', name: 'Frequent Headaches', identified: true, points: 2 },
-        { id: 'sleep', name: 'Sleep Pattern Changes', identified: false, points: 1 },
-        { id: 'appetite', name: 'Appetite Changes', identified: false, points: 1 }
+    // Python programming assessment scenario - shows binary vs nuanced evaluation
+    const programmingAssessment = {
+      taskInfo: "Write a Python function to find the second largest number in a list",
+      requirements: [
+        { id: 'functionality', name: 'Basic Functionality', achieved: true, points: 3 },
+        { id: 'efficiency', name: 'Algorithm Efficiency', achieved: false, points: 2 },
+        { id: 'edge_cases', name: 'Edge Case Handling', achieved: false, points: 2 },
+        { id: 'documentation', name: 'Code Documentation', achieved: false, points: 1 },
+        { id: 'style', name: 'Code Style & Readability', achieved: true, points: 1 }
       ],
-      diagnosis: {
-        primary: 'Stress-related fatigue',
-        differential: ['Depression', 'Sleep disorder', 'Nutritional deficiency'],
-        studentAnswer: 'Stress-related fatigue',
-        correct: true
-      },
-      treatment: {
-        immediate: ['Rest', 'Stress management', 'Regular sleep schedule'],
-        longterm: ['Counseling', 'Lifestyle changes', 'Follow-up'],
-        studentAnswers: ['Rest', 'Sleep better'],
-        partialCredit: 0.4
+      studentCode: `def second_largest(nums):
+    nums.sort()
+    return nums[-2]
+
+# Test
+print(second_largest([1, 3, 2, 5, 4]))`,
+      expectedOutput: '4',
+      actualOutput: '4',
+      codeRuns: true,
+      issues: {
+        efficiency: 'Uses sort() which is O(n log n) instead of O(n) single pass',
+        edgeCases: 'No handling for empty lists, single element, or duplicate values',
+        documentation: 'No docstring, no comments explaining logic'
       }
     };
 
     const calculateRealScore = () => {
-      const symptomScore = medicalCase.symptoms.reduce((acc, symptom) =>
-        acc + (symptom.identified ? symptom.points : 0), 0
+      const totalPoints = programmingAssessment.requirements.reduce((acc, req) =>
+        acc + (req.achieved ? req.points : 0), 0
       );
-      const maxSymptomScore = medicalCase.symptoms.reduce((acc, symptom) => acc + symptom.points, 0);
-      const diagnosisScore = medicalCase.diagnosis.correct ? 3 : 0;
-      const treatmentScore = medicalCase.treatment.partialCredit * 3;
-
-      return ((symptomScore + diagnosisScore + treatmentScore) / (maxSymptomScore + 6)) * 100;
+      const maxPoints = programmingAssessment.requirements.reduce((acc, req) => acc + req.points, 0);
+      return (totalPoints / maxPoints) * 100;
     };
 
-    const afmScore = medicalCase.diagnosis.correct ? 100 : 0; // Binary: either all correct or all wrong
-    const realScore = calculateRealScore(); // ~73% - shows partial understanding
+    const afmScore = programmingAssessment.codeRuns ? 100 : 0; // Binary: either runs or doesn't
+    const realScore = calculateRealScore(); // ~44% - shows partial competency
 
     const stepLabels = {
-      0: 'Case Overview',
-      1: 'Symptom Analysis',
-      2: 'Diagnosis Assessment',
-      3: 'Treatment Planning',
+      0: 'Programming Task Overview',
+      1: 'Code Analysis',
+      2: 'Functionality Assessment',
+      3: 'Quality Evaluation',
       4: 'Results Comparison'
     };
 
@@ -293,33 +292,45 @@ print(result)`,
       <div className="space-y-6">
         <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
           <div className="absolute -top-6 left-4 px-3 py-1 bg-blue-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
-            <Brain className="w-4 h-4" />
-            MEDICAL CASE STUDY
+            <Code className="w-4 h-4" />
+            PYTHON PROGRAMMING ASSESSMENT
           </div>
           <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center mb-6">
-            Medical Case Study
+            Python Programming Assessment
           </div>
           <p className="text-lg text-black text-center mb-8 font-bold">
-            Understand how AFM's binary approach fails in complex assessment scenarios
+            Understand how AFM's binary approach fails in comprehensive code evaluation
           </p>
 
           <div className="space-y-6">
             <div className="border-4 border-blue-600 rounded-xl p-6 bg-blue-50">
               <h3 className="font-bold text-blue-700 text-lg font-mono uppercase mb-3">
-                PATIENT PRESENTATION
+                PROGRAMMING TASK
               </h3>
-              <p className="text-black font-mono text-lg">
-                {medicalCase.patientInfo}
+              <p className="text-black font-mono text-lg mb-4">
+                {programmingAssessment.taskInfo}
               </p>
+              <div className="bg-black text-green-400 p-4 rounded-lg font-mono text-sm">
+                <div className="flex items-center gap-2 mb-2 text-gray-400">
+                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                  <span className="ml-2 text-xs">python_assessment.py</span>
+                </div>
+                <pre className="text-white whitespace-pre-wrap leading-relaxed">
+                  {programmingAssessment.studentCode}
+                </pre>
+              </div>
             </div>
 
             <div className="border-4 border-yellow-600 rounded-xl p-6 bg-yellow-50">
               <h3 className="font-bold text-yellow-700 text-lg font-mono uppercase mb-3">
-                YOUR TASK
+                ASSESSMENT CHALLENGE
               </h3>
               <p className="text-black font-mono text-lg">
-                As a medical student, you need to: identify symptoms, make a diagnosis, and propose treatment.
-                We'll see how AFM evaluates your performance vs. a more nuanced approach.
+                The code runs and produces the correct output. But is running correctly
+                the only measure of programming competency? We'll compare AFM's binary
+                approach with a comprehensive code evaluation.
               </p>
             </div>
           </div>
@@ -330,39 +341,224 @@ print(result)`,
             onClick={() => setSimStep(1)}
             className="px-8 py-4 bg-black text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-black hover:border-black transition-all transform hover:scale-105 font-mono"
           >
-            START MEDICAL ASSESSMENT →
+            START CODE ANALYSIS →
           </button>
         </div>
       </div>
     );
 
-    const renderSymptomAnalysis = () => (
+    const renderCodeAnalysis = () => (
       <div className="space-y-6">
         <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
           <div className="absolute -top-6 left-4 px-3 py-1 bg-green-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
-            <List className="w-4 h-4" />
-            STEP 1: SYMPTOM IDENTIFICATION
+            <Target className="w-4 h-4" />
+            STEP 1: CODE ANALYSIS
           </div>
           <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center mb-6">
-            Step 1: Symptom Identification
+            Step 1: Code Analysis
           </div>
           <p className="text-lg text-black text-center mb-8 font-bold">
-            Student identifies symptoms from patient presentation
+            Analyzing student's code submission across multiple dimensions
           </p>
 
-          <div className="border-4 border-green-600 rounded-xl p-6 bg-green-50">
-            <h3 className="font-bold text-green-700 text-lg font-mono uppercase mb-3">
-              SYMPTOM CHECKLIST
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {medicalCase.symptoms.map((symptom) => (
-                <div key={symptom.id} className="flex items-center justify-between p-3 bg-white border-2 border-green-600 rounded-lg">
-                  <span className="font-mono text-black font-bold">{symptom.name}</span>
-                  <div className="flex items-center space-x-2">
-                    <span className={`px-2 py-1 border-2 border-black font-mono font-bold text-xs ${symptom.identified ? 'bg-green-300' : 'bg-red-300'}`}>
-                      {symptom.identified ? 'IDENTIFIED' : 'MISSED'}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="border-4 border-green-600 rounded-xl p-6 bg-green-50">
+              <h3 className="font-bold text-green-700 text-lg font-mono uppercase mb-3">
+                STUDENT'S SOLUTION
+              </h3>
+              <div className="bg-black text-green-400 p-4 rounded-lg font-mono text-sm">
+                <pre className="text-white whitespace-pre-wrap leading-relaxed">
+                  {programmingAssessment.studentCode}
+                </pre>
+              </div>
+              <div className="mt-4 p-3 bg-white border-2 border-green-600 rounded-lg">
+                <p className="font-mono text-black font-bold">
+                  Output: {programmingAssessment.actualOutput}
+                </p>
+                <p className="font-mono text-black font-bold">
+                  Expected: {programmingAssessment.expectedOutput}
+                </p>
+                <span className={`px-2 py-1 border-2 border-black font-mono font-bold text-xs ${programmingAssessment.codeRuns ? 'bg-green-300' : 'bg-red-300'}`}>
+                  {programmingAssessment.codeRuns ? 'RUNS CORRECTLY' : 'EXECUTION ERROR'}
+                </span>
+              </div>
+            </div>
+
+            <div className="border-4 border-orange-600 rounded-xl p-6 bg-orange-50">
+              <h3 className="font-bold text-orange-700 text-lg font-mono uppercase mb-3">
+                CODE QUALITY ISSUES
+              </h3>
+              <div className="space-y-3">
+                <div className="p-3 bg-white border-2 border-orange-600 rounded-lg">
+                  <h4 className="font-bold text-orange-700 font-mono mb-2">EFFICIENCY:</h4>
+                  <p className="text-black font-mono text-sm">
+                    {programmingAssessment.issues.efficiency}
+                  </p>
+                </div>
+                <div className="p-3 bg-white border-2 border-orange-600 rounded-lg">
+                  <h4 className="font-bold text-orange-700 font-mono mb-2">EDGE CASES:</h4>
+                  <p className="text-black font-mono text-sm">
+                    {programmingAssessment.issues.edgeCases}
+                  </p>
+                </div>
+                <div className="p-3 bg-white border-2 border-orange-600 rounded-lg">
+                  <h4 className="font-bold text-orange-700 font-mono mb-2">DOCUMENTATION:</h4>
+                  <p className="text-black font-mono text-sm">
+                    {programmingAssessment.issues.documentation}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-center space-x-4">
+          <button
+            onClick={() => navigateSimStep(-1)}
+            className="px-6 py-3 bg-white text-black border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-black hover:text-white transition-all transform hover:scale-105 font-mono"
+          >
+            ← PREVIOUS
+          </button>
+
+          <button
+            onClick={() => navigateSimStep(1)}
+            className="px-6 py-3 bg-black text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-black transition-all transform hover:scale-105 font-mono"
+          >
+            NEXT: FUNCTIONALITY →
+          </button>
+        </div>
+      </div>
+    );
+
+    const renderFunctionalityAssessment = () => (
+      <div className="space-y-6">
+        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
+          <div className="absolute -top-6 left-4 px-3 py-1 bg-blue-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
+            <Zap className="w-4 h-4" />
+            STEP 2: FUNCTIONALITY TEST
+          </div>
+          <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center mb-6">
+            Step 2: Functionality Test
+          </div>
+          <p className="text-lg text-black text-center mb-8 font-bold">
+            Testing the code with various inputs to evaluate robustness
+          </p>
+
+          <div className="space-y-4">
+            <div className="border-4 border-blue-600 rounded-xl p-6 bg-blue-50">
+              <h3 className="font-bold text-blue-700 text-lg font-mono uppercase mb-3">
+                TEST CASES
+              </h3>
+              <div className="space-y-3">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <div className="p-3 bg-white border-2 border-green-600 rounded-lg">
+                    <h4 className="font-bold text-green-700 font-mono mb-1">BASIC CASE</h4>
+                    <p className="font-mono text-black text-sm">Input: [1,3,2,5,4]</p>
+                    <p className="font-mono text-black text-sm">Expected: 4</p>
+                    <span className="px-2 py-1 bg-green-300 border border-black font-mono font-bold text-xs">
+                      PASS
                     </span>
-                    <span className="text-sm font-mono font-bold">({symptom.points} pts)</span>
+                  </div>
+                  <div className="p-3 bg-white border-2 border-red-600 rounded-lg">
+                    <h4 className="font-bold text-red-700 font-mono mb-1">EDGE CASE</h4>
+                    <p className="font-mono text-black text-sm">Input: []</p>
+                    <p className="font-mono text-black text-sm">Expected: Handle gracefully</p>
+                    <span className="px-2 py-1 bg-red-300 border border-black font-mono font-bold text-xs">
+                      FAIL
+                    </span>
+                  </div>
+                  <div className="p-3 bg-white border-2 border-red-600 rounded-lg">
+                    <h4 className="font-bold text-red-700 font-mono mb-1">DUPLICATES</h4>
+                    <p className="font-mono text-black text-sm">Input: [5,5,5,5]</p>
+                    <p className="font-mono text-black text-sm">Expected: Handle duplicates</p>
+                    <span className="px-2 py-1 bg-red-300 border border-black font-mono font-bold text-xs">
+                      FAIL
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="border-4 border-yellow-600 rounded-xl p-6 bg-yellow-50">
+              <h3 className="font-bold text-yellow-700 text-lg font-mono uppercase mb-3">
+                BETTER SOLUTION EXAMPLE
+              </h3>
+              <div className="bg-black text-green-400 p-4 rounded-lg font-mono text-sm">
+                <pre className="text-white whitespace-pre-wrap leading-relaxed">
+                  {`def second_largest(nums):
+    """
+    Find the second largest number in a list.
+    
+    Args:
+        nums: List of numbers
+    
+    Returns:
+        Second largest number or None if not possible
+    """
+    if len(nums) < 2:
+        return None
+    
+    first = second = float('-inf')
+    
+    for num in nums:
+        if num > first:
+            second = first
+            first = num
+        elif num > second and num != first:
+            second = num
+    
+    return second if second != float('-inf') else None`}
+                </pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-center space-x-4">
+          <button
+            onClick={() => navigateSimStep(-1)}
+            className="px-6 py-3 bg-white text-black border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-black hover:text-white transition-all transform hover:scale-105 font-mono"
+          >
+            ← PREVIOUS
+          </button>
+
+          <button
+            onClick={() => navigateSimStep(1)}
+            className="px-6 py-3 bg-black text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-black transition-all transform hover:scale-105 font-mono"
+          >
+            NEXT: QUALITY EVALUATION →
+          </button>
+        </div>
+      </div>
+    );
+
+    const renderQualityEvaluation = () => (
+      <div className="space-y-6">
+        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
+          <div className="absolute -top-6 left-4 px-3 py-1 bg-purple-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
+            <Brain className="w-4 h-4" />
+            STEP 3: QUALITY EVALUATION
+          </div>
+          <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center mb-6">
+            Step 3: Quality Evaluation
+          </div>
+          <p className="text-lg text-black text-center mb-8 font-bold">
+            Comprehensive assessment across multiple programming competencies
+          </p>
+
+          <div className="border-4 border-purple-600 rounded-xl p-6 bg-purple-50">
+            <h3 className="font-bold text-purple-700 text-lg font-mono uppercase mb-3">
+              ASSESSMENT CRITERIA
+            </h3>
+            <div className="space-y-3">
+              {programmingAssessment.requirements.map((req) => (
+                <div key={req.id} className="flex items-center justify-between p-3 bg-white border-2 border-purple-600 rounded-lg">
+                  <span className="font-mono text-black font-bold">{req.name}</span>
+                  <div className="flex items-center space-x-2">
+                    <span className={`px-2 py-1 border-2 border-black font-mono font-bold text-xs ${req.achieved ? 'bg-green-300' : 'bg-red-300'}`}>
+                      {req.achieved ? 'ACHIEVED' : 'MISSING'}
+                    </span>
+                    <span className="text-sm font-mono font-bold">({req.points} pts)</span>
                   </div>
                 </div>
               ))}
@@ -380,137 +576,9 @@ print(result)`,
 
           <button
             onClick={() => navigateSimStep(1)}
-            className="px-6 py-3 bg-black text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-black transition-all transform hover:scale-105 font-mono"
-          >
-            NEXT: DIAGNOSIS →
-          </button>
-        </div>
-      </div>
-    );
-
-    const renderDiagnosisAssessment = () => (
-      <div className="space-y-6">
-        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
-          <div className="absolute -top-6 left-4 px-3 py-1 bg-blue-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
-            <Brain className="w-4 h-4" />
-            STEP 2: DIAGNOSIS
-          </div>
-          <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center mb-6">
-            Step 2: Diagnosis
-          </div>
-          <p className="text-lg text-black text-center mb-8 font-bold">
-            Student makes primary diagnosis and considers differentials
-          </p>
-
-          <div className="border-4 border-blue-600 rounded-xl p-6 bg-blue-50">
-            <h3 className="font-bold text-blue-700 text-lg font-mono uppercase mb-3">
-              DIAGNOSIS ASSESSMENT
-            </h3>
-            <div className="space-y-3">
-              <div className="p-3 bg-white border-2 border-blue-600 rounded-lg">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-mono text-black font-bold">Primary Diagnosis:</span>
-                  <span className={`px-2 py-1 border-2 border-black font-mono font-bold text-sm ${medicalCase.diagnosis.correct ? 'bg-green-300' : 'bg-red-300'}`}>
-                    {medicalCase.diagnosis.correct ? 'CORRECT' : 'INCORRECT'}
-                  </span>
-                </div>
-                <p className="font-mono text-black">Student Answer: {medicalCase.diagnosis.studentAnswer}</p>
-                <p className="font-mono text-black">Correct Answer: {medicalCase.diagnosis.primary}</p>
-              </div>
-              <div className="p-3 bg-white border-2 border-blue-600 rounded-lg">
-                <span className="font-mono text-black font-bold">Differential Diagnoses Considered:</span>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {medicalCase.diagnosis.differential.map((diff, index) => (
-                    <span key={index} className="px-2 py-1 bg-gray-200 border border-black font-mono text-xs">
-                      {diff}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex justify-center space-x-4">
-          <button
-            onClick={() => navigateSimStep(-1)}
-            className="px-6 py-3 bg-white text-black border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-black hover:text-white transition-all transform hover:scale-105 font-mono"
-          >
-            ← PREVIOUS
-          </button>
-
-          <button
-            onClick={() => navigateSimStep(1)}
-            className="px-6 py-3 bg-black text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-black transition-all transform hover:scale-105 font-mono"
-          >
-            NEXT: TREATMENT →
-          </button>
-        </div>
-      </div>
-    );
-
-    const renderTreatmentPlanning = () => (
-      <div className="space-y-6">
-        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
-          <div className="absolute -top-6 left-4 px-3 py-1 bg-purple-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
-            <Zap className="w-4 h-4" />
-            STEP 3: TREATMENT PLANNING
-          </div>
-          <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center mb-6">
-            Step 3: Treatment Planning
-          </div>
-          <p className="text-lg text-black text-center mb-8 font-bold">
-            Student proposes treatment plan with partial credit opportunity
-          </p>
-
-          <div className="border-4 border-purple-600 rounded-xl p-6 bg-purple-50">
-            <h3 className="font-bold text-purple-700 text-lg font-mono uppercase mb-3">
-              TREATMENT ASSESSMENT
-            </h3>
-            <div className="space-y-4">
-              <div className="p-3 bg-white border-2 border-purple-600 rounded-lg">
-                <span className="font-mono text-black font-bold">Recommended Treatment:</span>
-                <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {medicalCase.treatment.immediate.concat(medicalCase.treatment.longterm).map((treatment, index) => (
-                    <div key={index} className="flex items-center justify-between p-2 bg-gray-100 border border-gray-400 rounded">
-                      <span className="font-mono text-black text-sm">{treatment}</span>
-                      <span className={`px-2 py-1 border border-black font-mono font-bold text-xs ${medicalCase.treatment.studentAnswers.includes(treatment) ? 'bg-green-300' : 'bg-red-300'}`}>
-                        {medicalCase.treatment.studentAnswers.includes(treatment) ? 'INCLUDED' : 'MISSED'}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="p-3 bg-white border-2 border-purple-600 rounded-lg">
-                <span className="font-mono text-black font-bold">Student's Treatment Plan:</span>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {medicalCase.treatment.studentAnswers.map((answer, index) => (
-                    <span key={index} className="px-2 py-1 bg-blue-200 border border-black font-mono text-xs">
-                      {answer}
-                    </span>
-                  ))}
-                </div>
-                <p className="mt-2 font-mono text-black text-sm">
-                  Partial Credit: {(medicalCase.treatment.partialCredit * 100).toFixed(0)}%
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex justify-center space-x-4">
-          <button
-            onClick={() => navigateSimStep(-1)}
-            className="px-6 py-3 bg-white text-black border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-black hover:text-white transition-all transform hover:scale-105 font-mono"
-          >
-            ← PREVIOUS
-          </button>
-
-          <button
-            onClick={() => navigateSimStep(1)}
             className="px-6 py-3 bg-green-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-green-600 transition-all transform hover:scale-105 font-mono"
           >
-            VIEW RESULTS →
+            VIEW COMPARISON →
           </button>
         </div>
       </div>
@@ -527,7 +595,7 @@ print(result)`,
             Assessment Comparison
           </div>
           <p className="text-lg text-black text-center mb-8 font-bold">
-            Compare AFM's binary approach vs nuanced evaluation
+            Compare AFM's binary approach vs comprehensive code evaluation
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -539,10 +607,10 @@ print(result)`,
                 <div className="bg-red-100 p-4 border-2 border-red-600">
                   <h4 className="font-bold text-red-700 font-mono mb-2">BINARY LOGIC:</h4>
                   <p className="text-black font-mono text-sm">
-                    Final diagnosis correct → Student gets 100%
+                    Code runs correctly → Student gets 100%
                   </p>
                   <p className="text-black font-mono text-sm">
-                    Final diagnosis wrong → Student gets 0%
+                    Code fails/error → Student gets 0%
                   </p>
                 </div>
 
@@ -564,10 +632,10 @@ print(result)`,
                 <div className="bg-red-50 p-4 border-2 border-red-600">
                   <h4 className="font-bold text-red-700 font-mono mb-2">IGNORED FACTORS:</h4>
                   <ul className="text-black font-mono text-sm space-y-1">
-                    <li>• Partial symptom identification</li>
-                    <li>• Treatment planning skills</li>
-                    <li>• Clinical reasoning process</li>
-                    <li>• Differential considerations</li>
+                    <li>• Algorithm efficiency</li>
+                    <li>• Edge case handling</li>
+                    <li>• Code readability</li>
+                    <li>• Documentation quality</li>
                   </ul>
                 </div>
               </div>
@@ -575,24 +643,30 @@ print(result)`,
 
             <div className="border-4 border-green-600 rounded-xl p-6 bg-green-50">
               <h3 className="font-bold text-green-700 text-lg font-mono uppercase mb-4 text-center">
-                Nuanced Assessment
+                Comprehensive Assessment
               </h3>
               <div className="space-y-4">
                 <div className="bg-green-100 p-4 border-2 border-green-600">
-                  <h4 className="font-bold text-green-700 font-mono mb-2">COMPREHENSIVE LOGIC:</h4>
+                  <h4 className="font-bold text-green-700 font-mono mb-2">HOLISTIC EVALUATION:</h4>
                   <p className="text-black font-mono text-sm">
-                    • Symptom identification: 6/8 points
+                    • Functionality: 3/3 points
                   </p>
                   <p className="text-black font-mono text-sm">
-                    • Diagnosis accuracy: 3/3 points
+                    • Efficiency: 0/2 points
                   </p>
                   <p className="text-black font-mono text-sm">
-                    • Treatment planning: 1.2/3 points
+                    • Edge cases: 0/2 points
+                  </p>
+                  <p className="text-black font-mono text-sm">
+                    • Documentation: 0/1 points
+                  </p>
+                  <p className="text-black font-mono text-sm">
+                    • Code style: 1/1 points
                   </p>
                 </div>
 
                 <div className="bg-white p-4 border-2 border-green-600">
-                  <h4 className="font-bold text-black font-mono mb-2">NUANCED SCORE:</h4>
+                  <h4 className="font-bold text-black font-mono mb-2">COMPREHENSIVE SCORE:</h4>
                   <div className="text-center">
                     <div className="text-4xl font-bold text-green-600 font-mono">
                       {realScore.toFixed(0)}%
@@ -609,10 +683,10 @@ print(result)`,
                 <div className="bg-green-50 p-4 border-2 border-green-600">
                   <h4 className="font-bold text-green-700 font-mono mb-2">CAPTURED INSIGHTS:</h4>
                   <ul className="text-black font-mono text-sm space-y-1">
-                    <li>• Strong diagnostic skills</li>
-                    <li>• Good symptom recognition</li>
-                    <li>• Needs treatment planning work</li>
-                    <li>• Overall solid foundation</li>
+                    <li>• Solid basic programming skills</li>
+                    <li>• Needs efficiency optimization</li>
+                    <li>• Lacks robustness thinking</li>
+                    <li>• Should improve documentation</li>
                   </ul>
                 </div>
               </div>
@@ -623,31 +697,31 @@ print(result)`,
         <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
           <div className="absolute -top-6 left-4 px-3 py-1 bg-yellow-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
             <AlertTriangle className="w-4 h-4" />
-            THE PROBLEM WITH BINARY ASSESSMENT
+            THE PROBLEM WITH BINARY CODE ASSESSMENT
           </div>
           <div className="text-center space-y-4">
             <div className="bg-yellow-300 border-2 border-black px-6 py-4 inline-block">
               <span className="text-black font-bold text-xl font-mono">
-                27% DIFFERENCE IN ASSESSMENT
+                56% DIFFERENCE IN ASSESSMENT
               </span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="border-l-4 border-yellow-600 bg-white p-4">
                 <h4 className="font-bold text-yellow-700 mb-2 font-mono">LOST INFORMATION</h4>
                 <ul className="text-black font-mono text-sm space-y-1">
-                  <li>• PARTIAL COMPETENCIES IGNORED</li>
-                  <li>• SKILL DEVELOPMENT UNMEASURED</li>
+                  <li>• ALGORITHM QUALITY IGNORED</li>
+                  <li>• MAINTAINABILITY UNMEASURED</li>
                   <li>• LEARNING GAPS HIDDEN</li>
-                  <li>• PROGRESS TRACKING IMPOSSIBLE</li>
+                  <li>• PROFESSIONAL SKILLS MISSED</li>
                 </ul>
               </div>
               <div className="border-l-4 border-yellow-600 bg-white p-4">
                 <h4 className="font-bold text-yellow-700 mb-2 font-mono">EDUCATIONAL IMPACT</h4>
                 <ul className="text-black font-mono text-sm space-y-1">
-                  <li>• STUDENTS RECEIVE POOR FEEDBACK</li>
-                  <li>• TEACHERS MISS LEARNING INSIGHTS</li>
-                  <li>• ADAPTIVE SYSTEMS FAIL</li>
-                  <li>• MOTIVATION DECREASES</li>
+                  <li>• STUDENTS LEARN BAD PRACTICES</li>
+                  <li>• TEACHERS MISS SKILL GAPS</li>
+                  <li>• EMPLOYERS GET POOR SIGNALS</li>
+                  <li>• CODE QUALITY SUFFERS</li>
                 </ul>
               </div>
             </div>
@@ -657,18 +731,18 @@ print(result)`,
         <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
           <div className="absolute -top-6 left-4 px-3 py-1 bg-blue-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
             <TrendingUp className="w-4 h-4" />
-            BETTER ASSESSMENT APPROACHES
+            BETTER PROGRAMMING ASSESSMENT
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              'RUBRIC-BASED',
-              'MULTI-DIMENSIONAL',
-              'COMPETENCY-BASED',
-              'PORTFOLIO',
-              'AUTHENTIC TASKS',
-              'PEER REVIEW',
-              'SELF-ASSESSMENT',
-              'PROCESS-FOCUSED'
+              'CODE REVIEW',
+              'UNIT TESTING',
+              'PERFORMANCE METRICS',
+              'DOCUMENTATION',
+              'REFACTORING',
+              'PAIR PROGRAMMING',
+              'CODE STYLE',
+              'ALGORITHM ANALYSIS'
             ].map((approach) => (
               <div key={approach} className="border-2 border-blue-600 bg-blue-50 p-3 text-center">
                 <span className="text-black font-mono font-bold text-sm">{approach}</span>
@@ -697,9 +771,9 @@ print(result)`,
     // Main simulation flow
     const simulationViews = {
       0: renderCaseOverview,
-      1: renderSymptomAnalysis,
-      2: renderDiagnosisAssessment,
-      3: renderTreatmentPlanning,
+      1: renderCodeAnalysis,
+      2: renderFunctionalityAssessment,
+      3: renderQualityEvaluation,
       4: renderResults
     };
 
@@ -725,62 +799,62 @@ print(result)`,
   };
 
   const renderContextBlind = () => {
-    // Language learning scenario showing how context affects performance
-    const languageScenario = {
-      student: "Maria, learning Spanish vocabulary",
-      skill: "Translating common Spanish words to English",
+    // Python programming context scenario showing how context affects coding performance
+    const programmingScenario = {
+      student: "Alex, learning Python programming",
+      skill: "Writing Python functions and solving coding problems",
       contexts: [
         {
           id: 'morning-focused',
-          name: 'Morning Study Session',
+          name: 'Morning Coding Session',
           time: '9:00 AM',
-          condition: 'Well-rested, focused, quiet environment',
+          condition: 'Fresh, focused, quiet environment, full-screen IDE',
           performance: { correct: 18, total: 20, percentage: 90 },
           color: 'green'
         },
         {
-          id: 'evening-tired',
-          name: 'Evening Study Session',
-          time: '11:00 PM',
-          condition: 'Tired, distracted, noisy environment',
-          performance: { correct: 12, total: 20, percentage: 60 },
+          id: 'late-debugging',
+          name: 'Late Night Debugging',
+          time: '11:30 PM',
+          condition: 'Tired, stressed, fixing bugs under pressure',
+          performance: { correct: 11, total: 20, percentage: 55 },
           color: 'red'
         },
         {
-          id: 'group-collaborative',
-          name: 'Group Study Session',
+          id: 'pair-programming',
+          name: 'Pair Programming Session',
           time: '2:00 PM',
-          condition: 'Collaborative, social learning, peer support',
+          condition: 'Collaborative, discussing solutions, peer support',
           performance: { correct: 16, total: 20, percentage: 80 },
           color: 'blue'
         },
         {
-          id: 'test-anxiety',
-          name: 'Quiz Environment',
-          time: '10:00 AM',
-          condition: 'High pressure, timed, formal assessment',
-          performance: { correct: 11, total: 20, percentage: 55 },
+          id: 'online-platform',
+          name: 'Online Coding Platform',
+          time: '7:00 PM',
+          condition: 'Timed challenges, competitive environment, small screen',
+          performance: { correct: 12, total: 20, percentage: 60 },
           color: 'orange'
         },
         {
-          id: 'app-gamified',
-          name: 'Mobile App Learning',
-          time: '7:00 PM',
-          condition: 'Gamified, immediate feedback, bite-sized',
-          performance: { correct: 17, total: 20, percentage: 85 },
+          id: 'algorithm-problems',
+          name: 'Algorithm Practice',
+          time: '4:00 PM',
+          condition: 'Complex problems, whiteboard-style, deep thinking',
+          performance: { correct: 15, total: 20, percentage: 75 },
           color: 'purple'
         }
       ]
     };
 
     const calculateContextAFMPrediction = () => {
-      const totalCorrect = languageScenario.contexts.reduce((sum, ctx) => sum + ctx.performance.correct, 0);
-      const totalQuestions = languageScenario.contexts.reduce((sum, ctx) => sum + ctx.performance.total, 0);
+      const totalCorrect = programmingScenario.contexts.reduce((sum, ctx) => sum + ctx.performance.correct, 0);
+      const totalQuestions = programmingScenario.contexts.reduce((sum, ctx) => sum + ctx.performance.total, 0);
       return (totalCorrect / totalQuestions) * 100;
     };
 
     const calculateVariance = () => {
-      const performances = languageScenario.contexts.map(ctx => ctx.performance.percentage);
+      const performances = programmingScenario.contexts.map(ctx => ctx.performance.percentage);
       const mean = performances.reduce((sum, perf) => sum + perf, 0) / performances.length;
       const variance = performances.reduce((sum, perf) => sum + Math.pow(perf - mean, 2), 0) / performances.length;
       return Math.sqrt(variance);
@@ -790,7 +864,7 @@ print(result)`,
     const performanceVariance = calculateVariance();
 
     const stepLabels = {
-      0: 'Context Overview',
+      0: 'Programming Context Overview',
       1: 'Performance Analysis',
       2: 'AFM vs Context-Aware',
       3: 'Educational Implications'
@@ -811,46 +885,64 @@ print(result)`,
       setSelectedStrategy(strategy);
     };
 
-
-
     const renderContextOverview = () => (
       <div className="space-y-6">
         <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
           <div className="absolute -top-6 left-4 px-3 py-1 bg-blue-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
-            <TrendingUp className="w-4 h-4" />
-            LANGUAGE LEARNING CONTEXT STUDY
+            <Code className="w-4 h-4" />
+            PYTHON PROGRAMMING CONTEXT STUDY
           </div>
           <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center mb-6">
-            Language Learning Context Study
+            Python Programming Context Study
           </div>
           <p className="text-lg text-black text-center mb-8 font-bold">
-            Observe how the same student performs differently across various learning contexts
+            Observe how the same programmer performs differently across various coding contexts
           </p>
 
           <div className="space-y-6">
             <div className="border-4 border-blue-600 rounded-xl p-6 bg-blue-50">
               <h3 className="font-bold text-blue-700 text-lg font-mono uppercase mb-3">
-                STUDENT PROFILE
+                PROGRAMMER PROFILE
               </h3>
               <p className="text-black font-mono text-lg">
-                <strong>Student:</strong> {languageScenario.student}
+                <strong>Student:</strong> {programmingScenario.student}
               </p>
               <p className="text-black font-mono text-lg">
-                <strong>Skill:</strong> {languageScenario.skill}
+                <strong>Skill:</strong> {programmingScenario.skill}
               </p>
               <p className="text-black font-mono text-lg">
-                <strong>Assessment:</strong> 20 vocabulary words per session
+                <strong>Assessment:</strong> 20 coding problems per session
               </p>
             </div>
 
             <div className="border-4 border-yellow-600 rounded-xl p-6 bg-yellow-50">
               <h3 className="font-bold text-yellow-700 text-lg font-mono uppercase mb-3">
-                STUDY QUESTION
+                RESEARCH QUESTION
               </h3>
               <p className="text-black font-mono text-lg">
-                How does learning context affect performance? AFM treats all sessions equally,
-                but should context matter for predictions?
+                How does programming context affect coding performance? AFM treats all sessions equally,
+                but should context matter for predicting coding success?
               </p>
+            </div>
+
+            <div className="border-4 border-green-600 rounded-xl p-6 bg-green-50">
+              <h3 className="font-bold text-green-700 text-lg font-mono uppercase mb-3">
+                CONTEXT VARIABLES
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="p-3 bg-white border-2 border-green-600 rounded-lg">
+                  <span className="font-mono text-black font-bold text-sm">• TIME OF DAY</span>
+                </div>
+                <div className="p-3 bg-white border-2 border-green-600 rounded-lg">
+                  <span className="font-mono text-black font-bold text-sm">• ENVIRONMENT SETUP</span>
+                </div>
+                <div className="p-3 bg-white border-2 border-green-600 rounded-lg">
+                  <span className="font-mono text-black font-bold text-sm">• PROBLEM TYPE</span>
+                </div>
+                <div className="p-3 bg-white border-2 border-green-600 rounded-lg">
+                  <span className="font-mono text-black font-bold text-sm">• COLLABORATION MODE</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -860,7 +952,7 @@ print(result)`,
             onClick={() => setContextStep(1)}
             className="px-8 py-4 bg-black text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-black hover:border-black transition-all transform hover:scale-105 font-mono"
           >
-            ANALYZE PERFORMANCE DATA →
+            ANALYZE CODING PERFORMANCE →
           </button>
         </div>
       </div>
@@ -871,17 +963,17 @@ print(result)`,
         <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
           <div className="absolute -top-6 left-4 px-3 py-1 bg-purple-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
             <TrendingDown className="w-4 h-4" />
-            PERFORMANCE ACROSS DIFFERENT CONTEXTS
+            PERFORMANCE ACROSS DIFFERENT PROGRAMMING CONTEXTS
           </div>
           <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center mb-6">
-            Performance Across Different Contexts
+            Performance Across Different Programming Contexts
           </div>
           <p className="text-lg text-black text-center mb-8 font-bold">
-            Same student, same skill, different contexts - notice the variation
+            Same programmer, same skill level, different contexts - notice the significant variation
           </p>
 
           <div className="space-y-4">
-            {languageScenario.contexts.map((context) => (
+            {programmingScenario.contexts.map((context) => (
               <div
                 key={context.id}
                 className={`border-4 border-${context.color}-600 rounded-xl p-4 bg-${context.color}-50`}
@@ -900,7 +992,7 @@ print(result)`,
                       {context.performance.percentage}%
                     </div>
                     <div className="text-sm font-mono text-black">
-                      {context.performance.correct}/{context.performance.total} correct
+                      {context.performance.correct}/{context.performance.total} problems solved
                     </div>
                   </div>
                 </div>
@@ -918,7 +1010,7 @@ print(result)`,
         <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
           <div className="absolute -top-6 left-4 px-3 py-1 bg-orange-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
             <AlertTriangle className="w-4 h-4" />
-            PERFORMANCE VARIANCE
+            PROGRAMMING PERFORMANCE VARIANCE
           </div>
           <div className="text-center space-y-4">
             <div className="bg-orange-300 border-2 border-black px-6 py-4 inline-block">
@@ -927,10 +1019,29 @@ print(result)`,
               </span>
             </div>
             <p className="text-black font-mono text-lg">
-              High variance indicates context significantly impacts performance
+              High variance indicates context significantly impacts programming performance
             </p>
             <div className="text-sm font-mono text-black">
-              Range: {Math.min(...languageScenario.contexts.map(c => c.performance.percentage))}% - {Math.max(...languageScenario.contexts.map(c => c.performance.percentage))}%
+              Range: {Math.min(...programmingScenario.contexts.map(c => c.performance.percentage))}% - {Math.max(...programmingScenario.contexts.map(c => c.performance.percentage))}%
+            </div>
+            <div className="border-4 border-orange-600 rounded-xl p-6 bg-orange-50">
+              <h3 className="font-bold text-orange-700 text-lg font-mono uppercase mb-3">
+                CONTEXT IMPACT FACTORS
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="p-3 bg-white border-2 border-orange-600 rounded-lg">
+                  <span className="font-mono text-black font-bold text-sm">• COGNITIVE LOAD</span>
+                </div>
+                <div className="p-3 bg-white border-2 border-orange-600 rounded-lg">
+                  <span className="font-mono text-black font-bold text-sm">• DEVELOPMENT ENVIRONMENT</span>
+                </div>
+                <div className="p-3 bg-white border-2 border-orange-600 rounded-lg">
+                  <span className="font-mono text-black font-bold text-sm">• TIME PRESSURE</span>
+                </div>
+                <div className="p-3 bg-white border-2 border-orange-600 rounded-lg">
+                  <span className="font-mono text-black font-bold text-sm">• COLLABORATION DYNAMICS</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -957,7 +1068,7 @@ print(result)`,
             AFM vs Context-Aware Predictions
           </div>
           <p className="text-lg text-black text-center mb-8 font-bold">
-            Compare how different approaches handle context-dependent performance
+            Compare how different approaches handle context-dependent programming performance
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -969,10 +1080,10 @@ print(result)`,
                 <div className="bg-red-100 p-4 border-2 border-red-600">
                   <h4 className="font-bold text-red-700 font-mono mb-2">CONTEXT-BLIND LOGIC:</h4>
                   <p className="text-black font-mono text-sm">
-                    All sessions weighted equally regardless of context
+                    All coding sessions weighted equally regardless of context
                   </p>
                   <p className="text-black font-mono text-sm">
-                    Total: {languageScenario.contexts.reduce((sum, ctx) => sum + ctx.performance.correct, 0)}/{languageScenario.contexts.reduce((sum, ctx) => sum + ctx.performance.total, 0)} correct
+                    Total: {programmingScenario.contexts.reduce((sum, ctx) => sum + ctx.performance.correct, 0)}/{programmingScenario.contexts.reduce((sum, ctx) => sum + ctx.performance.total, 0)} problems solved
                   </p>
                 </div>
 
@@ -994,11 +1105,11 @@ print(result)`,
                 <div className="bg-red-50 p-4 border-2 border-red-600">
                   <h4 className="font-bold text-red-700 font-mono mb-2">MISSED CONTEXT:</h4>
                   <ul className="text-black font-mono text-sm space-y-1">
-                    <li>• Time of day effects</li>
-                    <li>• Emotional state variations</li>
-                    <li>• Environmental factors</li>
-                    <li>• Learning mode preferences</li>
-                    <li>• Social context impacts</li>
+                    <li>• Time of day effects on focus</li>
+                    <li>• Development environment impacts</li>
+                    <li>• Problem type complexity variations</li>
+                    <li>• Collaboration vs solo performance</li>
+                    <li>• Cognitive load differences</li>
                   </ul>
                 </div>
               </div>
@@ -1015,7 +1126,7 @@ print(result)`,
                     Weight recent performance by context similarity
                   </p>
                   <p className="text-black font-mono text-sm">
-                    Predict based on upcoming context conditions
+                    Predict based on upcoming programming context
                   </p>
                 </div>
 
@@ -1029,7 +1140,7 @@ print(result)`,
                       Depends on upcoming context:
                     </div>
                     <div className="text-sm font-mono text-black">
-                      Morning: ~90% | Evening: ~60%
+                      Morning IDE: ~90% | Late debugging: ~55%
                     </div>
                   </div>
                 </div>
@@ -1037,11 +1148,11 @@ print(result)`,
                 <div className="bg-green-50 p-4 border-2 border-green-600">
                   <h4 className="font-bold text-green-700 font-mono mb-2">CAPTURED INSIGHTS:</h4>
                   <ul className="text-black font-mono text-sm space-y-1">
-                    <li>• Peak performance times</li>
-                    <li>• Optimal learning conditions</li>
-                    <li>• Environmental sensitivity</li>
-                    <li>• Contextual interventions</li>
-                    <li>• Personalized scheduling</li>
+                    <li>• Optimal coding times</li>
+                    <li>• Preferred development environments</li>
+                    <li>• Problem type strengths</li>
+                    <li>• Collaboration effectiveness</li>
+                    <li>• Context-specific interventions</li>
                   </ul>
                 </div>
               </div>
@@ -1071,7 +1182,7 @@ print(result)`,
             Educational Implications of Context Blindness
           </div>
           <p className="text-lg text-black text-center mb-8 font-bold">
-            How ignoring context affects learning systems and outcomes
+            How ignoring programming context affects coding education and skill development
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1081,11 +1192,11 @@ print(result)`,
               </h3>
               <div className="space-y-3">
                 {[
-                  'OPTIMAL LEARNING TIMES',
-                  'ENVIRONMENTAL PREFERENCES',
+                  'OPTIMAL CODING SESSIONS',
+                  'ENVIRONMENT OPTIMIZATION',
                   'PERSONALIZED SCHEDULING',
-                  'CONTEXTUAL INTERVENTIONS',
-                  'ADAPTIVE CONTENT DELIVERY'
+                  'CONTEXT-SPECIFIC PRACTICE',
+                  'ADAPTIVE PROBLEM SELECTION'
                 ].map((item, index) => (
                   <div key={index} className="border-l-4 border-orange-600 bg-orange-50 p-3">
                     <span className="text-black font-mono font-bold text-sm">
@@ -1102,11 +1213,11 @@ print(result)`,
               </h3>
               <div className="space-y-3">
                 {[
-                  'INACCURATE PREDICTIONS',
-                  'POOR TIMING OF INTERVENTIONS',
-                  'INEFFECTIVE SCHEDULING',
-                  'REDUCED PERSONALIZATION',
-                  'MISSED OPTIMIZATION OPPORTUNITIES'
+                  'INACCURATE SKILL PREDICTIONS',
+                  'POOR LEARNING RECOMMENDATIONS',
+                  'INEFFECTIVE PRACTICE TIMING',
+                  'REDUCED CODE QUALITY',
+                  'MISSED DEBUGGING PATTERNS'
                 ].map((item, index) => (
                   <div key={index} className="border-l-4 border-red-600 bg-red-50 p-3">
                     <span className="text-black font-mono font-bold text-sm">
@@ -1122,26 +1233,26 @@ print(result)`,
         <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
           <div className="absolute -top-6 left-4 px-3 py-1 bg-green-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
             <CheckCircle className="w-4 h-4" />
-            CONTEXT-AWARE LEARNING SYSTEMS
+            CONTEXT-AWARE PROGRAMMING EDUCATION
           </div>
           <div className="space-y-4">
             <div className="text-center">
               <div className="bg-green-300 border-2 border-black px-6 py-4 inline-block">
                 <span className="text-black font-bold text-xl font-mono">
-                  BETTER LEARNING OUTCOMES
+                  BETTER CODING OUTCOMES
                 </span>
               </div>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[
-                'TIME-AWARE SCHEDULING',
-                'ENVIRONMENTAL ADAPTATION',
-                'MOOD-BASED CONTENT',
-                'SOCIAL CONTEXT INTEGRATION',
-                'PERSONALIZED TIMING',
-                'CONTEXTUAL FEEDBACK',
-                'ADAPTIVE DIFFICULTY',
-                'SITUATIONAL SUPPORT'
+                'SMART SCHEDULING',
+                'ENVIRONMENT SETUP',
+                'PROBLEM ADAPTATION',
+                'COLLABORATION TIMING',
+                'COGNITIVE LOAD MANAGEMENT',
+                'DEBUGGING SUPPORT',
+                'PERSONALIZED PACING',
+                'CONTEXT-AWARE HINTS'
               ].map((approach, index) => (
                 <div key={index} className="border-2 border-green-600 bg-green-50 p-3 text-center">
                   <span className="text-black font-mono font-bold text-sm">{approach}</span>
@@ -1153,26 +1264,29 @@ print(result)`,
 
         <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
           <div className="absolute -top-6 left-4 px-3 py-1 bg-blue-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
-            <Zap className="w-4 h-4" />
-            REAL-WORLD APPLICATIONS
+            <Code className="w-4 h-4" />
+            REAL-WORLD PROGRAMMING APPLICATIONS
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="border-2 border-blue-600 bg-blue-50 p-4">
-              <h4 className="font-bold text-blue-700 mb-2 font-mono">LANGUAGE LEARNING</h4>
+              <h4 className="font-bold text-blue-700 mb-2 font-mono">BOOTCAMP EDUCATION</h4>
               <p className="text-black font-mono text-sm">
-                Schedule practice sessions during peak attention times, adapt to learning environment preferences
+                Adapt lesson timing to student energy levels, optimize pair programming sessions,
+                personalize project complexity based on context
               </p>
             </div>
             <div className="border-2 border-blue-600 bg-blue-50 p-4">
-              <h4 className="font-bold text-blue-700 mb-2 font-mono">PROGRAMMING EDUCATION</h4>
+              <h4 className="font-bold text-blue-700 mb-2 font-mono">ONLINE PLATFORMS</h4>
               <p className="text-black font-mono text-sm">
-                Consider debugging vs. coding contexts, collaborative vs. individual learning modes
+                Consider user's coding environment, time of day, and problem-solving context
+                when suggesting next challenges
               </p>
             </div>
             <div className="border-2 border-blue-600 bg-blue-50 p-4">
-              <h4 className="font-bold text-blue-700 mb-2 font-mono">MEDICAL TRAINING</h4>
+              <h4 className="font-bold text-blue-700 mb-2 font-mono">WORKPLACE TRAINING</h4>
               <p className="text-black font-mono text-sm">
-                Account for high-pressure vs. low-pressure learning environments, simulation vs. real-world contexts
+                Account for development environment, team dynamics, and project pressure
+                when assessing coding competency
               </p>
             </div>
           </div>
@@ -1737,11 +1851,7 @@ print(result)`,
                       : "bg-purple-600 text-white hover:bg-white hover:text-purple-600"
                       }`}
                     onClick={() => {
-                      if (scenario.id === 'binary-skills' || scenario.id === 'context-blind') {
-                        alert(`${scenario.title} scenario is currently under development. Please try the other scenarios.`);
-                      } else {
-                        handleBeginTask(scenario.id);
-                      }
+                      handleBeginTask(scenario.id);
                     }}
                   >
                     {isCompleted ? "REVIEW" : "BEGIN"}
@@ -1757,7 +1867,7 @@ print(result)`,
         <button
           className="px-12 py-4 bg-green-600 text-white border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide hover:bg-white hover:text-green-600 hover:border-green-600 transition-all transform hover:scale-105 flex items-center gap-3 font-['IBM_Plex_Mono',monospace]"
           onClick={() => {
-            scroll(19);
+            scroll(17);
           }}
         >
           <span>Continue to Next Section</span>

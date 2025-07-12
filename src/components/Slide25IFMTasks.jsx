@@ -234,7 +234,7 @@ const TaskOverview = ({ onNavigate, scroll }) => {
           {/* Navigation */}
           <div className="flex justify-center">
             <button
-              onClick={() => scroll(23)}
+              onClick={() => scroll(21)}
               className="px-8 py-4 bg-purple-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-purple-600 hover:border-purple-600 transition-all transform hover:scale-105 flex items-center gap-3"
             >
               <span>What is this all about?</span>

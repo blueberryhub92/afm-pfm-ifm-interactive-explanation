@@ -128,7 +128,7 @@ export const Slide16LearningRateQuestion = ({
 
             <div className="flex justify-center">
               <button
-                onClick={() => scroll(15)}
+                onClick={() => scroll(13)}
                 className="px-8 py-4 border-4 border-black bg-blue-600 text-white font-bold text-lg uppercase tracking-wider rounded-xl hover:bg-white hover:text-blue-600 hover:border-blue-600 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center gap-3"
               >
                 Tell me why!

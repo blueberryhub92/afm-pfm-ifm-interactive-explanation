@@ -136,7 +136,7 @@ export const Slide14BetaParameter = ({ scroll }) => {
               )}
 
               <button
-                onClick={() => scroll(13)}
+                onClick={() => scroll(11)}
                 className="px-8 py-4 bg-blue-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-blue-600 hover:border-blue-600 transition-all transform hover:scale-105 flex items-center gap-3 mx-auto"
               >
                 <span>Continue</span>

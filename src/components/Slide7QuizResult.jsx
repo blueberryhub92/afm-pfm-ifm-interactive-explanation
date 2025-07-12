@@ -89,7 +89,7 @@ export const Slide7QuizResult = ({ guess2, scroll, showTellMe, setShowTellMe }) 
         {showTellMe && (
           <div className="text-center">
             <button
-              onClick={() => scroll(9)}
+              onClick={() => scroll(7)}
               className="px-8 py-4 bg-purple-600 text-white border-4 border-black rounded-lg font-bold uppercase hover:bg-white hover:text-purple-700 hover:border-purple-800 transition-all shadow-lg flex items-center gap-2 mx-auto text-lg"
             >
               Continue

@@ -403,7 +403,7 @@ export const Slide24PFMSimulation = ({ scroll }) => {
           {/* Navigation - matching Slide22 pattern */}
           <div className="flex justify-center">
             <button
-              onClick={() => scroll(22)}
+              onClick={() => scroll(20)}
               className="px-8 py-4 bg-purple-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-purple-600 transition-all transform hover:scale-105 flex items-center gap-3"
             >
               <span>Continue</span>
