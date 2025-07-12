@@ -1,0 +1,29 @@
+# fly.toml
+app = "afm-analytics-backend"
+primary_region = "fra"
+
+[build]
+  dockerfile = "backend/Dockerfile"
+
+[http_service]
+  internal_port = 3001
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+
+[[http_service.checks]]
+  interval = "10s"
+  grace_period = "5s"
+  method = "GET"
+  path = "/api/analytics/stats"
+  protocol = "http"
+  timeout = "2s"
+
+[env]
+  NODE_ENV = "production"
+  PORT = "3001"
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 256 

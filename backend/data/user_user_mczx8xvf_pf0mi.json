@@ -1,0 +1,2221 @@
+[
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "slide_change",
+    "eventData": {
+      "slideNumber": 0,
+      "slideName": "Welcome",
+      "direction": "forward"
+    },
+    "timestamp": 1752305203979,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 45200,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "slide_change",
+    "eventData": {
+      "slideNumber": 0,
+      "slideName": "Welcome",
+      "direction": "forward"
+    },
+    "timestamp": 1752305919413,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 760634,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "slide_change",
+    "eventData": {
+      "slideNumber": 0,
+      "slideName": "Welcome",
+      "direction": "forward"
+    },
+    "timestamp": 1752306873208,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 491797,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "navigation_toggle",
+      "key": "n",
+      "expanded": true
+    },
+    "timestamp": 1752306874375,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 492964,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "navigation_toggle",
+      "key": "n",
+      "expanded": false
+    },
+    "timestamp": 1752306879973,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 498562,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "slide_change",
+    "eventData": {
+      "slideNumber": 0,
+      "slideName": "Welcome",
+      "direction": "forward"
+    },
+    "timestamp": 1752306885047,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 73,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "navigation_toggle",
+      "key": "n",
+      "expanded": true
+    },
+    "timestamp": 1752306885875,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 901,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "navigation_menu",
+      "from": 0,
+      "to": 4,
+      "method": "navigation_click",
+      "slideName": "AFM Introduction"
+    },
+    "timestamp": 1752306887345,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 2371,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "slide_change",
+    "eventData": {
+      "slideNumber": 4,
+      "slideName": "AFM Introduction",
+      "direction": "forward"
+    },
+    "timestamp": 1752306887373,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 2399,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "navigation_toggle",
+      "key": "n",
+      "expanded": true
+    },
+    "timestamp": 1752306888437,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 3463,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "navigation_toggle",
+      "key": "n",
+      "expanded": false
+    },
+    "timestamp": 1752306891774,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 6800,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "navigation_toggle",
+      "key": "n",
+      "expanded": true
+    },
+    "timestamp": 1752306917420,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 32446,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "navigation_menu",
+      "from": 4,
+      "to": 15,
+      "method": "navigation_click",
+      "slideName": "AFM Simulator"
+    },
+    "timestamp": 1752307028632,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 143658,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "afm_simulator_entered",
+    "eventData": {
+      "initialParams": {
+        "theta": 0,
+        "beta": 0,
+        "gamma": 0.15,
+        "practice": 0
+      },
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307028723,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 143749,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "slide_change",
+    "eventData": {
+      "slideNumber": 15,
+      "slideName": "AFM Simulator",
+      "direction": "forward"
+    },
+    "timestamp": 1752307028724,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 143750,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "afm_simulator_entered",
+    "eventData": {
+      "initialParams": {
+        "theta": 0,
+        "beta": 0,
+        "gamma": 0.15,
+        "practice": 0
+      },
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307028736,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 143762,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "slider_interaction",
+    "eventData": {
+      "sliderId": "afm_param_theta",
+      "value": -0.6,
+      "oldValue": 0,
+      "newValue": -0.6,
+      "parameterName": "theta",
+      "sessionActive": true,
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307031042,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 146068,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "slider_interaction",
+    "eventData": {
+      "sliderId": "afm_param_theta",
+      "value": -0.7,
+      "oldValue": -0.6,
+      "newValue": -0.7,
+      "parameterName": "theta",
+      "sessionActive": true,
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307031114,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 146140,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "slider_interaction",
+    "eventData": {
+      "sliderId": "afm_param_theta",
+      "value": -0.9,
+      "oldValue": -0.7,
+      "newValue": -0.9,
+      "parameterName": "theta",
+      "sessionActive": true,
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307031144,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 146170,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "slider_interaction",
+    "eventData": {
+      "sliderId": "afm_param_theta",
+      "value": -1.2,
+      "oldValue": -0.9,
+      "newValue": -1.2,
+      "parameterName": "theta",
+      "sessionActive": true,
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307031181,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 146207,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "slider_interaction",
+    "eventData": {
+      "sliderId": "afm_param_theta",
+      "value": -1.5,
+      "oldValue": -1.2,
+      "newValue": -1.5,
+      "parameterName": "theta",
+      "sessionActive": true,
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307031215,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 146241,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "slider_interaction",
+    "eventData": {
+      "sliderId": "afm_param_theta",
+      "value": -1.8,
+      "oldValue": -1.5,
+      "newValue": -1.8,
+      "parameterName": "theta",
+      "sessionActive": true,
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307031249,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 146275,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "slider_interaction",
+    "eventData": {
+      "sliderId": "afm_param_theta",
+      "value": -1.7,
+      "oldValue": -1.8,
+      "newValue": -1.7,
+      "parameterName": "theta",
+      "sessionActive": true,
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307031598,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 146624,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "slider_interaction",
+    "eventData": {
+      "sliderId": "afm_param_theta",
+      "value": -1.6,
+      "oldValue": -1.7,
+      "newValue": -1.6,
+      "parameterName": "theta",
+      "sessionActive": true,
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307031633,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 146659,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "slider_interaction",
+    "eventData": {
+      "sliderId": "afm_param_theta",
+      "value": -1.4,
+      "oldValue": -1.6,
+      "newValue": -1.4,
+      "parameterName": "theta",
+      "sessionActive": true,
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307031664,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 146690,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "slider_interaction",
+    "eventData": {
+      "sliderId": "afm_param_theta",
+      "value": -1.3,
+      "oldValue": -1.4,
+      "newValue": -1.3,
+      "parameterName": "theta",
+      "sessionActive": true,
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307031700,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 146726,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "afm_tooltip_open",
+      "parameter": "theta",
+      "currentValue": -1.3,
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307032512,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 147538,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "afm_tooltip_close",
+      "parameter": "theta",
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307034165,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 149191,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "afm_simulate_response",
+      "isCorrect": true,
+      "practiceAttempt": 0,
+      "currentProbability": 0.2141650169574414,
+      "currentParams": {
+        "theta": -1.3,
+        "beta": 0,
+        "gamma": 0.15,
+        "practice": 0
+      },
+      "logit": -1.3,
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307035455,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 150481,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "afm_simulate_response",
+      "isCorrect": true,
+      "practiceAttempt": 1,
+      "currentProbability": 0.24048908305088887,
+      "currentParams": {
+        "theta": -1.3,
+        "beta": 0,
+        "gamma": 0.15,
+        "practice": 1
+      },
+      "logit": -1.1500000000000001,
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307035836,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 150862,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "afm_simulate_response",
+      "isCorrect": true,
+      "practiceAttempt": 2,
+      "currentProbability": 0.2689414213699951,
+      "currentParams": {
+        "theta": -1.3,
+        "beta": 0,
+        "gamma": 0.15,
+        "practice": 2
+      },
+      "logit": -1,
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307036093,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 151119,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "afm_simulate_response",
+      "isCorrect": true,
+      "practiceAttempt": 3,
+      "currentProbability": 0.29943285752602705,
+      "currentParams": {
+        "theta": -1.3,
+        "beta": 0,
+        "gamma": 0.15,
+        "practice": 3
+      },
+      "logit": -0.8500000000000001,
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307036282,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 151308,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "afm_simulate_response",
+      "isCorrect": true,
+      "practiceAttempt": 4,
+      "currentProbability": 0.3318122278318339,
+      "currentParams": {
+        "theta": -1.3,
+        "beta": 0,
+        "gamma": 0.15,
+        "practice": 4
+      },
+      "logit": -0.7000000000000001,
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307036453,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 151479,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "afm_simulate_response",
+      "isCorrect": true,
+      "practiceAttempt": 5,
+      "currentProbability": 0.36586440898919936,
+      "currentParams": {
+        "theta": -1.3,
+        "beta": 0,
+        "gamma": 0.15,
+        "practice": 5
+      },
+      "logit": -0.55,
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307036621,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 151647,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "afm_simulate_response",
+      "isCorrect": false,
+      "practiceAttempt": 6,
+      "currentProbability": 0.401312339887548,
+      "currentParams": {
+        "theta": -1.3,
+        "beta": 0,
+        "gamma": 0.15,
+        "practice": 6
+      },
+      "logit": -0.40000000000000013,
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307037030,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 152056,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "afm_simulate_response",
+      "isCorrect": false,
+      "practiceAttempt": 7,
+      "currentProbability": 0.43782349911420193,
+      "currentParams": {
+        "theta": -1.3,
+        "beta": 0,
+        "gamma": 0.15,
+        "practice": 7
+      },
+      "logit": -0.25,
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307037179,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 152205,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "afm_simulate_response",
+      "isCorrect": false,
+      "practiceAttempt": 8,
+      "currentProbability": 0.47502081252106,
+      "currentParams": {
+        "theta": -1.3,
+        "beta": 0,
+        "gamma": 0.15,
+        "practice": 8
+      },
+      "logit": -0.10000000000000009,
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307037362,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 152388,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "afm_simulate_response",
+      "isCorrect": false,
+      "practiceAttempt": 9,
+      "currentProbability": 0.5124973964842103,
+      "currentParams": {
+        "theta": -1.3,
+        "beta": 0,
+        "gamma": 0.15,
+        "practice": 9
+      },
+      "logit": 0.04999999999999982,
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307037560,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 152586,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "afm_simulate_response",
+      "isCorrect": true,
+      "practiceAttempt": 10,
+      "currentProbability": 0.5498339973124778,
+      "currentParams": {
+        "theta": -1.3,
+        "beta": 0,
+        "gamma": 0.15,
+        "practice": 10
+      },
+      "logit": 0.19999999999999996,
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307038069,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 153095,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "afm_end_session",
+      "sessionStats": {
+        "finalParams": {
+          "theta": -1.3,
+          "beta": 0,
+          "gamma": 0.15,
+          "practice": 11
+        },
+        "totalResponses": 11,
+        "correctResponses": 7,
+        "finalProbability": 0.58661757891733,
+        "sessionDuration": 2614
+      },
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307038945,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 153971,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "afm_retrain_model",
+      "preRetrainParams": {
+        "theta": -1.3,
+        "beta": 0,
+        "gamma": 0.15,
+        "practice": 11
+      },
+      "postRetrainParams": {
+        "theta": -1,
+        "beta": -0.2,
+        "gamma": 0.1,
+        "practice": 0
+      },
+      "trainingDataCount": 11,
+      "recentAccuracy": 0.6,
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307039777,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 154803,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "afm_reset_all",
+      "preResetState": {
+        "params": {
+          "theta": -1,
+          "beta": -0.2,
+          "gamma": 0.1,
+          "practice": 0
+        },
+        "responseLogCount": 11,
+        "retrainingDataCount": 0,
+        "sessionActive": true
+      },
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307040604,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 155630,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "navigation_toggle",
+      "key": "n",
+      "expanded": true
+    },
+    "timestamp": 1752307044627,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 159653,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "navigation_toggle",
+      "key": "n",
+      "expanded": false
+    },
+    "timestamp": 1752307045779,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 160805,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "afm_continue_next_slide",
+      "finalState": {
+        "params": {
+          "theta": 0,
+          "beta": 0,
+          "gamma": 0.15,
+          "practice": 0
+        },
+        "sessionActive": true,
+        "totalResponses": 0,
+        "correctResponses": 0,
+        "currentProbability": 0.5
+      },
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307046938,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 161965,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "slide_navigation",
+      "from": 15,
+      "to": 16,
+      "method": "button_click",
+      "slideName": "AFM Limitations"
+    },
+    "timestamp": 1752307046940,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 161966,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "slide_change",
+    "eventData": {
+      "slideNumber": 16,
+      "slideName": "AFM Limitations",
+      "direction": "forward"
+    },
+    "timestamp": 1752307046952,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 161978,
+    "serverTimestamp": 1752307408594
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "keyboard_navigation",
+      "key": "ArrowLeft",
+      "from": 16,
+      "to": 15
+    },
+    "timestamp": 1752307047603,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 162629,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "navigation_menu",
+      "from": 16,
+      "to": 15,
+      "method": "navigation_click",
+      "slideName": "AFM Simulator"
+    },
+    "timestamp": 1752307047604,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 162631,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "afm_simulator_entered",
+    "eventData": {
+      "initialParams": {
+        "theta": 0,
+        "beta": 0,
+        "gamma": 0.15,
+        "practice": 0
+      },
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307047636,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 162662,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "slide_change",
+    "eventData": {
+      "slideNumber": 15,
+      "slideName": "AFM Simulator",
+      "direction": "forward"
+    },
+    "timestamp": 1752307047637,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 162663,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "afm_simulator_entered",
+    "eventData": {
+      "initialParams": {
+        "theta": 0,
+        "beta": 0,
+        "gamma": 0.15,
+        "practice": 0
+      },
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307047641,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 162667,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "keyboard_navigation",
+      "key": "ArrowLeft",
+      "from": 15,
+      "to": 14
+    },
+    "timestamp": 1752307050288,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 165314,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "navigation_menu",
+      "from": 15,
+      "to": 14,
+      "method": "navigation_click",
+      "slideName": "AFM Formula"
+    },
+    "timestamp": 1752307050290,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 165316,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "slide_change",
+    "eventData": {
+      "slideNumber": 14,
+      "slideName": "AFM Formula",
+      "direction": "forward"
+    },
+    "timestamp": 1752307050326,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 165352,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "keyboard_navigation",
+      "key": "ArrowRight",
+      "from": 14,
+      "to": 15
+    },
+    "timestamp": 1752307050971,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 165997,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "navigation_menu",
+      "from": 14,
+      "to": 15,
+      "method": "navigation_click",
+      "slideName": "AFM Simulator"
+    },
+    "timestamp": 1752307050972,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 165998,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "afm_simulator_entered",
+    "eventData": {
+      "initialParams": {
+        "theta": 0,
+        "beta": 0,
+        "gamma": 0.15,
+        "practice": 0
+      },
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307051024,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 166050,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "slide_change",
+    "eventData": {
+      "slideNumber": 15,
+      "slideName": "AFM Simulator",
+      "direction": "forward"
+    },
+    "timestamp": 1752307051026,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 166052,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "afm_simulator_entered",
+    "eventData": {
+      "initialParams": {
+        "theta": 0,
+        "beta": 0,
+        "gamma": 0.15,
+        "practice": 0
+      },
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307051034,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 166060,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "navigation_toggle",
+      "key": "n",
+      "expanded": true
+    },
+    "timestamp": 1752307051932,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 166958,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "navigation_menu",
+      "from": 15,
+      "to": 0,
+      "method": "navigation_click",
+      "slideName": "Welcome"
+    },
+    "timestamp": 1752307054138,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 169164,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "slide_change",
+    "eventData": {
+      "slideNumber": 0,
+      "slideName": "Welcome",
+      "direction": "forward"
+    },
+    "timestamp": 1752307054170,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 169196,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "navigation_toggle",
+      "key": "n",
+      "expanded": true
+    },
+    "timestamp": 1752307061004,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 176030,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "navigation_toggle",
+      "key": "n",
+      "expanded": false
+    },
+    "timestamp": 1752307064505,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 179531,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "slide_change",
+    "eventData": {
+      "slideNumber": 0,
+      "slideName": "Welcome",
+      "direction": "forward"
+    },
+    "timestamp": 1752307162267,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 53,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "slide_navigation",
+      "from": 0,
+      "to": 1,
+      "method": "button_click",
+      "slideName": "Introductory Question"
+    },
+    "timestamp": 1752307170895,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 8681,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "slide_change",
+    "eventData": {
+      "slideNumber": 1,
+      "slideName": "Introductory Question",
+      "direction": "forward"
+    },
+    "timestamp": 1752307170916,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 8702,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "slide_navigation",
+      "from": 1,
+      "to": 2,
+      "method": "button_click",
+      "slideName": "Guess Result"
+    },
+    "timestamp": 1752307172697,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 10483,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "slide_change",
+    "eventData": {
+      "slideNumber": 2,
+      "slideName": "Guess Result",
+      "direction": "forward"
+    },
+    "timestamp": 1752307172717,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 10503,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "slide_navigation",
+      "from": 2,
+      "to": 3,
+      "method": "button_click",
+      "slideName": "Slider Question"
+    },
+    "timestamp": 1752307173627,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 11414,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "slide_change",
+    "eventData": {
+      "slideNumber": 3,
+      "slideName": "Slider Question",
+      "direction": "forward"
+    },
+    "timestamp": 1752307173646,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 11432,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "navigation_toggle",
+      "key": "n",
+      "expanded": true
+    },
+    "timestamp": 1752307174493,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 12279,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "navigation_menu",
+      "from": 3,
+      "to": 15,
+      "method": "navigation_click",
+      "slideName": "AFM Simulator"
+    },
+    "timestamp": 1752307178671,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 16457,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "afm_simulator_entered",
+    "eventData": {
+      "initialParams": {
+        "theta": 0,
+        "beta": 0,
+        "gamma": 0.15,
+        "practice": 0
+      },
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307178722,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 16508,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "slide_change",
+    "eventData": {
+      "slideNumber": 15,
+      "slideName": "AFM Simulator",
+      "direction": "forward"
+    },
+    "timestamp": 1752307178723,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 16509,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "afm_simulator_entered",
+    "eventData": {
+      "initialParams": {
+        "theta": 0,
+        "beta": 0,
+        "gamma": 0.15,
+        "practice": 0
+      },
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307178732,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 16518,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "slider_interaction",
+    "eventData": {
+      "sliderId": "afm_param_theta",
+      "value": 1.1,
+      "oldValue": 0,
+      "newValue": 1.1,
+      "parameterName": "theta",
+      "sessionActive": true,
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307180590,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 18376,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "slider_interaction",
+    "eventData": {
+      "sliderId": "afm_param_beta",
+      "value": 0.7,
+      "oldValue": 0,
+      "newValue": 0.7,
+      "parameterName": "beta",
+      "sessionActive": true,
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307181331,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 19117,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "afm_simulate_response",
+      "isCorrect": true,
+      "practiceAttempt": 0,
+      "currentProbability": 0.5986876601124521,
+      "currentParams": {
+        "theta": 1.1,
+        "beta": 0.7,
+        "gamma": 0.15,
+        "practice": 0
+      },
+      "logit": 0.40000000000000013,
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307181904,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 19691,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "afm_end_session",
+      "sessionStats": {
+        "finalParams": {
+          "theta": 1.1,
+          "beta": 0.7,
+          "gamma": 0.15,
+          "practice": 1
+        },
+        "totalResponses": 1,
+        "correctResponses": 1,
+        "finalProbability": 0.6341355910108007,
+        "sessionDuration": 0
+      },
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307182545,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 20331,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "afm_retrain_model",
+      "preRetrainParams": {
+        "theta": 1.1,
+        "beta": 0.7,
+        "gamma": 0.15,
+        "practice": 1
+      },
+      "postRetrainParams": {
+        "theta": 1.4,
+        "beta": 0.1,
+        "gamma": 0.15,
+        "practice": 0
+      },
+      "trainingDataCount": 1,
+      "recentAccuracy": 1,
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307183625,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 21411,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "afm_continue_next_slide",
+      "finalState": {
+        "params": {
+          "theta": 1.4,
+          "beta": 0.1,
+          "gamma": 0.15,
+          "practice": 0
+        },
+        "sessionActive": true,
+        "totalResponses": 1,
+        "correctResponses": 1,
+        "currentProbability": 0.7858349830425586
+      },
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307185704,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 23490,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "slide_navigation",
+      "from": 15,
+      "to": 16,
+      "method": "button_click",
+      "slideName": "AFM Limitations"
+    },
+    "timestamp": 1752307185706,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 23492,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "slide_change",
+    "eventData": {
+      "slideNumber": 16,
+      "slideName": "AFM Limitations",
+      "direction": "forward"
+    },
+    "timestamp": 1752307185735,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 23521,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "keyboard_navigation",
+      "key": "ArrowLeft",
+      "from": 16,
+      "to": 15
+    },
+    "timestamp": 1752307186497,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 24283,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "navigation_menu",
+      "from": 16,
+      "to": 15,
+      "method": "navigation_click",
+      "slideName": "AFM Simulator"
+    },
+    "timestamp": 1752307186499,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 24285,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "afm_simulator_entered",
+    "eventData": {
+      "initialParams": {
+        "theta": 0,
+        "beta": 0,
+        "gamma": 0.15,
+        "practice": 0
+      },
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307186553,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 24339,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "slide_change",
+    "eventData": {
+      "slideNumber": 15,
+      "slideName": "AFM Simulator",
+      "direction": "forward"
+    },
+    "timestamp": 1752307186555,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 24341,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "afm_simulator_entered",
+    "eventData": {
+      "initialParams": {
+        "theta": 0,
+        "beta": 0,
+        "gamma": 0.15,
+        "practice": 0
+      },
+      "slideContext": "AFM Simulator"
+    },
+    "timestamp": 1752307186567,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 24353,
+    "serverTimestamp": 1752307408595
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "slide_change",
+    "eventData": {
+      "slideNumber": 0,
+      "slideName": "Welcome",
+      "direction": "forward"
+    },
+    "timestamp": 1752307408610,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 67,
+    "serverTimestamp": 1752307408615
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "slide_navigation",
+      "from": 0,
+      "to": 1,
+      "method": "button_click",
+      "slideName": "Introductory Question"
+    },
+    "timestamp": 1752307476239,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 67696,
+    "serverTimestamp": 1752307476247
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "slide_change",
+    "eventData": {
+      "slideNumber": 1,
+      "slideName": "Introductory Question",
+      "direction": "forward"
+    },
+    "timestamp": 1752307476258,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 67715,
+    "serverTimestamp": 1752307476261
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "navigation_toggle",
+      "key": "n",
+      "expanded": true
+    },
+    "timestamp": 1752307476998,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 68455,
+    "serverTimestamp": 1752307477002
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "navigation_toggle",
+      "key": "n",
+      "expanded": false
+    },
+    "timestamp": 1752307479259,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 70716,
+    "serverTimestamp": 1752307479263
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "navigation_toggle",
+      "key": "n",
+      "expanded": true
+    },
+    "timestamp": 1752307525090,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 116547,
+    "serverTimestamp": 1752307525100
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "analytics_dashboard_toggle",
+      "key": "a",
+      "expanded": true
+    },
+    "timestamp": 1752307560797,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 152254,
+    "serverTimestamp": 1752307560804
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "analytics_dashboard_toggle",
+      "key": "a",
+      "expanded": false
+    },
+    "timestamp": 1752307561450,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 152907,
+    "serverTimestamp": 1752307561453
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "slide_change",
+    "eventData": {
+      "slideNumber": 0,
+      "slideName": "Welcome",
+      "direction": "forward"
+    },
+    "timestamp": 1752307408610,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 67,
+    "serverTimestamp": 1752309109959
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "slide_navigation",
+      "from": 0,
+      "to": 1,
+      "method": "button_click",
+      "slideName": "Introductory Question"
+    },
+    "timestamp": 1752307476239,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 67696,
+    "serverTimestamp": 1752309109959
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "slide_change",
+    "eventData": {
+      "slideNumber": 1,
+      "slideName": "Introductory Question",
+      "direction": "forward"
+    },
+    "timestamp": 1752307476258,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 67715,
+    "serverTimestamp": 1752309109959
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "navigation_toggle",
+      "key": "n",
+      "expanded": true
+    },
+    "timestamp": 1752307476998,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 68455,
+    "serverTimestamp": 1752309109959
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "navigation_toggle",
+      "key": "n",
+      "expanded": false
+    },
+    "timestamp": 1752307479259,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 70716,
+    "serverTimestamp": 1752309109959
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "navigation_toggle",
+      "key": "n",
+      "expanded": true
+    },
+    "timestamp": 1752307525090,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 116547,
+    "serverTimestamp": 1752309109959
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "analytics_dashboard_toggle",
+      "key": "a",
+      "expanded": true
+    },
+    "timestamp": 1752307560797,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 152254,
+    "serverTimestamp": 1752309109959
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "analytics_dashboard_toggle",
+      "key": "a",
+      "expanded": false
+    },
+    "timestamp": 1752307561450,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 152907,
+    "serverTimestamp": 1752309109959
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "slide_change",
+    "eventData": {
+      "slideNumber": 0,
+      "slideName": "Welcome",
+      "direction": "forward"
+    },
+    "timestamp": 1752309109979,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 69,
+    "serverTimestamp": 1752309109985
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "slide_navigation",
+      "from": 0,
+      "to": 1,
+      "method": "button_click",
+      "slideName": "Introductory Question"
+    },
+    "timestamp": 1752309112631,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 2721,
+    "serverTimestamp": 1752309112635
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "slide_change",
+    "eventData": {
+      "slideNumber": 1,
+      "slideName": "Introductory Question",
+      "direction": "forward"
+    },
+    "timestamp": 1752309112651,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 2741,
+    "serverTimestamp": 1752309112655
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "navigation_menu",
+      "from": 1,
+      "to": 0,
+      "method": "navigation_click",
+      "slideName": "Welcome"
+    },
+    "timestamp": 1752309113952,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 4042,
+    "serverTimestamp": 1752309113956
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "slide_change",
+    "eventData": {
+      "slideNumber": 0,
+      "slideName": "Welcome",
+      "direction": "forward"
+    },
+    "timestamp": 1752309113982,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 4072,
+    "serverTimestamp": 1752309113984
+  },
+  {
+    "userId": "user_mczx8xvf_pf0mi",
+    "sessionId": "session_mczx8xvf_27meq",
+    "eventName": "button_click",
+    "eventData": {
+      "buttonName": "navigation_toggle",
+      "key": "n",
+      "expanded": true
+    },
+    "timestamp": 1752309115421,
+    "url": "http://localhost:5173/afm-pfm-ifm-interactive-explanation",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "screenResolution": "1920x1080",
+    "viewportSize": "1745x871",
+    "timeFromStart": 5511,
+    "serverTimestamp": 1752309115429
+  }
+]

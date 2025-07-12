@@ -13,6 +13,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import Chart from "chart.js/auto";
+import { trackButtonClick, trackSliderInteraction, trackCustomEvent } from "../utils/analytics";
 
 const paramDefaults = {
   theta: 0.0,
@@ -180,14 +181,28 @@ export const Slide20AFMSimulator = ({ scroll }) => {
     }
   }, [lastChangedParam]);
 
+  // Track slide entry
+  useEffect(() => {
+    trackCustomEvent('afm_simulator_entered', {
+      initialParams: params,
+      slideContext: 'AFM Simulator'
+    });
+  }, []);
+
   // Keyboard: Escape closes tooltip
   useEffect(() => {
     const handler = (e) => {
-      if (e.key === "Escape") setShowTooltip(null);
+      if (e.key === "Escape" && showTooltip) {
+        trackButtonClick('afm_tooltip_close_escape', {
+          parameter: showTooltip,
+          slideContext: 'AFM Simulator'
+        });
+        setShowTooltip(null);
+      }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, []);
+  }, [showTooltip]);
 
   // Derived
   const logit = params.theta - params.beta + params.gamma * params.practice;
@@ -201,11 +216,23 @@ export const Slide20AFMSimulator = ({ scroll }) => {
   // Handlers
   function setParam(p, v) {
     if (!sessionActive && p !== "practice") return;
+    const oldValue = params[p];
+    const newValue = p === "practice" ? parseInt(v, 10) : parseFloat(v);
+
     setParams((prev) => ({
       ...prev,
-      [p]: p === "practice" ? parseInt(v, 10) : parseFloat(v),
+      [p]: newValue,
     }));
     setLastChangedParam(p);
+
+    // Track parameter change
+    trackSliderInteraction(`afm_param_${p}`, newValue, {
+      oldValue,
+      newValue,
+      parameterName: p,
+      sessionActive,
+      slideContext: 'AFM Simulator'
+    });
   }
 
   function simulateResponse(isCorrect) {
@@ -220,10 +247,24 @@ export const Slide20AFMSimulator = ({ scroll }) => {
     setRetrainingData((prev) => [...prev, entry]);
     setParams((prev) => ({ ...prev, practice: prev.practice + 1 }));
     setLastChangedParam("practice");
+
+    // Track response simulation
+    trackButtonClick('afm_simulate_response', {
+      isCorrect,
+      practiceAttempt: params.practice,
+      currentProbability: prob,
+      currentParams: params,
+      logit: logit,
+      slideContext: 'AFM Simulator'
+    });
   }
 
   function retrainModel() {
     if (!retrainingData.length) return;
+
+    // Track retrain attempt
+    const preRetrainParams = { ...params };
+    const retrainDataSnapshot = [...retrainingData];
     let recent = retrainingData.slice(-10);
     let correct = recent.filter((r) => r.correct).length;
     let total = recent.length;
@@ -275,27 +316,65 @@ export const Slide20AFMSimulator = ({ scroll }) => {
       else if (imp < -0.2) gamma = Math.max(0, gamma - 0.05);
     }
 
-    setParams({
+    const newParams = {
       theta: parseFloat(theta.toFixed(1)),
       beta: parseFloat(beta.toFixed(1)),
       gamma: parseFloat(gamma.toFixed(2)),
       practice: 0,
-    });
+    };
+
+    setParams(newParams);
     setRetrainingData([]);
     setSessionActive(true);
     setLastChangedParam(null); // Clear highlight after retrain
+
+    // Track retrain completion
+    trackButtonClick('afm_retrain_model', {
+      preRetrainParams,
+      postRetrainParams: newParams,
+      trainingDataCount: retrainDataSnapshot.length,
+      recentAccuracy: recent.length ? recent.filter(r => r.correct).length / recent.length : 0,
+      slideContext: 'AFM Simulator'
+    });
   }
 
   function resetAll() {
+    const preResetState = {
+      params: { ...params },
+      responseLogCount: responseLog.length,
+      retrainingDataCount: retrainingData.length,
+      sessionActive
+    };
+
     setParams(paramDefaults);
     setSessionActive(true);
     setResponseLog([]);
     setRetrainingData([]);
     setLastChangedParam(null);
+
+    // Track reset action
+    trackButtonClick('afm_reset_all', {
+      preResetState,
+      slideContext: 'AFM Simulator'
+    });
   }
 
   function endSession() {
+    const sessionStats = {
+      finalParams: { ...params },
+      totalResponses: responseLog.length,
+      correctResponses: responseLog.filter(r => r.correct).length,
+      finalProbability: prob,
+      sessionDuration: responseLog.length ? responseLog[responseLog.length - 1].timestamp - responseLog[0].timestamp : 0
+    };
+
     setSessionActive(false);
+
+    // Track session end
+    trackButtonClick('afm_end_session', {
+      sessionStats,
+      slideContext: 'AFM Simulator'
+    });
   }
 
   const calculateTooltipPosition = () => {
@@ -307,6 +386,13 @@ export const Slide20AFMSimulator = ({ scroll }) => {
     setShowTooltip(param);
     const position = calculateTooltipPosition();
     setTooltipPosition(position);
+
+    // Track tooltip interaction
+    trackButtonClick('afm_tooltip_open', {
+      parameter: param,
+      currentValue: params[param],
+      slideContext: 'AFM Simulator'
+    });
   };
 
   const ParameterTooltip = () => {
@@ -345,7 +431,13 @@ export const Slide20AFMSimulator = ({ scroll }) => {
         </div>
 
         <button
-          onClick={() => setShowTooltip(null)}
+          onClick={() => {
+            trackButtonClick('afm_tooltip_close', {
+              parameter: showTooltip,
+              slideContext: 'AFM Simulator'
+            });
+            setShowTooltip(null);
+          }}
           className="absolute top-2 right-2 px-2 py-1 rounded border-2 border-black bg-red-600 text-white font-bold hover:bg-white hover:text-red-600 transition-all"
         >
           ×
@@ -737,7 +829,19 @@ export const Slide20AFMSimulator = ({ scroll }) => {
           {/* Navigation */}
           <div className="flex justify-center">
             <button
-              onClick={() => scroll(16)}
+              onClick={() => {
+                trackButtonClick('afm_continue_next_slide', {
+                  finalState: {
+                    params: params,
+                    sessionActive,
+                    totalResponses: responseLog.length,
+                    correctResponses: responseLog.filter(r => r.correct).length,
+                    currentProbability: prob
+                  },
+                  slideContext: 'AFM Simulator'
+                });
+                scroll(16);
+              }}
               className="px-8 py-4 bg-purple-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-purple-600 transition-all transform hover:scale-105 flex items-center gap-3"
             >
               <span>Continue</span>

@@ -24,6 +24,9 @@ import { Slide20AFMSimulator } from "./components/Slide20AFMSimulator";
 import { Slide25IFMTasks } from "./components/Slide25IFMTasks";
 import { Slide22AFMCorrectness } from "./components/Slide22AFMCorrectness";
 import { WelcomePage } from "./components/WelcomePage";
+import { trackSlideChange, trackButtonClick, syncEvents, getUserId } from "./utils/analytics";
+import ConsentDialog from "./components/ConsentDialog";
+import { AnalyticsDashboard } from "./components/AnalyticsDashboard";
 
 // Constants
 const TOTAL_SLIDES = 23;
@@ -55,7 +58,7 @@ const SLIDE_TITLES = [
   "IFM Simulation"
 ];
 
-function NavigationBar({ currentSlide, maxVisitedSlide, onNavigate, isExpanded, setIsExpanded }) {
+function NavigationBar({ currentSlide, maxVisitedSlide, onNavigate, isExpanded, setIsExpanded, setShowAnalyticsDashboard }) {
   return (
     <>
       {/* Toggle Button - Moves with navigation state */}
@@ -111,6 +114,22 @@ function NavigationBar({ currentSlide, maxVisitedSlide, onNavigate, isExpanded, 
             ))}
           </div>
 
+          {/* Analytics Dashboard Button */}
+          <div className="mt-6 border-4 border-green-600 bg-green-100 p-4 rounded-xl">
+            <button
+              onClick={() => {
+                console.log('Analytics Dashboard button clicked');
+                setShowAnalyticsDashboard(true);
+              }}
+              className="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-green-700 transition-colors uppercase tracking-wide"
+            >
+              📊 Analytics Dashboard
+            </button>
+            <div className="mt-2 text-xs text-green-700 text-center">
+              Or press 'A' key
+            </div>
+          </div>
+
           {/* Navigation Instructions */}
           <div className="mt-6 border-l-8 border-purple-600 bg-purple-100 p-4 rounded-r-xl">
             <h4 className="font-black text-black mb-2 uppercase tracking-wide text-sm">
@@ -120,6 +139,7 @@ function NavigationBar({ currentSlide, maxVisitedSlide, onNavigate, isExpanded, 
               <li>• ALT + ← : PREVIOUS SLIDE</li>
               <li>• ALT + → : NEXT SLIDE</li>
               <li>• N : TOGGLE NAVIGATION</li>
+              <li>• A : ANALYTICS DASHBOARD</li>
             </ul>
           </div>
         </div>
@@ -137,13 +157,53 @@ function AFMLearningAppContent() {
   const [slide3DoneClicked, setSlide3DoneClicked] = useState(false);
   const [showTellMe, setShowTellMe] = useState(false);
   const [isNavExpanded, setIsNavExpanded] = useState(false);
+  const [consentGiven, setConsentGiven] = useState(false);
+  const [showConsentDialog, setShowConsentDialog] = useState(false);
+  const [showAnalyticsDashboard, setShowAnalyticsDashboard] = useState(false);
 
   const slideRefs = useMemo(
     () => Array.from({ length: TOTAL_SLIDES }, () => ({ current: null })),
     []
   );
 
+  // Check consent status and sync events on app load
+  useEffect(() => {
+    const consentStatus = localStorage.getItem('study_consent_given');
+    if (consentStatus === 'true') {
+      setConsentGiven(true);
+      syncEvents();
+      console.log('Anonymous User ID:', getUserId());
+    } else {
+      setShowConsentDialog(true);
+    }
+  }, []);
+
+  // Track slide changes
+  useEffect(() => {
+    if (consentGiven) {
+      const slideName = SLIDE_TITLES[currentSlide] || `Slide ${currentSlide}`;
+      trackSlideChange(currentSlide, slideName);
+    }
+  }, [currentSlide, consentGiven]);
+
+  // Handle consent given
+  const handleConsentGiven = () => {
+    setConsentGiven(true);
+    setShowConsentDialog(false);
+    syncEvents();
+    console.log('Anonymous User ID:', getUserId());
+  };
+
+  // Handle consent declined
+  const handleConsentDeclined = () => {
+    setShowConsentDialog(false);
+    // Don't track anything if consent is declined
+    // You might want to show a message or redirect instead
+    alert('Ohne Einverständnis zur Studienteilnahme kann die Anwendung nicht verwendet werden.');
+  };
+
   const scroll = (index) => {
+    const previousSlide = currentSlide;
     setCurrentSlide(index);
     // Update max visited slide if we're going forward
     if (index > maxVisitedSlide) {
@@ -157,10 +217,21 @@ function AFMLearningAppContent() {
     setIsNavExpanded(false);
     // Keep the original scroll behavior if you still need it
     scrollToSlide(index, slideRefs);
+
+    // Track navigation
+    if (consentGiven) {
+      trackButtonClick('slide_navigation', {
+        from: previousSlide,
+        to: index,
+        method: 'button_click',
+        slideName: SLIDE_TITLES[index] || `Slide ${index}`
+      });
+    }
   };
 
   const handleNavigation = (targetSlide) => {
     if (targetSlide >= 0 && targetSlide < SLIDE_TITLES.length) {
+      const previousSlide = currentSlide;
       setCurrentSlide(targetSlide);
       // Update max visited slide if we're going to a higher slide
       if (targetSlide > maxVisitedSlide) {
@@ -173,6 +244,16 @@ function AFMLearningAppContent() {
       // Close navigation when navigating to a new slide
       setIsNavExpanded(false);
       scrollToSlide(targetSlide, slideRefs);
+
+      // Track navigation
+      if (consentGiven) {
+        trackButtonClick('navigation_menu', {
+          from: previousSlide,
+          to: targetSlide,
+          method: 'navigation_click',
+          slideName: SLIDE_TITLES[targetSlide] || `Slide ${targetSlide}`
+        });
+      }
     }
   };
 
@@ -183,11 +264,25 @@ function AFMLearningAppContent() {
         if (event.key === "ArrowLeft") {
           event.preventDefault();
           if (currentSlide > 0) {
+            if (consentGiven) {
+              trackButtonClick('keyboard_navigation', {
+                key: 'ArrowLeft',
+                from: currentSlide,
+                to: currentSlide - 1
+              });
+            }
             handleNavigation(currentSlide - 1);
           }
         } else if (event.key === "ArrowRight") {
           event.preventDefault();
           if (currentSlide < maxVisitedSlide) {
+            if (consentGiven) {
+              trackButtonClick('keyboard_navigation', {
+                key: 'ArrowRight',
+                from: currentSlide,
+                to: currentSlide + 1
+              });
+            }
             handleNavigation(currentSlide + 1);
           }
         }
@@ -197,14 +292,34 @@ function AFMLearningAppContent() {
       if (event.key === 'n' && !event.ctrlKey && !event.altKey && !event.shiftKey) {
         // Only if not focused on an input field
         if (document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+          if (consentGiven) {
+            trackButtonClick('navigation_toggle', {
+              key: 'n',
+              expanded: !isNavExpanded
+            });
+          }
           setIsNavExpanded(!isNavExpanded);
+        }
+      }
+
+      // Toggle Analytics Dashboard with 'a' key
+      if (event.key === 'a' && !event.ctrlKey && !event.altKey && !event.shiftKey) {
+        // Only if not focused on an input field
+        if (document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+          if (consentGiven) {
+            trackButtonClick('analytics_dashboard_toggle', {
+              key: 'a',
+              expanded: !showAnalyticsDashboard
+            });
+          }
+          setShowAnalyticsDashboard(!showAnalyticsDashboard);
         }
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentSlide, maxVisitedSlide, isNavExpanded]);
+  }, [currentSlide, maxVisitedSlide, isNavExpanded, consentGiven, showAnalyticsDashboard]);
 
   // Mouse navigation (back/forward buttons)
   useEffect(() => {
@@ -213,12 +328,26 @@ function AFMLearningAppContent() {
         // Back button
         event.preventDefault();
         if (currentSlide > 0) {
+          if (consentGiven) {
+            trackButtonClick('mouse_navigation', {
+              button: 'back',
+              from: currentSlide,
+              to: currentSlide - 1
+            });
+          }
           handleNavigation(currentSlide - 1);
         }
       } else if (event.button === 4) {
         // Forward button
         event.preventDefault();
         if (currentSlide < maxVisitedSlide) {
+          if (consentGiven) {
+            trackButtonClick('mouse_navigation', {
+              button: 'forward',
+              from: currentSlide,
+              to: currentSlide + 1
+            });
+          }
           handleNavigation(currentSlide + 1);
         }
       }
@@ -226,7 +355,7 @@ function AFMLearningAppContent() {
 
     window.addEventListener("mousedown", handleMouseButton);
     return () => window.removeEventListener("mousedown", handleMouseButton);
-  }, [currentSlide, maxVisitedSlide]);
+  }, [currentSlide, maxVisitedSlide, consentGiven]);
 
   const renderCurrentSlide = () => {
     const slideProps = {
@@ -346,6 +475,14 @@ function AFMLearningAppContent() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
+      {/* Consent Dialog */}
+      {showConsentDialog && (
+        <ConsentDialog
+          onConsent={handleConsentGiven}
+          onDecline={handleConsentDeclined}
+        />
+      )}
+
       {/* Navigation Bar */}
       <NavigationBar
         currentSlide={currentSlide}
@@ -353,6 +490,7 @@ function AFMLearningAppContent() {
         onNavigate={handleNavigation}
         isExpanded={isNavExpanded}
         setIsExpanded={setIsNavExpanded}
+        setShowAnalyticsDashboard={setShowAnalyticsDashboard}
       />
 
       {/* Main content - no margin adjustments, always full width */}
@@ -363,6 +501,21 @@ function AFMLearningAppContent() {
       {/* AFM Formula Tooltip - conditionally rendered */}
       {shouldShowTooltip() && (
         <AFMFormulaTooltip stage={getFormulaStage(currentSlide)} />
+      )}
+
+      {/* Analytics Dashboard Overlay */}
+      {showAnalyticsDashboard && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-7xl w-full max-h-[95vh] overflow-y-auto relative">
+            <button
+              onClick={() => setShowAnalyticsDashboard(false)}
+              className="absolute top-4 right-4 z-10 w-8 h-8 bg-red-600 text-white rounded-full hover:bg-red-700 flex items-center justify-center font-bold text-lg"
+            >
+              ×
+            </button>
+            <AnalyticsDashboard />
+          </div>
+        </div>
       )}
     </div>
   );
