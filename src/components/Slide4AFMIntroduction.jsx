@@ -91,8 +91,8 @@ export const Slide4AFMIntroduction = ({ scroll }) => {
   );
 
   return (
-    <div className="bg-white min-h-screen flex flex-col items-center justify-center py-8 px-4 md:px-10 text-black font-['IBM_Plex_Mono',monospace]">
-      <div className="w-full max-w-4xl mx-auto flex flex-col gap-8">
+    <div className="bg-white min-h-screen grid place-items-center py-8 px-4 md:px-10 text-black font-['IBM_Plex_Mono',monospace]">
+      <div className="w-full max-w-4xl mx-auto space-y-8">
 
         {/* Adaptive Learning Block */}
         <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">

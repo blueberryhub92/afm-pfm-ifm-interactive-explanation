@@ -11,8 +11,8 @@ export const Slide0IntroductoryQuestion = ({ guess1, setGuess1, scroll }) => {
   };
 
   return (
-    <div className="bg-white min-h-screen flex flex-col items-center justify-center py-8 px-4 md:px-10 text-black font-['IBM_Plex_Mono',monospace]">
-      <div className="w-full max-w-4xl mx-auto flex flex-col gap-8">
+    <div className="bg-white min-h-screen flex items-center justify-center py-8 px-4 md:px-10 text-black font-['IBM_Plex_Mono',monospace]">
+      <div className="w-full max-w-4xl mx-auto space-y-8">
 
         {/* Main Title */}
         <div className="text-center border-b-8 border-black pb-6 mb-2">

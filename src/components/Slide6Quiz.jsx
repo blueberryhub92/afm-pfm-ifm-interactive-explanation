@@ -11,10 +11,8 @@ export const Slide6Quiz = ({ guess2, setGuess2, scroll }) => {
   };
 
   return (
-    <div className="bg-white min-h-screen flex flex-col items-center justify-center py-8 px-4 md:px-10 text-black font-['IBM_Plex_Mono',monospace]">
-      <div className="w-full max-w-5xl mx-auto flex flex-col gap-8">
-
-
+    <div className="bg-white min-h-screen grid place-items-center py-8 px-4 md:px-10 text-black font-['IBM_Plex_Mono',monospace]">
+      <div className="w-full max-w-4xl mx-auto space-y-8">
 
         {/* Quiz Section */}
         <div className="border-4 border-black rounded-xl p-6 bg-white relative shadow-lg">
@@ -92,7 +90,6 @@ export const Slide6Quiz = ({ guess2, setGuess2, scroll }) => {
             </div>
           </div>
         </div>
-
 
       </div>
     </div>

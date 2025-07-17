@@ -16,7 +16,6 @@ import { Slide15TwoMorePythonTasks } from "./components/Slide15TwoMorePythonTask
 import { Slide16LearningRateQuestion } from "./components/Slide16LearningRateQuestion";
 import { Slide17LearningRateExplanation } from "./components/Slide17LearningRateExplanation";
 import { Slide23PFM } from "./components/Slide23PFM";
-import { Slide24PFMSimulation } from "./components/Slide24PFMSimulation";
 import { AFMFormulaTooltip } from "./components/shared/AFMFormulaTooltip";
 import { Slide26IFM } from "./components/Slide26IFM";
 import { Slide27IFMSimulation } from "./components/Slide27IFMSimulation";
@@ -27,9 +26,11 @@ import { WelcomePage } from "./components/WelcomePage";
 import { trackSlideChange, trackButtonClick, syncEvents, getUserId } from "./utils/analytics";
 import ConsentDialog from "./components/ConsentDialog";
 import { AnalyticsDashboard } from "./components/AnalyticsDashboard";
+import { Slide24PFMSimulation } from "./components/Slide24PFMSimulation";
+import { ModelComparison } from "./components/ModelComparison";
 
 // Constants
-const TOTAL_SLIDES = 23;
+const TOTAL_SLIDES = 24;
 
 // Navigation configuration
 const SLIDE_TITLES = [
@@ -51,11 +52,12 @@ const SLIDE_TITLES = [
   "AFM Simulator",
   "AFM Limitations",
   "AFM Correctness",
-  "PFM",
+  "PFM Introduction",
   "PFM Simulation",
   "IFM Tasks",
-  "IFM",
-  "IFM Simulation"
+  "IFM Introduction",
+  "IFM Simulation",
+  "Model Comparison"
 ];
 
 function NavigationBar({ currentSlide, maxVisitedSlide, onNavigate, isExpanded, setIsExpanded, setShowAnalyticsDashboard }) {
@@ -447,6 +449,8 @@ function AFMLearningAppContent() {
         return <Slide26IFM scroll={scroll} />;
       case 22:
         return <Slide27IFMSimulation scroll={scroll} />;
+      case 23:
+        return <ModelComparison scroll={scroll} />;
       default:
         return null;
     }

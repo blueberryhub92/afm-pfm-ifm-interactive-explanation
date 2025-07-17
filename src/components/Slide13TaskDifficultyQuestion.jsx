@@ -19,14 +19,14 @@ export const Slide13TaskDifficultyQuestion = ({
   };
 
   return (
-    <div className="bg-white min-h-screen flex flex-col items-center py-8 px-4 md:px-10 text-black font-['IBM_Plex_Mono',monospace]">
+    <div className="bg-white min-h-screen flex flex-col items-center justify-center py-8 px-4 md:px-10 text-black font-['IBM_Plex_Mono',monospace]">
       <div className="w-full max-w-4xl mx-auto flex flex-col gap-8">
 
         {/* Main Question */}
-        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
+        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
           <div className="absolute -top-6 left-4 px-3 py-1 bg-black text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
-            <Target className="w-4 h-4" />
-            DIFFICULTY ASSESSMENT
+            <Code className="w-4 h-4" />
+            PYTHON TASKS
           </div>
           <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center mb-8">
             Which task was more difficult?

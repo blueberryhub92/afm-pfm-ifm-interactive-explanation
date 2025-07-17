@@ -13,21 +13,12 @@ export const WelcomePage = ({ scroll }) => {
       size: "large" // Featured module
     },
     {
-      title: "Additive Factor Model Formula",
+      title: "Additive Factor Model",
       id: "afm-formula",
       icon: Calculator,
       color: "blue",
       description: "Dive deep into the Additive Factor Model. Understand the mathematical foundation and learn how it predicts student performance.",
-      onClick: () => scroll(16),
-      size: "normal"
-    },
-    {
-      title: "Additive Factor Model Simulator",
-      id: "afm-simulator",
-      icon: Play,
-      color: "purple",
-      description: "Interactive simulation of AFM behavior.",
-      onClick: () => scroll(17),
+      onClick: () => scroll(19),
       size: "normal"
     },
     {
@@ -36,8 +27,8 @@ export const WelcomePage = ({ scroll }) => {
       icon: Users,
       color: "orange",
       description: "Explore PFM and its approach to modeling student learning through correct and incorrect answers.",
-      onClick: () => scroll(20),
-      size: "wide"
+      onClick: () => scroll(23),
+      size: "normal"
     },
     {
       title: "Instructional Factor Model",
@@ -45,7 +36,7 @@ export const WelcomePage = ({ scroll }) => {
       icon: Brain,
       color: "red",
       description: "Learn about IFM and how it incorporates instructional factors into learning predictions.",
-      onClick: () => scroll(23),
+      onClick: () => scroll(26),
       size: "normal"
     }
   ];
@@ -69,8 +60,8 @@ export const WelcomePage = ({ scroll }) => {
   };
 
   return (
-    <div className="bg-white min-h-screen flex flex-col text-black font-['IBM_Plex_Mono',monospace] py-8 px-4 md:px-10">
-      <div className="w-full max-w-6xl mx-auto flex flex-col gap-8">
+    <div className="bg-white min-h-screen grid place-items-center text-black font-['IBM_Plex_Mono',monospace] py-8 px-4 md:px-10">
+      <div className="w-full max-w-6xl mx-auto space-y-8">
 
         {/* Header */}
         <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
@@ -87,46 +78,92 @@ export const WelcomePage = ({ scroll }) => {
         </div>
 
         {/* Bento Grid */}
-        <div className="grid grid-cols-3 grid-rows-3 gap-6 h-[600px]">
-          {modules.map((module) => {
-            const IconComponent = module.icon;
-            const isLarge = module.size === "large";
+        <div className="grid grid-cols-3 gap-6 h-[600px]">
+          {/* Left Side - Start Python Journey (Large Module) */}
+          <div className="col-span-2">
+            {modules.filter(module => module.size === "large").map((module) => {
+              const IconComponent = module.icon;
+              const isLarge = true;
 
-            return (
-              <div
-                key={module.id}
-                className={`${getSizeClasses(module.size)} border-4 border-black rounded-xl p-6 bg-white shadow-lg relative cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-xl hover:-translate-y-2 group`}
-                onClick={module.onClick}
-              >
+              return (
                 <div
-                  className={`absolute -top-6 left-4 px-3 py-1 font-semibold rounded-md text-xs tracking-wider flex items-center gap-2 border-4 border-black ${colorClasses[module.color]} transition-all duration-300 group-hover:scale-110`}
+                  key={module.id}
+                  className="h-full border-4 border-black rounded-xl p-6 bg-white shadow-lg relative cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-xl hover:-translate-y-2 group"
+                  onClick={module.onClick}
                 >
-                  <IconComponent className="w-4 h-4" />
-                  MODULE
-                </div>
-
-                <div className="h-full flex flex-col justify-between">
-                  <div className="flex items-start justify-between mb-4">
-                    <IconComponent className={`${isLarge ? 'w-12 h-12' : 'w-8 h-8'} transition-all duration-300 group-hover:scale-110 group-hover:rotate-3`} />
-                    <ArrowRight className={`${isLarge ? 'w-8 h-8' : 'w-6 h-6'} opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-1`} />
+                  <div
+                    className={`absolute -top-6 left-4 px-3 py-1 font-semibold rounded-md text-xs tracking-wider flex items-center gap-2 border-4 border-black ${colorClasses[module.color]} transition-all duration-300 group-hover:scale-110`}
+                  >
+                    <IconComponent className="w-4 h-4" />
+                    MODULE
                   </div>
 
-                  <div>
-                    <h3 className={`${isLarge ? 'text-2xl' : 'text-xl'} font-bold text-black uppercase tracking-tight mb-3 transition-all duration-300 group-hover:text-purple-600`}>
-                      {module.title}
-                    </h3>
+                  <div className="h-full flex flex-col justify-between">
+                    <div className="flex items-start justify-between mb-4">
+                      <IconComponent className="w-12 h-12 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3" />
+                      <ArrowRight className="w-8 h-8 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-1" />
+                    </div>
 
-                    <p className={`${isLarge ? 'text-sm' : 'text-xs'} font-bold text-black leading-relaxed transition-all duration-300 group-hover:text-gray-700`}>
-                      {module.description}
-                    </p>
+                    <div>
+                      <h3 className="text-2xl font-bold text-black uppercase tracking-tight mb-3 transition-all duration-300 group-hover:text-purple-600">
+                        {module.title}
+                      </h3>
+
+                      <p className="text-sm font-bold text-black leading-relaxed transition-all duration-300 group-hover:text-gray-700">
+                        {module.description}
+                      </p>
+                    </div>
                   </div>
-                </div>
 
-                {/* Hover overlay effect */}
-                <div className="absolute inset-0 bg-gradient-to-br from-transparent to-purple-100 opacity-0 group-hover:opacity-20 transition-opacity duration-300 rounded-lg pointer-events-none"></div>
-              </div>
-            );
-          })}
+                  {/* Hover overlay effect */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-transparent to-purple-100 opacity-0 group-hover:opacity-20 transition-opacity duration-300 rounded-lg pointer-events-none"></div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Right Side - Factor Models */}
+          <div className="col-span-1 flex flex-col gap-6">
+            {modules.filter(module => module.size === "normal").map((module) => {
+              const IconComponent = module.icon;
+              const isLarge = false;
+
+              return (
+                <div
+                  key={module.id}
+                  className="flex-1 border-4 border-black rounded-xl p-6 bg-white shadow-lg relative cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-xl hover:-translate-y-2 group"
+                  onClick={module.onClick}
+                >
+                  <div
+                    className={`absolute -top-6 left-4 px-3 py-1 font-semibold rounded-md text-xs tracking-wider flex items-center gap-2 border-4 border-black ${colorClasses[module.color]} transition-all duration-300 group-hover:scale-110`}
+                  >
+                    <IconComponent className="w-4 h-4" />
+                    MODULE
+                  </div>
+
+                  <div className="h-full flex flex-col justify-between">
+                    <div className="flex items-start justify-between mb-4">
+                      <IconComponent className="w-8 h-8 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3" />
+                      <ArrowRight className="w-6 h-6 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-1" />
+                    </div>
+
+                    <div>
+                      <h3 className="text-xl font-bold text-black uppercase tracking-tight mb-3 transition-all duration-300 group-hover:text-purple-600">
+                        {module.title}
+                      </h3>
+
+                      <p className="text-xs font-bold text-black leading-relaxed transition-all duration-300 group-hover:text-gray-700">
+                        {module.description}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Hover overlay effect */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-transparent to-purple-100 opacity-0 group-hover:opacity-20 transition-opacity duration-300 rounded-lg pointer-events-none"></div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>
