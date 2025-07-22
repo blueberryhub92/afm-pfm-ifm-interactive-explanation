@@ -1,16 +1,11 @@
 // API Configuration
 const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-const isVercel = window.location.hostname.includes('vercel.app');
-const isNetlify = window.location.hostname.includes('netlify.app');
-const isRailway = window.location.hostname.includes('railway.app');
 
 export const API_CONFIG = {
   // Backend URL based on environment
   BASE_URL: isDevelopment 
     ? 'http://localhost:3001'  // Local development
-    : isVercel || isNetlify
-      ? window.location.origin  // Vercel/Netlify: Same domain (serverless functions)
-      : 'https://afm-pfm-ifm-interactive-explanation-production.up.railway.app', // Railway backend URL
+    : window.location.origin,  // Production: Same domain as frontend
   
   // API Endpoints
   ENDPOINTS: {
@@ -33,15 +28,7 @@ export const ENV_INFO = {
   isDevelopment,
   currentHost: window.location.hostname,
   currentOrigin: window.location.origin,
-  detectedPlatform: isDevelopment 
-    ? 'development' 
-    : isVercel 
-      ? 'vercel' 
-      : isNetlify 
-        ? 'netlify' 
-        : isRailway 
-          ? 'railway' 
-          : 'custom'
+  detectedPlatform: isDevelopment ? 'development' : 'production'
 };
 
 console.log('API Configuration:', {
