@@ -45,7 +45,7 @@ const paramMeta = {
         },
     },
     beta: {
-        label: "β: Task Difficulty",
+        label: "β: Skill Difficulty",
         min: -2,
         max: 2,
         step: 0.1,
@@ -53,7 +53,7 @@ const paramMeta = {
         icon: <Target className="w-5 h-5" />,
         tooltip: {
             color: "purple",
-            title: "Task Difficulty (β)",
+            title: "Skill Difficulty (β)",
             desc: "Range: -2 (hard) to +2 (easy). Higher β = easier tasks. 0 = average.",
         },
     },
@@ -624,7 +624,7 @@ export const Slide24PFMSimulation = ({ scroll }) => {
                                         </div>
                                         <div className="flex items-center gap-2">
                                             <div className="w-4 h-4 bg-purple-200 border-2 border-purple-700 rounded"></div>
-                                            <span className="font-bold text-purple-700">β = Task Difficulty</span>
+                                            <span className="font-bold text-purple-700">β = Skill Difficulty</span>
                                         </div>
                                     </div>
                                     <div className="space-y-2">

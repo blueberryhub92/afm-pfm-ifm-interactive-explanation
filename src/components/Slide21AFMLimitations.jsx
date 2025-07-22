@@ -29,6 +29,10 @@ export const Slide21AFMLimitations = ({ scroll }) => {
   const [animateSequence, setAnimateSequence] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [showFeedback, setShowFeedback] = useState(false);
+  const [contextTaskAAnswer, setContextTaskAAnswer] = useState(null);
+  const [contextTaskBAnswer, setContextTaskBAnswer] = useState(null);
+  const [contextShowHint, setContextShowHint] = useState(false);
+  const [contextShowComparison, setContextShowComparison] = useState(false);
   const [initialProb, setInitialProb] = useState(0.25);
   const [sliderValues, setSliderValues] = useState({
     days: 0.8,
@@ -46,6 +50,9 @@ export const Slide21AFMLimitations = ({ scroll }) => {
   const [itemSelectedAnswer, setItemSelectedAnswer] = useState(null);
   const [itemShowFeedback, setItemShowFeedback] = useState(false);
   const [itemAttemptedProblems, setItemAttemptedProblems] = useState([]);
+  const [easyTaskAnswer, setEasyTaskAnswer] = useState(null);
+  const [hardTaskAnswer, setHardTaskAnswer] = useState(null);
+  const [showTaskComparison, setShowTaskComparison] = useState(false);
 
   // Q-Matrix Quality states
   const [qMatrixCurrentProblem, setQMatrixCurrentProblem] = useState(0);
@@ -53,6 +60,14 @@ export const Slide21AFMLimitations = ({ scroll }) => {
   const [qMatrixShowFeedback, setQMatrixShowFeedback] = useState(false);
   const [qMatrixViewMode, setQMatrixViewMode] = useState('incorrect');
   const [qMatrixAttemptedProblems, setQMatrixAttemptedProblems] = useState([]);
+  const [userSkillMastery, setUserSkillMastery] = useState({
+    'Loops': 0.5,
+    'Print Function': 0.5,
+    'Lists': 0.5,
+    'Methods': 0.5,
+    'Functions': 0.5,
+    'Return Values': 0.5
+  });
 
   const handleSliderChange = (period, value) => {
     setSliderValues((prev) => ({ ...prev, [period]: value }));
@@ -137,12 +152,19 @@ print(result)`,
       setShowTrajectory(false);
       setAnimateSequence(false);
       setSelectedStudent(null);
+      setContextTaskAAnswer(null);
+      setContextTaskBAnswer(null);
+      setContextShowHint(false);
+      setContextShowComparison(false);
     } else if (taskId === "item-difficulty") {
       setCurrentView("item-difficulty");
       setItemCurrentProblem(0);
       setItemSelectedAnswer(null);
       setItemShowFeedback(false);
       setItemAttemptedProblems([]);
+      setEasyTaskAnswer(null);
+      setHardTaskAnswer(null);
+      setShowTaskComparison(false);
     } else if (taskId === "q-matrix-quality") {
       setCurrentView("q-matrix-quality");
       setQMatrixCurrentProblem(0);
@@ -150,6 +172,14 @@ print(result)`,
       setQMatrixShowFeedback(false);
       setQMatrixViewMode('incorrect');
       setQMatrixAttemptedProblems([]);
+      setUserSkillMastery({
+        'Loops': 0.5,
+        'Print Function': 0.5,
+        'Lists': 0.5,
+        'Methods': 0.5,
+        'Functions': 0.5,
+        'Return Values': 0.5
+      });
     }
   };
 
@@ -761,29 +791,6 @@ print(second_largest([1, 3, 2, 5, 4]))`,
           </div>
         </div>
 
-        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
-          <div className="absolute -top-6 left-4 px-3 py-1 bg-blue-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
-            <TrendingUp className="w-4 h-4" />
-            BETTER PROGRAMMING ASSESSMENT
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              'CODE REVIEW',
-              'UNIT TESTING',
-              'PERFORMANCE METRICS',
-              'DOCUMENTATION',
-              'REFACTORING',
-              'PAIR PROGRAMMING',
-              'CODE STYLE',
-              'ALGORITHM ANALYSIS'
-            ].map((approach) => (
-              <div key={approach} className="border-2 border-blue-600 bg-blue-50 p-3 text-center">
-                <span className="text-black font-mono font-bold text-sm">{approach}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
         <div className="flex justify-center space-x-4">
           <button
             onClick={resetSimulation}
@@ -832,521 +839,46 @@ print(second_largest([1, 3, 2, 5, 4]))`,
   };
 
   const renderContextBlind = () => {
-    // Python programming context scenario showing how context affects coding performance
-    const programmingScenario = {
-      student: "Alex, learning Python programming",
-      skill: "Writing Python functions and solving coding problems",
-      contexts: [
-        {
-          id: 'morning-focused',
-          name: 'Morning Coding Session',
-          time: '9:00 AM',
-          condition: 'Fresh, focused, quiet environment, full-screen IDE',
-          performance: { correct: 18, total: 20, percentage: 90 },
-          color: 'green'
-        },
-        {
-          id: 'late-debugging',
-          name: 'Late Night Debugging',
-          time: '11:30 PM',
-          condition: 'Tired, stressed, fixing bugs under pressure',
-          performance: { correct: 11, total: 20, percentage: 55 },
-          color: 'red'
-        },
-        {
-          id: 'pair-programming',
-          name: 'Pair Programming Session',
-          time: '2:00 PM',
-          condition: 'Collaborative, discussing solutions, peer support',
-          performance: { correct: 16, total: 20, percentage: 80 },
-          color: 'blue'
-        },
-        {
-          id: 'online-platform',
-          name: 'Online Coding Platform',
-          time: '7:00 PM',
-          condition: 'Timed challenges, competitive environment, small screen',
-          performance: { correct: 12, total: 20, percentage: 60 },
-          color: 'orange'
-        },
-        {
-          id: 'algorithm-problems',
-          name: 'Algorithm Practice',
-          time: '4:00 PM',
-          condition: 'Complex problems, whiteboard-style, deep thinking',
-          performance: { correct: 15, total: 20, percentage: 75 },
-          color: 'purple'
-        }
-      ]
-    };
+    // Hint-based learning scenario showing how AFM misses contextual learning
 
-    const calculateContextAFMPrediction = () => {
-      const totalCorrect = programmingScenario.contexts.reduce((sum, ctx) => sum + ctx.performance.correct, 0);
-      const totalQuestions = programmingScenario.contexts.reduce((sum, ctx) => sum + ctx.performance.total, 0);
-      return (totalCorrect / totalQuestions) * 100;
-    };
-
-    const calculateVariance = () => {
-      const performances = programmingScenario.contexts.map(ctx => ctx.performance.percentage);
-      const mean = performances.reduce((sum, perf) => sum + perf, 0) / performances.length;
-      const variance = performances.reduce((sum, perf) => sum + Math.pow(perf - mean, 2), 0) / performances.length;
-      return Math.sqrt(variance);
-    };
-
-    const afmPrediction = calculateContextAFMPrediction();
-    const performanceVariance = calculateVariance();
-
-    const stepLabels = {
-      0: 'Programming Context Overview',
-      1: 'Performance Analysis',
-      2: 'AFM vs Context-Aware',
-      3: 'Educational Implications'
-    };
-
-    const navigateContext = (direction) => {
-      const newStep = contextStep + direction;
-      if (newStep >= 0 && newStep < 4) {
-        setAnimateSequence(true);
-        setTimeout(() => {
-          setContextStep(newStep);
-          setAnimateSequence(false);
-        }, 300);
+    const contextScenario = {
+      student: "Sarah, learning Python loops",
+      skill: "Python For Loops",
+      taskA: {
+        question: "What will this Python code output?",
+        code: `for i in range(3):
+    print(i * 2)`,
+        options: ['0 2 4', '1 2 3', '2 4 6', '0 1 2'],
+        correctAnswer: '0 2 4',
+        incorrectHint: "Remember: range(3) gives you 0, 1, 2. Then multiply each by 2: 0*2=0, 1*2=2, 2*2=4",
+        correctFeedback: "Great! You understand that range(3) creates 0, 1, 2, and each gets multiplied by 2. This pattern-recognition skill will help you with similar problems!"
+      },
+      taskB: {
+        question: "What will this Python code output?",
+        code: `for j in range(2):
+    print(j * 3)`,
+        options: ['0 3', '1 3', '0 6', '3 6'],
+        correctAnswer: '0 3',
+        contextualLearning: true // This success builds on Task A's hint
       }
     };
 
-    const handleStrategySelect = (strategy) => {
-      setSelectedStrategy(strategy);
+    const handleTaskAAnswer = (answer) => {
+      setContextTaskAAnswer(answer);
+      // Always show contextual feedback to demonstrate context-based learning
+      setContextShowHint(true);
     };
 
-    const renderContextOverview = () => (
-      <div className="space-y-6">
-        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
-          <div className="absolute -top-6 left-4 px-3 py-1 bg-blue-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
-            <Code className="w-4 h-4" />
-            PYTHON PROGRAMMING CONTEXT STUDY
-          </div>
-          <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center mb-6">
-            Python Programming Context Study
-          </div>
-          <p className="text-lg text-black text-center mb-8 font-bold">
-            Observe how the same programmer performs differently across various coding contexts
-          </p>
+    const handleTaskBAnswer = (answer) => {
+      setContextTaskBAnswer(answer);
+      setContextShowComparison(true);
+    };
 
-          <div className="space-y-6">
-            <div className="border-4 border-blue-600 rounded-xl p-6 bg-blue-50">
-              <h3 className="font-bold text-blue-700 text-lg font-mono uppercase mb-3">
-                PROGRAMMER PROFILE
-              </h3>
-              <p className="text-black font-mono text-lg">
-                <strong>Student:</strong> {programmingScenario.student}
-              </p>
-              <p className="text-black font-mono text-lg">
-                <strong>Skill:</strong> {programmingScenario.skill}
-              </p>
-              <p className="text-black font-mono text-lg">
-                <strong>Assessment:</strong> 20 coding problems per session
-              </p>
-            </div>
-
-            <div className="border-4 border-yellow-600 rounded-xl p-6 bg-yellow-50">
-              <h3 className="font-bold text-yellow-700 text-lg font-mono uppercase mb-3">
-                RESEARCH QUESTION
-              </h3>
-              <p className="text-black font-mono text-lg">
-                How does programming context affect coding performance? AFM treats all sessions equally,
-                but should context matter for predicting coding success?
-              </p>
-            </div>
-
-            <div className="border-4 border-green-600 rounded-xl p-6 bg-green-50">
-              <h3 className="font-bold text-green-700 text-lg font-mono uppercase mb-3">
-                CONTEXT VARIABLES
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div className="p-3 bg-white border-2 border-green-600 rounded-lg">
-                  <span className="font-mono text-black font-bold text-sm">• TIME OF DAY</span>
-                </div>
-                <div className="p-3 bg-white border-2 border-green-600 rounded-lg">
-                  <span className="font-mono text-black font-bold text-sm">• ENVIRONMENT SETUP</span>
-                </div>
-                <div className="p-3 bg-white border-2 border-green-600 rounded-lg">
-                  <span className="font-mono text-black font-bold text-sm">• PROBLEM TYPE</span>
-                </div>
-                <div className="p-3 bg-white border-2 border-green-600 rounded-lg">
-                  <span className="font-mono text-black font-bold text-sm">• COLLABORATION MODE</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex justify-center">
-          <button
-            onClick={() => setContextStep(1)}
-            className="px-8 py-4 bg-black text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-black hover:border-black transition-all transform hover:scale-105 font-mono"
-          >
-            ANALYZE CODING PERFORMANCE →
-          </button>
-        </div>
-      </div>
-    );
-
-    const renderPerformanceAnalysis = () => (
-      <div className="space-y-6">
-        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
-          <div className="absolute -top-6 left-4 px-3 py-1 bg-purple-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
-            <TrendingDown className="w-4 h-4" />
-            PERFORMANCE ACROSS DIFFERENT PROGRAMMING CONTEXTS
-          </div>
-          <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center mb-6">
-            Performance Across Different Programming Contexts
-          </div>
-          <p className="text-lg text-black text-center mb-8 font-bold">
-            Same programmer, same skill level, different contexts - notice the significant variation
-          </p>
-
-          <div className="space-y-4">
-            {programmingScenario.contexts.map((context) => (
-              <div
-                key={context.id}
-                className={`border-4 border-${context.color}-600 rounded-xl p-4 bg-${context.color}-50`}
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <div>
-                    <h3 className="font-bold text-black text-lg font-mono uppercase">
-                      {context.name}
-                    </h3>
-                    <p className="text-sm font-mono text-black">
-                      {context.time} - {context.condition}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-3xl font-bold text-black font-mono">
-                      {context.performance.percentage}%
-                    </div>
-                    <div className="text-sm font-mono text-black">
-                      {context.performance.correct}/{context.performance.total} problems solved
-                    </div>
-                  </div>
-                </div>
-                <div className="w-full bg-gray-200 border-2 border-black h-6">
-                  <div
-                    className={`h-full bg-${context.color}-600 transition-all duration-500`}
-                    style={{ width: `${context.performance.percentage}%` }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
-          <div className="absolute -top-6 left-4 px-3 py-1 bg-orange-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4" />
-            PROGRAMMING PERFORMANCE VARIANCE
-          </div>
-          <div className="text-center space-y-4">
-            <div className="bg-orange-300 border-2 border-black px-6 py-4 inline-block">
-              <span className="text-black font-bold text-xl font-mono">
-                {performanceVariance.toFixed(1)}% STANDARD DEVIATION
-              </span>
-            </div>
-            <p className="text-black font-mono text-lg">
-              High variance indicates context significantly impacts programming performance
-            </p>
-            <div className="text-sm font-mono text-black">
-              Range: {Math.min(...programmingScenario.contexts.map(c => c.performance.percentage))}% - {Math.max(...programmingScenario.contexts.map(c => c.performance.percentage))}%
-            </div>
-            <div className="border-4 border-orange-600 rounded-xl p-6 bg-orange-50">
-              <h3 className="font-bold text-orange-700 text-lg font-mono uppercase mb-3">
-                CONTEXT IMPACT FACTORS
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div className="p-3 bg-white border-2 border-orange-600 rounded-lg">
-                  <span className="font-mono text-black font-bold text-sm">• COGNITIVE LOAD</span>
-                </div>
-                <div className="p-3 bg-white border-2 border-orange-600 rounded-lg">
-                  <span className="font-mono text-black font-bold text-sm">• DEVELOPMENT ENVIRONMENT</span>
-                </div>
-                <div className="p-3 bg-white border-2 border-orange-600 rounded-lg">
-                  <span className="font-mono text-black font-bold text-sm">• TIME PRESSURE</span>
-                </div>
-                <div className="p-3 bg-white border-2 border-orange-600 rounded-lg">
-                  <span className="font-mono text-black font-bold text-sm">• COLLABORATION DYNAMICS</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex justify-center">
-          <button
-            onClick={() => setContextStep(2)}
-            className="px-8 py-4 bg-black text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-black hover:border-black transition-all transform hover:scale-105 font-mono"
-          >
-            COMPARE AFM VS CONTEXT-AWARE →
-          </button>
-        </div>
-      </div>
-    );
-
-    const renderAFMComparison = () => (
-      <div className="space-y-6">
-        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
-          <div className="absolute -top-6 left-4 px-3 py-1 bg-red-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
-            <CheckCircle className="w-4 h-4" />
-            AFM VS CONTEXT-AWARE PREDICTIONS
-          </div>
-          <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center mb-6">
-            AFM vs Context-Aware Predictions
-          </div>
-          <p className="text-lg text-black text-center mb-8 font-bold">
-            Compare how different approaches handle context-dependent programming performance
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="border-4 border-red-600 rounded-xl p-6 bg-red-50">
-              <h3 className="font-bold text-red-700 text-lg font-mono uppercase mb-4 text-center">
-                AFM Prediction
-              </h3>
-              <div className="space-y-4">
-                <div className="bg-red-100 p-4 border-2 border-red-600">
-                  <h4 className="font-bold text-red-700 font-mono mb-2">CONTEXT-BLIND LOGIC:</h4>
-                  <p className="text-black font-mono text-sm">
-                    All coding sessions weighted equally regardless of context
-                  </p>
-                  <p className="text-black font-mono text-sm">
-                    Total: {programmingScenario.contexts.reduce((sum, ctx) => sum + ctx.performance.correct, 0)}/{programmingScenario.contexts.reduce((sum, ctx) => sum + ctx.performance.total, 0)} problems solved
-                  </p>
-                </div>
-
-                <div className="bg-white p-4 border-2 border-red-600">
-                  <h4 className="font-bold text-black font-mono mb-2">AFM PREDICTION:</h4>
-                  <div className="text-center">
-                    <div className="text-4xl font-bold text-red-600 font-mono">
-                      {afmPrediction.toFixed(0)}%
-                    </div>
-                    <div className="w-full bg-gray-200 border-2 border-black h-6 mt-2">
-                      <div
-                        className="h-full bg-red-600 transition-all duration-500"
-                        style={{ width: `${afmPrediction}%` }}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-red-50 p-4 border-2 border-red-600">
-                  <h4 className="font-bold text-red-700 font-mono mb-2">MISSED CONTEXT:</h4>
-                  <ul className="text-black font-mono text-sm space-y-1">
-                    <li>• Time of day effects on focus</li>
-                    <li>• Development environment impacts</li>
-                    <li>• Problem type complexity variations</li>
-                    <li>• Collaboration vs solo performance</li>
-                    <li>• Cognitive load differences</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            <div className="border-4 border-green-600 rounded-xl p-6 bg-green-50">
-              <h3 className="font-bold text-green-700 text-lg font-mono uppercase mb-4 text-center">
-                Context-Aware Prediction
-              </h3>
-              <div className="space-y-4">
-                <div className="bg-green-100 p-4 border-2 border-green-600">
-                  <h4 className="font-bold text-green-700 font-mono mb-2">CONTEXT-AWARE LOGIC:</h4>
-                  <p className="text-black font-mono text-sm">
-                    Weight recent performance by context similarity
-                  </p>
-                  <p className="text-black font-mono text-sm">
-                    Predict based on upcoming programming context
-                  </p>
-                </div>
-
-                <div className="bg-white p-4 border-2 border-green-600">
-                  <h4 className="font-bold text-black font-mono mb-2">CONTEXT PREDICTION:</h4>
-                  <div className="text-center">
-                    <div className="text-4xl font-bold text-green-600 font-mono">
-                      Variable
-                    </div>
-                    <div className="text-sm font-mono text-black mt-2">
-                      Depends on upcoming context:
-                    </div>
-                    <div className="text-sm font-mono text-black">
-                      Morning IDE: ~90% | Late debugging: ~55%
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-green-50 p-4 border-2 border-green-600">
-                  <h4 className="font-bold text-green-700 font-mono mb-2">CAPTURED INSIGHTS:</h4>
-                  <ul className="text-black font-mono text-sm space-y-1">
-                    <li>• Optimal coding times</li>
-                    <li>• Preferred development environments</li>
-                    <li>• Problem type strengths</li>
-                    <li>• Collaboration effectiveness</li>
-                    <li>• Context-specific interventions</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex justify-center">
-          <button
-            onClick={() => setContextStep(3)}
-            className="px-8 py-4 bg-black text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-black hover:border-black transition-all transform hover:scale-105 font-mono"
-          >
-            EDUCATIONAL IMPLICATIONS →
-          </button>
-        </div>
-      </div>
-    );
-
-    const renderEducationalImplications = () => (
-      <div className="space-y-6">
-        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
-          <div className="absolute -top-6 left-4 px-3 py-1 bg-orange-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
-            <TrendingUp className="w-4 h-4" />
-            EDUCATIONAL IMPLICATIONS OF CONTEXT BLINDNESS
-          </div>
-          <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center mb-6">
-            Educational Implications of Context Blindness
-          </div>
-          <p className="text-lg text-black text-center mb-8 font-bold">
-            How ignoring programming context affects coding education and skill development
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <h3 className="font-bold text-orange-700 text-lg font-mono uppercase">
-                MISSED OPPORTUNITIES
-              </h3>
-              <div className="space-y-3">
-                {[
-                  'OPTIMAL CODING SESSIONS',
-                  'ENVIRONMENT OPTIMIZATION',
-                  'PERSONALIZED SCHEDULING',
-                  'CONTEXT-SPECIFIC PRACTICE',
-                  'ADAPTIVE PROBLEM SELECTION'
-                ].map((item, index) => (
-                  <div key={index} className="border-l-4 border-orange-600 bg-orange-50 p-3">
-                    <span className="text-black font-mono font-bold text-sm">
-                      {item}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <h3 className="font-bold text-red-700 text-lg font-mono uppercase">
-                NEGATIVE IMPACTS
-              </h3>
-              <div className="space-y-3">
-                {[
-                  'INACCURATE SKILL PREDICTIONS',
-                  'POOR LEARNING RECOMMENDATIONS',
-                  'INEFFECTIVE PRACTICE TIMING',
-                  'REDUCED CODE QUALITY',
-                  'MISSED DEBUGGING PATTERNS'
-                ].map((item, index) => (
-                  <div key={index} className="border-l-4 border-red-600 bg-red-50 p-3">
-                    <span className="text-black font-mono font-bold text-sm">
-                      {item}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
-          <div className="absolute -top-6 left-4 px-3 py-1 bg-green-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
-            <CheckCircle className="w-4 h-4" />
-            CONTEXT-AWARE PROGRAMMING EDUCATION
-          </div>
-          <div className="space-y-4">
-            <div className="text-center">
-              <div className="bg-green-300 border-2 border-black px-6 py-4 inline-block">
-                <span className="text-black font-bold text-xl font-mono">
-                  BETTER CODING OUTCOMES
-                </span>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {[
-                'SMART SCHEDULING',
-                'ENVIRONMENT SETUP',
-                'PROBLEM ADAPTATION',
-                'COLLABORATION TIMING',
-                'COGNITIVE LOAD MANAGEMENT',
-                'DEBUGGING SUPPORT',
-                'PERSONALIZED PACING',
-                'CONTEXT-AWARE HINTS'
-              ].map((approach, index) => (
-                <div key={index} className="border-2 border-green-600 bg-green-50 p-3 text-center">
-                  <span className="text-black font-mono font-bold text-sm">{approach}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
-          <div className="absolute -top-6 left-4 px-3 py-1 bg-blue-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
-            <Code className="w-4 h-4" />
-            REAL-WORLD PROGRAMMING APPLICATIONS
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="border-2 border-blue-600 bg-blue-50 p-4">
-              <h4 className="font-bold text-blue-700 mb-2 font-mono">BOOTCAMP EDUCATION</h4>
-              <p className="text-black font-mono text-sm">
-                Adapt lesson timing to student energy levels, optimize pair programming sessions,
-                personalize project complexity based on context
-              </p>
-            </div>
-            <div className="border-2 border-blue-600 bg-blue-50 p-4">
-              <h4 className="font-bold text-blue-700 mb-2 font-mono">ONLINE PLATFORMS</h4>
-              <p className="text-black font-mono text-sm">
-                Consider user's coding environment, time of day, and problem-solving context
-                when suggesting next challenges
-              </p>
-            </div>
-            <div className="border-2 border-blue-600 bg-blue-50 p-4">
-              <h4 className="font-bold text-blue-700 mb-2 font-mono">WORKPLACE TRAINING</h4>
-              <p className="text-black font-mono text-sm">
-                Account for development environment, team dynamics, and project pressure
-                when assessing coding competency
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex justify-center space-x-4">
-          <button
-            onClick={() => setContextStep(0)}
-            className="px-6 py-3 bg-white text-black border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-black hover:text-white transition-all transform hover:scale-105 font-mono"
-          >
-            RESTART ANALYSIS
-          </button>
-          <button
-            onClick={backToOverview}
-            className="px-6 py-3 bg-black text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-black transition-all transform hover:scale-105 font-mono"
-          >
-            ← RETURN TO OVERVIEW
-          </button>
-        </div>
-      </div>
-    );
-
-    const contextViews = {
-      0: renderContextOverview,
-      1: renderPerformanceAnalysis,
-      2: renderAFMComparison,
-      3: renderEducationalImplications
+    const resetScenario = () => {
+      setContextTaskAAnswer(null);
+      setContextTaskBAnswer(null);
+      setContextShowHint(false);
+      setContextShowComparison(false);
     };
 
     return (
@@ -1361,10 +893,279 @@ print(second_largest([1, 3, 2, 5, 4]))`,
               Context Blind Limitation
             </div>
             <p className="text-lg text-black text-center mt-4 font-bold">
-              {stepLabels[contextStep]}
+              How AFM misses learning from contextual hints and task sequences
             </p>
           </div>
-          {contextViews[contextStep]()}
+
+          {/* Scenario Introduction */}
+          <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
+            <div className="absolute -top-6 left-4 px-3 py-1 bg-blue-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
+              <Code className="w-4 h-4" />
+              LEARNING SCENARIO
+            </div>
+            <div className="space-y-6">
+              <div className="text-center">
+                <h2 className="text-2xl font-bold text-black mb-4">Python Learning Sequence</h2>
+                <p className="text-lg text-black font-bold">
+                  {contextScenario.student} solves two Python tasks back-to-back on an e-learning platform.
+                  Watch how context affects learning!
+                </p>
+              </div>
+
+              <div className="border-4 border-blue-600 rounded-xl p-6 bg-blue-50">
+                <h3 className="font-bold text-blue-700 text-lg font-mono uppercase mb-3">
+                  WHAT WILL HAPPEN:
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="p-3 bg-white border-2 border-blue-600 rounded-lg">
+                    <span className="font-mono text-black font-bold text-sm">1. TASK A: Student attempts task, receives contextual feedback</span>
+                  </div>
+                  <div className="p-3 bg-white border-2 border-blue-600 rounded-lg">
+                    <span className="font-mono text-black font-bold text-sm">2. TASK B: Student applies learning from context to similar task</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Task A */}
+          <div className="border-4 border-red-600 rounded-xl p-8 bg-red-50 shadow-lg relative">
+            <div className="absolute -top-6 left-4 px-3 py-1 bg-red-600 text-white font-semibold rounded-md text-xs tracking-wider">
+              TASK A
+            </div>
+            <div className="space-y-6">
+              <h3 className="text-2xl font-bold text-red-700 text-center mb-4">{contextScenario.taskA.question}</h3>
+
+              <div className="bg-black text-green-400 p-6 rounded-xl font-['IBM_Plex_Mono',monospace] text-lg border-4 border-black">
+                <pre className="whitespace-pre-wrap">{contextScenario.taskA.code}</pre>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
+                {contextScenario.taskA.options.map((option, index) => (
+                  <button
+                    key={index}
+                    onClick={() => !contextTaskAAnswer && handleTaskAAnswer(option)}
+                    disabled={!!contextTaskAAnswer}
+                    className={`px-6 py-4 border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide transition-all ${contextTaskAAnswer === option
+                      ? option === contextScenario.taskA.correctAnswer
+                        ? "bg-green-600 text-white"
+                        : "bg-red-600 text-white"
+                      : contextTaskAAnswer
+                        ? option === contextScenario.taskA.correctAnswer
+                          ? "bg-green-300 text-black"
+                          : "bg-gray-200 text-gray-500"
+                        : "bg-white text-black hover:bg-red-200 cursor-pointer transform hover:scale-105"
+                      }`}
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
+
+              {contextTaskAAnswer && (
+                <div className="space-y-4">
+                  <div className={`border-l-8 ${contextTaskAAnswer === contextScenario.taskA.correctAnswer ? 'border-green-600 bg-green-100' : 'border-red-600 bg-red-100'} p-6 rounded-r-xl`}>
+                    <p className="text-black text-xl font-bold">
+                      {contextTaskAAnswer === contextScenario.taskA.correctAnswer ? 'Correct!' : 'Incorrect!'}
+                      The answer is <strong>{contextScenario.taskA.correctAnswer}</strong>.
+                    </p>
+                  </div>
+
+                  {contextShowHint && (
+                    <div className={`border-l-8 p-6 rounded-r-xl ${contextTaskAAnswer === contextScenario.taskA.correctAnswer
+                      ? 'border-blue-600 bg-blue-100'
+                      : 'border-yellow-600 bg-yellow-100'
+                      }`}>
+                      <h4 className={`font-bold text-lg mb-2 ${contextTaskAAnswer === contextScenario.taskA.correctAnswer
+                        ? 'text-blue-700'
+                        : 'text-yellow-700'
+                        }`}>
+                        {contextTaskAAnswer === contextScenario.taskA.correctAnswer
+                          ? '✅ CONTEXTUAL FEEDBACK PROVIDED:'
+                          : '💡 HELPFUL HINT PROVIDED:'
+                        }
+                      </h4>
+                      <p className="text-black text-lg font-bold">
+                        {contextTaskAAnswer === contextScenario.taskA.correctAnswer
+                          ? contextScenario.taskA.correctFeedback
+                          : contextScenario.taskA.incorrectHint
+                        }
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Task B - Only show after Task A is completed */}
+          {contextTaskAAnswer && (
+            <div className="border-4 border-green-600 rounded-xl p-8 bg-green-50 shadow-lg relative">
+              <div className="absolute -top-6 left-4 px-3 py-1 bg-green-600 text-white font-semibold rounded-md text-xs tracking-wider">
+                TASK B (IMMEDIATELY AFTER)
+              </div>
+              <div className="space-y-6">
+                <h3 className="text-2xl font-bold text-green-700 text-center mb-4">{contextScenario.taskB.question}</h3>
+
+                <div className="bg-black text-green-400 p-6 rounded-xl font-['IBM_Plex_Mono',monospace] text-lg border-4 border-black">
+                  <pre className="whitespace-pre-wrap">{contextScenario.taskB.code}</pre>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
+                  {contextScenario.taskB.options.map((option, index) => (
+                    <button
+                      key={index}
+                      onClick={() => !contextTaskBAnswer && handleTaskBAnswer(option)}
+                      disabled={!!contextTaskBAnswer}
+                      className={`px-6 py-4 border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide transition-all ${contextTaskBAnswer === option
+                        ? option === contextScenario.taskB.correctAnswer
+                          ? "bg-green-600 text-white"
+                          : "bg-red-600 text-white"
+                        : contextTaskBAnswer
+                          ? option === contextScenario.taskB.correctAnswer
+                            ? "bg-green-300 text-black"
+                            : "bg-gray-200 text-gray-500"
+                          : "bg-white text-black hover:bg-green-200 cursor-pointer transform hover:scale-105"
+                        }`}
+                    >
+                      {option}
+                    </button>
+                  ))}
+                </div>
+
+                {contextTaskBAnswer && (
+                  <div className="border-l-8 border-green-600 bg-green-100 p-6 rounded-r-xl">
+                    <p className="text-black text-xl font-bold">
+                      {contextTaskBAnswer === contextScenario.taskB.correctAnswer ? 'Correct!' : 'Incorrect!'}
+                      The answer is <strong>{contextScenario.taskB.correctAnswer}</strong>.
+                      {contextTaskBAnswer === contextScenario.taskB.correctAnswer && contextShowHint && (
+                        <span className="text-green-700">
+                          {' '}Great! You applied the contextual learning from Task A!
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* AFM vs Reality Comparison */}
+          {contextShowComparison && (
+            <div className="space-y-6">
+              <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
+                <div className="absolute -top-6 left-4 px-3 py-1 bg-purple-600 text-white font-semibold rounded-md text-xs tracking-wider">
+                  AFM VS REALITY
+                </div>
+                <div className="text-2xl font-bold text-black text-center mb-6">
+                  How AFM Misses Contextual Learning
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="border-4 border-blue-600 rounded-xl p-6 bg-blue-50">
+                    <h3 className="font-bold text-blue-700 text-lg font-mono uppercase mb-4 text-center">
+                      WHAT ACTUALLY HAPPENED
+                    </h3>
+                    <div className="space-y-3">
+                      <div className="bg-white p-4 border-2 border-blue-600 rounded-lg">
+                        <p className="text-black font-bold text-sm">
+                          Student received contextual feedback on Task A {contextTaskAAnswer === contextScenario.taskA.correctAnswer ? '(reinforcement)' : '(corrective hint)'}, carrying that knowledge into Task B
+                        </p>
+                      </div>
+                      <div className="bg-white p-4 border-2 border-blue-600 rounded-lg">
+                        <p className="text-black font-bold text-sm">
+                          Success on Task B was influenced by immediate contextual learning and timing
+                        </p>
+                      </div>
+                      <div className="bg-white p-4 border-2 border-blue-600 rounded-lg">
+                        <p className="text-black font-bold text-sm">
+                          This represents rapid learning from targeted contextual support
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="border-4 border-red-600 rounded-xl p-6 bg-red-50">
+                    <h3 className="font-bold text-red-700 text-lg font-mono uppercase mb-4 text-center">
+                      WHAT AFM SEES
+                    </h3>
+                    <div className="space-y-3">
+                      <div className="bg-white p-4 border-2 border-red-600 rounded-lg">
+                        <p className="text-black font-bold text-sm">
+                          Simply counts: 2 total opportunities for "Python For Loops"
+                        </p>
+                      </div>
+                      <div className="bg-white p-4 border-2 border-red-600 rounded-lg">
+                        <p className="text-black font-bold text-sm">
+                          Treats each attempt as an isolated event
+                        </p>
+                      </div>
+                      <div className="bg-white p-4 border-2 border-red-600 rounded-lg">
+                        <p className="text-black font-bold text-sm">
+                          Ignores contextual feedback, timing, and learning sequence completely
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
+                <div className="absolute -top-6 left-4 px-3 py-1 bg-orange-600 text-white font-semibold rounded-md text-xs tracking-wider">
+                  CONTEXT BLINDNESS CONSEQUENCES
+                </div>
+                <div className="text-center space-y-4">
+                  <div className="bg-orange-300 border-2 border-black px-6 py-4 inline-block">
+                    <span className="text-black font-bold text-xl font-mono">
+                      AFM CANNOT DETECT CONTEXTUAL LEARNING PATTERNS
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="border-l-4 border-orange-600 bg-orange-50 p-4">
+                      <h4 className="font-bold text-orange-700 mb-2">MISSED PATTERNS</h4>
+                      <ul className="text-sm text-black space-y-1">
+                        <li>• Rapid learning from feedback</li>
+                        <li>• Task sequence effects</li>
+                        <li>• Contextual support impact</li>
+                      </ul>
+                    </div>
+                    <div className="border-l-4 border-orange-600 bg-orange-50 p-4">
+                      <h4 className="font-bold text-orange-700 mb-2">POOR ADAPTATION</h4>
+                      <ul className="text-sm text-black space-y-1">
+                        <li>• Can't adapt feedback timing</li>
+                        <li>• Misses optimal hint moments</li>
+                        <li>• Ignores learning trajectories</li>
+                      </ul>
+                    </div>
+                    <div className="border-l-4 border-orange-600 bg-orange-50 p-4">
+                      <h4 className="font-bold text-orange-700 mb-2">LIMITED INSIGHTS</h4>
+                      <ul className="text-sm text-black space-y-1">
+                        <li>• Same estimate for hint vs random success</li>
+                        <li>• No personalized instruction</li>
+                        <li>• Reduced learning effectiveness</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-center space-x-4">
+                <button
+                  onClick={resetScenario}
+                  className="px-6 py-3 bg-white text-black border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-black hover:text-white transition-all transform hover:scale-105 font-mono"
+                >
+                  Try Again
+                </button>
+                <button
+                  onClick={backToOverview}
+                  className="px-6 py-3 bg-black text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-black transition-all transform hover:scale-105 font-mono"
+                >
+                  ← Return to Overview
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -1761,244 +1562,341 @@ print(second_largest([1, 3, 2, 5, 4]))`,
   );
 
   const renderItemDifficulty = () => {
-    const pythonProblems = [
-      {
+    // Two tasks with same knowledge component but very different difficulty
+    const taskComparison = {
+      easyTask: {
         id: 'easy',
         difficulty: 'Easy',
-        question: 'What will this Python code output?',
-        code: `x = 5
-y = 10
-print(x + y)`,
-        options: ['5', '10', '15', '25'],
-        correctAnswer: '15',
-        realDifficulty: 0.1, // 10% get this wrong
-        afmPrediction: 0.72 // AFM uses average across all items
+        // AFM has NO item difficulty parameter for this task
+        instruction: 'Complete this Python task:',
+        task: 'Assign the number 10 to a variable called x.',
+        code: `# Your task: Assign the number 10 to a variable called x
+# Write your answer below:
+
+`,
+        options: ['x = 10', 'x == 10', '10 = x', 'var x = 10'],
+        correctAnswer: 'x = 10',
+        skills: ['Using Variables in Python'],
+        afmPrediction: 0.72 // AFM gives same prediction for both tasks
       },
-      {
-        id: 'medium',
-        difficulty: 'Medium',
-        question: 'What will this Python code output?',
-        code: `numbers = [1, 2, 3, 4]
-result = sum(numbers) / len(numbers)
-print(result)`,
-        options: ['2.5', '10', '4', '2'],
-        correctAnswer: '2.5',
-        realDifficulty: 0.4, // 40% get this wrong
-        afmPrediction: 0.72 // Same AFM prediction
-      },
-      {
+      hardTask: {
         id: 'hard',
         difficulty: 'Hard',
-        question: 'What will this Python code output?',
-        code: `def mystery_func(lst):
-    return [x for x in lst if x % 2 == 0]
+        // AFM has NO item difficulty parameter for this task
+        instruction: 'Complete this Python task:',
+        task: 'Write a function that takes a list and returns all even numbers.',
+        code: `# Your task: Write a function that takes a list and returns all even numbers
+# Function should be named 'get_evens' and take parameter 'numbers'
+# Write your answer below:
 
-result = mystery_func([1, 2, 3, 4, 5, 6])
-print(len(result))`,
-        options: ['3', '6', '4', '2'],
-        correctAnswer: '3',
-        realDifficulty: 0.7, // 70% get this wrong
-        afmPrediction: 0.72 // Same AFM prediction
-      }
-    ];
-
-    const currentQ = pythonProblems[itemCurrentProblem];
-    const isCorrect = itemSelectedAnswer === currentQ.correctAnswer;
-
-    const handleAnswerSelect = (answer) => {
-      setItemSelectedAnswer(answer);
-      setItemShowFeedback(true);
-
-      if (!itemAttemptedProblems.includes(itemCurrentProblem)) {
-        setItemAttemptedProblems(prev => [...prev, itemCurrentProblem]);
+`,
+        options: [
+          'def get_evens(numbers):\n    return [x for x in numbers if x % 2 == 0]',
+          'def get_evens(numbers):\n    return numbers % 2 == 0',
+          'function get_evens(numbers):\n    return [x for x in numbers if x % 2 == 0]',
+          'def get_evens(numbers):\n    return numbers.filter(x % 2 == 0)'
+        ],
+        correctAnswer: 'def get_evens(numbers):\n    return [x for x in numbers if x % 2 == 0]',
+        skills: ['Using Variables in Python'], // Same KC as easy task!
+        afmPrediction: 0.72 // AFM gives same prediction for both tasks
       }
     };
 
-    const nextProblem = () => {
-      if (itemCurrentProblem < pythonProblems.length - 1) {
-        setItemCurrentProblem(prev => prev + 1);
-        setItemSelectedAnswer(null);
-        setItemShowFeedback(false);
+
+
+    // Show how AFM's lack of item difficulty parameters causes problems
+    const baseKCMastery = 0.72; // What AFM thinks the KC mastery is
+
+    // What the predictions SHOULD be if AFM had item difficulty parameters
+    // (using hypothetical difficulty values that would make sense)
+    const easyItemDifficulty = -1.8; // Variable assignment is very easy
+    const hardItemDifficulty = 1.4;  // Function writing is much harder
+
+    const calculateCorrectPrediction = (itemDifficulty) => {
+      return Math.max(0.05, Math.min(0.95,
+        1 / (1 + Math.exp(-(baseKCMastery * 3 - itemDifficulty)))
+      ));
+    };
+
+    const easyCorrectPrediction = calculateCorrectPrediction(easyItemDifficulty);
+    const hardCorrectPrediction = calculateCorrectPrediction(hardItemDifficulty);
+
+    const handleTaskAnswer = (taskType, answer) => {
+      if (taskType === 'easy') {
+        setEasyTaskAnswer(answer);
+        if (hardTaskAnswer !== null) {
+          setShowTaskComparison(true);
+        }
+      } else {
+        setHardTaskAnswer(answer);
+        if (easyTaskAnswer !== null) {
+          setShowTaskComparison(true);
+        }
       }
     };
 
     const resetSimulation = () => {
-      setItemCurrentProblem(0);
-      setItemSelectedAnswer(null);
-      setItemShowFeedback(false);
-      setItemAttemptedProblems([]);
+      setEasyTaskAnswer(null);
+      setHardTaskAnswer(null);
+      setShowTaskComparison(false);
     };
 
     return (
       <TechnicalLayout>
-        <div className="max-w-4xl mx-auto space-y-8">
+        <div className="max-w-6xl mx-auto space-y-8">
           <div className="text-center mb-6">
             <h1 className="text-3xl font-bold text-black mb-4 uppercase tracking-wide">
               Item Difficulty Limitation
             </h1>
             <p className="text-black text-xl font-bold leading-relaxed">
-              Try these Python problems of different difficulties.{" "}
+              Compare these two Python tasks that are mapped to the same knowledge component but have very different difficulty levels.{" "}
               <span className="text-yellow-600 font-bold underline decoration-4">
-                Notice how AFM gives the same prediction for all problems,
-                regardless of their actual difficulty.
+                Notice how AFM gives identical predictions despite the obvious difficulty difference.
               </span>
             </p>
           </div>
 
-          {/* AFM Prediction Display */}
+          {/* Knowledge Component Mapping */}
           <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
-            <div className="flex justify-between items-center mb-4">
-              <span className="text-2xl font-bold text-black uppercase tracking-wide">
-                AFM SUCCESS PREDICTION: {(currentQ.afmPrediction * 100).toFixed(0)}%
-              </span>
-              <div className="flex items-center space-x-4">
-                <span className="text-lg font-bold text-black">0%</span>
-                <div className="w-64 bg-gray-200 border-4 border-black rounded-none h-8 overflow-hidden">
-                  <div
-                    className="h-full bg-yellow-600 transition-all duration-1000 ease-out"
-                    style={{ width: `${currentQ.afmPrediction * 100}%` }}
-                  />
+            <h3 className="text-2xl font-bold text-black text-center mb-4 uppercase tracking-wide">
+              AFM's Knowledge Component Mapping
+            </h3>
+            <div className="grid grid-cols-3 gap-4 items-center">
+              <div className="text-center">
+                <div className="border-2 border-green-600 bg-green-50 p-4 rounded-lg">
+                  <div className="text-lg font-bold text-green-700 mb-2">Easy Task</div>
+                  <div className="text-sm text-black">"Assign variable x"</div>
                 </div>
-                <span className="text-lg font-bold text-black">100%</span>
+              </div>
+
+              <div className="text-center">
+                <div className="border-4 border-blue-600 bg-blue-100 p-4 rounded-lg">
+                  <div className="text-lg font-bold text-blue-700 mb-2">MAPPED TO SAME SKILL</div>
+                  <div className="text-xl font-bold text-black">"{taskComparison.easyTask.skills[0]}"</div>
+                  <div className="text-sm text-blue-700 mt-2">Therefore same prediction!</div>
+                </div>
+              </div>
+
+              <div className="text-center">
+                <div className="border-2 border-red-600 bg-red-50 p-4 rounded-lg">
+                  <div className="text-lg font-bold text-red-700 mb-2">Hard Task</div>
+                  <div className="text-sm text-black">"Write function"</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* AFM Beta Parameter Display */}
+          <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
+            <h3 className="text-2xl font-bold text-black text-center mb-4 uppercase tracking-wide">
+              AFM's Beta Parameter (KC Easiness)
+            </h3>
+            <div className="text-center mb-4">
+              <div className="border-4 border-blue-600 bg-blue-50 p-4 rounded-xl inline-block">
+                <div className="text-lg font-bold text-blue-700 mb-2">"{taskComparison.easyTask.skills[0]}" Knowledge Component</div>
+                <div className="text-3xl font-bold text-blue-600">β = 0.89</div>
+                <div className="text-sm font-mono text-blue-700 mt-2">
+                  (Beta parameter - KC easiness learned from all mapped tasks)
+                </div>
               </div>
             </div>
             <div className="text-center">
-              <span className="bg-yellow-300 px-4 py-2 border-2 border-black rounded font-bold">
-                SAME PREDICTION FOR ALL ITEMS!
+              <span className="bg-blue-200 px-4 py-2 border-2 border-black rounded font-bold text-black">
+                THIS SINGLE β VALUE IS USED FOR BOTH TASKS!
               </span>
             </div>
           </div>
 
-          {/* Problem Display */}
-          <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-3xl font-bold text-black uppercase tracking-tight">
-                {currentQ.question}
-              </h2>
-              <div className="text-right">
-                <div className={`px-4 py-2 border-2 border-black font-bold text-lg ${currentQ.difficulty === 'Easy' ? 'bg-green-300' :
-                  currentQ.difficulty === 'Medium' ? 'bg-yellow-300' : 'bg-red-300'
-                  }`}>
-                  {currentQ.difficulty} Problem
-                </div>
-                <div className="text-sm font-mono text-black mt-2">
-                  Real difficulty: {(currentQ.realDifficulty * 100).toFixed(0)}% failure rate
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-black text-green-400 p-6 rounded-xl font-['IBM_Plex_Mono',monospace] text-lg mb-8 border-4 border-black">
-              <pre className="whitespace-pre-wrap">{currentQ.code}</pre>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4 max-w-md mx-auto mb-8">
-              {currentQ.options.map((option, index) => (
-                <button
-                  key={index}
-                  onClick={() => !itemShowFeedback && handleAnswerSelect(option)}
-                  disabled={itemShowFeedback}
-                  className={`px-6 py-4 border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide transition-all ${itemSelectedAnswer === option
-                    ? isCorrect ? "bg-green-600 text-white" : "bg-red-600 text-white"
-                    : itemShowFeedback
-                      ? option === currentQ.correctAnswer ? "bg-green-300 text-black" : "bg-gray-200 text-gray-500 cursor-not-allowed"
-                      : "bg-white text-black hover:bg-yellow-400 cursor-pointer transform hover:scale-105"
-                    }`}
-                >
-                  {option}
-                </button>
-              ))}
-            </div>
-
-            {itemShowFeedback && (
-              <div className="space-y-6">
-                <div className={`border-l-8 ${isCorrect ? 'border-green-600 bg-green-100' : 'border-red-600 bg-red-100'} p-6 rounded-r-xl`}>
-                  <p className="text-black text-xl font-bold">
-                    {isCorrect ? 'Correct!' : 'Incorrect!'} The answer is <strong>{currentQ.correctAnswer}</strong>.
-                    {currentQ.difficulty === 'Hard' && !isCorrect && (
-                      <span className="text-red-700"> This was a difficult problem that {(currentQ.realDifficulty * 100).toFixed(0)}% of students get wrong!</span>
-                    )}
-                    {currentQ.difficulty === 'Easy' && isCorrect && (
-                      <span className="text-green-700"> This was an easy problem that most students get right.</span>
-                    )}
-                  </p>
-                </div>
-
-                <div className="border-l-8 border-yellow-600 bg-yellow-100 p-6 rounded-r-xl">
-                  <p className="text-black text-xl font-bold">
-                    <strong>AFM Problem:</strong> Even though this {currentQ.difficulty.toLowerCase()} problem has a real difficulty of {(currentQ.realDifficulty * 100).toFixed(0)}%,
-                    AFM still predicts {(currentQ.afmPrediction * 100).toFixed(0)}% success rate - the same as all other Python problems!
-                  </p>
-                </div>
-
-                <div className="flex justify-center space-x-4">
-                  {itemCurrentProblem < pythonProblems.length - 1 ? (
-                    <button
-                      onClick={nextProblem}
-                      className="px-8 py-4 bg-yellow-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-yellow-600 transition-all transform hover:scale-105"
-                    >
-                      Next Problem →
-                    </button>
-                  ) : (
-                    <div className="space-x-4">
-                      <button
-                        onClick={resetSimulation}
-                        className="px-8 py-4 bg-gray-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-gray-600 transition-all transform hover:scale-105"
-                      >
-                        Try Again
-                      </button>
-                      <button
-                        onClick={backToOverview}
-                        className="px-8 py-4 bg-black text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-black transition-all transform hover:scale-105"
-                      >
-                        ← Back to Overview
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Progress Display */}
+          {/* AFM Prediction Comparison */}
           <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
-            <div className="flex justify-between items-center">
-              <span className="text-lg font-bold text-black">
-                Problem {itemCurrentProblem + 1} of {pythonProblems.length}
-              </span>
-              <div className="flex space-x-2">
-                {pythonProblems.map((_, index) => (
+            <h3 className="text-2xl font-bold text-black text-center mb-4 uppercase tracking-wide">
+              AFM's Identical Predictions
+            </h3>
+            <div className="grid grid-cols-2 gap-8">
+              <div className="text-center">
+                <div className="text-lg font-bold text-black mb-2">Easy Task</div>
+                <div className="text-sm font-mono text-blue-600 mb-2">
+                  KC: {taskComparison.easyTask.skills[0]}
+                </div>
+                <div className="text-3xl font-bold text-yellow-600 mb-2">
+                  {(taskComparison.easyTask.afmPrediction * 100).toFixed(0)}%
+                </div>
+                <div className="w-full bg-gray-200 border-2 border-black h-6">
                   <div
-                    key={index}
-                    className={`w-4 h-4 border-2 border-black ${itemAttemptedProblems.includes(index) ? 'bg-yellow-600' :
-                      index === itemCurrentProblem ? 'bg-blue-600' : 'bg-gray-200'
-                      }`}
+                    className="h-full bg-yellow-600 transition-all duration-500"
+                    style={{ width: `${taskComparison.easyTask.afmPrediction * 100}%` }}
                   />
+                </div>
+                <div className="text-sm font-mono text-gray-600 mt-2">
+                  Uses only the KC's β parameter
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="text-lg font-bold text-black mb-2">Hard Task</div>
+                <div className="text-sm font-mono text-blue-600 mb-2">
+                  KC: {taskComparison.hardTask.skills[0]}
+                </div>
+                <div className="text-3xl font-bold text-yellow-600 mb-2">
+                  {(taskComparison.hardTask.afmPrediction * 100).toFixed(0)}%
+                </div>
+                <div className="w-full bg-gray-200 border-2 border-black h-6">
+                  <div
+                    className="h-full bg-yellow-600 transition-all duration-500"
+                    style={{ width: `${taskComparison.hardTask.afmPrediction * 100}%` }}
+                  />
+                </div>
+                <div className="text-sm font-mono text-gray-600 mt-2">
+                  Uses the same KC's β parameter
+                </div>
+              </div>
+            </div>
+            <div className="text-center mt-4">
+              <span className="bg-yellow-300 px-4 py-2 border-2 border-black rounded font-bold">
+                SAME KC BETA PARAMETER → IDENTICAL PREDICTIONS!
+              </span>
+            </div>
+          </div>
+
+          {/* Side-by-Side Task Comparison */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Easy Task */}
+            <div className="border-4 border-green-600 rounded-xl p-6 bg-green-50">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-2xl font-bold text-green-700 uppercase">Easy Task</h3>
+              </div>
+
+              <div className="text-lg font-bold text-black mb-3">
+                {taskComparison.easyTask.instruction}
+              </div>
+
+              <div className="bg-black text-green-400 p-4 rounded-lg font-mono text-sm mb-4">
+                <pre className="whitespace-pre-wrap">{taskComparison.easyTask.code}</pre>
+              </div>
+
+              <div className="grid grid-cols-1 gap-2 mb-4">
+                {taskComparison.easyTask.options.map((option, index) => (
+                  <button
+                    key={index}
+                    onClick={() => !showTaskComparison && handleTaskAnswer('easy', option)}
+                    disabled={showTaskComparison}
+                    className={`px-4 py-3 border-2 border-black rounded font-mono text-base transition-all text-left ${easyTaskAnswer === option
+                      ? option === taskComparison.easyTask.correctAnswer
+                        ? "bg-green-600 text-white"
+                        : "bg-red-600 text-white"
+                      : showTaskComparison
+                        ? option === taskComparison.easyTask.correctAnswer
+                          ? "bg-green-300 text-black"
+                          : "bg-gray-200 text-gray-500"
+                        : "bg-white text-black hover:bg-green-200 cursor-pointer"
+                      }`}
+                  >
+                    {option}
+                  </button>
                 ))}
               </div>
+
+              <div className="text-sm font-mono text-green-700">
+                Knowledge Component: {taskComparison.easyTask.skills.join(', ')}
+              </div>
+            </div>
+
+            {/* Hard Task */}
+            <div className="border-4 border-red-600 rounded-xl p-6 bg-red-50">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-2xl font-bold text-red-700 uppercase">Hard Task</h3>
+              </div>
+
+              <div className="text-lg font-bold text-black mb-3">
+                {taskComparison.hardTask.instruction}
+              </div>
+
+              <div className="bg-black text-green-400 p-4 rounded-lg font-mono text-sm mb-4">
+                <pre className="whitespace-pre-wrap">{taskComparison.hardTask.code}</pre>
+              </div>
+
+              <div className="grid grid-cols-1 gap-2 mb-4">
+                {taskComparison.hardTask.options.map((option, index) => (
+                  <button
+                    key={index}
+                    onClick={() => !showTaskComparison && handleTaskAnswer('hard', option)}
+                    disabled={showTaskComparison}
+                    className={`px-4 py-3 border-2 border-black rounded font-mono text-xs transition-all text-left ${hardTaskAnswer === option
+                      ? option === taskComparison.hardTask.correctAnswer
+                        ? "bg-green-600 text-white"
+                        : "bg-red-600 text-white"
+                      : showTaskComparison
+                        ? option === taskComparison.hardTask.correctAnswer
+                          ? "bg-green-300 text-black"
+                          : "bg-gray-200 text-gray-500"
+                        : "bg-white text-black hover:bg-red-200 cursor-pointer"
+                      }`}
+                  >
+                    <pre className="whitespace-pre-wrap">{option}</pre>
+                  </button>
+                ))}
+              </div>
+
+              <div className="text-sm font-mono text-red-700">
+                Knowledge Component: {taskComparison.hardTask.skills.join(', ')} (SAME as easy task!)
+              </div>
             </div>
           </div>
 
-          {/* Research Evidence */}
-          {itemAttemptedProblems.length === pythonProblems.length && (
-            <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
-              <div className="text-center space-y-4">
-                <div className="bg-red-300 border-2 border-black px-6 py-4 inline-block">
-                  <span className="text-black font-bold text-xl">
-                    RESEARCH EVIDENCE
-                  </span>
+          {/* Results and Analysis */}
+          {(easyTaskAnswer && hardTaskAnswer) && (
+            <div className="space-y-6">
+              <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
+                <h3 className="text-2xl font-bold text-black text-center mb-6 uppercase">
+                  AFM Parameter Bias Demonstration
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="border-l-8 border-yellow-600 bg-yellow-100 p-6 rounded-r-xl">
+                    <h4 className="font-bold text-yellow-700 text-lg mb-3">AFM'S LIMITATION</h4>
+                    <p className="text-black font-bold">
+                      AFM gives both tasks the same {(taskComparison.easyTask.afmPrediction * 100).toFixed(0)}% prediction
+                      because they use the same KC beta parameter (β = 0.89).
+                      AFM has no item difficulty parameters, so it can't distinguish between easy and hard tasks!
+                    </p>
+                  </div>
+
+                  <div className="border-l-8 border-orange-600 bg-orange-100 p-6 rounded-r-xl">
+                    <h4 className="font-bold text-orange-700 text-lg mb-3">PARAMETER BIAS</h4>
+                    <p className="text-black font-bold">
+                      The KC's beta parameter (β = 0.89) is a "blended average" absorbing difficulty from both tasks.
+                      Easy variable assignments and hard function writing both influence this single parameter,
+                      creating biased estimates that don't reflect true KC mastery!
+                    </p>
+                  </div>
+
+                  <div className="border-l-8 border-red-600 bg-red-100 p-6 rounded-r-xl">
+                    <h4 className="font-bold text-red-700 text-lg mb-3">CONFOUNDED ESTIMATES</h4>
+                    <p className="text-black font-bold">
+                      If a student gets the easy task correct but the hard task wrong, AFM cannot tell whether the mistake was due to
+                      not understanding "Using Variables in Python", or because writing functions is simply harder than variable assignment.
+                      The KC parameter becomes unreliable!
+                    </p>
+                  </div>
                 </div>
-                <div className="bg-red-100 border-4 border-red-600 rounded-xl p-6">
-                  <p className="text-black text-lg leading-relaxed font-bold">
-                    "Tasks with heterogeneous difficulty cause parameter bias in AFM,
-                    since the model cannot separate item and KC effects"
-                  </p>
-                  <p className="text-red-700 text-sm mt-4">
-                    — Educational Data Mining Research
-                  </p>
-                </div>
+              </div>
+
+              <div className="flex justify-center space-x-4">
+                <button
+                  onClick={resetSimulation}
+                  className="px-8 py-4 bg-gray-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-gray-600 transition-all transform hover:scale-105"
+                >
+                  Try Again
+                </button>
+                <button
+                  onClick={backToOverview}
+                  className="px-8 py-4 bg-black text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-black transition-all transform hover:scale-105"
+                >
+                  ← Back to Overview
+                </button>
               </div>
             </div>
           )}
+
         </div>
       </TechnicalLayout>
     );
@@ -2011,12 +1909,11 @@ print(len(result))`,
         question: 'What will this Python code output?',
         code: `for i in range(3):
     print(i)`,
-        options: ['0 1 2', '1 2 3', '0\n1\n2', 'Error'],
+        options: ['0 2 4', '1 2 3', '0\n1\n2', 'Error'],
         correctAnswer: '0\n1\n2',
-        correctMapping: ['Loops', 'Print Function'],
-        incorrectMapping: ['Python Programming'], // Too generic
-        afmPredictionCorrect: 0.78,
-        afmPredictionIncorrect: 0.65 // Biased due to wrong mapping
+        correctSkills: ['Loops', 'Print Function'], // Actually needed skills
+        incorrectSkills: ['Lists', 'Functions'], // Wrongly mapped skills
+        difficulty: 0.2 // 20% of students get this wrong
       },
       {
         id: 'list_problem',
@@ -2026,10 +1923,9 @@ data.append(4)
 print(len(data))`,
         options: ['3', '4', '7', 'Error'],
         correctAnswer: '4',
-        correctMapping: ['Lists', 'Methods'],
-        incorrectMapping: ['Python Programming'], // Too generic
-        afmPredictionCorrect: 0.72,
-        afmPredictionIncorrect: 0.65 // Same biased prediction
+        correctSkills: ['Lists', 'Methods'], // Actually needed skills
+        incorrectSkills: ['Loops', 'Print Function'], // Wrongly mapped skills
+        difficulty: 0.4 // 40% of students get this wrong
       },
       {
         id: 'function_problem',
@@ -2041,21 +1937,48 @@ result = double(5)
 print(result)`,
         options: ['5', '10', '25', 'Error'],
         correctAnswer: '10',
-        correctMapping: ['Functions', 'Return Values'],
-        incorrectMapping: ['Python Programming'], // Too generic
-        afmPredictionCorrect: 0.69,
-        afmPredictionIncorrect: 0.65 // Same biased prediction
+        correctSkills: ['Functions', 'Return Values'], // Actually needed skills
+        incorrectSkills: ['Lists', 'Methods'], // Wrongly mapped skills
+        difficulty: 0.6 // 60% of students get this wrong
       }
     ];
 
     const currentQ = pythonProblems[qMatrixCurrentProblem];
     const isCorrect = qMatrixSelectedAnswer === currentQ.correctAnswer;
-    const currentMapping = qMatrixViewMode === 'correct' ? currentQ.correctMapping : currentQ.incorrectMapping;
-    const currentPrediction = qMatrixViewMode === 'correct' ? currentQ.afmPredictionCorrect : currentQ.afmPredictionIncorrect;
+
+    // Calculate AFM prediction based on mapping and user performance
+    const calculateAFMPrediction = () => {
+      const currentSkills = qMatrixViewMode === 'correct' ? currentQ.correctSkills : currentQ.incorrectSkills;
+
+      // AFM averages the mastery of mapped skills (simplified for clarity)
+      const avgMastery = currentSkills.reduce((sum, skill) => sum + userSkillMastery[skill], 0) / currentSkills.length;
+
+      // Return the average mastery as the prediction (AFM's core logic)
+      return Math.max(0.1, Math.min(0.95, avgMastery));
+    };
+
+    const currentPrediction = calculateAFMPrediction();
 
     const handleAnswerSelect = (answer) => {
       setQMatrixSelectedAnswer(answer);
       setQMatrixShowFeedback(true);
+
+      // Update skill mastery based on performance (AFM: always increases)
+      const isAnswerCorrect = answer === currentQ.correctAnswer;
+      const relevantSkills = qMatrixViewMode === 'correct' ? currentQ.correctSkills : currentQ.incorrectSkills;
+
+      setUserSkillMastery(prev => {
+        const updated = { ...prev };
+        relevantSkills.forEach(skill => {
+          // AFM principle: any attempt increases skill mastery
+          if (isAnswerCorrect) {
+            updated[skill] = Math.min(0.95, updated[skill] + 0.15);
+          } else {
+            updated[skill] = Math.min(0.95, updated[skill] + 0.08); // Smaller increase for wrong answers
+          }
+        });
+        return updated;
+      });
 
       if (!qMatrixAttemptedProblems.includes(qMatrixCurrentProblem)) {
         setQMatrixAttemptedProblems(prev => [...prev, qMatrixCurrentProblem]);
@@ -2082,22 +2005,89 @@ print(result)`,
       setQMatrixShowFeedback(false);
       setQMatrixViewMode('incorrect');
       setQMatrixAttemptedProblems([]);
+      setUserSkillMastery({
+        'Loops': 0.5,
+        'Print Function': 0.5,
+        'Lists': 0.5,
+        'Methods': 0.5,
+        'Functions': 0.5,
+        'Return Values': 0.5
+      });
     };
+
+    const currentSkills = qMatrixViewMode === 'correct' ? currentQ.correctSkills : currentQ.incorrectSkills;
 
     return (
       <TechnicalLayout>
-        <div className="max-w-4xl mx-auto space-y-8">
+        <div className="max-w-5xl mx-auto space-y-8">
           <div className="text-center mb-6">
             <h1 className="text-3xl font-bold text-black mb-4 uppercase tracking-wide">
               Q-Matrix Quality Limitation
             </h1>
             <p className="text-black text-xl font-bold leading-relaxed">
-              See how incorrect skill mappings distort AFM predictions.{" "}
+              See how Q-matrix mapping quality affects which skills AFM updates when you answer questions.{" "}
               <span className="text-indigo-600 font-bold underline decoration-4">
-                Switch between correct and incorrect Q-matrix mappings
-                to observe the prediction changes.
+                Watch how correct mapping updates the RIGHT skills (green) while incorrect mapping updates the WRONG skills (red).
               </span>
             </p>
+          </div>
+
+          {/* Skill Mastery Display */}
+          <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
+            <h3 className="font-bold text-black text-lg mb-4 uppercase tracking-wide">
+              Current Skill Mastery (AFM's Internal Model):
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {['Loops', 'Print Function', 'Lists', 'Methods', 'Functions', 'Return Values'].map(skill => {
+                const isRelevantForCurrentTask = currentQ.correctSkills.includes(skill);
+                const isMappedToCurrentTask = qMatrixViewMode === 'correct'
+                  ? currentQ.correctSkills.includes(skill)
+                  : currentQ.incorrectSkills.includes(skill);
+
+                let borderColor, bgColor, textColor, statusText;
+
+                if (qMatrixViewMode === 'correct') {
+                  if (isRelevantForCurrentTask) {
+                    borderColor = 'border-green-600';
+                    bgColor = 'bg-green-50';
+                    textColor = 'text-green-700';
+                    statusText = '✓ Correctly mapped';
+                  } else {
+                    borderColor = 'border-gray-400';
+                    bgColor = 'bg-gray-50';
+                    textColor = 'text-gray-700';
+                    statusText = 'Not used for this task';
+                  }
+                } else {
+                  if (isMappedToCurrentTask) {
+                    borderColor = 'border-red-600';
+                    bgColor = 'bg-red-50';
+                    textColor = 'text-red-700';
+                    statusText = '✗ Incorrectly mapped!';
+                  } else {
+                    borderColor = 'border-gray-400';
+                    bgColor = 'bg-gray-50';
+                    textColor = 'text-gray-700';
+                    statusText = 'Not mapped';
+                  }
+                }
+
+                return (
+                  <div key={skill} className={`border-2 ${borderColor} ${bgColor} p-3 rounded`}>
+                    <div className={`text-sm font-bold ${textColor} mb-1`}>{skill}</div>
+                    <div className="text-lg font-bold text-black">{(userSkillMastery[skill] * 100).toFixed(0)}%</div>
+                    <div className="w-full bg-gray-200 border border-black h-2 mb-1">
+                      <div
+                        className={`h-full transition-all duration-500 ${qMatrixViewMode === 'correct' && isRelevantForCurrentTask ? 'bg-green-600' :
+                          qMatrixViewMode === 'incorrect' && isMappedToCurrentTask ? 'bg-red-600' : 'bg-gray-400'}`}
+                        style={{ width: `${userSkillMastery[skill] * 100}%` }}
+                      />
+                    </div>
+                    <div className={`text-xs ${textColor} font-bold`}>{statusText}</div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
           {/* Mapping Mode Toggle */}
@@ -2108,10 +2098,11 @@ print(result)`,
               </span>
               <button
                 onClick={toggleMapping}
+                disabled={qMatrixShowFeedback}
                 className={`px-6 py-3 border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide transition-all transform hover:scale-105 ${qMatrixViewMode === 'correct'
                   ? 'bg-green-600 text-white hover:bg-white hover:text-green-600'
                   : 'bg-red-600 text-white hover:bg-white hover:text-red-600'
-                  }`}
+                  } ${qMatrixShowFeedback ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 {qMatrixViewMode === 'correct' ? 'CORRECT MAPPING' : 'INCORRECT MAPPING'}
               </button>
@@ -2119,7 +2110,7 @@ print(result)`,
             <div className="text-center">
               <span className={`px-4 py-2 border-2 border-black rounded font-bold ${qMatrixViewMode === 'correct' ? 'bg-green-300' : 'bg-red-300'
                 }`}>
-                MAPPED TO: {currentMapping.join(', ')}
+                MAPPED TO: {currentSkills.join(', ')}
               </span>
             </div>
           </div>
@@ -2146,8 +2137,8 @@ print(result)`,
               <span className={`px-4 py-2 border-2 border-black rounded font-bold ${qMatrixViewMode === 'correct' ? 'bg-green-300' : 'bg-red-300'
                 }`}>
                 {qMatrixViewMode === 'correct'
-                  ? 'SPECIFIC SKILL TRACKING'
-                  : 'GENERIC MAPPING - PREDICTION BIAS!'
+                  ? 'ACCURATE SKILL-SPECIFIC PREDICTION'
+                  : 'GENERIC PREDICTION - ACCURACY LOST!'
                 }
               </span>
             </div>
@@ -2161,10 +2152,13 @@ print(result)`,
               </h2>
               <div className="text-right">
                 <div className="px-4 py-2 border-2 border-black font-bold text-lg bg-blue-300">
-                  Python Problem {qMatrixCurrentProblem + 1}
+                  Problem {qMatrixCurrentProblem + 1} of {pythonProblems.length}
                 </div>
                 <div className="text-sm font-mono text-black mt-2">
-                  Skill mapping affects prediction!
+                  Real Skills: {currentQ.correctSkills.join(', ')}
+                </div>
+                <div className="text-sm font-mono text-black">
+                  Difficulty: {(currentQ.difficulty * 100).toFixed(0)}% failure rate
                 </div>
               </div>
             </div>
@@ -2201,25 +2195,44 @@ print(result)`,
 
                 <div className={`border-l-8 border-indigo-600 bg-indigo-100 p-6 rounded-r-xl`}>
                   <p className="text-black text-xl font-bold">
-                    <strong>Q-Matrix Impact:</strong>
+                    <strong>AFM Learning Update:</strong>
                     {qMatrixViewMode === 'correct' ? (
-                      <span className="text-green-700"> With correct mapping to specific skills [{currentMapping.join(', ')}], AFM can make accurate predictions!</span>
+                      <span className="text-green-700"> With correct mapping, AFM updated the RIGHT skills for this task: {currentSkills.join(', ')}. These are the skills actually needed to solve this problem!</span>
                     ) : (
-                      <span className="text-red-700"> With incorrect generic mapping to [{currentMapping.join(', ')}], AFM loses important skill-specific information!</span>
+                      <span className="text-red-700"> With incorrect mapping, AFM updated the WRONG skills: {currentSkills.join(', ')}. These skills aren't actually needed for this task, leading to poor predictions!</span>
                     )}
                   </p>
                 </div>
 
+                {/* Show skill-specific feedback for correct mapping */}
+                {qMatrixViewMode === 'correct' && (
+                  <div className="border-l-8 border-green-600 bg-green-100 p-6 rounded-r-xl">
+                    <p className="text-black text-lg font-bold mb-2">
+                      Skills Updated:
+                    </p>
+                    <div className="grid grid-cols-2 gap-2">
+                      {currentSkills.map(skill => (
+                        <div key={skill} className="bg-white border-2 border-green-600 p-2 rounded">
+                          <span className="text-green-700 font-bold">{skill}</span>
+                          <span className="text-black"> → {(userSkillMastery[skill] * 100).toFixed(0)}%</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 <div className="flex justify-center space-x-4">
-                  <button
-                    onClick={toggleMapping}
-                    className={`px-6 py-3 border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide transition-all transform hover:scale-105 ${qMatrixViewMode === 'correct'
-                      ? 'bg-red-600 text-white hover:bg-white hover:text-red-600'
-                      : 'bg-green-600 text-white hover:bg-white hover:text-green-600'
-                      }`}
-                  >
-                    Switch to {qMatrixViewMode === 'correct' ? 'Incorrect' : 'Correct'} Mapping
-                  </button>
+                  {!qMatrixAttemptedProblems.includes(qMatrixCurrentProblem) && (
+                    <button
+                      onClick={toggleMapping}
+                      className={`px-6 py-3 border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide transition-all transform hover:scale-105 ${qMatrixViewMode === 'correct'
+                        ? 'bg-red-600 text-white hover:bg-white hover:text-red-600'
+                        : 'bg-green-600 text-white hover:bg-white hover:text-green-600'
+                        }`}
+                    >
+                      Switch to {qMatrixViewMode === 'correct' ? 'Incorrect' : 'Correct'} Mapping
+                    </button>
+                  )}
 
                   {qMatrixCurrentProblem < pythonProblems.length - 1 ? (
                     <button
@@ -2272,19 +2285,14 @@ print(result)`,
           {qMatrixAttemptedProblems.length === pythonProblems.length && (
             <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
               <div className="text-center space-y-4">
-                <div className="bg-indigo-300 border-2 border-black px-6 py-4 inline-block">
-                  <span className="text-black font-bold text-xl">
-                    RESEARCH EVIDENCE
-                  </span>
-                </div>
-                <div className="bg-indigo-100 border-4 border-indigo-600 rounded-xl p-6">
-                  <p className="text-black text-lg leading-relaxed font-bold">
-                    "AFM's results are highly sensitive to Q-matrix definition, and errors
-                    propagate to all model outputs"
-                  </p>
-                  <p className="text-indigo-700 text-sm mt-4">
-                    — Multiple Educational Data Mining Studies
-                  </p>
+                <div className="border-l-4 border-red-600 bg-red-50 p-4">
+                  <h4 className="font-bold text-xl text-red-700 mb-2">Q-MATRIX PROBLEMS</h4>
+                  <ul className="text-lg font-bold text-black space-y-1">
+                    <li>• Updates irrelevant skills</li>
+                    <li>• Misleading predictions</li>
+                    <li>• Wrong intervention recommendations</li>
+                    <li>• Systematic assessment bias</li>
+                  </ul>
                 </div>
               </div>
             </div>

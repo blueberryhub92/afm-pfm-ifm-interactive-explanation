@@ -38,7 +38,7 @@ export const Slide17LearningRateExplanation = ({ scroll }) => {
   };
 
   const taskDifficultySimulation = {
-    title: "Task Difficulty Analysis",
+    title: "Skill Difficulty Analysis",
     subtitle: "UNIFORM LEARNING RATES • VARIABLE TASK COMPLEXITY",
     tasks: [
       {
@@ -461,7 +461,7 @@ for perm in perms:
         }
       };
     } else {
-      // Task Difficulty Simulation - Same concept type but different difficulty levels
+      // Skill Difficulty Simulation - Same concept type but different difficulty levels
       const easyTasks = [
         {
           code: `# ITERATION ${currentTry}: SIMPLE ARITHMETIC - BASIC ADDITION
@@ -736,7 +736,7 @@ print(f"Probability: {probability:.4f} or {probability*100:.2f}%")`,
         </div>
         <p className="text-black text-lg font-bold leading-relaxed mb-4">
           <span className="bg-yellow-200 px-2 py-1 border-2 border-yellow-600 rounded text-yellow-800 font-bold">
-            Learning Rate ≠ Task Difficulty
+            Learning Rate ≠ Skill Difficulty
           </span>
           . A task can have fast learning rate but still be highly difficult overall.
         </p>
@@ -751,7 +751,7 @@ print(f"Probability: {probability:.4f} or {probability*100:.2f}%")`,
           <div className="bg-red-100 border-2 border-red-600 rounded-lg p-3">
             <div className="font-bold text-red-800 text-sm flex items-center gap-2">
               <Target className="w-4 h-4" />
-              Task Difficulty
+              Skill Difficulty
             </div>
             <div className="text-red-900 text-xs mt-1">Inherent conceptual difficulty - how hard the skill is to learn in the first place</div>
           </div>
@@ -764,7 +764,7 @@ print(f"Probability: {probability:.4f} or {probability*100:.2f}%")`,
           <h3 className="text-xl font-bold text-purple-700 uppercase tracking-wide">Next: Interactive Simulation</h3>
         </div>
         <p className="text-black text-lg font-bold leading-relaxed">
-          In the next section, you'll simulate different effects of learning rate and task difficulty on success probability. You'll see how these two parameters affect the AFM formula differently.
+          In the next section, you'll simulate different effects of learning rate and skill difficulty on success probability. You'll see how these two parameters affect the AFM formula differently.
         </p>
       </div>
     </div>
@@ -775,7 +775,7 @@ print(f"Probability: {probability:.4f} or {probability*100:.2f}%")`,
       {/* Introduction */}
       <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
         <p className="text-lg text-black leading-relaxed text-center">
-          <strong>Learning Rate vs Task Difficulty:</strong> Toggle the demos to see what effect learning rate and task difficulty have on AFM.
+          <strong>Learning Rate vs Skill Difficulty:</strong> Toggle the demos to see what effect learning rate and skill difficulty have on AFM.
         </p>
       </div>
 
@@ -798,7 +798,7 @@ print(f"Probability: {probability:.4f} or {probability*100:.2f}%")`,
               : 'text-black bg-white hover:bg-gray-100'
               }`}
           >
-            TASK DIFFICULTY DEMO
+            SKILL DIFFICULTY DEMO
           </button>
         </div>
       </div>
@@ -973,7 +973,7 @@ print(f"Probability: {probability:.4f} or {probability*100:.2f}%")`,
       <div className="border-b-8 border-black bg-purple-400 px-8 py-6 shadow-lg">
         <div className="flex items-center justify-center">
           <span className="text-black font-bold text-2xl uppercase tracking-wider">
-            {currentStep === 0 ? "Learning Rate vs Task Difficulty" : "Parameter Comparison"}
+            {currentStep === 0 ? "Learning Rate vs Skill Difficulty" : "Parameter Comparison"}
           </span>
         </div>
       </div>

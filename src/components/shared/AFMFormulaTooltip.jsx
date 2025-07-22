@@ -63,7 +63,7 @@ export const AFMFormulaTooltip = ({ stage }) => {
   );
 
   const renderStage3 = () => (
-    // Stage 3: Add task difficulty (β part) - simplified
+    // Stage 3: Add skill difficulty (β part) - simplified
     <div className="flex items-center justify-center space-x-1 flex-wrap">
       <span className="font-bold text-lg text-green-600">P(success)</span>
       <span className="mx-2 font-bold text-xl">=</span>
@@ -164,7 +164,7 @@ export const AFMFormulaTooltip = ({ stage }) => {
 
   const renderExamples = () => {
     const examples = [];
-    
+
     if (stage >= 2) {
       examples.push(
         <div key="theta" className="flex items-center gap-2">
@@ -176,7 +176,7 @@ export const AFMFormulaTooltip = ({ stage }) => {
         </div>
       );
     }
-    
+
     if (stage >= 3) {
       examples.push(
         <div key="T" className="flex items-center gap-2">
@@ -188,7 +188,7 @@ export const AFMFormulaTooltip = ({ stage }) => {
         </div>
       );
     }
-    
+
     if (stage >= 4) {
       examples.push(
         <div key="beta" className="flex items-center gap-2">
@@ -196,11 +196,11 @@ export const AFMFormulaTooltip = ({ stage }) => {
           <sub className="text-xs font-bold">k</sub>
           <span className="text-gray-600">=</span>
           <span className="font-mono text-sm bg-purple-50 px-2 py-1 rounded border">-0.8</span>
-          <span className="text-xs text-gray-500">(task difficulty)</span>
+          <span className="text-xs text-gray-500">(skill difficulty)</span>
         </div>
       );
     }
-    
+
     if (stage >= 5) {
       examples.push(
         <div key="gamma" className="flex items-center gap-2">
@@ -256,7 +256,7 @@ export const AFMFormulaTooltip = ({ stage }) => {
       case 3:
         return "+ Practice Opportunities (T)";
       case 4:
-        return "+ Task Difficulty (β)";
+        return "+ Skill Difficulty (β)";
       case 5:
         return "+ Learning Rate (γ)";
       case 6:
@@ -281,7 +281,7 @@ export const AFMFormulaTooltip = ({ stage }) => {
         <button className="bg-black text-white p-3 rounded-full shadow-lg hover:bg-gray-800 transition-colors">
           <StageIcon className="w-5 h-5" />
         </button>
-        
+
         {/* Tooltip content for narrow screens */}
         <div className="absolute bottom-full right-0 mb-2 w-80 max-w-[90vw] bg-white border-4 border-black rounded-xl shadow-xl p-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0">
           {/* Header */}
@@ -291,7 +291,7 @@ export const AFMFormulaTooltip = ({ stage }) => {
               {getStageTitle()}
             </div>
           </div>
-          
+
           {/* Formula content */}
           <div className="text-black font-['IBM_Plex_Mono',monospace] select-none mb-3 overflow-x-auto">
             <div className="min-w-fit text-sm">
@@ -324,7 +324,7 @@ export const AFMFormulaTooltip = ({ stage }) => {
               {getStageTitle()}
             </div>
           </div>
-          
+
           {/* Formula content */}
           <div className="text-black font-['IBM_Plex_Mono',monospace] select-none mb-3 overflow-x-auto">
             <div className="min-w-fit text-sm">

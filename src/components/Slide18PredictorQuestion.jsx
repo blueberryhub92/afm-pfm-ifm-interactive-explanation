@@ -38,7 +38,7 @@ export const Slide18PredictorQuestion = ({ scroll }) => {
 
   const options = [
     { value: "student ability", label: "Student Ability", icon: <Brain className="w-5 h-5" />, color: "blue" },
-    { value: "task difficulty", label: "Task Difficulty", icon: <Target className="w-5 h-5" />, color: "purple" },
+    { value: "skill difficulty", label: "Skill Difficulty", icon: <Target className="w-5 h-5" />, color: "purple" },
     { value: "practice opportunities", label: "Practice Opportunities", icon: <Play className="w-5 h-5" />, color: "green" },
     { value: "learning rate", label: "Learning Rate", icon: <TrendingUp className="w-5 h-5" />, color: "orange" }
   ];
@@ -288,7 +288,7 @@ export const Slide18PredictorQuestion = ({ scroll }) => {
         </div>
         <div className="border-l-4 border-purple-600 bg-purple-100 px-3 py-2 rounded-r-lg">
           <div className="font-bold text-purple-800 text-sm">β (beta)</div>
-          <div className="text-purple-700 text-xs font-mono">Task difficulty - fixed during session</div>
+          <div className="text-purple-700 text-xs font-mono">Skill difficulty - fixed during session</div>
         </div>
         <div className="border-l-4 border-orange-600 bg-orange-100 px-3 py-2 rounded-r-lg">
           <div className="font-bold text-orange-800 text-sm">γ (gamma)</div>

@@ -44,7 +44,7 @@ const SLIDE_TITLES = [
   "Quiz Result",
   "Opportunity Choices",
   "Two Python Tasks",
-  "Task Difficulty Question",
+  "Skill Difficulty Question",
   "Beta Parameter",
   "Two More Python Tasks",
   "Learning Rate Question",
@@ -438,7 +438,7 @@ function AFMLearningAppContent() {
       return showTellMe ? 3 : 2;
     }
     if (slideIndex > 6 && slideIndex < 10) return 3; // θ + T
-    if (slideIndex >= 10 && slideIndex < 13) return 4; // θ + β + T (task difficulty from Slide14)
+    if (slideIndex >= 10 && slideIndex < 13) return 4; // θ + β + T (skill difficulty from Slide14)
     if (slideIndex >= 13 && slideIndex < 14) return 5; // θ + β + γ + T (learning rate from Slide17)
     if (slideIndex === 14) return 6; // Full formula (from Slide20)
     return 0; // No formula

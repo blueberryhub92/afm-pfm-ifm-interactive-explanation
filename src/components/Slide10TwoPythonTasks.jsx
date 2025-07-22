@@ -413,7 +413,7 @@ print(total)
             These tasks are optional - you can skip them and continue to the next section anytime.
           </p>
           <p className="text-md text-black text-center mt-2 font-bold">
-            The difference between the tasks is the task difficulty.
+            The difference between the tasks is the skill difficulty.
           </p>
         </div>
 

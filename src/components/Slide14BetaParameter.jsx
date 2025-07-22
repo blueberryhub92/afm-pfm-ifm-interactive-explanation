@@ -26,15 +26,15 @@ export const Slide14BetaParameter = ({ scroll }) => {
             BETA PARAMETER (β)
           </div>
           <div className="text-xl md:text-2xl font-bold tracking-tight text-black mb-6">
-            Understanding Task Difficulty
+            Understanding Skill Difficulty
           </div>
 
           <div className="space-y-6 text-lg leading-relaxed">
             <p className="text-black">
               We measure how hard a skill is to learn with{" "}
               <span className="bg-purple-200 px-2 py-1 rounded font-bold border-2 border-purple-600">
-                task difficulty (β)
-              </span>, which represents how hard a specific skill is to master. In practice, this is estimated from aggregated student performance data - skills that most students find difficult have more negative β values.
+                skill difficulty (β)
+              </span>, which represents how hard a specific skill is to master, and is estimated from student performance data aggregated over tasks linked to the skill.
             </p>
 
             <div className="border-l-8 border-red-500 bg-red-50 p-4 rounded-r-lg">
@@ -43,7 +43,7 @@ export const Slide14BetaParameter = ({ scroll }) => {
                 <span className="font-bold text-red-700">Lower β (Harder Skills)</span>
               </div>
               <p className="text-black">
-                A lower β suggests that the skill is harder to learn, so it's less likely that the student will answer a task on the same concept correctly on the next try.
+                A lower β suggests that the skill is harder to learn, so it's less likely that the student will answer a task on the same skill correctly on the next try.
               </p>
             </div>
           </div>
@@ -84,7 +84,7 @@ export const Slide14BetaParameter = ({ scroll }) => {
                 <option value="more">more</option>
                 <option value="less">less</option>
               </select>{" "}
-              likely that the student will answer a task on the same concept correctly on the next try.
+              likely that the student will answer a task on the same skill correctly on the next try.
             </div>
           </div>
         </div>

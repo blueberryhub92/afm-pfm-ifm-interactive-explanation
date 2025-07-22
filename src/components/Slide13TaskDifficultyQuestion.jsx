@@ -99,8 +99,8 @@ export const Slide13TaskDifficultyQuestion = ({
             </div>
             <div className="text-lg leading-relaxed text-black">
               The for loop task is more challenging because it requires understanding
-              <span className="font-bold bg-yellow-200 px-1 rounded ml-1">multiple concepts working together</span>:
-              loop syntax, the range() function, variable accumulation, and logical flow control.
+              <span className="font-bold bg-yellow-200 px-1 rounded ml-1">multiple concepts or skills working together</span>:
+              loop syntax, the range() function, variable accumulation, and logical flow control. All of these skills have their own inherent difficulty in AFM and add up to make the task more difficult.
             </div>
             <div className="mt-4 text-lg leading-relaxed text-black">
               Variable declaration is more straightforward - it's just
