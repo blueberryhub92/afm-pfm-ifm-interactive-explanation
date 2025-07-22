@@ -223,6 +223,16 @@ export const Slide24PFMSimulation = ({ scroll }) => {
         // eslint-disable-next-line
     }, [responseLog, params.theta, params.beta, params.gammaSuccess, params.gammaFailure]);
 
+    // Clear highlight after 3 seconds
+    useEffect(() => {
+        if (lastChangedParam) {
+            const timer = setTimeout(() => {
+                setLastChangedParam(null);
+            }, 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [lastChangedParam]);
+
     // Track slide entry
     useEffect(() => {
         trackCustomEvent('pfm_dynamic_simulator_entered', {
@@ -537,6 +547,99 @@ export const Slide24PFMSimulation = ({ scroll }) => {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         {/* Left Column - Parameters */}
                         <div className="space-y-8">
+                            {/* Formula */}
+                            <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
+                                <div className="flex items-center gap-3 mb-6">
+                                    <Calculator className="w-6 h-6 text-blue-700" />
+                                    <h3 className="text-xl font-bold text-black uppercase tracking-wide">
+                                        PFM Formula
+                                    </h3>
+                                </div>
+
+                                {/* Live Formula Display */}
+                                <div className="text-center mb-6 p-6 bg-gray-50 border-4 border-black rounded-lg space-y-4">
+                                    <div className="text-2xl font-bold text-black mb-4">
+                                        P(success) = {(currentProb * 100).toFixed(1)}%
+                                    </div>
+
+                                    <div className="border-t-2 border-gray-300 pt-4">
+                                        <div className="text-lg font-bold mb-2">Step-by-step:</div>
+
+                                        {/* Step 1: Formula */}
+                                        <div className="text-base font-mono mb-2">
+                                            <strong>1.</strong> P(success) = 1 / (1 + e<sup>-logit</sup>)
+                                        </div>
+
+                                        {/* Step 2: Logit formula */}
+                                        <div className="text-base font-mono mb-2">
+                                            <strong>2.</strong> logit = θ - β + γs × S + γf × F
+                                        </div>
+
+                                        {/* Step 3: Substitute values */}
+                                        <div className="text-base font-mono mb-2">
+                                            <strong>3.</strong> logit =
+                                            <span className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor('theta')}`}>
+                                                {params.theta.toFixed(1)}
+                                            </span>
+                                            -
+                                            <span className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor('beta')}`}>
+                                                ({params.beta.toFixed(1)})
+                                            </span>
+                                            +
+                                            <span className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor('gammaSuccess')}`}>
+                                                {params.gammaSuccess.toFixed(2)}
+                                            </span>
+                                            ×
+                                            <span className="mx-1 px-2 py-1 rounded font-bold bg-green-200 text-green-800">
+                                                {currentSuccesses}
+                                            </span>
+                                            +
+                                            <span className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor('gammaFailure')}`}>
+                                                ({params.gammaFailure.toFixed(2)})
+                                            </span>
+                                            ×
+                                            <span className="mx-1 px-2 py-1 rounded font-bold bg-red-200 text-red-800">
+                                                {currentFailures}
+                                            </span>
+                                        </div>
+
+                                        {/* Step 4: Calculate logit */}
+                                        <div className="text-base font-mono mb-2">
+                                            <strong>4.</strong> logit = {(params.theta - params.beta + params.gammaSuccess * currentSuccesses + params.gammaFailure * currentFailures).toFixed(3)}
+                                        </div>
+
+                                        {/* Step 5: Final probability */}
+                                        <div className="text-lg font-bold text-blue-600 border-t-2 border-blue-300 pt-2">
+                                            <strong>5.</strong> P(success) = {(currentProb * 100).toFixed(1)}%
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Parameter Legend */}
+                                <div className="grid grid-cols-2 gap-4 text-sm">
+                                    <div className="space-y-2">
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-4 h-4 bg-blue-200 border-2 border-blue-700 rounded"></div>
+                                            <span className="font-bold text-blue-700">θ = Student Ability</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-4 h-4 bg-purple-200 border-2 border-purple-700 rounded"></div>
+                                            <span className="font-bold text-purple-700">β = Task Difficulty</span>
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-4 h-4 bg-green-200 border-2 border-green-700 rounded"></div>
+                                            <span className="font-bold text-green-700">γs = Success Rate</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-4 h-4 bg-red-200 border-2 border-red-700 rounded"></div>
+                                            <span className="font-bold text-red-700">γf = Failure Rate</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             {/* Current Status */}
                             <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
                                 <div className="flex items-center gap-3 mb-6">

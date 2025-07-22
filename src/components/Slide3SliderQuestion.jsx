@@ -1,135 +1,136 @@
-import { useState } from "react";
-import { Target, TrendingUp, Lightbulb, Code } from "lucide-react";
+import { useState, useEffect } from 'react';
+import { Lightbulb, TrendingUp, Target, CheckCircle } from 'lucide-react';
+import { trackButtonClick, trackQuizAnswer, trackSliderInteraction, trackTimeSpent } from '../utils/analytics';
+import { SlideTracker, TrackedButton, TrackedSlider } from './shared/SlideTracker';
 
-export const Slide3SliderQuestion = ({ scroll, onDoneClick }) => {
+export const Slide3SliderQuestion = ({ scroll }) => {
   const [sliderValue, setSliderValue] = useState(50);
-  const [showAfmSection, setShowAfmSection] = useState(false);
-  const [hoveredTerm, setHoveredTerm] = useState(null);
+  const [startTime] = useState(Date.now());
 
-  const handleDoneClick = () => {
-    setShowAfmSection(true);
-    // Notify parent component that Done was clicked
-    if (onDoneClick) {
-      onDoneClick();
-    }
+  const handleSliderChange = (value) => {
+    const previousValue = sliderValue;
+    setSliderValue(value);
+
+    trackSliderInteraction('probability_slider', value, {
+      previousValue,
+      questionType: 'probability_estimation',
+      slideNumber: 3
+    });
   };
 
+  const handleSubmit = () => {
+    const timeSpent = Date.now() - startTime;
+
+    // Track the quiz answer
+    trackQuizAnswer('probability_estimation', sliderValue, null, timeSpent);
+
+    // Track time spent on slide
+    trackTimeSpent('slide_3_slider', timeSpent, 'interactive');
+
+    // Navigate to next slide
+    scroll(4);
+  };
+
+  useEffect(() => {
+    // Track when user views this question
+    trackTimeSpent('slide_3_view', 0, 'passive');
+  }, []);
+
   return (
-    <div className="bg-white min-h-screen flex flex-col items-center justify-center py-8 px-4 md:px-10 text-black font-['IBM_Plex_Mono',monospace]">
-      <div className="w-full max-w-4xl mx-auto flex flex-col items-center gap-8">
+    <SlideTracker
+      slideNumber={3}
+      slideName="Slider Question"
+      trackMouse={true}
+      trackScrolling={true}
+      trackEngagement={true}
+    >
+      <div className="bg-white min-h-screen flex flex-col items-center py-8 px-4 md:px-10 text-black font-mono">
+        <div className="w-full max-w-4xl mx-auto flex flex-col gap-8">
 
-        {/* Main Question Block with Slider */}
-        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg w-full max-w-3xl relative">
-          <div className="absolute -top-6 left-6 px-4 py-2 bg-black text-white font-semibold rounded-md text-sm tracking-wider flex items-center gap-2">
-            <Target className="w-4 h-4" />
-            PROBABILITY ESTIMATION
+          {/* Header */}
+          <div className="text-center border-4 border-black rounded-xl p-6 bg-white shadow-lg">
+            <h2 className="text-4xl font-bold text-black mb-4 tracking-tight">
+              Probability Estimation
+            </h2>
+            <p className="text-lg text-black font-mono">
+              Use the slider below to estimate your probability of success.
+            </p>
           </div>
 
-          <div className="text-xl md:text-2xl font-semibold tracking-tight text-black text-center mb-6 leading-relaxed">
-            What do you think the chances are that someone who doesn't know Python would have guessed the answer correctly by chance?
+          {/* Question */}
+          <div className="border-4 border-blue-600 rounded-xl p-8 bg-blue-50 shadow-lg">
+            <div className="flex items-center gap-3 mb-6">
+              <Target className="w-8 h-8 text-blue-600" />
+              <h3 className="text-2xl font-bold text-blue-700 tracking-tight">Question</h3>
+            </div>
+
+            <p className="text-xl text-black leading-relaxed mb-8 font-bold">
+              What do you think is the probability that you will answer the next programming question correctly?
+            </p>
+
+            {/* Slider Section */}
+            <div className="bg-white border-4 border-blue-600 rounded-xl p-8">
+              <div className="mb-6">
+                <label className="block text-lg font-bold text-black mb-4">
+                  Your probability: <span className="text-blue-600">{sliderValue}%</span>
+                </label>
+
+                <div className="relative">
+                  <TrackedSlider
+                    trackingId="probability_estimation_slider"
+                    value={sliderValue}
+                    onChange={handleSliderChange}
+                    min={0}
+                    max={100}
+                    step={1}
+                    className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                    trackingContext={{
+                      questionType: 'probability_estimation',
+                      slideNumber: 3
+                    }}
+                  />
+
+                  {/* Slider Labels */}
+                  <div className="flex justify-between mt-3 text-sm font-bold text-gray-600">
+                    <span>0% (Very Unlikely)</span>
+                    <span>50% (Uncertain)</span>
+                    <span>100% (Very Likely)</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Visual Feedback */}
+              <div className="mt-6 p-4 border-2 border-gray-300 rounded-lg bg-gray-50">
+                <div className="flex items-center gap-3 mb-2">
+                  <Lightbulb className="w-5 h-5 text-yellow-600" />
+                  <span className="font-bold text-gray-700">Your Confidence Level:</span>
+                </div>
+                <div className="text-lg font-bold">
+                  {sliderValue < 30 && <span className="text-red-600">Low Confidence</span>}
+                  {sliderValue >= 30 && sliderValue < 70 && <span className="text-yellow-600">Moderate Confidence</span>}
+                  {sliderValue >= 70 && <span className="text-green-600">High Confidence</span>}
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* Single Slider Container Box */}
-          <div className="border-2 border-black rounded-xl p-6 bg-neutral-50 space-y-6">
-
-            <div className="text-center mb-4">
-              <p className="text-lg font-bold text-neutral-700 uppercase tracking-wide">
-                Drag the slider!
-              </p>
-            </div>
-
-            {/* Slider Labels */}
-            <div className="flex justify-between text-base font-bold text-black border-2 border-black rounded p-3 bg-white">
-              <span className="uppercase tracking-wide">Pretty Small</span>
-              <span className="uppercase tracking-wide">Pretty Big</span>
-            </div>
-
-            {/* Slider */}
-            <div className="relative">
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={sliderValue}
-                onChange={(e) => setSliderValue(e.target.value)}
-                className="w-full h-4 bg-gradient-to-r from-red-400 via-yellow-400 to-orange-500 rounded-lg appearance-none cursor-pointer border-2 border-black shadow-lg"
-                style={{
-                  background: `linear-gradient(to right, #f87171 0%, #fbbf24 50%, #fb923c 100%)`,
-                }}
-              />
-              <style jsx>{`
-                input[type="range"]::-webkit-slider-thumb {
-                  appearance: none;
-                  width: 24px;
-                  height: 24px;
-                  background: black;
-                  border: 2px solid white;
-                  border-radius: 50%;
-                  cursor: pointer;
-                  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                }
-                input[type="range"]::-moz-range-thumb {
-                  width: 24px;
-                  height: 24px;
-                  background: black;
-                  border: 2px solid white;
-                  border-radius: 50%;
-                  cursor: pointer;
-                  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                }
-                input[type="range"]:focus {
-                  outline: none;
-                }
-              `}</style>
-            </div>
+          {/* Continue Button */}
+          <div className="text-center">
+            <TrackedButton
+              onClick={handleSubmit}
+              trackingName="submit_probability_estimate"
+              trackingContext={{
+                sliderValue,
+                timeSpent: Date.now() - startTime,
+                slideNumber: 3
+              }}
+              className="px-12 py-4 bg-blue-600 text-white border-4 border-black rounded-xl hover:bg-white hover:text-blue-600 transition-all text-xl font-bold uppercase tracking-wider shadow-lg"
+            >
+              Continue →
+            </TrackedButton>
           </div>
         </div>
-
-        {/* Action Button */}
-        <button
-          onClick={handleDoneClick}
-          className="px-12 py-4 bg-red-600 text-white border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide hover:bg-white hover:text-red-600 hover:border-red-600 transition-all duration-200 shadow-lg"
-        >
-          Done
-        </button>
-
-        {/* AFM Introduction Section - Appears after clicking Done */}
-        {showAfmSection && (
-          <>
-            <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative w-full max-w-3xl">
-              <div className="absolute -top-6 left-6 px-4 py-2 bg-black text-white font-semibold rounded-md text-sm tracking-wider flex items-center gap-2">
-                <Lightbulb className="w-4 h-4" />
-                AFM INTRODUCTION
-              </div>
-              <div className="space-y-6 text-lg font-semibold leading-relaxed">
-                <p className="text-black border-l-4 border-green-600 pl-4">
-                  If you said pretty small, you'd be right.
-                </p>
-                <p className="text-black">
-                  So what does this have to do with <span className="bg-yellow-200 px-2 py-1 border-2 border-black rounded font-bold uppercase">Additive Factor Models</span>? Well, AFM is an artificial intelligence algorithm that helps us predict what people know – often students, since AFM is typically used in educational contexts (e.g., Khan Academy and other online learning sites).
-                </p>
-                <p className="text-black">
-                  Like many other algorithms, AFM relies on parameters to compute its output, which in this case is the success probability that a student answers the next question on a specific{' '}
-                  <span
-                    className="relative border-4 border-green-600 bg-green-100 px-2 py-1 rounded font-bold text-green-800 uppercase hover:bg-green-200 transition-colors"
-                  >
-                    skill
-                  </span>
-                  {' '}correctly.
-                </p>
-              </div>
-            </div>
-
-            {/* Next Button */}
-            <button
-              onClick={() => scroll(4)}
-              className="px-12 py-4 bg-blue-600 text-white border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide hover:bg-white hover:text-blue-600 hover:border-blue-600 transition-all duration-200 shadow-lg"
-            >
-              Next
-            </button>
-          </>
-        )}
       </div>
-    </div>
+    </SlideTracker>
   );
 };

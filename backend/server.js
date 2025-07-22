@@ -6,12 +6,14 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 3001;
 const DATA_DIR = path.join(__dirname, 'data');
+const BACKUP_DIR = path.join(__dirname, 'backups');
 
 // Middleware
 const corsOptions = {
   origin: [
     'http://localhost:5173', // Local development
     'http://localhost:3000', // Alternative local port
+    'http://localhost:8080', // Docker frontend
     'https://blueberryhub92.github.io', // GitHub Pages base domain
     'https://blueberryhub92.github.io/afm-pfm-ifm-interactive-explanation/', // GitHub Pages full path
     'https://blueberryhub92.github.io/afm-pfm-ifm-interactive-explanation', // GitHub Pages full path without trailing slash
@@ -23,12 +25,44 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json({ limit: '10mb' }));
 
-// Ensure data directory exists
-const ensureDataDir = async () => {
+// Ensure data and backup directories exist
+const ensureDirectories = async () => {
   try {
     await fs.access(DATA_DIR);
   } catch {
     await fs.mkdir(DATA_DIR, { recursive: true });
+  }
+  
+  try {
+    await fs.access(BACKUP_DIR);
+  } catch {
+    await fs.mkdir(BACKUP_DIR, { recursive: true });
+  }
+};
+
+// Helper function to create automatic backups
+const createBackup = async () => {
+  try {
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const backupDir = path.join(BACKUP_DIR, `backup_${timestamp}`);
+    
+    await fs.mkdir(backupDir, { recursive: true });
+    
+    // Copy all data files to backup
+    const files = await fs.readdir(DATA_DIR);
+    for (const file of files) {
+      if (file.endsWith('.json')) {
+        const sourcePath = path.join(DATA_DIR, file);
+        const backupPath = path.join(backupDir, file);
+        await fs.copyFile(sourcePath, backupPath);
+      }
+    }
+    
+    console.log(`✅ Backup created: ${backupDir}`);
+    return backupDir;
+  } catch (error) {
+    console.error('❌ Failed to create backup:', error);
+    throw error;
   }
 };
 
@@ -51,32 +85,69 @@ const appendToJSONFile = async (filename, data) => {
     // Write back to file
     await fs.writeFile(filePath, JSON.stringify(jsonData, null, 2));
   } catch (error) {
-    // File doesn't exist or is corrupted, create new one
+    // File doesn't exist, create new one
     const newData = Array.isArray(data) ? data : [data];
     await fs.writeFile(filePath, JSON.stringify(newData, null, 2));
   }
 };
 
-// POST /api/analytics/events - Store single event
-app.post('/api/analytics/events', async (req, res) => {
-  try {
-    const event = req.body;
+// Helper function to convert JSON to CSV
+const jsonToCSV = (jsonArray) => {
+  if (!jsonArray || jsonArray.length === 0) return '';
+  
+  // Get all unique keys from all objects
+  const allKeys = new Set();
+  jsonArray.forEach(obj => {
+    Object.keys(obj).forEach(key => allKeys.add(key));
+    // Handle nested eventData
+    if (obj.eventData && typeof obj.eventData === 'object') {
+      Object.keys(obj.eventData).forEach(key => allKeys.add(`eventData_${key}`));
+    }
+  });
+  
+  const keys = Array.from(allKeys);
+  
+  // Create CSV header
+  const csvRows = [keys.join(',')];
     
-    // Add server timestamp
-    event.serverTimestamp = Date.now();
+  // Create CSV rows
+  jsonArray.forEach(obj => {
+    const row = keys.map(key => {
+      let value;
+      
+      if (key.startsWith('eventData_')) {
+        const eventDataKey = key.replace('eventData_', '');
+        value = obj.eventData && obj.eventData[eventDataKey];
+      } else {
+        value = obj[key];
+      }
+      
+      // Handle different data types
+      if (value === null || value === undefined) {
+        return '';
+      } else if (typeof value === 'object') {
+        return `"${JSON.stringify(value).replace(/"/g, '""')}"`;
+      } else if (typeof value === 'string' && value.includes(',')) {
+        return `"${value.replace(/"/g, '""')}"`;
+      }
+      
+      return value;
+    });
     
-    // Store in general events file
-    await appendToJSONFile('events.json', event);
-    
-    // Also store in user-specific file for easier querying
-    const userFile = `user_${event.userId}.json`;
-    await appendToJSONFile(userFile, event);
-    
-    res.status(200).json({ success: true, message: 'Event stored successfully' });
-  } catch (error) {
-    console.error('Error storing event:', error);
-    res.status(500).json({ success: false, error: 'Failed to store event' });
-  }
+    csvRows.push(row.join(','));
+  });
+  
+  return csvRows.join('\n');
+};
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({ 
+    status: 'healthy', 
+    timestamp: new Date().toISOString(),
+    dataDir: DATA_DIR,
+    backupDir: BACKUP_DIR
+  });
 });
 
 // POST /api/analytics/events/bulk - Store multiple events
@@ -112,9 +183,12 @@ app.post('/api/analytics/events/bulk', async (req, res) => {
       await appendToJSONFile(userFile, userEvents);
     }
     
+    console.log(`📊 Stored ${timestampedEvents.length} events for ${Object.keys(userGroups).length} users`);
+    
     res.status(200).json({ 
       success: true, 
-      message: `${timestampedEvents.length} events stored successfully` 
+      message: `${timestampedEvents.length} events stored successfully`,
+      usersAffected: Object.keys(userGroups).length
     });
   } catch (error) {
     console.error('Error storing bulk events:', error);
@@ -140,154 +214,254 @@ app.get('/api/analytics/users', async (req, res) => {
           eventCount: events.length,
           firstEvent: events[0]?.timestamp || null,
           lastEvent: events[events.length - 1]?.timestamp || null,
-          sessions: [...new Set(events.map(e => e.sessionId))].length
+          sessions: [...new Set(events.map(e => e.sessionId))].length,
+          lastActivity: new Date(events[events.length - 1]?.timestamp || 0).toISOString()
         };
       })
     );
     
-    res.json({ success: true, users });
+    // Sort by last activity
+    users.sort((a, b) => new Date(b.lastActivity) - new Date(a.lastActivity));
+    
+    res.json({ success: true, users, totalUsers: users.length });
   } catch (error) {
     console.error('Error fetching users:', error);
     res.status(500).json({ success: false, error: 'Failed to fetch users' });
   }
 });
 
-// GET /api/analytics/users/:userId - Get events for specific user
+// GET /api/analytics/users/:userId - Get specific user data
 app.get('/api/analytics/users/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
     const userFile = `user_${userId}.json`;
     const filePath = path.join(DATA_DIR, userFile);
     
-    try {
       const data = await fs.readFile(filePath, 'utf8');
       const events = JSON.parse(data);
       
-      res.json({ success: true, userId, events });
-    } catch (error) {
-      res.status(404).json({ success: false, error: 'User not found' });
-    }
+    // Calculate user statistics
+    const stats = {
+      totalEvents: events.length,
+      firstEvent: events[0]?.timestamp || null,
+      lastEvent: events[events.length - 1]?.timestamp || null,
+      sessions: [...new Set(events.map(e => e.sessionId))].length,
+      eventTypes: [...new Set(events.map(e => e.eventName))],
+      timeSpent: events[events.length - 1]?.timeFromStart || 0,
+      slidesVisited: new Set(events.filter(e => e.eventName === 'slide_change').map(e => e.eventData?.slideNumber)).size
+    };
+    
+    res.json({ 
+      success: true, 
+      user: {
+        userId,
+        events: events.slice(-100), // Last 100 events for performance
+        stats,
+        totalEvents: events.length
+      }
+    });
   } catch (error) {
-    console.error('Error fetching user events:', error);
-    res.status(500).json({ success: false, error: 'Failed to fetch user events' });
+    if (error.code === 'ENOENT') {
+      return res.status(404).json({ success: false, error: 'User not found' });
+    }
+    console.error('Error fetching user data:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch user data' });
   }
 });
 
-// GET /api/analytics/stats - Get analytics statistics
+// GET /api/analytics/stats - Get aggregated statistics
 app.get('/api/analytics/stats', async (req, res) => {
   try {
-    const eventsFile = path.join(DATA_DIR, 'events.json');
-    
-    try {
-      const data = await fs.readFile(eventsFile, 'utf8');
-      const events = JSON.parse(data);
+    const eventsPath = path.join(DATA_DIR, 'events.json');
+    const eventsData = await fs.readFile(eventsPath, 'utf8');
+    const events = JSON.parse(eventsData);
       
       const stats = {
         totalEvents: events.length,
-        uniqueUsers: [...new Set(events.map(e => e.userId))].length,
-        uniqueSessions: [...new Set(events.map(e => e.sessionId))].length,
-        eventTypes: events.reduce((acc, event) => {
-          acc[event.eventName] = (acc[event.eventName] || 0) + 1;
-          return acc;
-        }, {}),
+      totalUsers: new Set(events.map(e => e.userId)).size,
+      totalSessions: new Set(events.map(e => e.sessionId)).size,
+      eventTypes: {},
+      dailyStats: {},
         dateRange: {
-          start: Math.min(...events.map(e => e.timestamp)),
-          end: Math.max(...events.map(e => e.timestamp))
+        start: events[0]?.timestamp ? new Date(events[0].timestamp).toISOString() : null,
+        end: events[events.length - 1]?.timestamp ? new Date(events[events.length - 1].timestamp).toISOString() : null
         }
       };
       
-      res.json({ success: true, stats });
-    } catch (error) {
-      res.json({ 
-        success: true, 
-        stats: { 
-          totalEvents: 0, 
-          uniqueUsers: 0, 
-          uniqueSessions: 0, 
-          eventTypes: {}, 
-          dateRange: null 
-        } 
-      });
-    }
-  } catch (error) {
-    console.error('Error fetching stats:', error);
-    res.status(500).json({ success: false, error: 'Failed to fetch stats' });
-  }
-});
-
-// GET /api/analytics/export - Download all data as JSON
-app.get('/api/analytics/export', async (req, res) => {
-  try {
-    const files = await fs.readdir(DATA_DIR);
-    const jsonFiles = files.filter(file => file.endsWith('.json'));
-    
-    const exportData = {};
-    
-    for (const file of jsonFiles) {
-      const filePath = path.join(DATA_DIR, file);
-      const data = await fs.readFile(filePath, 'utf8');
-      const fileName = file.replace('.json', '');
-      exportData[fileName] = JSON.parse(data);
-    }
-    
-    // Set headers for file download
-    res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Content-Disposition', 'attachment; filename="analytics-export.json"');
-    res.json(exportData);
-  } catch (error) {
-    console.error('Error exporting data:', error);
-    res.status(500).json({ success: false, error: 'Failed to export data' });
-  }
-});
-
-// GET /api/analytics/export/csv - Download events as CSV
-app.get('/api/analytics/export/csv', async (req, res) => {
-  try {
-    const eventsFile = path.join(DATA_DIR, 'events.json');
-    const data = await fs.readFile(eventsFile, 'utf8');
-    const events = JSON.parse(data);
-    
-    if (events.length === 0) {
-      return res.status(404).json({ success: false, error: 'No events found' });
-    }
-    
-    // Create CSV header from first event keys
-    const headers = Object.keys(events[0]).join(',');
-    const csvRows = [headers];
-    
-    // Add data rows
+    // Count event types
     events.forEach(event => {
-      const values = Object.values(event).map(value => {
-        // Handle nested objects and arrays
-        if (typeof value === 'object' && value !== null) {
-          return '"' + JSON.stringify(value).replace(/"/g, '""') + '"';
-        }
-        // Escape quotes in strings
-        return '"' + String(value).replace(/"/g, '""') + '"';
-      });
-      csvRows.push(values.join(','));
+      const eventType = event.eventName || 'unknown';
+      stats.eventTypes[eventType] = (stats.eventTypes[eventType] || 0) + 1;
+      
+      // Daily stats
+      const date = new Date(event.timestamp).toISOString().split('T')[0];
+      if (!stats.dailyStats[date]) {
+        stats.dailyStats[date] = { events: 0, users: new Set() };
+      }
+      stats.dailyStats[date].events++;
+      stats.dailyStats[date].users.add(event.userId);
     });
     
-    const csvContent = csvRows.join('\n');
+    // Convert Sets to counts
+    Object.keys(stats.dailyStats).forEach(date => {
+      stats.dailyStats[date].users = stats.dailyStats[date].users.size;
+    });
     
-    // Set headers for CSV download
+    res.json({ success: true, stats });
+  } catch (error) {
+    console.error('Error fetching statistics:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch statistics' });
+  }
+});
+
+// GET /api/export/json - Export all data as JSON
+app.get('/api/export/json', async (req, res) => {
+  try {
+    const eventsPath = path.join(DATA_DIR, 'events.json');
+    const eventsData = await fs.readFile(eventsPath, 'utf8');
+    const events = JSON.parse(eventsData);
+    
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Disposition', `attachment; filename="afm_analytics_${new Date().toISOString().split('T')[0]}.json"`);
+    res.json({
+      exportDate: new Date().toISOString(),
+      totalEvents: events.length,
+      events: events
+    });
+  } catch (error) {
+    console.error('Error exporting JSON:', error);
+    res.status(500).json({ success: false, error: 'Failed to export JSON' });
+  }
+});
+
+// GET /api/export/csv - Export all data as CSV
+app.get('/api/export/csv', async (req, res) => {
+  try {
+    const eventsPath = path.join(DATA_DIR, 'events.json');
+    const eventsData = await fs.readFile(eventsPath, 'utf8');
+    const events = JSON.parse(eventsData);
+    
+    const csv = jsonToCSV(events);
+    
     res.setHeader('Content-Type', 'text/csv');
-    res.setHeader('Content-Disposition', 'attachment; filename="analytics-events.csv"');
-    res.send(csvContent);
+    res.setHeader('Content-Disposition', `attachment; filename="afm_analytics_${new Date().toISOString().split('T')[0]}.csv"`);
+    res.send(csv);
   } catch (error) {
     console.error('Error exporting CSV:', error);
     res.status(500).json({ success: false, error: 'Failed to export CSV' });
   }
 });
 
-// Initialize server
-const startServer = async () => {
-  await ensureDataDir();
-  
-  app.listen(PORT, () => {
-    console.log(`Analytics server running on port ${PORT}`);
-    console.log(`Data directory: ${DATA_DIR}`);
-  });
-};
+// GET /api/export/user/:userId/json - Export specific user data as JSON
+app.get('/api/export/user/:userId/json', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const userFile = `user_${userId}.json`;
+    const filePath = path.join(DATA_DIR, userFile);
+    
+    const data = await fs.readFile(filePath, 'utf8');
+    const events = JSON.parse(data);
+    
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Disposition', `attachment; filename="user_${userId}_${new Date().toISOString().split('T')[0]}.json"`);
+    res.json({
+      exportDate: new Date().toISOString(),
+      userId: userId,
+      totalEvents: events.length,
+      events: events
+    });
+  } catch (error) {
+    console.error('Error exporting user JSON:', error);
+    res.status(500).json({ success: false, error: 'Failed to export user JSON' });
+  }
+});
 
-startServer().catch(console.error); 
+// GET /api/export/user/:userId/csv - Export specific user data as CSV
+app.get('/api/export/user/:userId/csv', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const userFile = `user_${userId}.json`;
+    const filePath = path.join(DATA_DIR, userFile);
+    
+    const data = await fs.readFile(filePath, 'utf8');
+    const events = JSON.parse(data);
+    const csv = jsonToCSV(events);
+    
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', `attachment; filename="user_${userId}_${new Date().toISOString().split('T')[0]}.csv"`);
+    res.send(csv);
+  } catch (error) {
+    console.error('Error exporting user CSV:', error);
+    res.status(500).json({ success: false, error: 'Failed to export user CSV' });
+  }
+});
+
+// POST /api/backup - Create manual backup
+app.post('/api/backup', async (req, res) => {
+  try {
+    const backupDir = await createBackup();
+    res.json({ 
+      success: true, 
+      message: 'Backup created successfully',
+      backupPath: backupDir,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Error creating backup:', error);
+    res.status(500).json({ success: false, error: 'Failed to create backup' });
+  }
+});
+
+// GET /api/backups - List all backups
+app.get('/api/backups', async (req, res) => {
+  try {
+    const backups = await fs.readdir(BACKUP_DIR);
+    const backupDetails = await Promise.all(
+      backups.map(async (backup) => {
+        const backupPath = path.join(BACKUP_DIR, backup);
+        const stats = await fs.stat(backupPath);
+        const files = await fs.readdir(backupPath);
+        
+        return {
+          name: backup,
+          created: stats.birthtime.toISOString(),
+          files: files.length,
+          size: stats.size
+        };
+      })
+    );
+    
+    // Sort by creation date (newest first)
+    backupDetails.sort((a, b) => new Date(b.created) - new Date(a.created));
+    
+    res.json({ success: true, backups: backupDetails });
+  } catch (error) {
+    console.error('Error listing backups:', error);
+    res.status(500).json({ success: false, error: 'Failed to list backups' });
+  }
+});
+
+// Error handling middleware
+app.use((error, req, res, next) => {
+  console.error('Unhandled error:', error);
+  res.status(500).json({ success: false, error: 'Internal server error' });
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ success: false, error: 'Endpoint not found' });
+});
+
+// Initialize directories and start server
+ensureDirectories().then(() => {
+  app.listen(PORT, () => {
+    console.log(`🚀 AFM Analytics Server running on port ${PORT}`);
+    console.log(`📊 API endpoints:`);
+    console.log(`   Health: http://localhost:${PORT}/health`);
+    console.log(`   Analytics: http://localhost:${PORT}/api/analytics`);
+    console.log(`   Export JSON: http://localhost:${PORT}/api/export/json`);
+    console.log(`   Export CSV: http://localhost:${PORT}/api/export/csv`);
+    console.log(`📁 Data directory: ${DATA_DIR}`);
+    console.log(`💾 Backup directory: ${BACKUP_DIR}`);
+  });
+}); 

@@ -936,7 +936,7 @@ print(f"Probability: {probability:.4f} or {probability*100:.2f}%")`,
         <div className="flex items-center gap-3 mb-6">
           <Code className="w-6 h-6 text-purple-700" />
           <h3 className="text-xl font-bold text-black uppercase tracking-wide">
-            Live Code Analysis
+            Parameter Comparison
           </h3>
         </div>
 
@@ -948,16 +948,8 @@ print(f"Probability: {probability:.4f} or {probability*100:.2f}%")`,
                 <span className="text-xs text-gray-600 font-mono">ITERATION-{currentTry}</span>
               </div>
 
-              {/* Current Concept Being Demonstrated */}
-              {taskExamples[index]?.concept && (
-                <div className="mb-4 p-3 bg-gray-800 text-yellow-400 border-4 border-gray-600 rounded-lg">
-                  <div className="text-xs font-bold uppercase tracking-wider mb-1">CURRENT CONCEPT:</div>
-                  <div className="font-bold text-sm">{taskExamples[index].concept}</div>
-                </div>
-              )}
-
               {/* Task Parameters */}
-              <div className="mb-4 p-4 bg-white border-4 border-black rounded-lg">
+              <div className="p-4 bg-white border-4 border-black rounded-lg">
                 <div className="grid grid-cols-2 gap-2 text-sm font-mono font-bold">
                   <div>DIFFICULTY (β): {task.difficulty}</div>
                   <div>LEARNING RATE (γ): {task.learningRate}</div>
@@ -967,30 +959,6 @@ print(f"Probability: {probability:.4f} or {probability*100:.2f}%")`,
                     SUCCESS RATE: {currentProb[`task${index}`] || 0}%
                   </div>
                 </div>
-              </div>
-
-              {/* Task Description */}
-              <div className={`p-3 mb-4 text-sm ${task.textColor} border-4 border-black rounded-lg font-bold`}>
-                {task.description}
-              </div>
-
-              {/* Code Example */}
-              <div className="bg-black text-green-400 p-4 font-mono text-sm mb-4 rounded-lg border-4 border-gray-600">
-                <div className="flex items-center gap-2 mb-3 text-gray-400">
-                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                  <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                  <span className="ml-2 text-xs">{taskExamples[index]?.concept?.toLowerCase().replace(/\s+/g, '_')}.py</span>
-                </div>
-                <pre className="whitespace-pre-wrap">{taskExamples[index]?.code}</pre>
-              </div>
-
-              {/* Result */}
-              <div className={`p-3 border-4 text-sm font-mono font-bold rounded-lg ${taskExamples[index]?.result?.includes('SUCCESS')
-                ? 'bg-green-100 text-green-800 border-green-600'
-                : 'bg-red-100 text-red-800 border-red-600'
-                }`}>
-                {taskExamples[index]?.result}
               </div>
             </div>
           ))}

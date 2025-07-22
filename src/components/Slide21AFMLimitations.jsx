@@ -10,6 +10,8 @@ import {
   Clock,
   AlertTriangle,
   CheckCircle,
+  BarChart3,
+  Grid3x3,
 } from "lucide-react";
 import { ArrowLeft, TrendingDown, Calendar } from "lucide-react";
 
@@ -39,6 +41,19 @@ export const Slide21AFMLimitations = ({ scroll }) => {
   const [showExplanation, setShowExplanation] = useState(false);
   const [step, setStep] = useState(0);
 
+  // Item Difficulty states
+  const [itemCurrentProblem, setItemCurrentProblem] = useState(0);
+  const [itemSelectedAnswer, setItemSelectedAnswer] = useState(null);
+  const [itemShowFeedback, setItemShowFeedback] = useState(false);
+  const [itemAttemptedProblems, setItemAttemptedProblems] = useState([]);
+
+  // Q-Matrix Quality states
+  const [qMatrixCurrentProblem, setQMatrixCurrentProblem] = useState(0);
+  const [qMatrixSelectedAnswer, setQMatrixSelectedAnswer] = useState(null);
+  const [qMatrixShowFeedback, setQMatrixShowFeedback] = useState(false);
+  const [qMatrixViewMode, setQMatrixViewMode] = useState('incorrect');
+  const [qMatrixAttemptedProblems, setQMatrixAttemptedProblems] = useState([]);
+
   const handleSliderChange = (period, value) => {
     setSliderValues((prev) => ({ ...prev, [period]: value }));
   };
@@ -61,6 +76,18 @@ export const Slide21AFMLimitations = ({ scroll }) => {
       id: "incorrect-answers",
       icon: AlertTriangle,
       color: "pink",
+    },
+    {
+      title: "Item Difficulty",
+      id: "item-difficulty",
+      icon: BarChart3,
+      color: "yellow",
+    },
+    {
+      title: "Q-Matrix Quality",
+      id: "q-matrix-quality",
+      icon: Grid3x3,
+      color: "indigo",
     },
   ];
 
@@ -110,6 +137,19 @@ print(result)`,
       setShowTrajectory(false);
       setAnimateSequence(false);
       setSelectedStudent(null);
+    } else if (taskId === "item-difficulty") {
+      setCurrentView("item-difficulty");
+      setItemCurrentProblem(0);
+      setItemSelectedAnswer(null);
+      setItemShowFeedback(false);
+      setItemAttemptedProblems([]);
+    } else if (taskId === "q-matrix-quality") {
+      setCurrentView("q-matrix-quality");
+      setQMatrixCurrentProblem(0);
+      setQMatrixSelectedAnswer(null);
+      setQMatrixShowFeedback(false);
+      setQMatrixViewMode('incorrect');
+      setQMatrixAttemptedProblems([]);
     }
   };
 
@@ -118,7 +158,7 @@ print(result)`,
 
     // Track completion for specific scenarios
     if (
-      ["incorrect-answers-reflection", "no-forgetting", "binary-skills", "context-blind"].includes(
+      ["incorrect-answers-reflection", "no-forgetting", "binary-skills", "context-blind", "item-difficulty", "q-matrix-quality"].includes(
         currentView
       )
     ) {
@@ -128,6 +168,8 @@ print(result)`,
       else if (currentView === "no-forgetting") scenarioId = "no-forgetting";
       else if (currentView === "binary-skills") scenarioId = "binary-skills";
       else if (currentView === "context-blind") scenarioId = "context-blind";
+      else if (currentView === "item-difficulty") scenarioId = "item-difficulty";
+      else if (currentView === "q-matrix-quality") scenarioId = "q-matrix-quality";
 
       if (scenarioId) {
         setCompletedScenarios((prev) => new Set([...prev, scenarioId]));
@@ -146,15 +188,6 @@ print(result)`,
   // Technical Layout Component
   const TechnicalLayout = ({ children }) => (
     <div className="bg-white min-h-screen font-mono relative">
-      {/* Grid background */}
-      <div
-        className="absolute inset-0 opacity-60"
-        style={{
-          backgroundImage: 'linear-gradient(to right, #d1d5db 1px, transparent 1px), linear-gradient(to bottom, #d1d5db 1px, transparent 1px)',
-          backgroundSize: '20px 20px'
-        }}
-      />
-
       <div className="relative flex-1 px-8 py-6">{children}</div>
     </div>
   );
@@ -1727,6 +1760,540 @@ print(second_largest([1, 3, 2, 5, 4]))`,
     </div>
   );
 
+  const renderItemDifficulty = () => {
+    const pythonProblems = [
+      {
+        id: 'easy',
+        difficulty: 'Easy',
+        question: 'What will this Python code output?',
+        code: `x = 5
+y = 10
+print(x + y)`,
+        options: ['5', '10', '15', '25'],
+        correctAnswer: '15',
+        realDifficulty: 0.1, // 10% get this wrong
+        afmPrediction: 0.72 // AFM uses average across all items
+      },
+      {
+        id: 'medium',
+        difficulty: 'Medium',
+        question: 'What will this Python code output?',
+        code: `numbers = [1, 2, 3, 4]
+result = sum(numbers) / len(numbers)
+print(result)`,
+        options: ['2.5', '10', '4', '2'],
+        correctAnswer: '2.5',
+        realDifficulty: 0.4, // 40% get this wrong
+        afmPrediction: 0.72 // Same AFM prediction
+      },
+      {
+        id: 'hard',
+        difficulty: 'Hard',
+        question: 'What will this Python code output?',
+        code: `def mystery_func(lst):
+    return [x for x in lst if x % 2 == 0]
+
+result = mystery_func([1, 2, 3, 4, 5, 6])
+print(len(result))`,
+        options: ['3', '6', '4', '2'],
+        correctAnswer: '3',
+        realDifficulty: 0.7, // 70% get this wrong
+        afmPrediction: 0.72 // Same AFM prediction
+      }
+    ];
+
+    const currentQ = pythonProblems[itemCurrentProblem];
+    const isCorrect = itemSelectedAnswer === currentQ.correctAnswer;
+
+    const handleAnswerSelect = (answer) => {
+      setItemSelectedAnswer(answer);
+      setItemShowFeedback(true);
+
+      if (!itemAttemptedProblems.includes(itemCurrentProblem)) {
+        setItemAttemptedProblems(prev => [...prev, itemCurrentProblem]);
+      }
+    };
+
+    const nextProblem = () => {
+      if (itemCurrentProblem < pythonProblems.length - 1) {
+        setItemCurrentProblem(prev => prev + 1);
+        setItemSelectedAnswer(null);
+        setItemShowFeedback(false);
+      }
+    };
+
+    const resetSimulation = () => {
+      setItemCurrentProblem(0);
+      setItemSelectedAnswer(null);
+      setItemShowFeedback(false);
+      setItemAttemptedProblems([]);
+    };
+
+    return (
+      <TechnicalLayout>
+        <div className="max-w-4xl mx-auto space-y-8">
+          <div className="text-center mb-6">
+            <h1 className="text-3xl font-bold text-black mb-4 uppercase tracking-wide">
+              Item Difficulty Limitation
+            </h1>
+            <p className="text-black text-xl font-bold leading-relaxed">
+              Try these Python problems of different difficulties.{" "}
+              <span className="text-yellow-600 font-bold underline decoration-4">
+                Notice how AFM gives the same prediction for all problems,
+                regardless of their actual difficulty.
+              </span>
+            </p>
+          </div>
+
+          {/* AFM Prediction Display */}
+          <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
+            <div className="flex justify-between items-center mb-4">
+              <span className="text-2xl font-bold text-black uppercase tracking-wide">
+                AFM SUCCESS PREDICTION: {(currentQ.afmPrediction * 100).toFixed(0)}%
+              </span>
+              <div className="flex items-center space-x-4">
+                <span className="text-lg font-bold text-black">0%</span>
+                <div className="w-64 bg-gray-200 border-4 border-black rounded-none h-8 overflow-hidden">
+                  <div
+                    className="h-full bg-yellow-600 transition-all duration-1000 ease-out"
+                    style={{ width: `${currentQ.afmPrediction * 100}%` }}
+                  />
+                </div>
+                <span className="text-lg font-bold text-black">100%</span>
+              </div>
+            </div>
+            <div className="text-center">
+              <span className="bg-yellow-300 px-4 py-2 border-2 border-black rounded font-bold">
+                SAME PREDICTION FOR ALL ITEMS!
+              </span>
+            </div>
+          </div>
+
+          {/* Problem Display */}
+          <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-3xl font-bold text-black uppercase tracking-tight">
+                {currentQ.question}
+              </h2>
+              <div className="text-right">
+                <div className={`px-4 py-2 border-2 border-black font-bold text-lg ${currentQ.difficulty === 'Easy' ? 'bg-green-300' :
+                  currentQ.difficulty === 'Medium' ? 'bg-yellow-300' : 'bg-red-300'
+                  }`}>
+                  {currentQ.difficulty} Problem
+                </div>
+                <div className="text-sm font-mono text-black mt-2">
+                  Real difficulty: {(currentQ.realDifficulty * 100).toFixed(0)}% failure rate
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-black text-green-400 p-6 rounded-xl font-['IBM_Plex_Mono',monospace] text-lg mb-8 border-4 border-black">
+              <pre className="whitespace-pre-wrap">{currentQ.code}</pre>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 max-w-md mx-auto mb-8">
+              {currentQ.options.map((option, index) => (
+                <button
+                  key={index}
+                  onClick={() => !itemShowFeedback && handleAnswerSelect(option)}
+                  disabled={itemShowFeedback}
+                  className={`px-6 py-4 border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide transition-all ${itemSelectedAnswer === option
+                    ? isCorrect ? "bg-green-600 text-white" : "bg-red-600 text-white"
+                    : itemShowFeedback
+                      ? option === currentQ.correctAnswer ? "bg-green-300 text-black" : "bg-gray-200 text-gray-500 cursor-not-allowed"
+                      : "bg-white text-black hover:bg-yellow-400 cursor-pointer transform hover:scale-105"
+                    }`}
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
+
+            {itemShowFeedback && (
+              <div className="space-y-6">
+                <div className={`border-l-8 ${isCorrect ? 'border-green-600 bg-green-100' : 'border-red-600 bg-red-100'} p-6 rounded-r-xl`}>
+                  <p className="text-black text-xl font-bold">
+                    {isCorrect ? 'Correct!' : 'Incorrect!'} The answer is <strong>{currentQ.correctAnswer}</strong>.
+                    {currentQ.difficulty === 'Hard' && !isCorrect && (
+                      <span className="text-red-700"> This was a difficult problem that {(currentQ.realDifficulty * 100).toFixed(0)}% of students get wrong!</span>
+                    )}
+                    {currentQ.difficulty === 'Easy' && isCorrect && (
+                      <span className="text-green-700"> This was an easy problem that most students get right.</span>
+                    )}
+                  </p>
+                </div>
+
+                <div className="border-l-8 border-yellow-600 bg-yellow-100 p-6 rounded-r-xl">
+                  <p className="text-black text-xl font-bold">
+                    <strong>AFM Problem:</strong> Even though this {currentQ.difficulty.toLowerCase()} problem has a real difficulty of {(currentQ.realDifficulty * 100).toFixed(0)}%,
+                    AFM still predicts {(currentQ.afmPrediction * 100).toFixed(0)}% success rate - the same as all other Python problems!
+                  </p>
+                </div>
+
+                <div className="flex justify-center space-x-4">
+                  {itemCurrentProblem < pythonProblems.length - 1 ? (
+                    <button
+                      onClick={nextProblem}
+                      className="px-8 py-4 bg-yellow-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-yellow-600 transition-all transform hover:scale-105"
+                    >
+                      Next Problem →
+                    </button>
+                  ) : (
+                    <div className="space-x-4">
+                      <button
+                        onClick={resetSimulation}
+                        className="px-8 py-4 bg-gray-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-gray-600 transition-all transform hover:scale-105"
+                      >
+                        Try Again
+                      </button>
+                      <button
+                        onClick={backToOverview}
+                        className="px-8 py-4 bg-black text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-black transition-all transform hover:scale-105"
+                      >
+                        ← Back to Overview
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Progress Display */}
+          <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
+            <div className="flex justify-between items-center">
+              <span className="text-lg font-bold text-black">
+                Problem {itemCurrentProblem + 1} of {pythonProblems.length}
+              </span>
+              <div className="flex space-x-2">
+                {pythonProblems.map((_, index) => (
+                  <div
+                    key={index}
+                    className={`w-4 h-4 border-2 border-black ${itemAttemptedProblems.includes(index) ? 'bg-yellow-600' :
+                      index === itemCurrentProblem ? 'bg-blue-600' : 'bg-gray-200'
+                      }`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Research Evidence */}
+          {itemAttemptedProblems.length === pythonProblems.length && (
+            <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
+              <div className="text-center space-y-4">
+                <div className="bg-red-300 border-2 border-black px-6 py-4 inline-block">
+                  <span className="text-black font-bold text-xl">
+                    RESEARCH EVIDENCE
+                  </span>
+                </div>
+                <div className="bg-red-100 border-4 border-red-600 rounded-xl p-6">
+                  <p className="text-black text-lg leading-relaxed font-bold">
+                    "Tasks with heterogeneous difficulty cause parameter bias in AFM,
+                    since the model cannot separate item and KC effects"
+                  </p>
+                  <p className="text-red-700 text-sm mt-4">
+                    — Educational Data Mining Research
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </TechnicalLayout>
+    );
+  };
+
+  const renderQMatrixQuality = () => {
+    const pythonProblems = [
+      {
+        id: 'syntax_problem',
+        question: 'What will this Python code output?',
+        code: `for i in range(3):
+    print(i)`,
+        options: ['0 1 2', '1 2 3', '0\n1\n2', 'Error'],
+        correctAnswer: '0\n1\n2',
+        correctMapping: ['Loops', 'Print Function'],
+        incorrectMapping: ['Python Programming'], // Too generic
+        afmPredictionCorrect: 0.78,
+        afmPredictionIncorrect: 0.65 // Biased due to wrong mapping
+      },
+      {
+        id: 'list_problem',
+        question: 'What will this Python code output?',
+        code: `data = [1, 2, 3]
+data.append(4)
+print(len(data))`,
+        options: ['3', '4', '7', 'Error'],
+        correctAnswer: '4',
+        correctMapping: ['Lists', 'Methods'],
+        incorrectMapping: ['Python Programming'], // Too generic
+        afmPredictionCorrect: 0.72,
+        afmPredictionIncorrect: 0.65 // Same biased prediction
+      },
+      {
+        id: 'function_problem',
+        question: 'What will this Python code output?',
+        code: `def double(x):
+    return x * 2
+
+result = double(5)
+print(result)`,
+        options: ['5', '10', '25', 'Error'],
+        correctAnswer: '10',
+        correctMapping: ['Functions', 'Return Values'],
+        incorrectMapping: ['Python Programming'], // Too generic
+        afmPredictionCorrect: 0.69,
+        afmPredictionIncorrect: 0.65 // Same biased prediction
+      }
+    ];
+
+    const currentQ = pythonProblems[qMatrixCurrentProblem];
+    const isCorrect = qMatrixSelectedAnswer === currentQ.correctAnswer;
+    const currentMapping = qMatrixViewMode === 'correct' ? currentQ.correctMapping : currentQ.incorrectMapping;
+    const currentPrediction = qMatrixViewMode === 'correct' ? currentQ.afmPredictionCorrect : currentQ.afmPredictionIncorrect;
+
+    const handleAnswerSelect = (answer) => {
+      setQMatrixSelectedAnswer(answer);
+      setQMatrixShowFeedback(true);
+
+      if (!qMatrixAttemptedProblems.includes(qMatrixCurrentProblem)) {
+        setQMatrixAttemptedProblems(prev => [...prev, qMatrixCurrentProblem]);
+      }
+    };
+
+    const nextProblem = () => {
+      if (qMatrixCurrentProblem < pythonProblems.length - 1) {
+        setQMatrixCurrentProblem(prev => prev + 1);
+        setQMatrixSelectedAnswer(null);
+        setQMatrixShowFeedback(false);
+      }
+    };
+
+    const toggleMapping = () => {
+      setQMatrixViewMode(prev => prev === 'correct' ? 'incorrect' : 'correct');
+      setQMatrixSelectedAnswer(null);
+      setQMatrixShowFeedback(false);
+    };
+
+    const resetSimulation = () => {
+      setQMatrixCurrentProblem(0);
+      setQMatrixSelectedAnswer(null);
+      setQMatrixShowFeedback(false);
+      setQMatrixViewMode('incorrect');
+      setQMatrixAttemptedProblems([]);
+    };
+
+    return (
+      <TechnicalLayout>
+        <div className="max-w-4xl mx-auto space-y-8">
+          <div className="text-center mb-6">
+            <h1 className="text-3xl font-bold text-black mb-4 uppercase tracking-wide">
+              Q-Matrix Quality Limitation
+            </h1>
+            <p className="text-black text-xl font-bold leading-relaxed">
+              See how incorrect skill mappings distort AFM predictions.{" "}
+              <span className="text-indigo-600 font-bold underline decoration-4">
+                Switch between correct and incorrect Q-matrix mappings
+                to observe the prediction changes.
+              </span>
+            </p>
+          </div>
+
+          {/* Mapping Mode Toggle */}
+          <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
+            <div className="flex justify-between items-center mb-4">
+              <span className="text-lg font-bold text-black uppercase tracking-wide">
+                Current Q-Matrix Mapping:
+              </span>
+              <button
+                onClick={toggleMapping}
+                className={`px-6 py-3 border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide transition-all transform hover:scale-105 ${qMatrixViewMode === 'correct'
+                  ? 'bg-green-600 text-white hover:bg-white hover:text-green-600'
+                  : 'bg-red-600 text-white hover:bg-white hover:text-red-600'
+                  }`}
+              >
+                {qMatrixViewMode === 'correct' ? 'CORRECT MAPPING' : 'INCORRECT MAPPING'}
+              </button>
+            </div>
+            <div className="text-center">
+              <span className={`px-4 py-2 border-2 border-black rounded font-bold ${qMatrixViewMode === 'correct' ? 'bg-green-300' : 'bg-red-300'
+                }`}>
+                MAPPED TO: {currentMapping.join(', ')}
+              </span>
+            </div>
+          </div>
+
+          {/* AFM Prediction Display */}
+          <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
+            <div className="flex justify-between items-center mb-4">
+              <span className="text-2xl font-bold text-black uppercase tracking-wide">
+                AFM SUCCESS PREDICTION: {(currentPrediction * 100).toFixed(0)}%
+              </span>
+              <div className="flex items-center space-x-4">
+                <span className="text-lg font-bold text-black">0%</span>
+                <div className="w-64 bg-gray-200 border-4 border-black rounded-none h-8 overflow-hidden">
+                  <div
+                    className={`h-full transition-all duration-1000 ease-out ${qMatrixViewMode === 'correct' ? 'bg-green-600' : 'bg-red-600'
+                      }`}
+                    style={{ width: `${currentPrediction * 100}%` }}
+                  />
+                </div>
+                <span className="text-lg font-bold text-black">100%</span>
+              </div>
+            </div>
+            <div className="text-center">
+              <span className={`px-4 py-2 border-2 border-black rounded font-bold ${qMatrixViewMode === 'correct' ? 'bg-green-300' : 'bg-red-300'
+                }`}>
+                {qMatrixViewMode === 'correct'
+                  ? 'SPECIFIC SKILL TRACKING'
+                  : 'GENERIC MAPPING - PREDICTION BIAS!'
+                }
+              </span>
+            </div>
+          </div>
+
+          {/* Problem Display */}
+          <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-3xl font-bold text-black uppercase tracking-tight">
+                {currentQ.question}
+              </h2>
+              <div className="text-right">
+                <div className="px-4 py-2 border-2 border-black font-bold text-lg bg-blue-300">
+                  Python Problem {qMatrixCurrentProblem + 1}
+                </div>
+                <div className="text-sm font-mono text-black mt-2">
+                  Skill mapping affects prediction!
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-black text-green-400 p-6 rounded-xl font-['IBM_Plex_Mono',monospace] text-lg mb-8 border-4 border-black">
+              <pre className="whitespace-pre-wrap">{currentQ.code}</pre>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 max-w-md mx-auto mb-8">
+              {currentQ.options.map((option, index) => (
+                <button
+                  key={index}
+                  onClick={() => !qMatrixShowFeedback && handleAnswerSelect(option)}
+                  disabled={qMatrixShowFeedback}
+                  className={`px-6 py-4 border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide transition-all ${qMatrixSelectedAnswer === option
+                    ? isCorrect ? "bg-green-600 text-white" : "bg-red-600 text-white"
+                    : qMatrixShowFeedback
+                      ? option === currentQ.correctAnswer ? "bg-green-300 text-black" : "bg-gray-200 text-gray-500 cursor-not-allowed"
+                      : "bg-white text-black hover:bg-indigo-400 cursor-pointer transform hover:scale-105"
+                    }`}
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
+
+            {qMatrixShowFeedback && (
+              <div className="space-y-6">
+                <div className={`border-l-8 ${isCorrect ? 'border-green-600 bg-green-100' : 'border-red-600 bg-red-100'} p-6 rounded-r-xl`}>
+                  <p className="text-black text-xl font-bold">
+                    {isCorrect ? 'Correct!' : 'Incorrect!'} The answer is <strong>{currentQ.correctAnswer}</strong>.
+                  </p>
+                </div>
+
+                <div className={`border-l-8 border-indigo-600 bg-indigo-100 p-6 rounded-r-xl`}>
+                  <p className="text-black text-xl font-bold">
+                    <strong>Q-Matrix Impact:</strong>
+                    {qMatrixViewMode === 'correct' ? (
+                      <span className="text-green-700"> With correct mapping to specific skills [{currentMapping.join(', ')}], AFM can make accurate predictions!</span>
+                    ) : (
+                      <span className="text-red-700"> With incorrect generic mapping to [{currentMapping.join(', ')}], AFM loses important skill-specific information!</span>
+                    )}
+                  </p>
+                </div>
+
+                <div className="flex justify-center space-x-4">
+                  <button
+                    onClick={toggleMapping}
+                    className={`px-6 py-3 border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide transition-all transform hover:scale-105 ${qMatrixViewMode === 'correct'
+                      ? 'bg-red-600 text-white hover:bg-white hover:text-red-600'
+                      : 'bg-green-600 text-white hover:bg-white hover:text-green-600'
+                      }`}
+                  >
+                    Switch to {qMatrixViewMode === 'correct' ? 'Incorrect' : 'Correct'} Mapping
+                  </button>
+
+                  {qMatrixCurrentProblem < pythonProblems.length - 1 ? (
+                    <button
+                      onClick={nextProblem}
+                      className="px-8 py-4 bg-indigo-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-indigo-600 transition-all transform hover:scale-105"
+                    >
+                      Next Problem →
+                    </button>
+                  ) : (
+                    <div className="space-x-4">
+                      <button
+                        onClick={resetSimulation}
+                        className="px-8 py-4 bg-gray-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-gray-600 transition-all transform hover:scale-105"
+                      >
+                        Try Again
+                      </button>
+                      <button
+                        onClick={backToOverview}
+                        className="px-8 py-4 bg-black text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-black transition-all transform hover:scale-105"
+                      >
+                        ← Back to Overview
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Progress Display */}
+          <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
+            <div className="flex justify-between items-center">
+              <span className="text-lg font-bold text-black">
+                Problem {qMatrixCurrentProblem + 1} of {pythonProblems.length}
+              </span>
+              <div className="flex space-x-2">
+                {pythonProblems.map((_, index) => (
+                  <div
+                    key={index}
+                    className={`w-4 h-4 border-2 border-black ${qMatrixAttemptedProblems.includes(index) ? 'bg-indigo-600' :
+                      index === qMatrixCurrentProblem ? 'bg-blue-600' : 'bg-gray-200'
+                      }`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Research Evidence */}
+          {qMatrixAttemptedProblems.length === pythonProblems.length && (
+            <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
+              <div className="text-center space-y-4">
+                <div className="bg-indigo-300 border-2 border-black px-6 py-4 inline-block">
+                  <span className="text-black font-bold text-xl">
+                    RESEARCH EVIDENCE
+                  </span>
+                </div>
+                <div className="bg-indigo-100 border-4 border-indigo-600 rounded-xl p-6">
+                  <p className="text-black text-lg leading-relaxed font-bold">
+                    "AFM's results are highly sensitive to Q-matrix definition, and errors
+                    propagate to all model outputs"
+                  </p>
+                  <p className="text-indigo-700 text-sm mt-4">
+                    — Multiple Educational Data Mining Studies
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </TechnicalLayout>
+    );
+  };
+
   const renderReflection = () => (
     <TechnicalLayout title="Reflection: Incorrect Answers">
       <div className="max-w-4xl mx-auto">
@@ -1797,19 +2364,19 @@ print(second_largest([1, 3, 2, 5, 4]))`,
             Explore AFM's limitations through interactive scenarios
           </div>
           <p className="text-lg text-black text-center mt-4 font-bold">
-            Complete all four scenarios below to proceed.
+            Complete all six scenarios below to proceed.
           </p>
         </div>
 
         {/* Progress Indicator */}
         <div className="border-4 border-black rounded-xl p-4 bg-yellow-400 text-center">
           <span className="text-black font-bold text-xl uppercase tracking-wide">
-            {completedScenarios.size} / 4 SCENARIOS COMPLETE
+            {completedScenarios.size} / 6 SCENARIOS COMPLETE
           </span>
         </div>
 
         {/* Scenarios Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {scenarios.map((scenario) => {
             const isCompleted = completedScenarios.has(scenario.id);
             const IconComponent = scenario.icon;
@@ -1820,6 +2387,8 @@ print(second_largest([1, 3, 2, 5, 4]))`,
               purple: "bg-purple-100 border-purple-600 text-purple-700",
               orange: "bg-orange-100 border-orange-600 text-orange-700",
               pink: "bg-pink-100 border-pink-600 text-pink-700",
+              yellow: "bg-yellow-100 border-yellow-600 text-yellow-700",
+              indigo: "bg-indigo-100 border-indigo-600 text-indigo-700",
             };
 
             return (
@@ -1885,6 +2454,8 @@ print(second_largest([1, 3, 2, 5, 4]))`,
     "no-forgetting": renderNoForgetting,
     "binary-skills": renderBinarySkills,
     "context-blind": renderContextBlind,
+    "item-difficulty": renderItemDifficulty,
+    "q-matrix-quality": renderQMatrixQuality,
   };
 
   return views[currentView]?.() || renderOverview();

@@ -25,9 +25,10 @@ import { Slide22AFMCorrectness } from "./components/Slide22AFMCorrectness";
 import { WelcomePage } from "./components/WelcomePage";
 import { trackSlideChange, trackButtonClick, syncEvents, getUserId } from "./utils/analytics";
 import ConsentDialog from "./components/ConsentDialog";
-import { AnalyticsDashboard } from "./components/AnalyticsDashboard";
+
 import { Slide24PFMSimulation } from "./components/Slide24PFMSimulation";
 import { ModelComparison } from "./components/ModelComparison";
+import { QuestionnaireNotification } from "./components/QuestionnaireNotification";
 
 // Constants
 const TOTAL_SLIDES = 24;
@@ -60,7 +61,7 @@ const SLIDE_TITLES = [
   "Model Comparison"
 ];
 
-function NavigationBar({ currentSlide, maxVisitedSlide, onNavigate, isExpanded, setIsExpanded, setShowAnalyticsDashboard }) {
+function NavigationBar({ currentSlide, maxVisitedSlide, onNavigate, isExpanded, setIsExpanded }) {
   return (
     <>
       {/* Toggle Button - Moves with navigation state */}
@@ -116,21 +117,7 @@ function NavigationBar({ currentSlide, maxVisitedSlide, onNavigate, isExpanded, 
             ))}
           </div>
 
-          {/* Analytics Dashboard Button */}
-          <div className="mt-6 border-4 border-green-600 bg-green-100 p-4 rounded-xl">
-            <button
-              onClick={() => {
-                console.log('Analytics Dashboard button clicked');
-                setShowAnalyticsDashboard(true);
-              }}
-              className="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-green-700 transition-colors uppercase tracking-wide"
-            >
-              📊 Analytics Dashboard
-            </button>
-            <div className="mt-2 text-xs text-green-700 text-center">
-              Or press 'A' key
-            </div>
-          </div>
+
 
           {/* Navigation Instructions */}
           <div className="mt-6 border-l-8 border-purple-600 bg-purple-100 p-4 rounded-r-xl">
@@ -138,10 +125,9 @@ function NavigationBar({ currentSlide, maxVisitedSlide, onNavigate, isExpanded, 
               KEYBOARD SHORTCUTS:
             </h4>
             <ul className="text-black font-bold text-xs space-y-1 uppercase">
-              <li>• ALT + ← : PREVIOUS SLIDE</li>
-              <li>• ALT + → : NEXT SLIDE</li>
+              <li>• ALT + ARROW LEFT : PREVIOUS SLIDE</li>
+              <li>• ALT + ARROW RIGHT : NEXT SLIDE</li>
               <li>• N : TOGGLE NAVIGATION</li>
-              <li>• A : ANALYTICS DASHBOARD</li>
             </ul>
           </div>
         </div>
@@ -161,7 +147,7 @@ function AFMLearningAppContent() {
   const [isNavExpanded, setIsNavExpanded] = useState(false);
   const [consentGiven, setConsentGiven] = useState(false);
   const [showConsentDialog, setShowConsentDialog] = useState(false);
-  const [showAnalyticsDashboard, setShowAnalyticsDashboard] = useState(false);
+
 
   const slideRefs = useMemo(
     () => Array.from({ length: TOTAL_SLIDES }, () => ({ current: null })),
@@ -304,24 +290,12 @@ function AFMLearningAppContent() {
         }
       }
 
-      // Toggle Analytics Dashboard with 'a' key
-      if (event.key === 'a' && !event.ctrlKey && !event.altKey && !event.shiftKey) {
-        // Only if not focused on an input field
-        if (document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
-          if (consentGiven) {
-            trackButtonClick('analytics_dashboard_toggle', {
-              key: 'a',
-              expanded: !showAnalyticsDashboard
-            });
-          }
-          setShowAnalyticsDashboard(!showAnalyticsDashboard);
-        }
-      }
+
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentSlide, maxVisitedSlide, isNavExpanded, consentGiven, showAnalyticsDashboard]);
+  }, [currentSlide, maxVisitedSlide, isNavExpanded, consentGiven]);
 
   // Mouse navigation (back/forward buttons)
   useEffect(() => {
@@ -494,7 +468,6 @@ function AFMLearningAppContent() {
         onNavigate={handleNavigation}
         isExpanded={isNavExpanded}
         setIsExpanded={setIsNavExpanded}
-        setShowAnalyticsDashboard={setShowAnalyticsDashboard}
       />
 
       {/* Main content - no margin adjustments, always full width */}
@@ -507,20 +480,10 @@ function AFMLearningAppContent() {
         <AFMFormulaTooltip stage={getFormulaStage(currentSlide)} />
       )}
 
-      {/* Analytics Dashboard Overlay */}
-      {showAnalyticsDashboard && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-7xl w-full max-h-[95vh] overflow-y-auto relative">
-            <button
-              onClick={() => setShowAnalyticsDashboard(false)}
-              className="absolute top-4 right-4 z-10 w-8 h-8 bg-red-600 text-white rounded-full hover:bg-red-700 flex items-center justify-center font-bold text-lg"
-            >
-              ×
-            </button>
-            <AnalyticsDashboard />
-          </div>
-        </div>
-      )}
+      {/* Questionnaire Notification - always visible */}
+      <QuestionnaireNotification />
+
+
     </div>
   );
 }

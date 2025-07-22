@@ -39,18 +39,18 @@ export const Slide1GuessResult = ({ guess1, scroll }) => {
             </p>
           </div>
 
-          {/* Ready for Answer */}
+          {/* Transition to Probability Estimation */}
           <div className="text-center">
-            <p className="text-2xl font-semibold text-black mb-6 uppercase tracking-wide">
-              Ready for the answer?
+            <p className="text-lg text-black mb-6 leading-relaxed">
+              What do you think chances are that you answer the <span className="bg-yellow-200 px-2 py-1 border-2 border-black rounded font-bold uppercase">next programming task</span> correctly? Can you estimate your probability of success?
             </p>
 
             <button
               onClick={() => scroll(3)}
               className="px-12 py-4 bg-black text-white border-4 border-black rounded-xl font-semibold uppercase tracking-wide hover:bg-white hover:text-black transition-all text-xl flex items-center gap-3 mx-auto shadow-lg"
             >
-              <CheckCircle className="w-6 h-6" />
-              Yes! Show me
+              <Brain className="w-6 h-6" />
+              Estimate my probability
               <ArrowRight className="w-6 h-6" />
             </button>
           </div>

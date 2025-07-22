@@ -533,6 +533,54 @@ export const ModelComparison = ({ scroll }) => {
                     </div>
 
 
+                    {/* Questionnaire Request */}
+                    <div className="border-4 border-black rounded-xl p-8 bg-gradient-to-r from-blue-100 to-green-100 shadow-lg">
+                        <div className="text-center mb-6">
+                            <div className="flex items-center justify-center gap-3 mb-4">
+                                <h3 className="text-2xl font-bold text-black uppercase tracking-wide">
+                                    Help Support This Research!
+                                </h3>
+                            </div>
+                        </div>
+
+                        <div className="border-4 border-blue-600 rounded-xl p-6 bg-blue-50 mb-6">
+                            <p className="text-black font-bold text-lg text-center mb-4">
+                                <strong>Your experience matters!</strong> This interactive app is part of a master thesis research project.
+                            </p>
+                            <p className="text-black font-bold text-center mb-4">
+                                Please take a few minutes to share your insights about the learning experience you just completed.
+                            </p>
+                            <div className="text-center">
+                                <span className="bg-green-300 px-4 py-2 border-2 border-black rounded font-bold">
+                                    Only takes 5-10 minutes
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="flex justify-center mb-6">
+                            <button
+                                onClick={() => {
+                                    // TODO: Replace with your actual questionnaire URL
+                                    const questionnaireUrl = 'https://your-questionnaire-link.com';
+                                    window.open(questionnaireUrl, '_blank');
+                                }}
+                                className="px-8 py-4 bg-blue-600 text-white border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide hover:bg-white hover:text-blue-600 transition-all transform hover:scale-105 flex items-center gap-3"
+                            >
+                                <span>Take Questionnaire</span>
+                                <ArrowRight className="w-6 h-6" />
+                            </button>
+                        </div>
+
+                        <div className="border-l-8 border-green-600 bg-green-100 p-4 rounded-r-lg">
+                            <div className="text-center">
+                                <p className="text-green-800 font-bold text-sm">
+                                    Your feedback helps improve educational technology and supports academic research.
+                                    Thank you for contributing to the advancement of learning science!
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
                     {/* End of App Navigation */}
                     <div className="border-4 border-black rounded-xl p-8 bg-gradient-to-r from-gray-100 to-purple-100 shadow-lg">
                         <div className="text-center mb-8">
@@ -554,7 +602,7 @@ export const ModelComparison = ({ scroll }) => {
                                 onClick={() => scroll(0)}
                                 className="px-6 py-4 bg-gray-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-gray-600 transition-all transform hover:scale-105 flex flex-col items-center gap-2"
                             >
-                                <span>Welcome Page</span>
+                                <span>Home</span>
                             </button>
 
                             {/* AFM Simulator */}

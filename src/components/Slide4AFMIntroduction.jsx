@@ -94,6 +94,24 @@ export const Slide4AFMIntroduction = ({ scroll }) => {
     <div className="bg-white min-h-screen grid place-items-center py-8 px-4 md:px-10 text-black font-['IBM_Plex_Mono',monospace]">
       <div className="w-full max-w-4xl mx-auto space-y-8">
 
+        {/* AFM Introduction Block */}
+        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
+          <div className="absolute -top-6 left-6 px-4 py-2 bg-blue-600 text-white font-semibold rounded-md text-sm tracking-wider flex items-center gap-2">
+            <Brain className="w-4 h-4" />
+            ADDITIVE FACTOR MODEL
+          </div>
+
+          <div className="space-y-6 text-lg font-semibold leading-relaxed">
+            <p className="text-black">
+              On the previous slide, you estimated your probability of success for a Python programming task. The <span className="bg-blue-200 px-2 py-1 border-2 border-black rounded font-bold uppercase">Additive Factor Model (AFM)</span> does exactly this – but automatically and continuously.
+            </p>
+
+            <p className="text-black">
+              AFM's core purpose is to <span className="bg-yellow-200 px-2 py-1 border-2 border-black rounded font-bold uppercase">predict your success probability</span> for the next task on any given topic. It analyzes your performance patterns and estimates: <em>"What's the chance this student will answer the next question correctly?"</em>
+            </p>
+          </div>
+        </div>
+
         {/* Adaptive Learning Block */}
         <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
           <div className="absolute -top-6 left-6 px-4 py-2 bg-orange-600 text-white font-semibold rounded-md text-sm tracking-wider flex items-center gap-2">
