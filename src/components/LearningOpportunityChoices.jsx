@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { TrendingUp, TrendingDown, Minus, Lightbulb, ArrowRight, HelpCircle } from "lucide-react";
 
-export const LearningOpportunityChoices = ({ scroll }) => {
+export const LearningOpportunityChoices = ({ navigate }) => {
   const [opportunityChoice, setOpportunityChoice] = useState("");
   const [showOpportunityResult, setShowOpportunityResult] = useState(false);
 
@@ -86,7 +86,7 @@ export const LearningOpportunityChoices = ({ scroll }) => {
         {showOpportunityResult && (
           <div className="text-center">
             <button
-              onClick={() => scroll(8)}
+              onClick={() => navigate(8)}
               className="px-8 py-4 bg-purple-600 text-white border-4 border-black rounded-lg font-bold uppercase hover:bg-white hover:text-purple-700 hover:border-purple-800 transition-all shadow-lg flex items-center gap-2 mx-auto text-lg"
             >
               Next

@@ -100,7 +100,7 @@ const paramMeta = {
   },
 };
 
-export const IFMInteractiveSimulator = ({ scroll }) => {
+export const IFMInteractiveSimulator = ({ navigate }) => {
   // State
   const [params, setParams] = useState(paramDefaults);
   const [sessionActive, setSessionActive] = useState(true);
@@ -1095,7 +1095,7 @@ export const IFMInteractiveSimulator = ({ scroll }) => {
                   totalHints: currentTotalHints,
                   slideContext: 'IFM Dynamic Simulator'
                 });
-                scroll(23);
+                navigate(23);
               }}
               className="px-8 py-4 bg-gradient-to-r from-orange-600 to-red-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-orange-600 hover:to-red-600 transition-all transform hover:scale-105 flex items-center gap-3"
             >

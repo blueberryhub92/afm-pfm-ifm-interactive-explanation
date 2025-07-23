@@ -10,7 +10,7 @@ import {
   Lightbulb,
 } from "lucide-react";
 
-export const AFMCorrectnessAnalysis = ({ scroll }) => {
+export const AFMCorrectnessAnalysis = ({ navigate }) => {
   const [showModelTeaser, setShowModelTeaser] = useState(false);
 
   return (
@@ -113,7 +113,7 @@ export const AFMCorrectnessAnalysis = ({ scroll }) => {
           {/* Navigation */}
           <div className="flex justify-center items-center">
             <button
-              onClick={() => scroll(18)}
+              onClick={() => navigate(18)}
               disabled={!showModelTeaser}
               className="px-8 py-4 bg-green-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-green-600 transition-all transform hover:scale-105 flex items-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
             >

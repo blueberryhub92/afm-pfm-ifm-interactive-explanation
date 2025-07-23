@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Play, Pause, RotateCcw, Brain, Target, TrendingUp, Code, AlertCircle, ArrowRight, Lightbulb, Zap, Clock } from 'lucide-react';
 
-export const LearningRateExplanation = ({ scroll }) => {
+export const LearningRateExplanation = ({ navigate }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [currentSimulation, setCurrentSimulation] = useState('learning-rate');
   const [isPlaying, setIsPlaying] = useState(false);
@@ -1028,7 +1028,7 @@ print(f"Probability: {probability:.4f} or {probability*100:.2f}%")`,
               </button>
             ) : (
               <button
-                onClick={() => scroll(14)}
+                onClick={() => navigate(14)}
                 className="px-8 py-4 bg-green-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-green-600 transition-all transform hover:scale-105 flex items-center gap-3"
               >
                 <span>Continue</span>

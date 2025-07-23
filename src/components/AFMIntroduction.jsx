@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { TrendingUp, TrendingDown, ArrowRight, Brain, Target, Activity, Lightbulb, Code, Zap, ArrowDownRight } from 'lucide-react';
 
-export const AFMIntroduction = ({ scroll }) => {
+export const AFMIntroduction = ({ navigate }) => {
   const [hoveredTerm, setHoveredTerm] = useState(null);
   const [baselineProficiency] = useState(0.15); // θ (theta) - starting baseline
   const [probability, setProbability] = useState(0.15);
@@ -172,7 +172,7 @@ export const AFMIntroduction = ({ scroll }) => {
         {/* Action Button */}
         <div className="text-center">
           <button
-            onClick={() => scroll(5)}
+            onClick={() => navigate(5)}
             className="px-12 py-4 bg-purple-600 text-white border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide hover:bg-white hover:text-purple-600 hover:border-purple-600 transition-all duration-200 shadow-lg"
           >
             Next →

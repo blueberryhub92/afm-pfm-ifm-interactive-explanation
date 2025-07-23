@@ -81,7 +81,7 @@ const ConfettiEffect = ({ isActive }) => {
   );
 };
 
-export const PythonTasksIntroduction = ({ scroll = (n) => console.log(`Scroll to: ${n}`) }) => {
+export const PythonTasksIntroduction = ({ navigate }) => {
   const { updateProbability } = useProbability();
   const [startTime] = useState(Date.now());
   const [taskStartTime, setTaskStartTime] = useState(null);
@@ -428,7 +428,7 @@ print(total)
       }
     });
 
-    scroll(9);
+    navigate(9);
   };
 
   // Color classes matching AFMLimitations style

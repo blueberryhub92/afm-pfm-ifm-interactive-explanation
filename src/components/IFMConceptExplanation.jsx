@@ -1,7 +1,7 @@
 import { CheckCircle, XCircle, TrendingUp, Calculator, ArrowRight, BarChart3, HelpCircle, Lightbulb, BookOpen, Brain, Target, Zap, Users, Clock, AlertTriangle } from 'lucide-react';
 import { useState, useRef } from 'react';
 
-export const IFMConceptExplanation = ({ scroll }) => {
+export const IFMConceptExplanation = ({ navigate }) => {
   const [hoveredTerm, setHoveredTerm] = useState(null);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0, side: 'right' });
   const [currentStep, setCurrentStep] = useState(0);
@@ -460,7 +460,7 @@ export const IFMConceptExplanation = ({ scroll }) => {
               </button>
             ) : (
               <button
-                onClick={() => scroll(22)}
+                onClick={() => navigate(22)}
                 className="px-8 py-4 bg-green-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-green-600 transition-all transform hover:scale-105 flex items-center gap-3"
               >
                 <span>Continue to Summary</span>

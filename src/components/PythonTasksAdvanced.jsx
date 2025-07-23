@@ -67,7 +67,7 @@ const ConfettiEffect = ({ isActive }) => {
   );
 };
 
-export const PythonTasksAdvanced = ({ scroll }) => {
+export const PythonTasksAdvanced = ({ navigate }) => {
   const [startTime] = useState(Date.now());
   const [taskStartTime, setTaskStartTime] = useState(null);
   const [interactionHistory, setInteractionHistory] = useState([]);
@@ -327,7 +327,7 @@ return fibonacci(n-1) + fibonacci(n-2)`,
       }
     });
 
-    scroll(12);
+    navigate(12);
   };
 
   // Color classes matching AFMLimitations style

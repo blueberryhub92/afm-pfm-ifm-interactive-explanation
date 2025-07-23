@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Lightbulb, TrendingUp, Target, CheckCircle } from 'lucide-react';
-import { TrackedButton, TrackedSlider } from './shared/SlideTracker';
+import { TrackedButton, TrackedSlider } from '../components/shared/SlideTracker';
 import { trackButtonClick, trackSliderInteraction, trackCustomEvent } from '../utils/analytics';
 
-export const ProbabilitySliderEstimation = ({ scroll, onDoneClick }) => {
+export const ProbabilitySliderEstimation = ({ navigate, onDoneClick }) => {
   const [sliderValue, setSliderValue] = useState(50);
   const [startTime] = useState(Date.now());
 
@@ -72,7 +72,7 @@ export const ProbabilitySliderEstimation = ({ scroll, onDoneClick }) => {
     });
 
     onDoneClick();
-    scroll(4);
+    navigate(4);
   };
 
   return (

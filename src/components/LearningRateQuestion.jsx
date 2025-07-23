@@ -4,7 +4,7 @@ import { Brain, Target, CheckCircle, ArrowRight, X, Code, RotateCcw, Lightbulb, 
 export const LearningRateQuestion = ({
   taskChoice,
   setTaskChoice,
-  scroll
+  navigate
 }) => {
   const [showTaskResult2, setShowTaskResult2] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
@@ -212,7 +212,7 @@ export const LearningRateQuestion = ({
         {showExplanation && (
           <div className="flex justify-center">
             <button
-              onClick={() => scroll(13)}
+              onClick={() => navigate(13)}
               className="px-8 py-4 bg-purple-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-purple-600 hover:border-purple-600 transition-all transform hover:scale-105 flex items-center gap-3"
             >
               <span>Continue</span>

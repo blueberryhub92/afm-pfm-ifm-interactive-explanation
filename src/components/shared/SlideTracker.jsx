@@ -3,7 +3,6 @@ import {
     trackSlideEntry,
     trackSlideExit,
     trackMouseClick,
-    trackMouseMove,
     trackScroll,
     trackHover,
     trackInputChange,
@@ -34,7 +33,6 @@ export const SlideTracker = ({
     const slideRef = useRef(null);
     const [slideStartTime] = useState(Date.now());
     const [lastScrollTime, setLastScrollTime] = useState(Date.now());
-    const [mouseMovements, setMouseMovements] = useState([]);
     const [focusedElement, setFocusedElement] = useState(null);
     const [engagementScore, setEngagementScore] = useState(0);
     const [hoverStart, setHoverStart] = useState(null);
@@ -55,7 +53,6 @@ export const SlideTracker = ({
     const updateEngagementScore = useCallback((interactionType, value = 1) => {
         setEngagementScore(prev => {
             const weights = {
-                mouse_move: 0.1,
                 mouse_click: 2,
                 keyboard: 3,
                 scroll: 0.5,
@@ -70,7 +67,6 @@ export const SlideTracker = ({
             // Track engagement periodically
             if (trackEngagement && newScore > prev + 5) {
                 const indicators = {
-                    mouse_movements: mouseMovements.length,
                     time_spent: Date.now() - slideStartTime,
                     interactions_count: Math.floor(newScore / 2)
                 };
@@ -79,48 +75,7 @@ export const SlideTracker = ({
 
             return newScore;
         });
-    }, [slideNumber, mouseMovements.length, slideStartTime, trackEngagement]);
-
-    // Mouse tracking
-    const handleMouseMove = useCallback((e) => {
-        if (!trackMouse) return;
-
-        const now = Date.now();
-        const lastMovement = mouseMovements[mouseMovements.length - 1];
-
-        if (!lastMovement || now - lastMovement.timestamp > 100) {
-            const movement = {
-                x: e.clientX,
-                y: e.clientY,
-                timestamp: now
-            };
-
-            setMouseMovements(prev => {
-                const newMovements = [...prev, movement];
-                if (newMovements.length > 50) newMovements.shift(); // Keep last 50 movements
-                return newMovements;
-            });
-
-            if (lastMovement) {
-                const distance = Math.sqrt(
-                    Math.pow(e.clientX - lastMovement.x, 2) +
-                    Math.pow(e.clientY - lastMovement.y, 2)
-                );
-
-                if (distance > 10) { // Only track significant movements
-                    trackMouseMove('slide', `slide_${slideNumber}`, {
-                        startX: lastMovement.x,
-                        startY: lastMovement.y,
-                        endX: e.clientX,
-                        endY: e.clientY,
-                        distance,
-                        duration: now - lastMovement.timestamp
-                    });
-                    updateEngagementScore('mouse_move');
-                }
-            }
-        }
-    }, [trackMouse, mouseMovements, slideNumber, updateEngagementScore]);
+    }, [slideNumber, slideStartTime, trackEngagement]);
 
     // Mouse click tracking
     const handleMouseClick = useCallback((e) => {
@@ -303,7 +258,6 @@ export const SlideTracker = ({
 
         // Add event listeners
         if (trackMouse) {
-            element.addEventListener('mousemove', handleMouseMove, { passive: true });
             element.addEventListener('click', handleMouseClick);
             element.addEventListener('mouseenter', handleMouseEnter);
             element.addEventListener('mouseleave', handleMouseLeave);
@@ -330,7 +284,6 @@ export const SlideTracker = ({
 
         return () => {
             if (trackMouse) {
-                element.removeEventListener('mousemove', handleMouseMove);
                 element.removeEventListener('click', handleMouseClick);
                 element.removeEventListener('mouseenter', handleMouseEnter);
                 element.removeEventListener('mouseleave', handleMouseLeave);
@@ -357,7 +310,7 @@ export const SlideTracker = ({
         };
     }, [
         trackMouse, trackScrolling, trackKeyboard, trackFocus, trackInteractions,
-        handleMouseMove, handleMouseClick, handleMouseEnter, handleMouseLeave,
+        handleMouseClick, handleMouseEnter, handleMouseLeave,
         handleScroll, handleKeyDown, handleFocus, handleBlur,
         handleInputChange, handleButtonClick
     ]);

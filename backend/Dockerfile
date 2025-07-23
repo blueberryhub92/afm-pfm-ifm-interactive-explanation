@@ -17,8 +17,9 @@ COPY . .
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S backend -u 1001
 
-# Change ownership of the app directory
-RUN chown -R backend:nodejs /app
+# Create data and backup directories and set permissions
+RUN mkdir -p /app/data /app/backups && \
+    chown -R backend:nodejs /app
 USER backend
 
 # Expose port
@@ -29,4 +30,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD node healthcheck.js
 
 # Start the application
-CMD ["node", "server-postgres.js"] 
+CMD ["node", "server.js"] 

@@ -12,7 +12,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 
-export const AFMFormulaExplanation = ({ scroll }) => {
+export const AFMFormulaExplanation = ({ navigate }) => {
   const [showMath, setShowMath] = useState(false);
   const [hoveredTerm, setHoveredTerm] = useState(null);
   const [showQMatrix, setShowQMatrix] = useState(false);
@@ -827,7 +827,7 @@ export const AFMFormulaExplanation = ({ scroll }) => {
         {/* Continue Button */}
         <div className="text-center">
           <button
-            onClick={() => scroll(15)}
+            onClick={() => navigate(15)}
             className="px-12 py-4 bg-black text-white border-4 border-black rounded-xl hover:bg-white hover:text-black transition-all text-xl font-bold uppercase tracking-wider shadow-lg"
           >
             Continue →

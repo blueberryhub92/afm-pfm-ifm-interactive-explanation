@@ -1,7 +1,7 @@
 import React from 'react';
 import { Eye, CheckCircle, ArrowRight, Brain } from 'lucide-react';
 
-export const ProbabilityGuessResult = ({ guess1, scroll }) => {
+export const ProbabilityGuessResult = ({ guess1, navigate }) => {
   return (
     <div className="bg-white min-h-screen flex flex-col items-center justify-center py-8 px-4 md:px-10 text-black font-['IBM_Plex_Mono',monospace]">
       <div className="w-full max-w-4xl mx-auto flex flex-col gap-8">
@@ -44,7 +44,7 @@ export const ProbabilityGuessResult = ({ guess1, scroll }) => {
             </p>
 
             <button
-              onClick={() => scroll(3)}
+              onClick={() => navigate(3)}
               className="px-12 py-4 bg-black text-white border-4 border-black rounded-xl font-semibold uppercase tracking-wide hover:bg-white hover:text-black transition-all text-xl flex items-center gap-3 mx-auto shadow-lg"
             >
               <Brain className="w-6 h-6" />

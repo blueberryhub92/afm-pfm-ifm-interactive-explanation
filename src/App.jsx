@@ -1,5 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
-import { scrollToSlide } from "./utils/utils";
+import React, { useState, useMemo, useEffect } from "react";
 
 // AFM Components
 import { AFMLimitationsDiscussion } from "./components/AFMLimitationsDiscussion";
@@ -8,7 +7,6 @@ import { AFMInteractiveSimulator } from "./components/AFMInteractiveSimulator";
 import { AFMCorrectnessAnalysis } from "./components/AFMCorrectnessAnalysis";
 import { AFMBetaParameter } from "./components/AFMBetaParameter";
 import { AFMIntroduction } from "./components/AFMIntroduction";
-import { AFMPredictorQuestion } from "./components/AFMPredictorQuestion";
 
 // Introduction and Basics
 import { IntroductoryProbabilityQuestion } from "./components/IntroductoryProbabilityQuestion";
@@ -44,7 +42,6 @@ import { IFMTasksIntroduction } from "./components/IFMTasksIntroduction";
 import { WelcomePage } from "./components/WelcomePage";
 import { ConsentDialog } from "./components/ConsentDialog";
 import { QuestionnaireNotification } from "./components/QuestionnaireNotification";
-import { MetaphoricalLearningVisualization } from "./components/MetaphoricalLearningVisualization";
 import { ModelComparison } from "./components/ModelComparison";
 import { AFMFormulaTooltip } from "./components/shared/AFMFormulaTooltip";
 import { SlideTracker } from "./components/shared/SlideTracker";
@@ -169,11 +166,6 @@ function AFMLearningAppContent() {
   const [showConsentDialog, setShowConsentDialog] = useState(false);
 
 
-  const slideRefs = useMemo(
-    () => Array.from({ length: TOTAL_SLIDES }, () => ({ current: null })),
-    []
-  );
-
   // Check consent status and sync events on app load
   useEffect(() => {
     const consentStatus = localStorage.getItem('study_consent_given');
@@ -210,33 +202,6 @@ function AFMLearningAppContent() {
     alert('Ohne Einverständnis zur Studienteilnahme kann die Anwendung nicht verwendet werden.');
   };
 
-  const scroll = (index) => {
-    const previousSlide = currentSlide;
-    setCurrentSlide(index);
-    // Update max visited slide if we're going forward
-    if (index > maxVisitedSlide) {
-      setMaxVisitedSlide(index);
-    }
-    // Reset slide3DoneClicked if we're not on slide 3 (Slide3SliderQuestion)
-    if (index !== 3) {
-      setSlide3DoneClicked(false);
-    }
-    // Close navigation when navigating to a new slide
-    setIsNavExpanded(false);
-    // Keep the original scroll behavior if you still need it
-    scrollToSlide(index, slideRefs);
-
-    // Track navigation
-    if (consentGiven) {
-      trackButtonClick('slide_navigation', {
-        from: previousSlide,
-        to: index,
-        method: 'button_click',
-        slideName: SLIDE_TITLES[index] || `Slide ${index}`
-      });
-    }
-  };
-
   const handleNavigation = (targetSlide) => {
     if (targetSlide >= 0 && targetSlide < SLIDE_TITLES.length) {
       const previousSlide = currentSlide;
@@ -245,13 +210,12 @@ function AFMLearningAppContent() {
       if (targetSlide > maxVisitedSlide) {
         setMaxVisitedSlide(targetSlide);
       }
-      // Reset slide3DoneClicked if we're not on slide 3 (Slide3SliderQuestion)
+      // Reset slide3DoneClicked if we're not on slide 3
       if (targetSlide !== 3) {
         setSlide3DoneClicked(false);
       }
       // Close navigation when navigating to a new slide
       setIsNavExpanded(false);
-      scrollToSlide(targetSlide, slideRefs);
 
       // Track navigation
       if (consentGiven) {
@@ -355,6 +319,7 @@ function AFMLearningAppContent() {
 
   const renderSlide = (Component, props, slideNumber, slideName) => (
     <SlideTracker
+      key={`slide-${slideNumber}`}
       slideNumber={slideNumber}
       slideName={slideName}
       trackInteractions={true}
@@ -364,7 +329,7 @@ function AFMLearningAppContent() {
       trackFocus={true}
       trackEngagement={true}
     >
-      <div ref={slideRefs[slideNumber]}>
+      <div className="slide-container">
         <Component {...props} />
       </div>
     </SlideTracker>
@@ -378,170 +343,170 @@ function AFMLearningAppContent() {
       setGuess2,
       taskChoice,
       setTaskChoice,
-      scroll,
+      navigate: handleNavigation
     };
 
     switch (currentSlide) {
       case 0:
-        return renderSlide(WelcomePage, { scroll }, 0, "Welcome");
+        return renderSlide(WelcomePage, { navigate: handleNavigation }, 0, "Welcome");
       case 1:
         return renderSlide(
           IntroductoryProbabilityQuestion,
-          { guess1, setGuess1, scroll },
+          { guess1, setGuess1, navigate: handleNavigation },
           1,
           "IntroductoryProbability"
         );
       case 2:
         return renderSlide(
           ProbabilityGuessResult,
-          { guess1, scroll },
+          { guess1, navigate: handleNavigation },
           2,
           "ProbabilityGuessResult"
         );
       case 3:
         return renderSlide(
           ProbabilitySliderEstimation,
-          { scroll, onDoneClick: () => setSlide3DoneClicked(true) },
+          { navigate: handleNavigation, onDoneClick: () => setSlide3DoneClicked(true) },
           3,
           "ProbabilityEstimation"
         );
       case 4:
         return renderSlide(
           AFMIntroduction,
-          { scroll },
+          { navigate: handleNavigation },
           4,
           "AFMIntroduction"
         );
       case 5:
         return renderSlide(
           ConceptUnderstandingQuiz,
-          { guess2, setGuess2, scroll },
+          { guess2, setGuess2, navigate: handleNavigation },
           5,
           "ConceptUnderstanding"
         );
       case 6:
         return renderSlide(
           QuizFeedback,
-          { guess2, scroll, showTellMe, setShowTellMe },
+          { guess2, navigate: handleNavigation, showTellMe, setShowTellMe },
           6,
           "QuizFeedback"
         );
       case 7:
         return renderSlide(
           LearningOpportunityChoices,
-          { scroll },
+          { navigate: handleNavigation },
           7,
           "LearningOpportunities"
         );
       case 8:
         return renderSlide(
           PythonTasksIntroduction,
-          { scroll },
+          { navigate: handleNavigation },
           8,
           "PythonTasksIntroduction"
         );
       case 9:
         return renderSlide(
           TaskDifficultyQuestion,
-          { taskChoice, setTaskChoice, scroll },
+          { taskChoice, setTaskChoice, navigate: handleNavigation },
           9,
           "TaskDifficulty"
         );
       case 10:
         return renderSlide(
           AFMBetaParameter,
-          { scroll },
+          { navigate: handleNavigation },
           10,
           "AFMBetaParameter"
         );
       case 11:
         return renderSlide(
           PythonTasksAdvanced,
-          { scroll },
+          { navigate: handleNavigation },
           11,
           "PythonTasksAdvanced"
         );
       case 12:
         return renderSlide(
           LearningRateQuestion,
-          { taskChoice, setTaskChoice, scroll },
+          { taskChoice, setTaskChoice, navigate: handleNavigation },
           12,
           "LearningRateQuestion"
         );
       case 13:
         return renderSlide(
           LearningRateExplanation,
-          { scroll },
+          { navigate: handleNavigation },
           13,
           "LearningRateExplanation"
         );
       case 14:
         return renderSlide(
           AFMFormulaExplanation,
-          { scroll },
+          { navigate: handleNavigation },
           14,
           "AFMFormula"
         );
       case 15:
         return renderSlide(
           AFMInteractiveSimulator,
-          { scroll },
+          { navigate: handleNavigation },
           15,
           "AFMInteractiveSimulator"
         );
       case 16:
         return renderSlide(
           AFMLimitationsDiscussion,
-          { scroll },
+          { navigate: handleNavigation },
           16,
           "AFMLimitations"
         );
       case 17:
         return renderSlide(
           AFMCorrectnessAnalysis,
-          { scroll },
+          { navigate: handleNavigation },
           17,
           "AFMCorrectness"
         );
       case 18:
         return renderSlide(
           PFMIntroduction,
-          { scroll },
+          { navigate: handleNavigation },
           18,
           "PFMIntroduction"
         );
       case 19:
         return renderSlide(
           PFMInteractiveSimulator,
-          { scroll },
+          { navigate: handleNavigation },
           19,
           "PFMInteractiveSimulator"
         );
       case 20:
         return renderSlide(
           IFMTasksIntroduction,
-          { scroll },
+          { navigate: handleNavigation },
           20,
           "IFMTasksIntroduction"
         );
       case 21:
         return renderSlide(
           IFMConceptExplanation,
-          { scroll },
+          { navigate: handleNavigation },
           21,
           "IFMConceptExplanation"
         );
       case 22:
         return renderSlide(
           IFMInteractiveSimulator,
-          { scroll },
+          { navigate: handleNavigation },
           22,
           "IFMInteractiveSimulator"
         );
       case 23:
         return renderSlide(
           ModelComparison,
-          { scroll },
+          { navigate: handleNavigation },
           23,
           "ModelComparison"
         );

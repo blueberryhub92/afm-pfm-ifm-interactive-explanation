@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { CheckCircle, XCircle, TrendingUp, Calculator, ArrowRight, BarChart3, Brain, Zap, Target } from 'lucide-react';
 
-export const PFMIntroduction = ({ scroll }) => {
+export const PFMIntroduction = ({ navigate }) => {
   const [hoveredTerm, setHoveredTerm] = useState(null);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0, side: 'right' });
   const [currentStep, setCurrentStep] = useState(0);
@@ -348,7 +348,7 @@ export const PFMIntroduction = ({ scroll }) => {
               </button>
             ) : (
               <button
-                onClick={() => scroll(19)}
+                onClick={() => navigate(19)}
                 className="px-8 py-4 bg-green-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-green-600 transition-all transform hover:scale-105 flex items-center gap-3"
               >
                 <span>Discover the Comparison</span>

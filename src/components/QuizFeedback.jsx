@@ -3,7 +3,7 @@ import { Brain, Target, HelpCircle, ArrowRight } from 'lucide-react';
 import { trackButtonClick, trackCustomEvent } from '../utils/analytics';
 import dogImage from '../assets/dog.jpg';
 
-export const QuizFeedback = ({ guess2, scroll, showTellMe, setShowTellMe }) => {
+export const QuizFeedback = ({ guess2, navigate, showTellMe, setShowTellMe }) => {
   const [startTime] = useState(Date.now());
   const [interactionHistory, setInteractionHistory] = useState([]);
   const correctAnswer = 'dog';
@@ -89,7 +89,7 @@ export const QuizFeedback = ({ guess2, scroll, showTellMe, setShowTellMe }) => {
       timestamp: Date.now()
     }]);
 
-    scroll(7);
+    navigate(7);
   };
 
   return (

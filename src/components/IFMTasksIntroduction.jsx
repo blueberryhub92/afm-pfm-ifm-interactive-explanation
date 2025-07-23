@@ -179,7 +179,7 @@ print(output)`,
 };
 
 // Overview Component
-const TaskOverview = ({ onNavigate, scroll, completedTasks, showConfetti }) => {
+const TaskOverview = ({ onNavigate, navigate, completedTasks, showConfetti }) => {
   // Color classes matching Slide10 and Slide15 style
   const colorClasses = {
     green: "bg-green-100 border-green-600 text-green-700",
@@ -294,7 +294,7 @@ const TaskOverview = ({ onNavigate, scroll, completedTasks, showConfetti }) => {
         {/* Navigation */}
         <div className="flex justify-center">
           <button
-            onClick={() => scroll(21)}
+            onClick={() => navigate(21)}
             className="px-12 py-4 bg-green-600 text-white border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide hover:bg-white hover:text-green-600 hover:border-green-600 transition-all transform hover:scale-105 flex items-center gap-3"
           >
             <span>Continue to Next Section</span>
@@ -557,7 +557,7 @@ const MultipleChoiceTask = ({ task, onNavigate, onTaskComplete, showConfetti }) 
 };
 
 // Main App Component
-export const IFMTasksIntroduction = ({ scroll }) => {
+export const IFMTasksIntroduction = ({ navigate }) => {
   const [currentPage, setCurrentPage] = useState('overview');
   const [completedTasks, setCompletedTasks] = useState([]);
   const [showConfetti, setShowConfetti] = useState(false);
@@ -591,6 +591,6 @@ export const IFMTasksIntroduction = ({ scroll }) => {
       return <MultipleChoiceTask task={TASKS.taskB} onNavigate={handleNavigate} onTaskComplete={handleTaskComplete} showConfetti={showConfetti} />;
     case 'overview':
     default:
-      return <TaskOverview onNavigate={handleNavigate} scroll={scroll} completedTasks={completedTasks} showConfetti={showConfetti} />;
+      return <TaskOverview onNavigate={handleNavigate} navigate={navigate} completedTasks={completedTasks} showConfetti={showConfetti} />;
   }
 };

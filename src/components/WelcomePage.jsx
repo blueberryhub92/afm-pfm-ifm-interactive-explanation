@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ArrowRight, Brain, Lightbulb, Target, Code, Calculator, Users } from 'lucide-react';
 import { trackButtonClick, trackCustomEvent } from '../utils/analytics';
 
-export const WelcomePage = ({ scroll }) => {
+export const WelcomePage = ({ navigate }) => {
   const [hoveredModule, setHoveredModule] = useState(null);
   const [hoverStartTime, setHoverStartTime] = useState(null);
   const [viewStartTime] = useState(Date.now());
@@ -18,7 +18,7 @@ export const WelcomePage = ({ scroll }) => {
       description: "Begin your adventure with Python programming. Learn about AFMs parameters with interactive tutorials and hands-on exercises.",
       onClick: () => {
         handleModuleClick("python-journey");
-        scroll(1);
+        navigate(1);
       },
       size: "large" // Featured module
     },
@@ -30,7 +30,7 @@ export const WelcomePage = ({ scroll }) => {
       description: "Dive deep into the Additive Factor Model. Understand the mathematical foundation and learn how it predicts student performance.",
       onClick: () => {
         handleModuleClick("afm-formula");
-        scroll(14);
+        navigate(14);
       },
       size: "normal"
     },
@@ -42,7 +42,7 @@ export const WelcomePage = ({ scroll }) => {
       description: "Explore PFM and its approach to modeling student learning through correct and incorrect answers.",
       onClick: () => {
         handleModuleClick("pfm");
-        scroll(18);
+        navigate(18);
       },
       size: "normal"
     },
@@ -54,7 +54,7 @@ export const WelcomePage = ({ scroll }) => {
       description: "Learn about IFM and how it incorporates instructional factors into learning predictions.",
       onClick: () => {
         handleModuleClick("ifm");
-        scroll(21);
+        navigate(21);
       },
       size: "normal"
     }

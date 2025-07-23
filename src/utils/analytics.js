@@ -9,6 +9,7 @@ class Analytics {
     this.startTime = Date.now();
     this.slideStartTime = Date.now();
     this.currentSlide = null;
+    this.currentComponent = null;
     this.interactionBuffer = [];
     this.eventQueue = [];
     this.batchTimeout = null;
@@ -45,13 +46,35 @@ class Analytics {
 
   // Track any event with custom data
   track(eventName, eventData = {}) {
+    // Extract component info from eventData if provided
+    const componentName = eventData.componentName || this.currentComponent?.name;
+    const componentType = eventData.elementType || this.currentComponent?.type;
+
+    // Build URL with component info
+    const url = new URL(window.location.href);
+    if (componentName) {
+      url.searchParams.set('component', componentName);
+    }
+    if (this.currentSlide?.name) {
+      url.searchParams.set('slide', this.currentSlide.name);
+    }
+
     const event = {
       userId: this.userId,
       sessionId: this.sessionId,
       eventName,
-      eventData,
+      eventData: {
+        ...eventData,
+        componentContext: {
+          componentName,
+          componentType,
+          slideNumber: this.currentSlide?.number,
+          slideName: this.currentSlide?.name,
+          slideContext: this.getSlideContext()
+        }
+      },
       timestamp: Date.now(),
-      url: window.location.href,
+      url: url.toString(),
       userAgent: navigator.userAgent,
       screenResolution: `${screen.width}x${screen.height}`,
       viewportSize: `${window.innerWidth}x${window.innerHeight}`,
@@ -61,15 +84,50 @@ class Analytics {
 
     this.events.push(event);
     this.persistEvent(event);
-    
-    // Add to queue instead of sending immediately
     this.queueEvent(event);
   }
 
   // Set current slide for timing calculations
   setCurrentSlide(slideNumber, slideName) {
-    this.currentSlide = { number: slideNumber, name: slideName };
+    this.currentSlide = { 
+      number: slideNumber, 
+      name: slideName,
+      startTime: Date.now()
+    };
     this.slideStartTime = Date.now();
+
+    // Update URL with slide info
+    const url = new URL(window.location.href);
+    url.searchParams.set('slide', slideName);
+    window.history.replaceState({}, '', url.toString());
+  }
+
+  setCurrentComponent(componentName, componentType) {
+    this.currentComponent = {
+      name: componentName,
+      type: componentType,
+      startTime: Date.now()
+    };
+
+    // Update URL with component info
+    const url = new URL(window.location.href);
+    url.searchParams.set('component', componentName);
+    window.history.replaceState({}, '', url.toString());
+  }
+
+  getSlideContext() {
+    if (!this.currentSlide) return null;
+
+    return {
+      number: this.currentSlide.number,
+      name: this.currentSlide.name,
+      timeOnSlide: Date.now() - this.currentSlide.startTime,
+      currentComponent: this.currentComponent ? {
+        name: this.currentComponent.name,
+        type: this.currentComponent.type,
+        timeOnComponent: Date.now() - this.currentComponent.startTime
+      } : null
+    };
   }
 
   // Persist event to localStorage as backup
@@ -229,6 +287,8 @@ export const trackSlideExit = (slideNumber, slideName, timeSpent, exitMethod = '
 export const trackButtonClick = (buttonName, context = {}) => {
   analytics.track('button_click', {
     buttonName,
+    componentName: context.componentName,
+    elementType: context.elementType || 'button',
     ...context
   });
 };
@@ -277,13 +337,16 @@ export const trackHover = (elementType, elementId, duration) => {
 };
 
 // === FORM & INPUT TRACKING ===
-export const trackInputChange = (inputType, inputId, value, previousValue) => {
+export const trackInputChange = (inputType, inputId, value, previousValue, context = {}) => {
   analytics.track('input_change', {
     inputType,
     inputId,
+    componentName: context.componentName,
+    elementType: context.elementType || 'input',
     value: typeof value === 'string' && value.length > 50 ? value.substring(0, 50) + '...' : value,
     previousValue: typeof previousValue === 'string' && previousValue.length > 50 ? previousValue.substring(0, 50) + '...' : previousValue,
-    valueLength: typeof value === 'string' ? value.length : null
+    valueLength: typeof value === 'string' ? value.length : null,
+    ...context
   });
 };
 
@@ -307,6 +370,8 @@ export const trackSliderInteraction = (sliderId, value, context = {}) => {
   analytics.track('slider_interaction', {
     sliderId,
     value,
+    componentName: context.componentName,
+    elementType: context.elementType || 'slider',
     previousValue: context.previousValue,
     isDragging: context.isDragging,
     ...context

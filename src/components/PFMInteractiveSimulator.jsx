@@ -85,7 +85,7 @@ const paramMeta = {
     },
 };
 
-export const PFMInteractiveSimulator = ({ scroll }) => {
+export const PFMInteractiveSimulator = ({ navigate }) => {
     // State
     const [params, setParams] = useState(paramDefaults);
     const [sessionActive, setSessionActive] = useState(true);
@@ -930,7 +930,7 @@ export const PFMInteractiveSimulator = ({ scroll }) => {
                                     finalProbability: currentProb,
                                     slideContext: 'PFM Dynamic Simulator'
                                 });
-                                scroll(20);
+                                navigate(20);
                             }}
                             className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-blue-600 hover:to-purple-600 transition-all transform hover:scale-105 flex items-center gap-3"
                         >

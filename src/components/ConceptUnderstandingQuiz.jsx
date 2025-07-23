@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Brain, Terminal, Zap, ArrowRight, Target, Code } from 'lucide-react';
 import { trackButtonClick, trackInputChange, trackCustomEvent } from '../utils/analytics';
 
-export const ConceptUnderstandingQuiz = ({ guess2, setGuess2, scroll }) => {
+export const ConceptUnderstandingQuiz = ({ guess2, setGuess2, navigate }) => {
   const [startTime] = useState(Date.now());
   const [interactionHistory, setInteractionHistory] = useState([]);
   const [lastInputValue, setLastInputValue] = useState('');
@@ -69,7 +69,7 @@ export const ConceptUnderstandingQuiz = ({ guess2, setGuess2, scroll }) => {
       timestamp: Date.now()
     }]);
 
-    scroll(6);
+    navigate(6);
   };
 
   const handleInputChange = (e) => {

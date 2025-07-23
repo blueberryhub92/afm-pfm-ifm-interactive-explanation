@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { CheckCircle, XCircle, Play, Pause, RotateCcw, TrendingUp, Calculator, ArrowRight, Brain, Zap, Target, HelpCircle, Lightbulb } from 'lucide-react';
 
-export const ModelComparison = ({ scroll }) => {
+export const ModelComparison = ({ navigate }) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentStep, setCurrentStep] = useState(0);
     const [ifmProbability, setIfmProbability] = useState(0.4);
@@ -599,7 +599,7 @@ export const ModelComparison = ({ scroll }) => {
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                             {/* Back to Welcome */}
                             <button
-                                onClick={() => scroll(0)}
+                                onClick={() => navigate(0)}
                                 className="px-6 py-4 bg-gray-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-gray-600 transition-all transform hover:scale-105 flex flex-col items-center gap-2"
                             >
                                 <span>Home</span>
@@ -607,7 +607,7 @@ export const ModelComparison = ({ scroll }) => {
 
                             {/* AFM Simulator */}
                             <button
-                                onClick={() => scroll(15)}
+                                onClick={() => navigate(15)}
                                 className="px-6 py-4 bg-green-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-green-600 transition-all transform hover:scale-105 flex flex-col items-center gap-2"
                             >
                                 <span>AFM Simulator</span>
@@ -615,7 +615,7 @@ export const ModelComparison = ({ scroll }) => {
 
                             {/* PFM Simulator */}
                             <button
-                                onClick={() => scroll(19)}
+                                onClick={() => navigate(19)}
                                 className="px-6 py-4 bg-blue-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-blue-600 transition-all transform hover:scale-105 flex flex-col items-center gap-2"
                             >
                                 <span>PFM Simulator</span>
@@ -623,7 +623,7 @@ export const ModelComparison = ({ scroll }) => {
 
                             {/* IFM Simulator */}
                             <button
-                                onClick={() => scroll(22)}
+                                onClick={() => navigate(22)}
                                 className="px-6 py-4 bg-orange-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-orange-600 transition-all transform hover:scale-105 flex flex-col items-center gap-2"
                             >
                                 <span>IFM Simulator</span>

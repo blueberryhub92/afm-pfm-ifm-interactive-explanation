@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Target, Brain, CheckCircle, XCircle, ArrowRight, BookOpen, TrendingDown, TrendingUp } from "lucide-react";
 
-export const AFMBetaParameter = ({ scroll }) => {
+export const AFMBetaParameter = ({ navigate }) => {
   const [betaAnswer1, setBetaAnswer1] = useState("");
   const [betaAnswer2, setBetaAnswer2] = useState("");
   const [showResult, setShowResult] = useState(false);
@@ -136,7 +136,7 @@ export const AFMBetaParameter = ({ scroll }) => {
               )}
 
               <button
-                onClick={() => scroll(11)}
+                onClick={() => navigate(11)}
                 className="px-8 py-4 bg-blue-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-blue-600 hover:border-blue-600 transition-all transform hover:scale-105 flex items-center gap-3 mx-auto"
               >
                 <span>Continue</span>

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Code, ArrowRight, Lightbulb } from 'lucide-react';
 
-export const IntroductoryProbabilityQuestion = ({ guess1, setGuess1, scroll }) => {
-  const handleSubmitGuess1 = () => guess1.trim() && scroll(2);
+export const IntroductoryProbabilityQuestion = ({ guess1, setGuess1, navigate }) => {
+  const handleSubmitGuess1 = () => guess1.trim() && navigate(2);
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {

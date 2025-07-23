@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { ArrowLeft, TrendingDown, Calendar } from "lucide-react";
 
-export const AFMLimitationsDiscussion = ({ scroll }) => {
+export const AFMLimitationsDiscussion = ({ navigate }) => {
   const [currentView, setCurrentView] = useState("overview");
   const [completedScenarios, setCompletedScenarios] = useState(new Set());
   const [simStep, setSimStep] = useState(0);
@@ -2360,7 +2360,7 @@ print(result)`,
   );
 
   const renderOverview = () => (
-    <div className="bg-white min-h-screen flex flex-col text-black font-['IBM_Plex_Mono',monospace] py-8 px-4 md:px-10">
+    <div className="bg-white min-h-screen flex flex-col items-center py-8 px-4 md:px-10 text-black font-['IBM_Plex_Mono',monospace]">
       <div className="w-full max-w-6xl mx-auto flex flex-col gap-8">
         {/* Header */}
         <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
@@ -2438,18 +2438,17 @@ print(result)`,
             );
           })}
         </div>
-      </div>
 
-      <div className="flex justify-center mt-12">
-        <button
-          className="px-12 py-4 bg-green-600 text-white border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide hover:bg-white hover:text-green-600 hover:border-green-600 transition-all transform hover:scale-105 flex items-center gap-3 font-['IBM_Plex_Mono',monospace]"
-          onClick={() => {
-            scroll(17);
-          }}
-        >
-          <span>Continue to Next Section</span>
-          <ArrowRight className="w-6 h-6" />
-        </button>
+        {/* Continue Button */}
+        <div className="flex justify-center">
+          <button
+            onClick={() => navigate(17)}
+            className="px-8 py-4 bg-purple-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-purple-600 transition-all transform hover:scale-105 flex items-center gap-3"
+          >
+            <span>Continue</span>
+            <ArrowRight className="w-5 h-5" />
+          </button>
+        </div>
       </div>
     </div>
   );

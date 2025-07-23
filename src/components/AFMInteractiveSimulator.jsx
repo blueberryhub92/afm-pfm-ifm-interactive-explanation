@@ -82,7 +82,7 @@ const paramMeta = {
   },
 };
 
-export const AFMInteractiveSimulator = ({ scroll }) => {
+export const AFMInteractiveSimulator = ({ navigate }) => {
   // State
   const [params, setParams] = useState(paramDefaults);
   const [sessionActive, setSessionActive] = useState(true);
@@ -898,7 +898,7 @@ export const AFMInteractiveSimulator = ({ scroll }) => {
                   },
                   slideContext: 'AFM Simulator'
                 });
-                scroll(16);
+                navigate(16);
               }}
               className="px-8 py-4 bg-purple-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-purple-600 transition-all transform hover:scale-105 flex items-center gap-3"
             >
