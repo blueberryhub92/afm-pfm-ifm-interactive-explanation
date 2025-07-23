@@ -1,8 +1,101 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Brain, Terminal, Zap, ArrowRight, Target, Code } from 'lucide-react';
+import { trackButtonClick, trackInputChange, trackCustomEvent } from '../utils/analytics';
 
-export const Slide6Quiz = ({ guess2, setGuess2, scroll }) => {
-  const handleSubmitGuess2 = () => guess2.trim() && scroll(6);
+export const ConceptUnderstandingQuiz = ({ guess2, setGuess2, scroll }) => {
+  const [startTime] = useState(Date.now());
+  const [interactionHistory, setInteractionHistory] = useState([]);
+  const [lastInputValue, setLastInputValue] = useState('');
+
+  // Track quiz entry
+  useEffect(() => {
+    trackCustomEvent('concept_quiz_started', {
+      componentName: 'ConceptUnderstandingQuiz',
+      elementType: 'quiz',
+      quizContext: {
+        quizType: 'python_slicing',
+        questionType: 'code_output',
+        timestamp: startTime
+      }
+    });
+
+    return () => {
+      // Track quiz exit
+      trackCustomEvent('concept_quiz_exited', {
+        componentName: 'ConceptUnderstandingQuiz',
+        elementType: 'quiz',
+        quizMetrics: {
+          timeSpent: Date.now() - startTime,
+          interactionCount: interactionHistory.length,
+          finalAnswer: guess2,
+          interactionPattern: summarizeInteractions(interactionHistory)
+        }
+      });
+    };
+  }, [interactionHistory, guess2]);
+
+  const summarizeInteractions = (interactions) => {
+    return {
+      totalEdits: interactions.filter(i => i.type === 'edit').length,
+      totalSubmitAttempts: interactions.filter(i => i.type === 'submit').length,
+      averageEditLength: interactions
+        .filter(i => i.type === 'edit')
+        .reduce((sum, i) => sum + i.value.length, 0) / Math.max(1, interactions.filter(i => i.type === 'edit').length),
+      editPattern: interactions
+        .filter(i => i.type === 'edit')
+        .map(i => i.value.length)
+    };
+  };
+
+  const handleSubmitGuess2 = () => {
+    if (!guess2.trim()) return;
+
+    // Track submission attempt
+    trackButtonClick('concept_quiz_submit', {
+      componentName: 'ConceptUnderstandingQuiz',
+      elementType: 'button',
+      elementLocation: 'quiz_submission',
+      submissionContext: {
+        answer: guess2,
+        timeToSubmit: Date.now() - startTime,
+        answerLength: guess2.length,
+        previousInteractions: summarizeInteractions(interactionHistory)
+      }
+    });
+
+    setInteractionHistory(prev => [...prev, {
+      type: 'submit',
+      value: guess2,
+      timestamp: Date.now()
+    }]);
+
+    scroll(6);
+  };
+
+  const handleInputChange = (e) => {
+    const newValue = e.target.value;
+    setGuess2(newValue);
+
+    // Track detailed input changes
+    trackInputChange('concept_quiz_answer', 'quiz_input', newValue, lastInputValue, {
+      componentName: 'ConceptUnderstandingQuiz',
+      elementType: 'text_input',
+      elementLocation: 'quiz_answer',
+      changeContext: {
+        previousLength: lastInputValue.length,
+        newLength: newValue.length,
+        changeType: newValue.length > lastInputValue.length ? 'addition' : 'deletion',
+        timestamp: Date.now()
+      }
+    });
+
+    setLastInputValue(newValue);
+    setInteractionHistory(prev => [...prev, {
+      type: 'edit',
+      value: newValue,
+      timestamp: Date.now()
+    }]);
+  };
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
@@ -13,7 +106,6 @@ export const Slide6Quiz = ({ guess2, setGuess2, scroll }) => {
   return (
     <div className="bg-white min-h-screen grid place-items-center py-8 px-4 md:px-10 text-black font-['IBM_Plex_Mono',monospace]">
       <div className="w-full max-w-4xl mx-auto space-y-8">
-
         {/* Quiz Section */}
         <div className="border-4 border-black rounded-xl p-6 bg-white relative shadow-lg">
           <div className="absolute -top-6 left-4 px-3 py-1 bg-purple-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
@@ -69,7 +161,7 @@ export const Slide6Quiz = ({ guess2, setGuess2, scroll }) => {
                 type="text"
                 placeholder="TYPE YOUR GUESS HERE..."
                 value={guess2}
-                onChange={(e) => setGuess2(e.target.value)}
+                onChange={handleInputChange}
                 onKeyPress={handleKeyPress}
                 className="w-full px-4 py-3 border-4 border-black rounded-lg focus:outline-none focus:ring-4 focus:ring-purple-300 bg-white text-black font-mono text-lg font-semibold placeholder-gray-400 tracking-wide"
                 style={{ textTransform: 'none' }}
@@ -90,7 +182,6 @@ export const Slide6Quiz = ({ guess2, setGuess2, scroll }) => {
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );

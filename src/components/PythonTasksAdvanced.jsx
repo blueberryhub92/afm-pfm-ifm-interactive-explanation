@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Code, Target, Zap, ArrowRight, List, Brain, Users, CheckCircle, XCircle, Clock, TrendingUp } from "lucide-react";
+import { trackButtonClick, trackCustomEvent } from '../utils/analytics';
 
 // Confetti Component
 const ConfettiEffect = ({ isActive }) => {
@@ -66,24 +67,54 @@ const ConfettiEffect = ({ isActive }) => {
   );
 };
 
-export const Slide15TwoMorePythonTasks = ({ scroll }) => {
+export const PythonTasksAdvanced = ({ scroll }) => {
+  const [startTime] = useState(Date.now());
+  const [taskStartTime, setTaskStartTime] = useState(null);
+  const [interactionHistory, setInteractionHistory] = useState([]);
   const [selectedTask, setSelectedTask] = useState(null);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [showResult, setShowResult] = useState(false);
   const [completedTasks, setCompletedTasks] = useState([]);
   const [showConfetti, setShowConfetti] = useState(false);
 
-  // Check if all tasks are completed and trigger confetti
+  // Track component entry
   useEffect(() => {
-    if (completedTasks.length === 2 && completedTasks.length > 0) {
-      setShowConfetti(true);
-      // Turn off confetti after 3 seconds
-      const timer = setTimeout(() => {
-        setShowConfetti(false);
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [completedTasks]);
+    trackCustomEvent('advanced_python_tasks_viewed', {
+      componentName: 'PythonTasksAdvanced',
+      elementType: 'task_selection',
+      viewContext: {
+        timestamp: startTime,
+        availableTasks: Object.keys(tasks).length
+      }
+    });
+
+    return () => {
+      // Track component exit
+      trackCustomEvent('advanced_python_tasks_exited', {
+        componentName: 'PythonTasksAdvanced',
+        elementType: 'task_selection',
+        completionMetrics: {
+          timeSpent: Date.now() - startTime,
+          completedTasks: completedTasks.length,
+          totalTasks: Object.keys(tasks).length,
+          interactionPattern: summarizeInteractions(interactionHistory)
+        }
+      });
+    };
+  }, [completedTasks, interactionHistory]);
+
+  const summarizeInteractions = (interactions) => {
+    return {
+      totalInteractions: interactions.length,
+      taskAttempts: interactions.filter(i => i.type === 'task_attempt').length,
+      correctAnswers: interactions.filter(i => i.type === 'correct_answer').length,
+      incorrectAnswers: interactions.filter(i => i.type === 'incorrect_answer').length,
+      averageTimePerTask: interactions
+        .filter(i => i.type === 'task_complete')
+        .reduce((sum, i) => sum + i.duration, 0) / Math.max(1, completedTasks.length),
+      completionSequence: completedTasks
+    };
+  };
 
   const tasks = {
     A: {
@@ -169,26 +200,134 @@ return fibonacci(n-1) + fibonacci(n-2)`,
   };
 
   const handleTaskClick = (taskId) => {
+    const task = tasks[taskId];
+
+    trackButtonClick('advanced_python_task_selected', {
+      componentName: 'PythonTasksAdvanced',
+      elementType: 'button',
+      elementLocation: 'task_selection',
+      selectionContext: {
+        taskId,
+        taskTitle: task.title,
+        taskType: task.color,
+        learningRate: task.learningRate,
+        isCompleted: completedTasks.includes(taskId),
+        previousTask: selectedTask,
+        timeFromStart: Date.now() - startTime
+      }
+    });
+
     setSelectedTask(taskId);
     setSelectedAnswer(null);
     setShowResult(false);
+    setTaskStartTime(Date.now());
+
+    setInteractionHistory(prev => [...prev, {
+      type: 'task_attempt',
+      taskId,
+      timestamp: Date.now()
+    }]);
   };
 
   const handleAnswerSelect = (answerId) => {
+    const task = tasks[selectedTask];
+    const selectedOption = task.options.find(opt => opt.id === answerId);
+    const isCorrect = selectedOption?.correct;
+
+    trackCustomEvent('advanced_python_task_answer', {
+      componentName: 'PythonTasksAdvanced',
+      elementType: 'task',
+      answerContext: {
+        taskId: selectedTask,
+        taskTitle: task.title,
+        answerId,
+        isCorrect,
+        timeToAnswer: Date.now() - taskStartTime,
+        learningRate: task.learningRate,
+        previousAttempts: interactionHistory.filter(i =>
+          i.type === 'task_attempt' && i.taskId === selectedTask
+        ).length
+      }
+    });
+
     setSelectedAnswer(answerId);
     setShowResult(true);
 
+    setInteractionHistory(prev => [...prev, {
+      type: isCorrect ? 'correct_answer' : 'incorrect_answer',
+      taskId: selectedTask,
+      answerId,
+      timestamp: Date.now()
+    }]);
+
     // Mark task as completed if answer is correct
-    const selectedOption = tasks[selectedTask].options.find(opt => opt.id === answerId);
-    if (selectedOption?.correct && !completedTasks.includes(selectedTask)) {
+    if (isCorrect && !completedTasks.includes(selectedTask)) {
+      trackCustomEvent('advanced_python_task_completed', {
+        componentName: 'PythonTasksAdvanced',
+        elementType: 'task',
+        completionContext: {
+          taskId: selectedTask,
+          taskTitle: task.title,
+          timeToComplete: Date.now() - taskStartTime,
+          learningRate: task.learningRate,
+          isFirstCompletion: true,
+          totalCompleted: completedTasks.length + 1
+        }
+      });
+
       setCompletedTasks([...completedTasks, selectedTask]);
+      setInteractionHistory(prev => [...prev, {
+        type: 'task_complete',
+        taskId: selectedTask,
+        timestamp: Date.now(),
+        duration: Date.now() - taskStartTime
+      }]);
     }
   };
 
   const resetTask = () => {
+    trackButtonClick('advanced_python_task_reset', {
+      componentName: 'PythonTasksAdvanced',
+      elementType: 'button',
+      elementLocation: 'task_navigation',
+      resetContext: {
+        taskId: selectedTask,
+        wasCompleted: completedTasks.includes(selectedTask),
+        timeSpent: Date.now() - taskStartTime,
+        learningRate: tasks[selectedTask]?.learningRate
+      }
+    });
+
     setSelectedTask(null);
     setSelectedAnswer(null);
     setShowResult(false);
+    setTaskStartTime(null);
+
+    setInteractionHistory(prev => [...prev, {
+      type: 'task_reset',
+      taskId: selectedTask,
+      timestamp: Date.now()
+    }]);
+  };
+
+  const handleContinue = () => {
+    trackButtonClick('advanced_python_tasks_continue', {
+      componentName: 'PythonTasksAdvanced',
+      elementType: 'button',
+      elementLocation: 'section_navigation',
+      navigationContext: {
+        completedTasks: completedTasks.length,
+        totalTasks: Object.keys(tasks).length,
+        timeSpent: Date.now() - startTime,
+        interactionSummary: summarizeInteractions(interactionHistory),
+        learningRateComparison: {
+          highRateCompleted: completedTasks.includes('A'),
+          lowRateCompleted: completedTasks.includes('B')
+        }
+      }
+    });
+
+    scroll(12);
   };
 
   // Color classes matching AFMLimitations style
@@ -428,8 +567,8 @@ return fibonacci(n-1) + fibonacci(n-2)`,
 
       <div className="flex justify-center mt-12">
         <button
+          onClick={handleContinue}
           className="px-12 py-4 bg-green-600 text-white border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide hover:bg-white hover:text-green-600 hover:border-green-600 transition-all transform hover:scale-105 flex items-center gap-3"
-          onClick={() => scroll(12)}
         >
           <span>Continue to Next Section</span>
           <ArrowRight className="w-6 h-6" />

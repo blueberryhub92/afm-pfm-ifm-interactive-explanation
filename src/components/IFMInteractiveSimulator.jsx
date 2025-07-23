@@ -100,7 +100,7 @@ const paramMeta = {
   },
 };
 
-export const Slide27IFMSimulation = ({ scroll }) => {
+export const IFMInteractiveSimulator = ({ scroll }) => {
   // State
   const [params, setParams] = useState(paramDefaults);
   const [sessionActive, setSessionActive] = useState(true);

@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MessageCircle, X, FileText } from 'lucide-react';
+import { getUserId, trackButtonClick } from '../utils/analytics';
 
 export const QuestionnaireNotification = () => {
     const [isExpanded, setIsExpanded] = useState(false);
     const [isVisible, setIsVisible] = useState(true);
     const [isDismissed, setIsDismissed] = useState(false);
     const notificationRef = useRef(null);
+    const userId = getUserId();
 
     // Check if user previously dismissed the notification
     useEffect(() => {
@@ -36,12 +38,55 @@ export const QuestionnaireNotification = () => {
         setIsDismissed(true);
         setIsVisible(false);
         localStorage.setItem('questionnaire-notification-dismissed', 'true');
+
+        // Track dismissal
+        trackButtonClick('questionnaire_notification_dismiss', {
+            userId,
+            action: 'dismiss'
+        });
     };
 
     const handleQuestionnaireClick = () => {
-        // TODO: Replace with your actual questionnaire URL
-        const questionnaireUrl = 'https://your-questionnaire-link.com';
+        // Track questionnaire click
+        trackButtonClick('questionnaire_start', {
+            userId,
+            action: 'start_questionnaire'
+        });
+
+        // Base URL of your LimeSurvey questionnaire
+        const baseUrl = 'https://your-limesurvey-url.com/index.php/123456'; // Replace with your actual survey URL
+
+        // LimeSurvey parameters:
+        // - token: if you're using token-based access
+        // - sid: survey ID (usually part of the base URL)
+        // - newtest: start a new response
+        // - lang: language code
+        // You can also add custom parameters that you can access in LimeSurvey using ExpressionScript:
+        // {PARAMETER:studyid}
+        const questionnaireUrl = `${baseUrl}?studyid=${encodeURIComponent(userId)}&newtest=Y`;
+
+        // Open questionnaire in new tab
         window.open(questionnaireUrl, '_blank');
+    };
+
+    const handleExpand = () => {
+        setIsExpanded(true);
+
+        // Track expansion
+        trackButtonClick('questionnaire_notification_expand', {
+            userId,
+            action: 'expand'
+        });
+    };
+
+    const handleCollapse = () => {
+        setIsExpanded(false);
+
+        // Track collapse
+        trackButtonClick('questionnaire_notification_collapse', {
+            userId,
+            action: 'collapse'
+        });
     };
 
     if (isDismissed || !isVisible) {
@@ -54,7 +99,7 @@ export const QuestionnaireNotification = () => {
             {!isExpanded && (
                 <div
                     className="bg-blue-600 text-white p-4 rounded-lg shadow-lg border-4 border-black cursor-pointer hover:bg-blue-700 transition-all duration-300 transform hover:scale-105"
-                    onClick={() => setIsExpanded(true)}
+                    onClick={handleExpand}
                 >
                     <div className="flex items-center gap-2">
                         <MessageCircle className="w-5 h-5" />
@@ -73,7 +118,7 @@ export const QuestionnaireNotification = () => {
                             <span className="font-bold text-blue-600 uppercase tracking-wide">Master Thesis Research</span>
                         </div>
                         <button
-                            onClick={() => setIsExpanded(false)}
+                            onClick={handleCollapse}
                             className="p-1 hover:bg-gray-100 rounded border-2 border-black transition-colors"
                         >
                             <X className="w-4 h-4" />
@@ -98,6 +143,30 @@ export const QuestionnaireNotification = () => {
                                 <li>• Only takes 5-10 minutes</li>
                                 <li>• Your insights are valuable!</li>
                             </ul>
+                        </div>
+
+                        {/* Study ID Display */}
+                        <div className="bg-purple-50 border-2 border-purple-600 rounded-lg p-3">
+                            <div className="flex items-center gap-2 mb-2">
+                                <span className="text-purple-600 font-bold text-xs uppercase tracking-wide">Your Study ID</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <code className="bg-white px-3 py-1 rounded text-sm font-mono text-purple-800 border-2 border-purple-300 flex-1">
+                                    {userId}
+                                </code>
+                                <button
+                                    onClick={() => {
+                                        navigator.clipboard.writeText(userId);
+                                        trackButtonClick('copy_study_id', { userId });
+                                    }}
+                                    className="text-purple-600 hover:text-purple-800 text-xs underline"
+                                >
+                                    Copy
+                                </button>
+                            </div>
+                            <p className="text-xs text-purple-700 mt-2">
+                                This ID will be automatically included in your questionnaire responses.
+                            </p>
                         </div>
 
                         {/* Action buttons */}

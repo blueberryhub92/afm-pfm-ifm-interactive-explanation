@@ -10,7 +10,7 @@ import {
   Lightbulb,
 } from "lucide-react";
 
-export const Slide22AFMCorrectness = ({ scroll }) => {
+export const AFMCorrectnessAnalysis = ({ scroll }) => {
   const [showModelTeaser, setShowModelTeaser] = useState(false);
 
   return (

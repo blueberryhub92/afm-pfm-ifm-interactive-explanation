@@ -13,7 +13,7 @@ import {
   Clock
 } from "lucide-react";
 
-export const Slide18PredictorQuestion = ({ scroll }) => {
+export const AFMPredictorQuestion = ({ scroll }) => {
   const [selectedAnswer, setSelectedAnswer] = useState("");
   const [currentStep, setCurrentStep] = useState(0);
   const [hoveredTerm, setHoveredTerm] = useState(null);

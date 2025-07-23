@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { TrendingUp, TrendingDown, Minus, Lightbulb, ArrowRight, HelpCircle } from "lucide-react";
 
-export const Slide8OpportunityChoices = ({ scroll }) => {
+export const LearningOpportunityChoices = ({ scroll }) => {
   const [opportunityChoice, setOpportunityChoice] = useState("");
   const [showOpportunityResult, setShowOpportunityResult] = useState(false);
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { CheckCircle, XCircle, TrendingUp, Calculator, ArrowRight, BarChart3, Brain, Zap, Target } from 'lucide-react';
 
-export const Slide23PFM = ({ scroll }) => {
+export const PFMIntroduction = ({ scroll }) => {
   const [hoveredTerm, setHoveredTerm] = useState(null);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0, side: 'right' });
   const [currentStep, setCurrentStep] = useState(0);

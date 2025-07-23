@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Target, Brain, CheckCircle, XCircle, ArrowRight, BookOpen, TrendingDown, TrendingUp } from "lucide-react";
 
-export const Slide14BetaParameter = ({ scroll }) => {
+export const AFMBetaParameter = ({ scroll }) => {
   const [betaAnswer1, setBetaAnswer1] = useState("");
   const [betaAnswer2, setBetaAnswer2] = useState("");
   const [showResult, setShowResult] = useState(false);

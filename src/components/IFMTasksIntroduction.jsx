@@ -557,7 +557,7 @@ const MultipleChoiceTask = ({ task, onNavigate, onTaskComplete, showConfetti }) 
 };
 
 // Main App Component
-export const Slide25IFMTasks = ({ scroll }) => {
+export const IFMTasksIntroduction = ({ scroll }) => {
   const [currentPage, setCurrentPage] = useState('overview');
   const [completedTasks, setCompletedTasks] = useState([]);
   const [showConfetti, setShowConfetti] = useState(false);

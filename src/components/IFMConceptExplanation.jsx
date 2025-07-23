@@ -1,7 +1,7 @@
 import { CheckCircle, XCircle, TrendingUp, Calculator, ArrowRight, BarChart3, HelpCircle, Lightbulb, BookOpen, Brain, Target, Zap, Users, Clock, AlertTriangle } from 'lucide-react';
 import { useState, useRef } from 'react';
 
-export const Slide26IFM = ({ scroll }) => {
+export const IFMConceptExplanation = ({ scroll }) => {
   const [hoveredTerm, setHoveredTerm] = useState(null);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0, side: 'right' });
   const [currentStep, setCurrentStep] = useState(0);

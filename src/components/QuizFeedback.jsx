@@ -1,10 +1,95 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Brain, Target, HelpCircle, ArrowRight } from 'lucide-react';
+import { trackButtonClick, trackCustomEvent } from '../utils/analytics';
+import dogImage from '../assets/dog.jpg';
 
-export const Slide7QuizResult = ({ guess2, scroll, showTellMe, setShowTellMe }) => {
+export const QuizFeedback = ({ guess2, scroll, showTellMe, setShowTellMe }) => {
+  const [startTime] = useState(Date.now());
+  const [interactionHistory, setInteractionHistory] = useState([]);
+  const correctAnswer = 'dog';
+  const isCorrect = guess2.toLowerCase().trim() === correctAnswer;
+
+  // Track feedback view
+  useEffect(() => {
+    trackCustomEvent('quiz_feedback_viewed', {
+      componentName: 'QuizFeedback',
+      elementType: 'feedback',
+      feedbackContext: {
+        userAnswer: guess2,
+        correctAnswer,
+        isCorrect,
+        timestamp: startTime,
+        quizType: 'python_slicing'
+      }
+    });
+
+    return () => {
+      // Track feedback exit
+      trackCustomEvent('quiz_feedback_exited', {
+        componentName: 'QuizFeedback',
+        elementType: 'feedback',
+        feedbackMetrics: {
+          timeSpent: Date.now() - startTime,
+          interactionCount: interactionHistory.length,
+          viewedExplanation: showTellMe,
+          interactionPattern: summarizeInteractions(interactionHistory)
+        }
+      });
+    };
+  }, [interactionHistory, showTellMe]);
+
+  const summarizeInteractions = (interactions) => {
+    return {
+      totalInteractions: interactions.length,
+      explanationViewed: interactions.some(i => i.type === 'view_explanation'),
+      timeToExplanation: interactions.find(i => i.type === 'view_explanation')?.timestamp - startTime,
+      interactionSequence: interactions.map(i => i.type)
+    };
+  };
 
   const handleTellMe = () => {
+    trackButtonClick('quiz_feedback_show_explanation', {
+      componentName: 'QuizFeedback',
+      elementType: 'button',
+      elementLocation: 'feedback_explanation',
+      explanationContext: {
+        timeToRequest: Date.now() - startTime,
+        userAnswer: guess2,
+        isCorrect,
+        previousInteractions: summarizeInteractions(interactionHistory)
+      }
+    });
+
+    setInteractionHistory(prev => [...prev, {
+      type: 'view_explanation',
+      timestamp: Date.now()
+    }]);
+
     setShowTellMe(true);
+  };
+
+  const handleContinue = () => {
+    trackButtonClick('quiz_feedback_continue', {
+      componentName: 'QuizFeedback',
+      elementType: 'button',
+      elementLocation: 'feedback_navigation',
+      navigationContext: {
+        timeSpent: Date.now() - startTime,
+        viewedExplanation: showTellMe,
+        userPerformance: {
+          answer: guess2,
+          isCorrect,
+          timeToExplanation: interactionHistory.find(i => i.type === 'view_explanation')?.timestamp - startTime
+        }
+      }
+    });
+
+    setInteractionHistory(prev => [...prev, {
+      type: 'continue',
+      timestamp: Date.now()
+    }]);
+
+    scroll(7);
   };
 
   return (
@@ -32,11 +117,11 @@ export const Slide7QuizResult = ({ guess2, scroll, showTellMe, setShowTellMe }) 
           </div>
           <div className="text-center space-y-4">
             <p className="text-3xl font-bold text-green-800 tracking-tight">
-              Answer: <span className="bg-green-200 px-4 py-2 rounded border-2 border-black">dog</span>
+              Answer: <span className="bg-green-200 px-4 py-2 rounded border-2 border-black">{correctAnswer}</span>
             </p>
             <div className="flex justify-center">
               <img
-                src="dog.jpg"
+                src={dogImage}
                 alt="dog"
                 className="w-32 h-auto rounded border-2 border-black"
               />
@@ -89,7 +174,7 @@ export const Slide7QuizResult = ({ guess2, scroll, showTellMe, setShowTellMe }) 
         {showTellMe && (
           <div className="text-center">
             <button
-              onClick={() => scroll(7)}
+              onClick={handleContinue}
               className="px-8 py-4 bg-purple-600 text-white border-4 border-black rounded-lg font-bold uppercase hover:bg-white hover:text-purple-700 hover:border-purple-800 transition-all shadow-lg flex items-center gap-2 mx-auto text-lg"
             >
               Continue

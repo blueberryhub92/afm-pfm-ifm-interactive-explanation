@@ -82,7 +82,7 @@ const paramMeta = {
   },
 };
 
-export const Slide20AFMSimulator = ({ scroll }) => {
+export const AFMInteractiveSimulator = ({ scroll }) => {
   // State
   const [params, setParams] = useState(paramDefaults);
   const [sessionActive, setSessionActive] = useState(true);
@@ -225,13 +225,19 @@ export const Slide20AFMSimulator = ({ scroll }) => {
     }));
     setLastChangedParam(p);
 
-    // Track parameter change
-    trackSliderInteraction(`afm_param_${p}`, newValue, {
+    // Track parameter change with more specific context
+    trackSliderInteraction(`slide20_afm_simulator_${p}_slider`, newValue, {
       oldValue,
       newValue,
       parameterName: p,
+      parameterLabel: paramMeta[p].label,
+      parameterContext: paramMeta[p].tooltip.desc,
       sessionActive,
-      slideContext: 'AFM Simulator'
+      slideNumber: 20,
+      slideName: 'AFM Simulator',
+      elementType: 'slider',
+      elementLocation: 'model_parameters_section',
+      interactionPurpose: p === 'practice' ? 'adjust_practice_count' : 'adjust_model_parameter'
     });
   }
 
@@ -248,21 +254,27 @@ export const Slide20AFMSimulator = ({ scroll }) => {
     setParams((prev) => ({ ...prev, practice: prev.practice + 1 }));
     setLastChangedParam("practice");
 
-    // Track response simulation
-    trackButtonClick('afm_simulate_response', {
+    // Track response simulation with more context
+    trackButtonClick('slide20_afm_simulator_response', {
       isCorrect,
       practiceAttempt: params.practice,
       currentProbability: prob,
       currentParams: params,
-      logit: logit,
-      slideContext: 'AFM Simulator'
+      logit,
+      slideNumber: 20,
+      slideName: 'AFM Simulator',
+      elementType: 'button',
+      elementLocation: 'session_controls_section',
+      buttonType: isCorrect ? 'correct_response' : 'incorrect_response',
+      sessionActive,
+      totalResponses: responseLog.length + 1
     });
   }
 
   function retrainModel() {
     if (!retrainingData.length) return;
 
-    // Track retrain attempt
+    // Track retrain attempt with more context
     const preRetrainParams = { ...params };
     const retrainDataSnapshot = [...retrainingData];
     let recent = retrainingData.slice(-10);
@@ -328,13 +340,35 @@ export const Slide20AFMSimulator = ({ scroll }) => {
     setSessionActive(true);
     setLastChangedParam(null); // Clear highlight after retrain
 
-    // Track retrain completion
-    trackButtonClick('afm_retrain_model', {
+    // Track retrain completion with more context
+    trackButtonClick('slide20_afm_simulator_retrain', {
       preRetrainParams,
       postRetrainParams: newParams,
       trainingDataCount: retrainDataSnapshot.length,
-      recentAccuracy: recent.length ? recent.filter(r => r.correct).length / recent.length : 0,
-      slideContext: 'AFM Simulator'
+      recentAccuracy: acc,
+      avgPredictionError: avgErr,
+      slideNumber: 20,
+      slideName: 'AFM Simulator',
+      elementType: 'button',
+      elementLocation: 'retrain_section',
+      buttonType: 'retrain_model',
+      modelUpdates: {
+        theta: {
+          before: preRetrainParams.theta,
+          after: newParams.theta,
+          change: newParams.theta - preRetrainParams.theta
+        },
+        beta: {
+          before: preRetrainParams.beta,
+          after: newParams.beta,
+          change: newParams.beta - preRetrainParams.beta
+        },
+        gamma: {
+          before: preRetrainParams.gamma,
+          after: newParams.gamma,
+          change: newParams.gamma - preRetrainParams.gamma
+        }
+      }
     });
   }
 
@@ -352,10 +386,19 @@ export const Slide20AFMSimulator = ({ scroll }) => {
     setRetrainingData([]);
     setLastChangedParam(null);
 
-    // Track reset action
-    trackButtonClick('afm_reset_all', {
+    // Track reset action with more context
+    trackButtonClick('slide20_afm_simulator_reset', {
       preResetState,
-      slideContext: 'AFM Simulator'
+      slideNumber: 20,
+      slideName: 'AFM Simulator',
+      elementType: 'button',
+      elementLocation: 'session_controls_section',
+      buttonType: 'reset_all',
+      sessionState: {
+        wasActive: sessionActive,
+        hadResponses: responseLog.length > 0,
+        hadRetrainingData: retrainingData.length > 0
+      }
     });
   }
 
@@ -365,15 +408,30 @@ export const Slide20AFMSimulator = ({ scroll }) => {
       totalResponses: responseLog.length,
       correctResponses: responseLog.filter(r => r.correct).length,
       finalProbability: prob,
-      sessionDuration: responseLog.length ? responseLog[responseLog.length - 1].timestamp - responseLog[0].timestamp : 0
+      sessionDuration: responseLog.length ? responseLog[responseLog.length - 1].timestamp - responseLog[0].timestamp : 0,
+      learningProgress: {
+        initialProb: responseLog[0]?.probability || prob,
+        finalProb: prob,
+        improvement: responseLog[0] ? prob - responseLog[0].probability : 0
+      }
     };
 
     setSessionActive(false);
 
-    // Track session end
-    trackButtonClick('afm_end_session', {
+    // Track session end with more context
+    trackButtonClick('slide20_afm_simulator_end_session', {
       sessionStats,
-      slideContext: 'AFM Simulator'
+      slideNumber: 20,
+      slideName: 'AFM Simulator',
+      elementType: 'button',
+      elementLocation: 'session_controls_section',
+      buttonType: 'end_session',
+      performanceMetrics: {
+        accuracy: sessionStats.correctResponses / sessionStats.totalResponses,
+        averageProbability: responseLog.reduce((sum, r) => sum + r.probability, 0) / responseLog.length,
+        probabilityTrend: responseLog.length > 1 ?
+          (responseLog[responseLog.length - 1].probability - responseLog[0].probability) : 0
+      }
     });
   }
 

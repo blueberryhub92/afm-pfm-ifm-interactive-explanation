@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Target, Brain, ArrowRight, Lightbulb, Code, Zap } from "lucide-react";
 
-export const Slide13TaskDifficultyQuestion = ({
+export const TaskDifficultyQuestion = ({
   taskChoice,
   setTaskChoice,
   scroll

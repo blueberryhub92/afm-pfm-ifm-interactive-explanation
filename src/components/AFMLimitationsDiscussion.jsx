@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { ArrowLeft, TrendingDown, Calendar } from "lucide-react";
 
-export const Slide21AFMLimitations = ({ scroll }) => {
+export const AFMLimitationsDiscussion = ({ scroll }) => {
   const [currentView, setCurrentView] = useState("overview");
   const [completedScenarios, setCompletedScenarios] = useState(new Set());
   const [simStep, setSimStep] = useState(0);

@@ -1,34 +1,54 @@
 import { useState, useMemo, useEffect } from "react";
-import { Slide21AFMLimitations } from "./components/Slide21AFMLimitations";
-import { Slide19AFMFormula } from "./components/Slide19AFMFormula";
 import { scrollToSlide } from "./utils/utils";
-import { Slide0IntroductoryQuestion } from "./components/Slide0IntroductoryQuestion";
-import { Slide1GuessResult } from "./components/Slide1GuessResult";
-import { Slide3SliderQuestion } from "./components/Slide3SliderQuestion";
-import { Slide4AFMIntroduction } from "./components/Slide4AFMIntroduction";
-import { Slide6Quiz } from "./components/Slide6Quiz";
-import { Slide7QuizResult } from "./components/Slide7QuizResult";
-import { Slide8OpportunityChoices } from "./components/Slide8OpportunityChoices";
-import { Slide10TwoPythonTasks } from "./components/Slide10TwoPythonTasks";
-import { Slide13TaskDifficultyQuestion } from "./components/Slide13TaskDifficultyQuestion";
-import { Slide14BetaParameter } from "./components/Slide14BetaParameter";
-import { Slide15TwoMorePythonTasks } from "./components/Slide15TwoMorePythonTasks";
-import { Slide16LearningRateQuestion } from "./components/Slide16LearningRateQuestion";
-import { Slide17LearningRateExplanation } from "./components/Slide17LearningRateExplanation";
-import { Slide23PFM } from "./components/Slide23PFM";
-import { AFMFormulaTooltip } from "./components/shared/AFMFormulaTooltip";
-import { Slide26IFM } from "./components/Slide26IFM";
-import { Slide27IFMSimulation } from "./components/Slide27IFMSimulation";
-import { Slide20AFMSimulator } from "./components/Slide20AFMSimulator";
-import { Slide25IFMTasks } from "./components/Slide25IFMTasks";
-import { Slide22AFMCorrectness } from "./components/Slide22AFMCorrectness";
-import { WelcomePage } from "./components/WelcomePage";
-import { trackSlideChange, trackButtonClick, syncEvents, getUserId } from "./utils/analytics";
-import ConsentDialog from "./components/ConsentDialog";
 
-import { Slide24PFMSimulation } from "./components/Slide24PFMSimulation";
-import { ModelComparison } from "./components/ModelComparison";
+// AFM Components
+import { AFMLimitationsDiscussion } from "./components/AFMLimitationsDiscussion";
+import { AFMFormulaExplanation } from "./components/AFMFormulaExplanation";
+import { AFMInteractiveSimulator } from "./components/AFMInteractiveSimulator";
+import { AFMCorrectnessAnalysis } from "./components/AFMCorrectnessAnalysis";
+import { AFMBetaParameter } from "./components/AFMBetaParameter";
+import { AFMIntroduction } from "./components/AFMIntroduction";
+import { AFMPredictorQuestion } from "./components/AFMPredictorQuestion";
+
+// Introduction and Basics
+import { IntroductoryProbabilityQuestion } from "./components/IntroductoryProbabilityQuestion";
+import { ProbabilityGuessResult } from "./components/ProbabilityGuessResult";
+import { ProbabilitySliderEstimation } from "./components/ProbabilitySliderEstimation";
+
+// Quiz and Assessment
+import { ConceptUnderstandingQuiz } from "./components/ConceptUnderstandingQuiz";
+import { QuizFeedback } from "./components/QuizFeedback";
+import { LearningOpportunityChoices } from "./components/LearningOpportunityChoices";
+
+// Python Tasks
+import { PythonTasksIntroduction } from "./components/PythonTasksIntroduction";
+import { PythonTasksAdvanced } from "./components/PythonTasksAdvanced";
+
+// Learning Rate Components
+import { LearningRateQuestion } from "./components/LearningRateQuestion";
+import { LearningRateExplanation } from "./components/LearningRateExplanation";
+
+// Task Difficulty
+import { TaskDifficultyQuestion } from "./components/TaskDifficultyQuestion";
+
+// PFM Components
+import { PFMIntroduction } from "./components/PFMIntroduction";
+import { PFMInteractiveSimulator } from "./components/PFMInteractiveSimulator";
+
+// IFM Components
+import { IFMConceptExplanation } from "./components/IFMConceptExplanation";
+import { IFMInteractiveSimulator } from "./components/IFMInteractiveSimulator";
+import { IFMTasksIntroduction } from "./components/IFMTasksIntroduction";
+
+// Other Components
+import { WelcomePage } from "./components/WelcomePage";
+import { ConsentDialog } from "./components/ConsentDialog";
 import { QuestionnaireNotification } from "./components/QuestionnaireNotification";
+import { MetaphoricalLearningVisualization } from "./components/MetaphoricalLearningVisualization";
+import { ModelComparison } from "./components/ModelComparison";
+import { AFMFormulaTooltip } from "./components/shared/AFMFormulaTooltip";
+import { SlideTracker } from "./components/shared/SlideTracker";
+import { trackSlideChange, trackButtonClick, syncEvents, getUserId } from "./utils/analytics";
 
 // Constants
 const TOTAL_SLIDES = 24;
@@ -36,28 +56,28 @@ const TOTAL_SLIDES = 24;
 // Navigation configuration
 const SLIDE_TITLES = [
   "Welcome",
-  "Introductory Question",
-  "Guess Result",
-  "Slider Question",
+  "Introductory Probability",
+  "Probability Guess Result",
+  "Probability Estimation",
   "AFM Introduction",
-  "Quiz",
-  "Quiz Result",
-  "Opportunity Choices",
-  "Two Python Tasks",
-  "Skill Difficulty Question",
-  "Beta Parameter",
-  "Two More Python Tasks",
+  "Concept Understanding",
+  "Quiz Feedback",
+  "Learning Opportunities",
+  "Python Tasks Introduction",
+  "Task Difficulty",
+  "AFM Beta Parameter",
+  "Python Tasks Advanced",
   "Learning Rate Question",
   "Learning Rate Explanation",
   "AFM Formula",
-  "AFM Simulator",
+  "AFM Interactive Simulator",
   "AFM Limitations",
   "AFM Correctness",
   "PFM Introduction",
-  "PFM Simulation",
-  "IFM Tasks",
-  "IFM Introduction",
-  "IFM Simulation",
+  "PFM Interactive Simulator",
+  "IFM Tasks Introduction",
+  "IFM Concept Explanation",
+  "IFM Interactive Simulator",
   "Model Comparison"
 ];
 
@@ -333,6 +353,23 @@ function AFMLearningAppContent() {
     return () => window.removeEventListener("mousedown", handleMouseButton);
   }, [currentSlide, maxVisitedSlide, consentGiven]);
 
+  const renderSlide = (Component, props, slideNumber, slideName) => (
+    <SlideTracker
+      slideNumber={slideNumber}
+      slideName={slideName}
+      trackInteractions={true}
+      trackScrolling={true}
+      trackMouse={true}
+      trackKeyboard={true}
+      trackFocus={true}
+      trackEngagement={true}
+    >
+      <div ref={slideRefs[slideNumber]}>
+        <Component {...props} />
+      </div>
+    </SlideTracker>
+  );
+
   const renderCurrentSlide = () => {
     const slideProps = {
       guess1,
@@ -346,85 +383,168 @@ function AFMLearningAppContent() {
 
     switch (currentSlide) {
       case 0:
-        return <WelcomePage scroll={scroll} />;
+        return renderSlide(WelcomePage, { scroll }, 0, "Welcome");
       case 1:
-        return (
-          <Slide0IntroductoryQuestion
-            guess1={guess1}
-            setGuess1={setGuess1}
-            scroll={scroll}
-          />
+        return renderSlide(
+          IntroductoryProbabilityQuestion,
+          { guess1, setGuess1, scroll },
+          1,
+          "IntroductoryProbability"
         );
       case 2:
-        return <Slide1GuessResult guess1={guess1} scroll={scroll} />;
+        return renderSlide(
+          ProbabilityGuessResult,
+          { guess1, scroll },
+          2,
+          "ProbabilityGuessResult"
+        );
       case 3:
-        return (
-          <Slide3SliderQuestion
-            scroll={scroll}
-            onDoneClick={() => setSlide3DoneClicked(true)}
-          />
+        return renderSlide(
+          ProbabilitySliderEstimation,
+          { scroll, onDoneClick: () => setSlide3DoneClicked(true) },
+          3,
+          "ProbabilityEstimation"
         );
       case 4:
-        return <Slide4AFMIntroduction scroll={scroll} />;
+        return renderSlide(
+          AFMIntroduction,
+          { scroll },
+          4,
+          "AFMIntroduction"
+        );
       case 5:
-        return (
-          <Slide6Quiz guess2={guess2} setGuess2={setGuess2} scroll={scroll} />
+        return renderSlide(
+          ConceptUnderstandingQuiz,
+          { guess2, setGuess2, scroll },
+          5,
+          "ConceptUnderstanding"
         );
       case 6:
-        return (
-          <Slide7QuizResult
-            guess2={guess2}
-            scroll={scroll}
-            showTellMe={showTellMe}
-            setShowTellMe={setShowTellMe}
-          />
+        return renderSlide(
+          QuizFeedback,
+          { guess2, scroll, showTellMe, setShowTellMe },
+          6,
+          "QuizFeedback"
         );
       case 7:
-        return <Slide8OpportunityChoices scroll={scroll} />;
+        return renderSlide(
+          LearningOpportunityChoices,
+          { scroll },
+          7,
+          "LearningOpportunities"
+        );
       case 8:
-        return <Slide10TwoPythonTasks scroll={scroll} />;
+        return renderSlide(
+          PythonTasksIntroduction,
+          { scroll },
+          8,
+          "PythonTasksIntroduction"
+        );
       case 9:
-        return (
-          <Slide13TaskDifficultyQuestion
-            taskChoice={taskChoice}
-            setTaskChoice={setTaskChoice}
-            scroll={scroll}
-          />
+        return renderSlide(
+          TaskDifficultyQuestion,
+          { taskChoice, setTaskChoice, scroll },
+          9,
+          "TaskDifficulty"
         );
       case 10:
-        return <Slide14BetaParameter scroll={scroll} />;
+        return renderSlide(
+          AFMBetaParameter,
+          { scroll },
+          10,
+          "AFMBetaParameter"
+        );
       case 11:
-        return <Slide15TwoMorePythonTasks scroll={scroll} />;
+        return renderSlide(
+          PythonTasksAdvanced,
+          { scroll },
+          11,
+          "PythonTasksAdvanced"
+        );
       case 12:
-        return (
-          <Slide16LearningRateQuestion
-            taskChoice={taskChoice}
-            setTaskChoice={setTaskChoice}
-            scroll={scroll}
-          />
+        return renderSlide(
+          LearningRateQuestion,
+          { taskChoice, setTaskChoice, scroll },
+          12,
+          "LearningRateQuestion"
         );
       case 13:
-        return <Slide17LearningRateExplanation scroll={scroll} />;
+        return renderSlide(
+          LearningRateExplanation,
+          { scroll },
+          13,
+          "LearningRateExplanation"
+        );
       case 14:
-        return <Slide19AFMFormula scroll={scroll} />;
+        return renderSlide(
+          AFMFormulaExplanation,
+          { scroll },
+          14,
+          "AFMFormula"
+        );
       case 15:
-        return <Slide20AFMSimulator scroll={scroll} />;
+        return renderSlide(
+          AFMInteractiveSimulator,
+          { scroll },
+          15,
+          "AFMInteractiveSimulator"
+        );
       case 16:
-        return <Slide21AFMLimitations scroll={scroll} />;
+        return renderSlide(
+          AFMLimitationsDiscussion,
+          { scroll },
+          16,
+          "AFMLimitations"
+        );
       case 17:
-        return <Slide22AFMCorrectness scroll={scroll} />;
+        return renderSlide(
+          AFMCorrectnessAnalysis,
+          { scroll },
+          17,
+          "AFMCorrectness"
+        );
       case 18:
-        return <Slide23PFM scroll={scroll} />;
+        return renderSlide(
+          PFMIntroduction,
+          { scroll },
+          18,
+          "PFMIntroduction"
+        );
       case 19:
-        return <Slide24PFMSimulation scroll={scroll} />;
+        return renderSlide(
+          PFMInteractiveSimulator,
+          { scroll },
+          19,
+          "PFMInteractiveSimulator"
+        );
       case 20:
-        return <Slide25IFMTasks scroll={scroll} />;
+        return renderSlide(
+          IFMTasksIntroduction,
+          { scroll },
+          20,
+          "IFMTasksIntroduction"
+        );
       case 21:
-        return <Slide26IFM scroll={scroll} />;
+        return renderSlide(
+          IFMConceptExplanation,
+          { scroll },
+          21,
+          "IFMConceptExplanation"
+        );
       case 22:
-        return <Slide27IFMSimulation scroll={scroll} />;
+        return renderSlide(
+          IFMInteractiveSimulator,
+          { scroll },
+          22,
+          "IFMInteractiveSimulator"
+        );
       case 23:
-        return <ModelComparison scroll={scroll} />;
+        return renderSlide(
+          ModelComparison,
+          { scroll },
+          23,
+          "ModelComparison"
+        );
       default:
         return null;
     }

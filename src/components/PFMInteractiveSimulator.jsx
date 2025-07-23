@@ -85,7 +85,7 @@ const paramMeta = {
     },
 };
 
-export const Slide24PFMSimulation = ({ scroll }) => {
+export const PFMInteractiveSimulator = ({ scroll }) => {
     // State
     const [params, setParams] = useState(paramDefaults);
     const [sessionActive, setSessionActive] = useState(true);

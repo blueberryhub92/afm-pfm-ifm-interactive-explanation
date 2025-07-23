@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Play, Pause, RotateCcw, Brain, Target, TrendingUp, Code, AlertCircle, ArrowRight, Lightbulb, Zap, Clock } from 'lucide-react';
 
-export const Slide17LearningRateExplanation = ({ scroll }) => {
+export const LearningRateExplanation = ({ scroll }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [currentSimulation, setCurrentSimulation] = useState('learning-rate');
   const [isPlaying, setIsPlaying] = useState(false);

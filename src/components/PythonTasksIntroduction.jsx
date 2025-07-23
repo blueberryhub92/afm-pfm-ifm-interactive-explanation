@@ -9,6 +9,7 @@ import {
   AlertTriangle,
   ArrowRight,
 } from "lucide-react";
+import { trackButtonClick, trackCustomEvent, trackInputChange } from '../utils/analytics';
 
 // Mock hook for demonstration - replace with your actual hook
 const useProbability = () => ({
@@ -80,9 +81,11 @@ const ConfettiEffect = ({ isActive }) => {
   );
 };
 
-export const Slide10TwoPythonTasks = ({ scroll = (n) => console.log(`Scroll to: ${n}`) }) => {
+export const PythonTasksIntroduction = ({ scroll = (n) => console.log(`Scroll to: ${n}`) }) => {
   const { updateProbability } = useProbability();
-
+  const [startTime] = useState(Date.now());
+  const [taskStartTime, setTaskStartTime] = useState(null);
+  const [interactionHistory, setInteractionHistory] = useState([]);
   const [selectedTask, setSelectedTask] = useState(null);
   const [taskAnswer, setTaskAnswer] = useState("");
   const [showSolution, setShowSolution] = useState(false);
@@ -91,17 +94,43 @@ export const Slide10TwoPythonTasks = ({ scroll = (n) => console.log(`Scroll to: 
   const [completedTasks, setCompletedTasks] = useState([]);
   const [showConfetti, setShowConfetti] = useState(false);
 
-  // Check if all tasks are completed and trigger confetti
+  // Track component entry
   useEffect(() => {
-    if (completedTasks.length === 2 && completedTasks.length > 0) {
-      setShowConfetti(true);
-      // Turn off confetti after 3 seconds
-      const timer = setTimeout(() => {
-        setShowConfetti(false);
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [completedTasks]);
+    trackCustomEvent('python_tasks_viewed', {
+      componentName: 'PythonTasksIntroduction',
+      elementType: 'task_selection',
+      viewContext: {
+        timestamp: startTime,
+        availableTasks: Object.keys(tasks).length
+      }
+    });
+
+    return () => {
+      // Track component exit
+      trackCustomEvent('python_tasks_exited', {
+        componentName: 'PythonTasksIntroduction',
+        elementType: 'task_selection',
+        completionMetrics: {
+          timeSpent: Date.now() - startTime,
+          completedTasks: completedTasks.length,
+          totalTasks: Object.keys(tasks).length,
+          interactionPattern: summarizeInteractions(interactionHistory)
+        }
+      });
+    };
+  }, [completedTasks, interactionHistory]);
+
+  const summarizeInteractions = (interactions) => {
+    return {
+      totalInteractions: interactions.length,
+      taskAttempts: interactions.filter(i => i.type === 'task_attempt').length,
+      codeEdits: interactions.filter(i => i.type === 'code_edit').length,
+      averageTimePerTask: interactions
+        .filter(i => i.type === 'task_complete')
+        .reduce((sum, i) => sum + i.duration, 0) / Math.max(1, completedTasks.length),
+      completionSequence: completedTasks
+    };
+  };
 
   const tasks = {
     1: {
@@ -220,41 +249,186 @@ print(total)
       setTimeout(() => {
         textarea.selectionStart = textarea.selectionEnd = start + 4;
       }, 0);
+
+      // Track tab usage
+      trackCustomEvent('python_task_code_indent', {
+        componentName: 'PythonTasksIntroduction',
+        elementType: 'code_editor',
+        indentContext: {
+          taskId: selectedTask,
+          position: start,
+          timestamp: Date.now()
+        }
+      });
     }
   };
 
+  const handleCodeChange = (e) => {
+    const newValue = e.target.value;
+
+    trackInputChange('python_task_code', `task_${selectedTask}_code`, newValue, taskAnswer, {
+      componentName: 'PythonTasksIntroduction',
+      elementType: 'code_editor',
+      elementLocation: 'task_code',
+      changeContext: {
+        taskId: selectedTask,
+        lineCount: newValue.split('\n').length,
+        characterCount: newValue.length,
+        timestamp: Date.now()
+      }
+    });
+
+    setTaskAnswer(newValue);
+    setInteractionHistory(prev => [...prev, {
+      type: 'code_edit',
+      taskId: selectedTask,
+      timestamp: Date.now(),
+      codeLength: newValue.length
+    }]);
+  };
+
   const handleTaskClick = (taskId) => {
+    const task = tasks[taskId];
+
+    trackButtonClick('python_task_selected', {
+      componentName: 'PythonTasksIntroduction',
+      elementType: 'button',
+      elementLocation: 'task_selection',
+      selectionContext: {
+        taskId,
+        taskTitle: task.title,
+        taskType: task.color,
+        isCompleted: completedTasks.includes(taskId),
+        previousTask: selectedTask,
+        timeFromStart: Date.now() - startTime
+      }
+    });
+
     updateProbability(0.30);
     setSelectedTask(taskId);
     setTaskAnswer("");
     setShowSolution(false);
     setShowError(false);
     setErrorMessage("");
+    setTaskStartTime(Date.now());
+
+    setInteractionHistory(prev => [...prev, {
+      type: 'task_attempt',
+      taskId,
+      timestamp: Date.now()
+    }]);
   };
 
   const handleCheckAnswer = () => {
     const task = tasks[selectedTask];
     const result = task.checkFunction(taskAnswer);
 
+    trackButtonClick('python_task_check', {
+      componentName: 'PythonTasksIntroduction',
+      elementType: 'button',
+      elementLocation: 'task_submission',
+      submissionContext: {
+        taskId: selectedTask,
+        isCorrect: result.valid,
+        codeLength: taskAnswer.length,
+        timeSpent: Date.now() - taskStartTime,
+        attemptNumber: interactionHistory.filter(i =>
+          i.type === 'task_attempt' && i.taskId === selectedTask
+        ).length
+      }
+    });
+
     if (result.valid) {
       setShowSolution(true);
       setShowError(false);
       if (!completedTasks.includes(selectedTask)) {
+        trackCustomEvent('python_task_completed', {
+          componentName: 'PythonTasksIntroduction',
+          elementType: 'task',
+          completionContext: {
+            taskId: selectedTask,
+            taskTitle: task.title,
+            timeToComplete: Date.now() - taskStartTime,
+            codeLength: taskAnswer.length,
+            isFirstCompletion: true,
+            totalCompleted: completedTasks.length + 1
+          }
+        });
+
         setCompletedTasks([...completedTasks, selectedTask]);
+        setInteractionHistory(prev => [...prev, {
+          type: 'task_complete',
+          taskId: selectedTask,
+          timestamp: Date.now(),
+          duration: Date.now() - taskStartTime
+        }]);
       }
     } else {
+      trackCustomEvent('python_task_error', {
+        componentName: 'PythonTasksIntroduction',
+        elementType: 'task',
+        errorContext: {
+          taskId: selectedTask,
+          errorType: result.error,
+          codeLength: taskAnswer.length,
+          timeSpent: Date.now() - taskStartTime
+        }
+      });
+
       setErrorMessage(result.error);
       setShowError(true);
       setTimeout(() => setShowError(false), 5000);
+
+      setInteractionHistory(prev => [...prev, {
+        type: 'task_error',
+        taskId: selectedTask,
+        timestamp: Date.now(),
+        error: result.error
+      }]);
     }
   };
 
   const resetTask = () => {
+    trackButtonClick('python_task_reset', {
+      componentName: 'PythonTasksIntroduction',
+      elementType: 'button',
+      elementLocation: 'task_navigation',
+      resetContext: {
+        taskId: selectedTask,
+        wasCompleted: completedTasks.includes(selectedTask),
+        timeSpent: Date.now() - taskStartTime,
+        codeLength: taskAnswer.length
+      }
+    });
+
     setSelectedTask(null);
     setTaskAnswer("");
     setShowSolution(false);
     setShowError(false);
     setErrorMessage("");
+    setTaskStartTime(null);
+
+    setInteractionHistory(prev => [...prev, {
+      type: 'task_reset',
+      taskId: selectedTask,
+      timestamp: Date.now()
+    }]);
+  };
+
+  const handleContinue = () => {
+    trackButtonClick('python_tasks_continue', {
+      componentName: 'PythonTasksIntroduction',
+      elementType: 'button',
+      elementLocation: 'section_navigation',
+      navigationContext: {
+        completedTasks: completedTasks.length,
+        totalTasks: Object.keys(tasks).length,
+        timeSpent: Date.now() - startTime,
+        interactionSummary: summarizeInteractions(interactionHistory)
+      }
+    });
+
+    scroll(9);
   };
 
   // Color classes matching AFMLimitations style
@@ -328,7 +502,7 @@ print(total)
               </div>
               <textarea
                 value={taskAnswer}
-                onChange={(e) => setTaskAnswer(e.target.value)}
+                onChange={handleCodeChange}
                 onKeyDown={handleKeyDown}
                 className="w-full h-40 p-4 bg-black text-white font-mono text-sm border-none resize-none focus:outline-none"
                 placeholder="# Write your Python code here..."
@@ -487,7 +661,7 @@ print(total)
       <div className="flex justify-center mt-12">
         <button
           className="px-12 py-4 bg-green-600 text-white border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide hover:bg-white hover:text-green-600 hover:border-green-600 transition-all transform hover:scale-105 flex items-center gap-3"
-          onClick={() => scroll(9)}
+          onClick={handleContinue}
         >
           <span>Continue to Next Section</span>
           <ArrowRight className="w-6 h-6" />

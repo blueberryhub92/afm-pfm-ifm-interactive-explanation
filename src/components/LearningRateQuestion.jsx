@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Brain, Target, CheckCircle, ArrowRight, X, Code, RotateCcw, Lightbulb, TrendingUp, Zap, Clock } from "lucide-react";
 
-export const Slide16LearningRateQuestion = ({
+export const LearningRateQuestion = ({
   taskChoice,
   setTaskChoice,
   scroll

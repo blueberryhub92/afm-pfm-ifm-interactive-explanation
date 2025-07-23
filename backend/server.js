@@ -12,6 +12,7 @@ const BACKUP_DIR = path.join(__dirname, 'backups');
 const corsOptions = {
   origin: [
     'http://localhost:5173', // Local development
+    'http://localhost:5174', // Alternative local development port
     'http://localhost:3000', // Alternative local port
     'http://localhost:8080', // Docker frontend
     'https://blueberryhub92.github.io', // GitHub Pages base domain

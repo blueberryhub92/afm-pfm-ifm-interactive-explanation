@@ -12,7 +12,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 
-export const Slide19AFMFormula = ({ scroll }) => {
+export const AFMFormulaExplanation = ({ scroll }) => {
   const [showMath, setShowMath] = useState(false);
   const [hoveredTerm, setHoveredTerm] = useState(null);
   const [showQMatrix, setShowQMatrix] = useState(false);

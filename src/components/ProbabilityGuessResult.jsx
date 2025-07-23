@@ -1,12 +1,10 @@
 import React from 'react';
 import { Eye, CheckCircle, ArrowRight, Brain } from 'lucide-react';
 
-export const Slide1GuessResult = ({ guess1, scroll }) => {
+export const ProbabilityGuessResult = ({ guess1, scroll }) => {
   return (
     <div className="bg-white min-h-screen flex flex-col items-center justify-center py-8 px-4 md:px-10 text-black font-['IBM_Plex_Mono',monospace]">
       <div className="w-full max-w-4xl mx-auto flex flex-col gap-8">
-
-
 
         {/* Guess Display */}
         <div className="border-4 border-orange-400 rounded-xl p-8 bg-orange-50 shadow-lg relative">
@@ -57,5 +55,6 @@ export const Slide1GuessResult = ({ guess1, scroll }) => {
         </div>
       </div>
     </div>
+
   );
 };

@@ -10,6 +10,10 @@ class Analytics {
     this.slideStartTime = Date.now();
     this.currentSlide = null;
     this.interactionBuffer = [];
+    this.eventQueue = [];
+    this.batchTimeout = null;
+    this.BATCH_DELAY = 2000; // Send events every 2 seconds
+    this.MAX_BATCH_SIZE = 50; // Maximum events per batch
   }
 
   // Generate or retrieve anonymous user ID from localStorage
@@ -58,8 +62,8 @@ class Analytics {
     this.events.push(event);
     this.persistEvent(event);
     
-    // Optional: Send to backend immediately
-    this.sendToBackend(event);
+    // Add to queue instead of sending immediately
+    this.queueEvent(event);
   }
 
   // Set current slide for timing calculations
@@ -85,14 +89,38 @@ class Analytics {
     }
   }
 
-  // Send event to backend (implement your backend endpoint)
-  async sendToBackend(event) {
+  // Queue event and schedule batch send
+  queueEvent(event) {
+    this.eventQueue.push(event);
+    
+    // If queue exceeds max size, send immediately
+    if (this.eventQueue.length >= this.MAX_BATCH_SIZE) {
+      this.sendQueuedEvents();
+      return;
+    }
+    
+    // Otherwise schedule a batch send
+    if (this.batchTimeout) {
+      clearTimeout(this.batchTimeout);
+    }
+    
+    this.batchTimeout = setTimeout(() => {
+      this.sendQueuedEvents();
+    }, this.BATCH_DELAY);
+  }
+
+  // Send queued events in bulk
+  async sendQueuedEvents() {
+    if (this.eventQueue.length === 0) return;
+    
+    const events = [...this.eventQueue];
+    this.eventQueue = []; // Clear queue
+    
     try {
-      const backendUrl = API_CONFIG.getFullUrl(API_CONFIG.ENDPOINTS.EVENTS);
-      console.log('📡 Sending event to backend:', {
+      const backendUrl = API_CONFIG.getFullUrl(API_CONFIG.ENDPOINTS.EVENTS_BULK);
+      console.log('📡 Sending batch of events to backend:', {
         url: backendUrl,
-        eventName: event.eventName,
-        userId: event.userId
+        eventCount: events.length
       });
       
       const response = await fetch(backendUrl, {
@@ -100,7 +128,7 @@ class Analytics {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(event)
+        body: JSON.stringify(events)
       });
       
       if (!response.ok) {
@@ -113,14 +141,15 @@ class Analytics {
       }
       
       const result = await response.json();
-      console.log('✅ Event sent successfully:', result);
+      console.log('✅ Events batch sent successfully:', result);
     } catch (error) {
-      console.error('❌ Failed to send event to backend:', {
+      console.error('❌ Failed to send events batch to backend:', {
         error: error.message,
-        url: API_CONFIG.getFullUrl(API_CONFIG.ENDPOINTS.EVENTS),
-        eventName: event.eventName
+        url: API_CONFIG.getFullUrl(API_CONFIG.ENDPOINTS.EVENTS_BULK),
+        eventCount: events.length
       });
-      // Event is still persisted locally, so can be retried later
+      // Re-queue failed events
+      this.eventQueue.push(...events);
     }
   }
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { TrendingUp, TrendingDown, ArrowRight, Brain, Target, Activity, Lightbulb, Code, Zap, ArrowDownRight } from 'lucide-react';
 
-export const Slide4AFMIntroduction = ({ scroll }) => {
+export const AFMIntroduction = ({ scroll }) => {
   const [hoveredTerm, setHoveredTerm] = useState(null);
   const [baselineProficiency] = useState(0.15); // θ (theta) - starting baseline
   const [probability, setProbability] = useState(0.15);
@@ -154,7 +154,8 @@ export const Slide4AFMIntroduction = ({ scroll }) => {
                 className="bg-purple-300 px-2 py-1 border-2 border-black rounded font-bold uppercase transition-colors"
               >
                 θ
-              </span>, which is the{' '}
+              </span>
+              , which is the{' '}
               <span
                 ref={baselineRef}
                 className="relative cursor-pointer border-4 border-purple-600 bg-purple-100 px-2 py-1 rounded font-bold text-purple-800 uppercase hover:bg-purple-200 transition-colors"
@@ -177,10 +178,10 @@ export const Slide4AFMIntroduction = ({ scroll }) => {
             Next →
           </button>
         </div>
-      </div>
 
-      {/* Tooltips */}
-      {hoveredTerm === 'baseline-proficiency' && <BaselineProficiencyTooltip />}
+        {/* Tooltips */}
+        {hoveredTerm === 'baseline-proficiency' && <BaselineProficiencyTooltip />}
+      </div>
     </div>
   );
 };
