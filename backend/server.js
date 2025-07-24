@@ -10,15 +10,26 @@ const BACKUP_DIR = path.join(__dirname, 'backups');
 
 // Middleware
 const corsOptions = {
-  origin: [
-    'http://localhost:5173', // Local development
-    'http://localhost:5174', // Alternative local development port
-    'http://localhost:3000', // Alternative local port
-    'http://localhost:8080', // Docker frontend
-    'https://blueberryhub92.github.io', // GitHub Pages base domain
-    'https://blueberryhub92.github.io/afm-pfm-ifm-interactive-explanation/', // GitHub Pages full path
-    'https://blueberryhub92.github.io/afm-pfm-ifm-interactive-explanation', // GitHub Pages full path without trailing slash
-  ],
+  origin: function(origin, callback) {
+    // Allow requests with no origin (like mobile apps, curl, Postman)
+    if (!origin) return callback(null, true);
+    
+    // Allow all localhost origins
+    if (origin.match(/^http:\/\/localhost(:[0-9]+)?$/)) {
+      return callback(null, true);
+    }
+    
+    // Allow specific domains
+    const allowedDomains = [
+      'https://blueberryhub92.github.io'
+    ];
+    
+    if (allowedDomains.some(domain => origin.startsWith(domain))) {
+      return callback(null, true);
+    }
+    
+    callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
   optionsSuccessStatus: 200
 };

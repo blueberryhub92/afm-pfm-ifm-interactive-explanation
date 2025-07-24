@@ -1,12 +1,29 @@
-# React + Vite
+# Modelingo
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Quick Start
 
-Currently, two official plugins are available:
+1. Create a new directory and navigate into it:
+```bash
+mkdir modelingo && cd modelingo
+```
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+2. Download the docker-compose.yml:
+```bash
+curl -O https://raw.githubusercontent.com/blueberryhub92/afm-pfm-ifm-interactive-explanation/main/docker-compose.yml
+```
 
-## Expanding the ESLint configuration
+3. Start the application:
+```bash
+docker compose up -d
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+4. Access the application:
+- Frontend: http://localhost:8080
+- Backend API: http://localhost:3001
+
+## Data Storage
+The application stores data in two local directories:
+- `./data`: Application data
+- `./backups`: Automatic backups
+
+These directories will be created automatically.
