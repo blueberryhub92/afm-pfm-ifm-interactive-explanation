@@ -1,5 +1,8 @@
 // API Configuration
-const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const isDevelopment = window.location.hostname === 'localhost' || 
+                     window.location.hostname === '127.0.0.1' ||
+                     window.location.hostname.includes('localhost.run') ||
+                     window.location.hostname.includes('lhr.life');
 
 export const API_CONFIG = {
   // Backend URL based on environment
