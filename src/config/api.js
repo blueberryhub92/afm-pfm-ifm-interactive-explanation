@@ -5,7 +5,7 @@ export const API_CONFIG = {
   // Backend URL based on environment
   BASE_URL: isDevelopment 
     ? 'http://localhost:3001'  // Local development
-    : window.location.origin,  // Production: Same domain as frontend
+    : `${window.location.origin}/modelingo`,  // Production: Same domain with /modelingo path
   
   // API Endpoints
   ENDPOINTS: {

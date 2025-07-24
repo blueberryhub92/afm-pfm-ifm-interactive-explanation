@@ -21,7 +21,8 @@ const corsOptions = {
     
     // Allow specific domains
     const allowedDomains = [
-      'https://blueberryhub92.github.io'
+      'https://blueberryhub92.github.io',
+      'https://demo.colaps.team'
     ];
     
     if (allowedDomains.some(domain => origin.startsWith(domain))) {
