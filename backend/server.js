@@ -14,15 +14,17 @@ const corsOptions = {
     // Allow requests with no origin (like mobile apps, curl, Postman)
     if (!origin) return callback(null, true);
     
-    // Allow all localhost origins
-    if (origin.match(/^http:\/\/localhost(:[0-9]+)?$/)) {
+    // Allow all localhost origins and tunnel services
+    if (origin.match(/^http:\/\/localhost(:[0-9]+)?$/) || 
+        origin.match(/^https?:\/\/[a-z0-9]+\.lhr\.life$/) ||
+        origin.match(/^https?:\/\/[a-z0-9-]+\.localhost\.run$/)) {
       return callback(null, true);
     }
     
     // Allow specific domains
     const allowedDomains = [
-      'https://blueberryhub92.github.io',
-      'https://demo.colaps.team'
+      'https://demo.colaps.team',
+      'https://blueberryhub92.github.io'
     ];
     
     if (allowedDomains.some(domain => origin.startsWith(domain))) {

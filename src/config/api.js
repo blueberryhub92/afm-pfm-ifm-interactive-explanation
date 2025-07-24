@@ -4,11 +4,24 @@ const isDevelopment = window.location.hostname === 'localhost' ||
                      window.location.hostname.includes('localhost.run') ||
                      window.location.hostname.includes('lhr.life');
 
+// Helper to get the backend URL
+const getBackendUrl = () => {
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    return 'http://localhost:3001';
+  }
+  
+  // For tunnel services, use the same protocol and hostname but different port
+  if (window.location.hostname.includes('lhr.life') || window.location.hostname.includes('localhost.run')) {
+    return `${window.location.protocol}//${window.location.hostname}:3001`;
+  }
+  
+  // Production
+  return `${window.location.origin}/modelingo`;
+};
+
 export const API_CONFIG = {
   // Backend URL based on environment
-  BASE_URL: isDevelopment 
-    ? 'http://localhost:3001'  // Local development
-    : `${window.location.origin}/modelingo`,  // Production: Same domain with /modelingo path
+  BASE_URL: getBackendUrl(),
   
   // API Endpoints
   ENDPOINTS: {
