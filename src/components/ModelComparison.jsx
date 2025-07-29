@@ -735,7 +735,7 @@ export const ModelComparison = ({ navigate }) => {
                                     <button
                                         onClick={() => {
                                             // TODO: Replace with your actual questionnaire URL
-                                            const questionnaireUrl = 'https://your-questionnaire-link.com';
+                                            const questionnaireUrl = 'https://limesurvey.uni-due.de/index.php/847825?lang=en';
                                             window.open(questionnaireUrl, '_blank');
                                         }}
                                         className="px-8 py-4 bg-blue-600 text-white border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide hover:bg-white hover:text-blue-600 transition-all transform hover:scale-105 flex items-center gap-3"
