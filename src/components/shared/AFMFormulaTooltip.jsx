@@ -1,6 +1,8 @@
-import { Calculator, Code } from "lucide-react";
+import React, { useState } from "react";
+import { Calculator, Code, X, Minimize2 } from "lucide-react";
 
 export const AFMFormulaTooltip = ({ stage }) => {
+  const [isExpanded, setIsExpanded] = useState(true);
 
   const renderSkillDefinition = () => (
     // Stage 1: Formula with placeholders and brief skill explanation
@@ -107,7 +109,7 @@ export const AFMFormulaTooltip = ({ stage }) => {
 
   const renderStage5 = () => (
     // Stage 5: Full formula with log and probability
-    <div className="flex items-center justify-center space-x-1 flex-wrap">
+    <div className="flex items-center justify-center space-x-1">
       <span className="font-bold text-lg">log</span>
       <span className="text-xl font-bold">(</span>
       <div className="flex flex-col items-center mx-1">
@@ -275,54 +277,34 @@ export const AFMFormulaTooltip = ({ stage }) => {
   const StageIcon = getStageIcon();
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 group">
-      {/* Trigger button for narrow screens */}
-      <div className="lg:hidden">
-        <button className="bg-black text-white p-3 rounded-full shadow-lg hover:bg-gray-800 transition-colors">
+    <div className="fixed bottom-4 right-4 z-50">
+      {/* Collapsed state - just a button */}
+      {!isExpanded && (
+        <button
+          onClick={() => setIsExpanded(true)}
+          className="bg-black text-white p-3 rounded-full shadow-lg hover:bg-gray-800 transition-colors"
+          title="Show AFM Formula"
+        >
           <StageIcon className="w-5 h-5" />
         </button>
+      )}
 
-        {/* Tooltip content for narrow screens */}
-        <div className="absolute bottom-full right-0 mb-2 w-80 max-w-[90vw] bg-white border-4 border-black rounded-xl shadow-xl p-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0">
-          {/* Header */}
-          <div className="flex items-center justify-center mb-3">
+      {/* Expanded state - full tooltip */}
+      {isExpanded && (
+        <div className={`${stage === 6 ? 'w-96 lg:w-auto lg:max-w-2xl' : 'w-80 lg:max-w-sm lg:w-auto'} max-w-[95vw] bg-white border-4 border-black rounded-xl shadow-xl p-4`}>
+          {/* Header with collapse button */}
+          <div className="flex items-center justify-between mb-3">
             <div className={`px-3 py-1 ${stage === 0 ? 'bg-green-700' : 'bg-black'} text-white font-bold rounded-lg text-xs tracking-wider flex items-center gap-1 uppercase`}>
               <StageIcon className="w-3 h-3" />
               {getStageTitle()}
             </div>
-          </div>
-
-          {/* Formula content */}
-          <div className="text-black font-['IBM_Plex_Mono',monospace] select-none mb-3 overflow-x-auto">
-            <div className="min-w-fit text-sm">
-              {renderFormula()}
-            </div>
-          </div>
-
-          {/* Example parameters - only show for stages 1+ */}
-          {stage > 0 && (
-            <div className="p-3 bg-neutral-50 border-2 border-black rounded-lg">
-              <div className="text-xs font-bold text-black uppercase tracking-wide mb-2 text-center">
-                Example Parameters:
-              </div>
-              <div className="grid grid-cols-1 gap-2 text-xs">
-                {renderExamples()}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Always visible for large screens */}
-      <div className="hidden lg:block max-w-sm w-auto">
-        {/* Formula container */}
-        <div className="bg-white border-4 border-black rounded-xl shadow-xl p-4">
-          {/* Header */}
-          <div className="flex items-center justify-center mb-3">
-            <div className={`px-3 py-1 ${stage === 0 ? 'bg-green-700' : 'bg-black'} text-white font-bold rounded-lg text-xs tracking-wider flex items-center gap-1 uppercase`}>
-              <StageIcon className="w-3 h-3" />
-              {getStageTitle()}
-            </div>
+            <button
+              onClick={() => setIsExpanded(false)}
+              className="p-2 bg-red-100 hover:bg-red-200 border-2 border-red-600 rounded-lg transition-colors shadow-sm"
+              title="Collapse formula"
+            >
+              <Minimize2 className="w-5 h-5 text-red-700" />
+            </button>
           </div>
 
           {/* Formula content */}
@@ -344,7 +326,7 @@ export const AFMFormulaTooltip = ({ stage }) => {
             </div>
           )}
         </div>
-      </div>
+      )}
     </div>
   );
 };

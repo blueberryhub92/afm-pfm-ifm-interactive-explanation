@@ -26,7 +26,7 @@ import { PythonTasksAdvanced } from "./components/PythonTasksAdvanced";
 import { LearningRateQuestion } from "./components/LearningRateQuestion";
 import { LearningRateExplanation } from "./components/LearningRateExplanation";
 
-// Task Difficulty
+// Skill Difficulty
 import { TaskDifficultyQuestion } from "./components/TaskDifficultyQuestion";
 
 // PFM Components
@@ -61,7 +61,7 @@ const SLIDE_TITLES = [
   "Quiz Feedback",
   "Learning Opportunities",
   "Python Tasks Introduction",
-  "Task Difficulty",
+  "Skill Difficulty",
   "AFM Beta Parameter",
   "Python Tasks Advanced",
   "Learning Rate Question",
@@ -84,7 +84,7 @@ function NavigationBar({ currentSlide, maxVisitedSlide, onNavigate, isExpanded, 
       {/* Toggle Button - Moves with navigation state */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className={`fixed top-4 z-60 w-12 h-12 bg-black text-white border-4 border-black rounded-lg font-bold text-xl uppercase tracking-wide hover:bg-white hover:text-black transition-all transform hover:scale-105 flex items-center justify-center shadow-xl ${isExpanded ? 'left-[336px]' : 'left-4'
+        className={`fixed top-4 z-[9999] w-12 h-12 bg-black text-white border-4 border-black rounded-lg font-bold text-xl uppercase tracking-wide hover:bg-white hover:text-black transition-all transform hover:scale-105 flex items-center justify-center shadow-xl ${isExpanded ? 'left-[336px]' : 'left-4'
           }`}
         title={isExpanded ? "COLLAPSE NAVIGATION" : "EXPAND NAVIGATION"}
       >
@@ -157,8 +157,18 @@ function AFMLearningAppContent() {
   const [guess1, setGuess1] = useState("");
   const [guess2, setGuess2] = useState("");
   const [taskChoice, setTaskChoice] = useState("");
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [maxVisitedSlide, setMaxVisitedSlide] = useState(0);
+  const [currentSlide, setCurrentSlide] = useState(() => {
+    // Initialize from URL hash or default to 0
+    const hash = window.location.hash.replace('#', '');
+    const slideFromHash = parseInt(hash, 10);
+    return !isNaN(slideFromHash) && slideFromHash >= 0 && slideFromHash < SLIDE_TITLES.length ? slideFromHash : 0;
+  });
+  const [maxVisitedSlide, setMaxVisitedSlide] = useState(() => {
+    // Initialize max visited slide to at least the current slide from URL
+    const hash = window.location.hash.replace('#', '');
+    const slideFromHash = parseInt(hash, 10);
+    return !isNaN(slideFromHash) && slideFromHash >= 0 && slideFromHash < SLIDE_TITLES.length ? slideFromHash : 0;
+  });
   const [slide3DoneClicked, setSlide3DoneClicked] = useState(false);
   const [showTellMe, setShowTellMe] = useState(false);
   const [isNavExpanded, setIsNavExpanded] = useState(false);
@@ -176,7 +186,12 @@ function AFMLearningAppContent() {
     } else {
       setShowConsentDialog(true);
     }
-  }, []);
+
+    // Initialize browser history state if not already set
+    if (!window.history.state || window.history.state.slide !== currentSlide) {
+      window.history.replaceState({ slide: currentSlide }, '', `#${currentSlide}`);
+    }
+  }, [currentSlide]);
 
   // Track slide changes
   useEffect(() => {
@@ -202,10 +217,16 @@ function AFMLearningAppContent() {
     alert('Ohne Einverständnis zur Studienteilnahme kann die Anwendung nicht verwendet werden.');
   };
 
-  const handleNavigation = (targetSlide) => {
+  const handleNavigation = (targetSlide, updateHistory = true) => {
     if (targetSlide >= 0 && targetSlide < SLIDE_TITLES.length) {
       const previousSlide = currentSlide;
       setCurrentSlide(targetSlide);
+
+      // Update browser history (unless this navigation is from browser back/forward)
+      if (updateHistory) {
+        window.history.pushState({ slide: targetSlide }, '', `#${targetSlide}`);
+      }
+
       // Update max visited slide if we're going to a higher slide
       if (targetSlide > maxVisitedSlide) {
         setMaxVisitedSlide(targetSlide);
@@ -281,41 +302,31 @@ function AFMLearningAppContent() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [currentSlide, maxVisitedSlide, isNavExpanded, consentGiven]);
 
-  // Mouse navigation (back/forward buttons)
+  // Browser history navigation (back/forward buttons)
   useEffect(() => {
-    const handleMouseButton = (event) => {
-      if (event.button === 3) {
-        // Back button
-        event.preventDefault();
-        if (currentSlide > 0) {
-          if (consentGiven) {
-            trackButtonClick('mouse_navigation', {
-              button: 'back',
-              from: currentSlide,
-              to: currentSlide - 1
-            });
-          }
-          handleNavigation(currentSlide - 1);
+    const handlePopState = (event) => {
+      const hash = window.location.hash.replace('#', '');
+      const slideFromHash = parseInt(hash, 10);
+      const targetSlide = !isNaN(slideFromHash) && slideFromHash >= 0 && slideFromHash < SLIDE_TITLES.length ? slideFromHash : 0;
+
+      if (targetSlide !== currentSlide) {
+        if (consentGiven) {
+          trackButtonClick('browser_navigation', {
+            button: 'browser_back_forward',
+            from: currentSlide,
+            to: targetSlide
+          });
         }
-      } else if (event.button === 4) {
-        // Forward button
-        event.preventDefault();
-        if (currentSlide < maxVisitedSlide) {
-          if (consentGiven) {
-            trackButtonClick('mouse_navigation', {
-              button: 'forward',
-              from: currentSlide,
-              to: currentSlide + 1
-            });
-          }
-          handleNavigation(currentSlide + 1);
-        }
+        // Don't update history since this IS a history navigation
+        handleNavigation(targetSlide, false);
       }
     };
 
-    window.addEventListener("mousedown", handleMouseButton);
-    return () => window.removeEventListener("mousedown", handleMouseButton);
-  }, [currentSlide, maxVisitedSlide, consentGiven]);
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [currentSlide, consentGiven]);
+
+
 
   const renderSlide = (Component, props, slideNumber, slideName) => (
     <SlideTracker

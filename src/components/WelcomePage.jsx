@@ -260,9 +260,9 @@ export const WelcomePage = ({ navigate }) => {
         </div>
 
         {/* Bento Grid */}
-        <div className="grid grid-cols-3 gap-6 h-[600px]">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:h-[600px]">
           {/* Left Side - Start Python Journey (Large Module) */}
-          <div className="col-span-2">
+          <div className="lg:col-span-2">
             {modules.filter(module => module.size === "large").map((module) => {
               const IconComponent = module.icon;
               const isLarge = true;
@@ -308,7 +308,7 @@ export const WelcomePage = ({ navigate }) => {
           </div>
 
           {/* Right Side - Factor Models */}
-          <div className="col-span-1 flex flex-col gap-6">
+          <div className="lg:col-span-1 flex flex-col gap-6">
             {modules.filter(module => module.size === "normal").map((module) => {
               const IconComponent = module.icon;
               const isLarge = false;

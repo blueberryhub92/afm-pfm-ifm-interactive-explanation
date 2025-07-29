@@ -54,7 +54,7 @@ export const QuestionnaireNotification = () => {
         });
 
         // Base URL of your LimeSurvey questionnaire
-        const baseUrl = 'https://your-limesurvey-url.com/index.php/123456'; // Replace with your actual survey URL
+        const baseUrl = 'https://limesurvey.uni-due.de/index.php/847825?lang=en';
 
         // LimeSurvey parameters:
         // - token: if you're using token-based access
@@ -63,7 +63,7 @@ export const QuestionnaireNotification = () => {
         // - lang: language code
         // You can also add custom parameters that you can access in LimeSurvey using ExpressionScript:
         // {PARAMETER:studyid}
-        const questionnaireUrl = `${baseUrl}?studyid=${encodeURIComponent(userId)}&newtest=Y`;
+        const questionnaireUrl = `${baseUrl}&studyid=${encodeURIComponent(userId)}`;
 
         // Open questionnaire in new tab
         window.open(questionnaireUrl, '_blank');
