@@ -1,71 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Code, Target, Zap, ArrowRight, List, Brain, Users, CheckCircle, XCircle, Clock, TrendingUp } from "lucide-react";
 import { trackButtonClick, trackCustomEvent } from '../utils/analytics';
-
-// Confetti Component
-const ConfettiEffect = ({ isActive }) => {
-  const [particles, setParticles] = useState([]);
-
-  useEffect(() => {
-    if (isActive) {
-      // Create confetti particles
-      const newParticles = Array.from({ length: 50 }, (_, i) => ({
-        id: i,
-        x: Math.random() * 100,
-        y: -10,
-        rotation: Math.random() * 360,
-        color: ['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7'][Math.floor(Math.random() * 6)],
-        size: Math.random() * 8 + 4,
-        speedX: (Math.random() - 0.5) * 4,
-        speedY: Math.random() * 3 + 2,
-      }));
-
-      setParticles(newParticles);
-
-      // Clear particles after animation
-      const timer = setTimeout(() => {
-        setParticles([]);
-      }, 3000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [isActive]);
-
-  if (!isActive || particles.length === 0) return null;
-
-  return (
-    <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
-      {particles.map((particle) => (
-        <div
-          key={particle.id}
-          className="absolute animate-bounce"
-          style={{
-            left: `${particle.x}%`,
-            top: `${particle.y}%`,
-            backgroundColor: particle.color,
-            width: `${particle.size}px`,
-            height: `${particle.size}px`,
-            transform: `rotate(${particle.rotation}deg)`,
-            borderRadius: '2px',
-            animation: `confettiFall 3s ease-out forwards`,
-          }}
-        />
-      ))}
-      <style jsx>{`
-        @keyframes confettiFall {
-          0% {
-            transform: translateY(-100vh) rotate(0deg);
-            opacity: 1;
-          }
-          100% {
-            transform: translateY(100vh) rotate(720deg);
-            opacity: 0;
-          }
-        }
-      `}</style>
-    </div>
-  );
-};
+import { startConfetti } from '../utils/confetti';
 
 export const PythonTasksAdvanced = ({ navigate }) => {
   const [startTime] = useState(Date.now());
@@ -75,7 +11,6 @@ export const PythonTasksAdvanced = ({ navigate }) => {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [showResult, setShowResult] = useState(false);
   const [completedTasks, setCompletedTasks] = useState([]);
-  const [showConfetti, setShowConfetti] = useState(false);
 
   // Track component entry
   useEffect(() => {
@@ -282,6 +217,9 @@ return fibonacci(n-1) + fibonacci(n-2)`,
         timestamp: Date.now(),
         duration: Date.now() - taskStartTime
       }]);
+
+      // Trigger confetti for correct answer
+      startConfetti(3000);
     }
   };
 
@@ -345,7 +283,6 @@ return fibonacci(n-1) + fibonacci(n-2)`,
 
     return (
       <div className="bg-white min-h-screen flex flex-col text-black font-['IBM_Plex_Mono',monospace] py-8 px-4 md:px-10">
-        <ConfettiEffect isActive={showConfetti} />
         <div className="w-full max-w-4xl mx-auto flex flex-col gap-8">
 
           {/* Header */}
@@ -477,7 +414,6 @@ return fibonacci(n-1) + fibonacci(n-2)`,
   // Main Task Selection View
   return (
     <div className="bg-white min-h-screen flex flex-col items-center justify-center text-black font-['IBM_Plex_Mono',monospace] py-8 px-4 md:px-10">
-      <ConfettiEffect isActive={showConfetti} />
       <div className="w-full max-w-6xl mx-auto flex flex-col gap-8">
 
         {/* Header */}
@@ -504,7 +440,7 @@ return fibonacci(n-1) + fibonacci(n-2)`,
           </span>
           {completedTasks.length === 2 && (
             <div className="mt-2 text-black font-bold text-lg">
-              🎉 ALL TASKS COMPLETED! 🎉
+              ALL TASKS COMPLETED!
             </div>
           )}
         </div>
