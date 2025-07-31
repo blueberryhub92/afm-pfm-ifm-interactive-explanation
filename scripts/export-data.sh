@@ -38,12 +38,23 @@ print_status "⏰ Timestamp: $DATE"
 # Check if backend is running
 if ! curl -f http://localhost:$BACKEND_PORT/health &>/dev/null; then
     print_warning "Backend not running. Starting it first..."
-    if [ -f "docker-compose.simple.yml" ]; then
-        docker-compose -f docker-compose.simple.yml up -d backend
+    if [ -f "docker-compose.yml" ]; then
+        print_status "Starting backend service..."
+        docker compose up -d backend
         print_status "Waiting for backend to start..."
-        sleep 10
+        sleep 15
+        
+        # Retry health check
+        if ! curl -f http://localhost:$BACKEND_PORT/health &>/dev/null; then
+            echo "❌ Backend failed to start. Please check:"
+            echo "   docker compose logs backend"
+            echo "   docker compose ps"
+            exit 1
+        fi
+        print_success "✅ Backend is now running"
     else
-        echo "❌ Cannot start backend. Please run ./start-simple.sh first"
+        echo "❌ Cannot start backend. docker-compose.yml not found."
+        echo "   Please run: docker compose up -d"
         exit 1
     fi
 fi
@@ -97,9 +108,16 @@ fi
 
 # Copy raw JSON files as backup
 print_status "💾 Creating backup of raw data files..."
-if [ -d "./backend/data" ]; then
+if [ -d "./data" ]; then
+    cp -r ./data "$EXPORT_DIR/raw_data_backup_$DATE"
+    print_success "✅ Raw data backup created: $EXPORT_DIR/raw_data_backup_$DATE"
+elif [ -d "./backend/data" ]; then
+    # Fallback for older directory structure
     cp -r ./backend/data "$EXPORT_DIR/raw_data_backup_$DATE"
     print_success "✅ Raw data backup created: $EXPORT_DIR/raw_data_backup_$DATE"
+else
+    print_warning "⚠️  No data directory found. Skipping raw data backup."
+    print_status "   Expected: ./data or ./backend/data"
 fi
 
 # Generate export summary

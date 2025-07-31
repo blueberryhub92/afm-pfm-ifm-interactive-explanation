@@ -61,11 +61,15 @@ MANUAL_BACKUP_DIR="$BACKUP_DIR/manual_backup_$DATE"
 mkdir -p "$MANUAL_BACKUP_DIR"
 
 # Backup data files
-if [ -d "./backend/data" ]; then
-    cp -r ./backend/data "$MANUAL_BACKUP_DIR/"
+if [ -d "./data" ]; then
+    cp -r ./data "$MANUAL_BACKUP_DIR/"
     print_success "✅ Data files backed up"
+elif [ -d "./backend/data" ]; then
+    # Fallback for older directory structure
+    cp -r ./backend/data "$MANUAL_BACKUP_DIR/"
+    print_success "✅ Data files backed up (legacy path)"
 else
-    print_warning "⚠️  No data directory found (./backend/data)"
+    print_warning "⚠️  No data directory found (./data or ./backend/data)"
 fi
 
 # Backup existing backups (if any)
@@ -100,9 +104,10 @@ File Counts:
 Backup Size: $(du -sh "$MANUAL_BACKUP_DIR" | cut -f1)
 
 Restore Instructions:
-1. Stop the application: docker-compose -f docker-compose.simple.yml down
-2. Restore data: cp -r $MANUAL_BACKUP_DIR/data/* ./backend/data/
-3. Restart application: docker-compose -f docker-compose.simple.yml up -d
+1. Stop the application: docker compose down
+2. Restore data: cp -r $MANUAL_BACKUP_DIR/data/* ./data/
+3. Set permissions: sudo chown -R 1001:1001 ./data ./backups
+4. Restart application: docker compose up -d
 
 EOF
 
@@ -149,7 +154,8 @@ echo "   • Created: $(date)"
 echo ""
 echo "📝 Restore command:"
 echo "   tar -xzf $BACKUP_DIR/afm_backup_$DATE.tar.gz -C $BACKUP_DIR"
-echo "   cp -r $BACKUP_DIR/manual_backup_$DATE/data/* ./backend/data/"
+echo "   cp -r $BACKUP_DIR/manual_backup_$DATE/data/* ./data/"
+echo "   sudo chown -R 1001:1001 ./data ./backups"
 echo ""
 echo "💡 Tip: Run this script regularly or set up a cron job for automatic backups"
 echo "" 
