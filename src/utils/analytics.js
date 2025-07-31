@@ -660,6 +660,59 @@ if (typeof document !== 'undefined') {
       oldSize = newSize;
     }, 250);
   });
+
+  // Track mouse movements with throttling
+  let mouseTrackingEnabled = true;
+  let lastMousePosition = { x: 0, y: 0, timestamp: 0 };
+  let mouseTrackingTimeout;
+  const MOUSE_TRACKING_DELAY = 100; // Track every 100ms maximum
+  const MIN_MOUSE_DISTANCE = 5; // Minimum distance in pixels to track
+
+  function calculateDistance(pos1, pos2) {
+    return Math.sqrt(Math.pow(pos2.x - pos1.x, 2) + Math.pow(pos2.y - pos1.y, 2));
+  }
+
+  document.addEventListener('mousemove', (event) => {
+    if (!mouseTrackingEnabled) return;
+
+    const currentTime = Date.now();
+    const currentPosition = {
+      x: event.clientX,
+      y: event.clientY,
+      pageX: event.pageX,
+      pageY: event.pageY,
+      timestamp: currentTime
+    };
+
+    // Only track if enough time has passed and mouse moved significantly
+    if (currentTime - lastMousePosition.timestamp >= MOUSE_TRACKING_DELAY) {
+      const distance = calculateDistance(lastMousePosition, currentPosition);
+      
+      if (distance >= MIN_MOUSE_DISTANCE) {
+        const movement = {
+          startX: lastMousePosition.x,
+          startY: lastMousePosition.y,
+          endX: currentPosition.x,
+          endY: currentPosition.y,
+          distance: distance,
+          duration: currentTime - lastMousePosition.timestamp
+        };
+
+        // Get target element information
+        const targetElement = event.target;
+        const elementType = targetElement.tagName?.toLowerCase() || 'unknown';
+        const elementId = targetElement.id || targetElement.className || 'unnamed';
+
+        trackMouseMove(elementType, elementId, movement);
+        lastMousePosition = currentPosition;
+      }
+    }
+  });
+
+  // Pause mouse tracking when page is hidden to save resources
+  document.addEventListener('visibilitychange', () => {
+    mouseTrackingEnabled = !document.hidden;
+  });
 }
 
 export default analytics; 
