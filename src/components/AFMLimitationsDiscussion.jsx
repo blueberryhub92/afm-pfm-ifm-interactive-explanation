@@ -58,15 +58,15 @@ export const AFMLimitationsDiscussion = ({ navigate }) => {
   const [qMatrixCurrentProblem, setQMatrixCurrentProblem] = useState(0);
   const [qMatrixSelectedAnswer, setQMatrixSelectedAnswer] = useState(null);
   const [qMatrixShowFeedback, setQMatrixShowFeedback] = useState(false);
-  const [qMatrixViewMode, setQMatrixViewMode] = useState('incorrect');
+  const [qMatrixViewMode, setQMatrixViewMode] = useState("incorrect");
   const [qMatrixAttemptedProblems, setQMatrixAttemptedProblems] = useState([]);
   const [userSkillMastery, setUserSkillMastery] = useState({
-    'Loops': 0.5,
-    'Print Function': 0.5,
-    'Lists': 0.5,
-    'Methods': 0.5,
-    'Functions': 0.5,
-    'Return Values': 0.5
+    Loops: 0.5,
+    "Print Function": 0.5,
+    Lists: 0.5,
+    Methods: 0.5,
+    Functions: 0.5,
+    "Return Values": 0.5,
   });
 
   const handleSliderChange = (period, value) => {
@@ -121,8 +121,6 @@ print(result)`,
     hint: "There may not be a correct answer option.",
   };
 
-
-
   // Event handlers
   const handleBeginTask = (taskId) => {
     if (taskId === "incorrect-answers") {
@@ -170,15 +168,15 @@ print(result)`,
       setQMatrixCurrentProblem(0);
       setQMatrixSelectedAnswer(null);
       setQMatrixShowFeedback(false);
-      setQMatrixViewMode('incorrect');
+      setQMatrixViewMode("incorrect");
       setQMatrixAttemptedProblems([]);
       setUserSkillMastery({
-        'Loops': 0.5,
-        'Print Function': 0.5,
-        'Lists': 0.5,
-        'Methods': 0.5,
-        'Functions': 0.5,
-        'Return Values': 0.5
+        Loops: 0.5,
+        "Print Function": 0.5,
+        Lists: 0.5,
+        Methods: 0.5,
+        Functions: 0.5,
+        "Return Values": 0.5,
       });
     }
   };
@@ -188,9 +186,14 @@ print(result)`,
 
     // Track completion for specific scenarios
     if (
-      ["incorrect-answers-reflection", "no-forgetting", "binary-skills", "context-blind", "item-difficulty", "q-matrix-quality"].includes(
-        currentView
-      )
+      [
+        "incorrect-answers-reflection",
+        "no-forgetting",
+        "binary-skills",
+        "context-blind",
+        "item-difficulty",
+        "q-matrix-quality",
+      ].includes(currentView)
     ) {
       let scenarioId;
       if (currentView === "incorrect-answers-reflection")
@@ -198,8 +201,10 @@ print(result)`,
       else if (currentView === "no-forgetting") scenarioId = "no-forgetting";
       else if (currentView === "binary-skills") scenarioId = "binary-skills";
       else if (currentView === "context-blind") scenarioId = "context-blind";
-      else if (currentView === "item-difficulty") scenarioId = "item-difficulty";
-      else if (currentView === "q-matrix-quality") scenarioId = "q-matrix-quality";
+      else if (currentView === "item-difficulty")
+        scenarioId = "item-difficulty";
+      else if (currentView === "q-matrix-quality")
+        scenarioId = "q-matrix-quality";
 
       if (scenarioId) {
         setCompletedScenarios((prev) => new Set([...prev, scenarioId]));
@@ -223,11 +228,17 @@ print(result)`,
   );
 
   // Technical Card Component
-  const TechnicalCard = ({ title, description, children, size = "normal", accent = "black" }) => {
+  const TechnicalCard = ({
+    title,
+    description,
+    children,
+    size = "normal",
+    accent = "black",
+  }) => {
     const sizeClasses = {
       normal: "p-6",
       large: "p-8",
-      small: "p-4"
+      small: "p-4",
     };
 
     const accentClasses = {
@@ -237,22 +248,36 @@ print(result)`,
       green: "border-green-600",
       purple: "border-purple-600",
       orange: "border-orange-600",
-      yellow: "border-yellow-600"
+      yellow: "border-yellow-600",
     };
 
     return (
-      <div className={`border-2 ${accentClasses[accent]} bg-white ${sizeClasses[size]} relative`}>
+      <div
+        className={`border-2 ${accentClasses[accent]} bg-white ${sizeClasses[size]} relative`}
+      >
         {/* Technical corner brackets */}
-        <div className={`absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 ${accentClasses[accent]}`}></div>
-        <div className={`absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 ${accentClasses[accent]}`}></div>
-        <div className={`absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 ${accentClasses[accent]}`}></div>
-        <div className={`absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 ${accentClasses[accent]}`}></div>
+        <div
+          className={`absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 ${accentClasses[accent]}`}
+        ></div>
+        <div
+          className={`absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 ${accentClasses[accent]}`}
+        ></div>
+        <div
+          className={`absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 ${accentClasses[accent]}`}
+        ></div>
+        <div
+          className={`absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 ${accentClasses[accent]}`}
+        ></div>
 
         {title && (
           <div className="mb-4">
-            <h3 className="text-lg font-bold text-black tracking-wider uppercase">{title}</h3>
+            <h3 className="text-lg font-bold text-black tracking-wider uppercase">
+              {title}
+            </h3>
             {description && (
-              <p className="text-sm font-mono text-gray-600 mt-2">{description}</p>
+              <p className="text-sm font-mono text-gray-600 mt-2">
+                {description}
+              </p>
             )}
           </div>
         )}
@@ -263,27 +288,35 @@ print(result)`,
   };
 
   // Button component
-  const TechnicalButton = ({ children, onClick, variant = "primary", disabled = false, size = "normal" }) => {
-    const baseClasses = "font-mono font-bold tracking-wider uppercase transition-all transform hover:scale-105 border-2 border-black";
+  const TechnicalButton = ({
+    children,
+    onClick,
+    variant = "primary",
+    disabled = false,
+    size = "normal",
+  }) => {
+    const baseClasses =
+      "font-mono font-bold tracking-wider uppercase transition-all transform hover:scale-105 border-2 border-black";
     const sizeClasses = {
       small: "px-4 py-2 text-sm",
       normal: "px-6 py-3 text-base",
-      large: "px-8 py-4 text-lg"
+      large: "px-8 py-4 text-lg",
     };
     const variantClasses = {
       primary: "bg-black text-white hover:bg-white hover:text-black",
       secondary: "bg-white text-black hover:bg-black hover:text-white",
       danger: "bg-red-600 text-white hover:bg-white hover:text-red-600",
       success: "bg-green-600 text-white hover:bg-white hover:text-green-600",
-      warning: "bg-yellow-600 text-white hover:bg-white hover:text-yellow-600"
+      warning: "bg-yellow-600 text-white hover:bg-white hover:text-yellow-600",
     };
 
     return (
       <button
         onClick={onClick}
         disabled={disabled}
-        className={`${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]} ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
-          }`}
+        className={`${baseClasses} ${sizeClasses[size]} ${
+          variantClasses[variant]
+        } ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
       >
         {children}
       </button>
@@ -293,13 +326,39 @@ print(result)`,
   const renderBinarySkills = () => {
     // Python programming assessment scenario - shows binary vs nuanced evaluation
     const programmingAssessment = {
-      taskInfo: "Write a Python function to find the second largest number in a list",
+      taskInfo:
+        "Write a Python function to find the second largest number in a list",
       requirements: [
-        { id: 'functionality', name: 'Basic Functionality', achieved: true, points: 3 },
-        { id: 'efficiency', name: 'Algorithm Efficiency', achieved: false, points: 2 },
-        { id: 'edge_cases', name: 'Edge Case Handling', achieved: false, points: 2 },
-        { id: 'documentation', name: 'Code Documentation', achieved: false, points: 1 },
-        { id: 'style', name: 'Code Style & Readability', achieved: true, points: 1 }
+        {
+          id: "functionality",
+          name: "Basic Functionality",
+          achieved: true,
+          points: 3,
+        },
+        {
+          id: "efficiency",
+          name: "Algorithm Efficiency",
+          achieved: false,
+          points: 2,
+        },
+        {
+          id: "edge_cases",
+          name: "Edge Case Handling",
+          achieved: false,
+          points: 2,
+        },
+        {
+          id: "documentation",
+          name: "Code Documentation",
+          achieved: false,
+          points: 1,
+        },
+        {
+          id: "style",
+          name: "Code Style & Readability",
+          achieved: true,
+          points: 1,
+        },
       ],
       studentCode: `def second_largest(nums):
     nums.sort()
@@ -307,21 +366,27 @@ print(result)`,
 
 # Test
 print(second_largest([1, 3, 2, 5, 4]))`,
-      expectedOutput: '4',
-      actualOutput: '4',
+      expectedOutput: "4",
+      actualOutput: "4",
       codeRuns: true,
       issues: {
-        efficiency: 'Uses sort() which is O(n log n) instead of O(n) single pass',
-        edgeCases: 'No handling for empty lists, single element, or duplicate values',
-        documentation: 'No docstring, no comments explaining logic'
-      }
+        efficiency:
+          "Uses sort() which is O(n log n) instead of O(n) single pass",
+        edgeCases:
+          "No handling for empty lists, single element, or duplicate values",
+        documentation: "No docstring, no comments explaining logic",
+      },
     };
 
     const calculateRealScore = () => {
-      const totalPoints = programmingAssessment.requirements.reduce((acc, req) =>
-        acc + (req.achieved ? req.points : 0), 0
+      const totalPoints = programmingAssessment.requirements.reduce(
+        (acc, req) => acc + (req.achieved ? req.points : 0),
+        0
       );
-      const maxPoints = programmingAssessment.requirements.reduce((acc, req) => acc + req.points, 0);
+      const maxPoints = programmingAssessment.requirements.reduce(
+        (acc, req) => acc + req.points,
+        0
+      );
       return (totalPoints / maxPoints) * 100;
     };
 
@@ -329,11 +394,11 @@ print(second_largest([1, 3, 2, 5, 4]))`,
     const realScore = calculateRealScore(); // ~44% - shows partial competency
 
     const stepLabels = {
-      0: 'Programming Task Overview',
-      1: 'Code Analysis',
-      2: 'Functionality Assessment',
-      3: 'Quality Evaluation',
-      4: 'Results Comparison'
+      0: "Programming Task Overview",
+      1: "Code Analysis",
+      2: "Functionality Assessment",
+      3: "Quality Evaluation",
+      4: "Results Comparison",
     };
 
     const navigateSimStep = (direction) => {
@@ -362,7 +427,8 @@ print(second_largest([1, 3, 2, 5, 4]))`,
             Python Programming Assessment
           </div>
           <p className="text-lg text-black text-center mb-8 font-bold">
-            Understand how AFM's binary approach fails in comprehensive code evaluation
+            Understand how AFM's binary approach fails in comprehensive code
+            evaluation
           </p>
 
           <div className="space-y-6">
@@ -391,9 +457,10 @@ print(second_largest([1, 3, 2, 5, 4]))`,
                 ASSESSMENT CHALLENGE
               </h3>
               <p className="text-black font-mono text-lg">
-                The code runs and produces the correct output. But is running correctly
-                the only measure of programming competency? We'll compare AFM's binary
-                approach with a comprehensive code evaluation.
+                The code runs and produces the correct output. But is running
+                correctly the only measure of programming competency? We'll
+                compare AFM's binary approach with a comprehensive code
+                evaluation.
               </p>
             </div>
           </div>
@@ -441,8 +508,16 @@ print(second_largest([1, 3, 2, 5, 4]))`,
                 <p className="font-mono text-black font-bold">
                   Expected: {programmingAssessment.expectedOutput}
                 </p>
-                <span className={`px-2 py-1 border-2 border-black font-mono font-bold text-xs ${programmingAssessment.codeRuns ? 'bg-green-300' : 'bg-red-300'}`}>
-                  {programmingAssessment.codeRuns ? 'RUNS CORRECTLY' : 'EXECUTION ERROR'}
+                <span
+                  className={`px-2 py-1 border-2 border-black font-mono font-bold text-xs ${
+                    programmingAssessment.codeRuns
+                      ? "bg-green-300"
+                      : "bg-red-300"
+                  }`}
+                >
+                  {programmingAssessment.codeRuns
+                    ? "RUNS CORRECTLY"
+                    : "EXECUTION ERROR"}
                 </span>
               </div>
             </div>
@@ -453,19 +528,25 @@ print(second_largest([1, 3, 2, 5, 4]))`,
               </h3>
               <div className="space-y-3">
                 <div className="p-3 bg-white border-2 border-orange-600 rounded-lg">
-                  <h4 className="font-bold text-orange-700 font-mono mb-2">EFFICIENCY:</h4>
+                  <h4 className="font-bold text-orange-700 font-mono mb-2">
+                    EFFICIENCY:
+                  </h4>
                   <p className="text-black font-mono text-sm">
                     {programmingAssessment.issues.efficiency}
                   </p>
                 </div>
                 <div className="p-3 bg-white border-2 border-orange-600 rounded-lg">
-                  <h4 className="font-bold text-orange-700 font-mono mb-2">EDGE CASES:</h4>
+                  <h4 className="font-bold text-orange-700 font-mono mb-2">
+                    EDGE CASES:
+                  </h4>
                   <p className="text-black font-mono text-sm">
                     {programmingAssessment.issues.edgeCases}
                   </p>
                 </div>
                 <div className="p-3 bg-white border-2 border-orange-600 rounded-lg">
-                  <h4 className="font-bold text-orange-700 font-mono mb-2">DOCUMENTATION:</h4>
+                  <h4 className="font-bold text-orange-700 font-mono mb-2">
+                    DOCUMENTATION:
+                  </h4>
                   <p className="text-black font-mono text-sm">
                     {programmingAssessment.issues.documentation}
                   </p>
@@ -515,25 +596,39 @@ print(second_largest([1, 3, 2, 5, 4]))`,
               <div className="space-y-3">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   <div className="p-3 bg-white border-2 border-green-600 rounded-lg">
-                    <h4 className="font-bold text-green-700 font-mono mb-1">BASIC CASE</h4>
-                    <p className="font-mono text-black text-sm">Input: [1,3,2,5,4]</p>
+                    <h4 className="font-bold text-green-700 font-mono mb-1">
+                      BASIC CASE
+                    </h4>
+                    <p className="font-mono text-black text-sm">
+                      Input: [1,3,2,5,4]
+                    </p>
                     <p className="font-mono text-black text-sm">Expected: 4</p>
                     <span className="px-2 py-1 bg-green-300 border border-black font-mono font-bold text-xs">
                       PASS
                     </span>
                   </div>
                   <div className="p-3 bg-white border-2 border-red-600 rounded-lg">
-                    <h4 className="font-bold text-red-700 font-mono mb-1">EDGE CASE</h4>
+                    <h4 className="font-bold text-red-700 font-mono mb-1">
+                      EDGE CASE
+                    </h4>
                     <p className="font-mono text-black text-sm">Input: []</p>
-                    <p className="font-mono text-black text-sm">Expected: Handle gracefully</p>
+                    <p className="font-mono text-black text-sm">
+                      Expected: Handle gracefully
+                    </p>
                     <span className="px-2 py-1 bg-red-300 border border-black font-mono font-bold text-xs">
                       FAIL
                     </span>
                   </div>
                   <div className="p-3 bg-white border-2 border-red-600 rounded-lg">
-                    <h4 className="font-bold text-red-700 font-mono mb-1">DUPLICATES</h4>
-                    <p className="font-mono text-black text-sm">Input: [5,5,5,5]</p>
-                    <p className="font-mono text-black text-sm">Expected: Handle duplicates</p>
+                    <h4 className="font-bold text-red-700 font-mono mb-1">
+                      DUPLICATES
+                    </h4>
+                    <p className="font-mono text-black text-sm">
+                      Input: [5,5,5,5]
+                    </p>
+                    <p className="font-mono text-black text-sm">
+                      Expected: Handle duplicates
+                    </p>
                     <span className="px-2 py-1 bg-red-300 border border-black font-mono font-bold text-xs">
                       FAIL
                     </span>
@@ -615,13 +710,24 @@ print(second_largest([1, 3, 2, 5, 4]))`,
             </h3>
             <div className="space-y-3">
               {programmingAssessment.requirements.map((req) => (
-                <div key={req.id} className="flex items-center justify-between p-3 bg-white border-2 border-purple-600 rounded-lg">
-                  <span className="font-mono text-black font-bold">{req.name}</span>
+                <div
+                  key={req.id}
+                  className="flex items-center justify-between p-3 bg-white border-2 border-purple-600 rounded-lg"
+                >
+                  <span className="font-mono text-black font-bold">
+                    {req.name}
+                  </span>
                   <div className="flex items-center space-x-2">
-                    <span className={`px-2 py-1 border-2 border-black font-mono font-bold text-xs ${req.achieved ? 'bg-green-300' : 'bg-red-300'}`}>
-                      {req.achieved ? 'ACHIEVED' : 'MISSING'}
+                    <span
+                      className={`px-2 py-1 border-2 border-black font-mono font-bold text-xs ${
+                        req.achieved ? "bg-green-300" : "bg-red-300"
+                      }`}
+                    >
+                      {req.achieved ? "ACHIEVED" : "MISSING"}
                     </span>
-                    <span className="text-sm font-mono font-bold">({req.points} pts)</span>
+                    <span className="text-sm font-mono font-bold">
+                      ({req.points} pts)
+                    </span>
                   </div>
                 </div>
               ))}
@@ -668,7 +774,9 @@ print(second_largest([1, 3, 2, 5, 4]))`,
               </h3>
               <div className="space-y-4">
                 <div className="bg-red-100 p-4 border-2 border-red-600">
-                  <h4 className="font-bold text-red-700 font-mono mb-2">BINARY LOGIC:</h4>
+                  <h4 className="font-bold text-red-700 font-mono mb-2">
+                    BINARY LOGIC:
+                  </h4>
                   <p className="text-black font-mono text-sm">
                     Code runs correctly → Student gets 100%
                   </p>
@@ -678,7 +786,9 @@ print(second_largest([1, 3, 2, 5, 4]))`,
                 </div>
 
                 <div className="bg-white p-4 border-2 border-red-600">
-                  <h4 className="font-bold text-black font-mono mb-2">AFM SCORE:</h4>
+                  <h4 className="font-bold text-black font-mono mb-2">
+                    AFM SCORE:
+                  </h4>
                   <div className="text-center">
                     <div className="text-4xl font-bold text-red-600 font-mono">
                       {afmScore.toFixed(0)}%
@@ -693,7 +803,9 @@ print(second_largest([1, 3, 2, 5, 4]))`,
                 </div>
 
                 <div className="bg-red-50 p-4 border-2 border-red-600">
-                  <h4 className="font-bold text-red-700 font-mono mb-2">IGNORED FACTORS:</h4>
+                  <h4 className="font-bold text-red-700 font-mono mb-2">
+                    IGNORED FACTORS:
+                  </h4>
                   <ul className="text-black font-mono text-sm space-y-1">
                     <li>• Algorithm efficiency</li>
                     <li>• Edge case handling</li>
@@ -710,7 +822,9 @@ print(second_largest([1, 3, 2, 5, 4]))`,
               </h3>
               <div className="space-y-4">
                 <div className="bg-green-100 p-4 border-2 border-green-600">
-                  <h4 className="font-bold text-green-700 font-mono mb-2">HOLISTIC EVALUATION:</h4>
+                  <h4 className="font-bold text-green-700 font-mono mb-2">
+                    HOLISTIC EVALUATION:
+                  </h4>
                   <p className="text-black font-mono text-sm">
                     • Functionality: 3/3 points
                   </p>
@@ -729,7 +843,9 @@ print(second_largest([1, 3, 2, 5, 4]))`,
                 </div>
 
                 <div className="bg-white p-4 border-2 border-green-600">
-                  <h4 className="font-bold text-black font-mono mb-2">COMPREHENSIVE SCORE:</h4>
+                  <h4 className="font-bold text-black font-mono mb-2">
+                    COMPREHENSIVE SCORE:
+                  </h4>
                   <div className="text-center">
                     <div className="text-4xl font-bold text-green-600 font-mono">
                       {realScore.toFixed(0)}%
@@ -744,7 +860,9 @@ print(second_largest([1, 3, 2, 5, 4]))`,
                 </div>
 
                 <div className="bg-green-50 p-4 border-2 border-green-600">
-                  <h4 className="font-bold text-green-700 font-mono mb-2">CAPTURED INSIGHTS:</h4>
+                  <h4 className="font-bold text-green-700 font-mono mb-2">
+                    CAPTURED INSIGHTS:
+                  </h4>
                   <ul className="text-black font-mono text-sm space-y-1">
                     <li>• Solid basic programming skills</li>
                     <li>• Needs efficiency optimization</li>
@@ -770,7 +888,9 @@ print(second_largest([1, 3, 2, 5, 4]))`,
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="border-l-4 border-yellow-600 bg-white p-4">
-                <h4 className="font-bold text-yellow-700 mb-2 font-mono">LOST INFORMATION</h4>
+                <h4 className="font-bold text-yellow-700 mb-2 font-mono">
+                  LOST INFORMATION
+                </h4>
                 <ul className="text-black font-mono text-sm space-y-1">
                   <li>• ALGORITHM QUALITY IGNORED</li>
                   <li>• MAINTAINABILITY UNMEASURED</li>
@@ -779,7 +899,9 @@ print(second_largest([1, 3, 2, 5, 4]))`,
                 </ul>
               </div>
               <div className="border-l-4 border-yellow-600 bg-white p-4">
-                <h4 className="font-bold text-yellow-700 mb-2 font-mono">EDUCATIONAL IMPACT</h4>
+                <h4 className="font-bold text-yellow-700 mb-2 font-mono">
+                  EDUCATIONAL IMPACT
+                </h4>
                 <ul className="text-black font-mono text-sm space-y-1">
                   <li>• STUDENTS LEARN BAD PRACTICES</li>
                   <li>• TEACHERS MISS SKILL GAPS</li>
@@ -814,7 +936,7 @@ print(second_largest([1, 3, 2, 5, 4]))`,
       1: renderCodeAnalysis,
       2: renderFunctionalityAssessment,
       3: renderQualityEvaluation,
-      4: renderResults
+      4: renderResults,
     };
 
     return (
@@ -848,19 +970,21 @@ print(second_largest([1, 3, 2, 5, 4]))`,
         question: "What will this Python code output?",
         code: `for i in range(3):
     print(i * 2)`,
-        options: ['0 2 4', '1 2 3', '2 4 6', '0 1 2'],
-        correctAnswer: '0 2 4',
-        incorrectHint: "Remember: range(3) gives you 0, 1, 2. Then multiply each by 2: 0*2=0, 1*2=2, 2*2=4",
-        correctFeedback: "Great! You understand that range(3) creates 0, 1, 2, and each gets multiplied by 2. This pattern-recognition skill will help you with similar problems!"
+        options: ["0 2 4", "1 2 3", "2 4 6", "0 1 2"],
+        correctAnswer: "0 2 4",
+        incorrectHint:
+          "Remember: range(3) gives you 0, 1, 2. Then multiply each by 2: 0*2=0, 1*2=2, 2*2=4",
+        correctFeedback:
+          "Great! You understand that range(3) creates 0, 1, 2, and each gets multiplied by 2. This pattern-recognition skill will help you with similar problems!",
       },
       taskB: {
         question: "What will this Python code output?",
         code: `for j in range(2):
     print(j * 3)`,
-        options: ['0 3', '1 3', '0 6', '3 6'],
-        correctAnswer: '0 3',
-        contextualLearning: true // This success builds on Task A's hint
-      }
+        options: ["0 3", "1 3", "0 6", "3 6"],
+        correctAnswer: "0 3",
+        contextualLearning: true, // This success builds on Task A's hint
+      },
     };
 
     const handleTaskAAnswer = (answer) => {
@@ -905,10 +1029,12 @@ print(second_largest([1, 3, 2, 5, 4]))`,
             </div>
             <div className="space-y-6">
               <div className="text-center">
-                <h2 className="text-2xl font-bold text-black mb-4">Python Learning Sequence</h2>
+                <h2 className="text-2xl font-bold text-black mb-4">
+                  Python Learning Sequence
+                </h2>
                 <p className="text-lg text-black font-bold">
-                  {contextScenario.student} solves two Python tasks back-to-back on an e-learning platform.
-                  Watch how context affects learning!
+                  {contextScenario.student} solves two Python tasks back-to-back
+                  on an e-learning platform. Watch how context affects learning!
                 </p>
               </div>
 
@@ -918,10 +1044,16 @@ print(second_largest([1, 3, 2, 5, 4]))`,
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="p-3 bg-white border-2 border-blue-600 rounded-lg">
-                    <span className="font-mono text-black font-bold text-sm">1. TASK A: Student attempts task, receives contextual feedback</span>
+                    <span className="font-mono text-black font-bold text-sm">
+                      1. TASK A: Student attempts task, receives contextual
+                      feedback
+                    </span>
                   </div>
                   <div className="p-3 bg-white border-2 border-blue-600 rounded-lg">
-                    <span className="font-mono text-black font-bold text-sm">2. TASK B: Student applies learning from context to similar task</span>
+                    <span className="font-mono text-black font-bold text-sm">
+                      2. TASK B: Student applies learning from context to
+                      similar task
+                    </span>
                   </div>
                 </div>
               </div>
@@ -934,28 +1066,35 @@ print(second_largest([1, 3, 2, 5, 4]))`,
               TASK A
             </div>
             <div className="space-y-6">
-              <h3 className="text-2xl font-bold text-red-700 text-center mb-4">{contextScenario.taskA.question}</h3>
+              <h3 className="text-2xl font-bold text-red-700 text-center mb-4">
+                {contextScenario.taskA.question}
+              </h3>
 
               <div className="bg-black text-green-400 p-6 rounded-xl font-['IBM_Plex_Mono',monospace] text-lg border-4 border-black">
-                <pre className="whitespace-pre-wrap">{contextScenario.taskA.code}</pre>
+                <pre className="whitespace-pre-wrap">
+                  {contextScenario.taskA.code}
+                </pre>
               </div>
 
               <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
                 {contextScenario.taskA.options.map((option, index) => (
                   <button
                     key={index}
-                    onClick={() => !contextTaskAAnswer && handleTaskAAnswer(option)}
+                    onClick={() =>
+                      !contextTaskAAnswer && handleTaskAAnswer(option)
+                    }
                     disabled={!!contextTaskAAnswer}
-                    className={`px-6 py-4 border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide transition-all ${contextTaskAAnswer === option
-                      ? option === contextScenario.taskA.correctAnswer
-                        ? "bg-green-600 text-white"
-                        : "bg-red-600 text-white"
-                      : contextTaskAAnswer
+                    className={`px-6 py-4 border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide transition-all ${
+                      contextTaskAAnswer === option
+                        ? option === contextScenario.taskA.correctAnswer
+                          ? "bg-green-600 text-white"
+                          : "bg-red-600 text-white"
+                        : contextTaskAAnswer
                         ? option === contextScenario.taskA.correctAnswer
                           ? "bg-green-300 text-black"
                           : "bg-gray-200 text-gray-500"
                         : "bg-white text-black hover:bg-red-200 cursor-pointer transform hover:scale-105"
-                      }`}
+                    }`}
                   >
                     {option}
                   </button>
@@ -964,32 +1103,50 @@ print(second_largest([1, 3, 2, 5, 4]))`,
 
               {contextTaskAAnswer && (
                 <div className="space-y-4">
-                  <div className={`border-l-8 ${contextTaskAAnswer === contextScenario.taskA.correctAnswer ? 'border-green-600 bg-green-100' : 'border-red-600 bg-red-100'} p-6 rounded-r-xl`}>
+                  <div
+                    className={`border-l-8 ${
+                      contextTaskAAnswer === contextScenario.taskA.correctAnswer
+                        ? "border-green-600 bg-green-100"
+                        : "border-red-600 bg-red-100"
+                    } p-6 rounded-r-xl`}
+                  >
                     <p className="text-black text-xl font-bold">
-                      {contextTaskAAnswer === contextScenario.taskA.correctAnswer ? 'Correct!' : 'Incorrect!'}
-                      The answer is <strong>{contextScenario.taskA.correctAnswer}</strong>.
+                      {contextTaskAAnswer ===
+                      contextScenario.taskA.correctAnswer
+                        ? "Correct!"
+                        : "Incorrect!"}
+                      The answer is{" "}
+                      <strong>{contextScenario.taskA.correctAnswer}</strong>.
                     </p>
                   </div>
 
                   {contextShowHint && (
-                    <div className={`border-l-8 p-6 rounded-r-xl ${contextTaskAAnswer === contextScenario.taskA.correctAnswer
-                      ? 'border-blue-600 bg-blue-100'
-                      : 'border-yellow-600 bg-yellow-100'
-                      }`}>
-                      <h4 className={`font-bold text-lg mb-2 ${contextTaskAAnswer === contextScenario.taskA.correctAnswer
-                        ? 'text-blue-700'
-                        : 'text-yellow-700'
-                        }`}>
-                        {contextTaskAAnswer === contextScenario.taskA.correctAnswer
-                          ? '✅ CONTEXTUAL FEEDBACK PROVIDED:'
-                          : '💡 HELPFUL HINT PROVIDED:'
-                        }
+                    <div
+                      className={`border-l-8 p-6 rounded-r-xl ${
+                        contextTaskAAnswer ===
+                        contextScenario.taskA.correctAnswer
+                          ? "border-blue-600 bg-blue-100"
+                          : "border-yellow-600 bg-yellow-100"
+                      }`}
+                    >
+                      <h4
+                        className={`font-bold text-lg mb-2 ${
+                          contextTaskAAnswer ===
+                          contextScenario.taskA.correctAnswer
+                            ? "text-blue-700"
+                            : "text-yellow-700"
+                        }`}
+                      >
+                        {contextTaskAAnswer ===
+                        contextScenario.taskA.correctAnswer
+                          ? "✅ CONTEXTUAL FEEDBACK PROVIDED:"
+                          : "💡 HELPFUL HINT PROVIDED:"}
                       </h4>
                       <p className="text-black text-lg font-bold">
-                        {contextTaskAAnswer === contextScenario.taskA.correctAnswer
+                        {contextTaskAAnswer ===
+                        contextScenario.taskA.correctAnswer
                           ? contextScenario.taskA.correctFeedback
-                          : contextScenario.taskA.incorrectHint
-                        }
+                          : contextScenario.taskA.incorrectHint}
                       </p>
                     </div>
                   )}
@@ -1005,28 +1162,35 @@ print(second_largest([1, 3, 2, 5, 4]))`,
                 TASK B (IMMEDIATELY AFTER)
               </div>
               <div className="space-y-6">
-                <h3 className="text-2xl font-bold text-green-700 text-center mb-4">{contextScenario.taskB.question}</h3>
+                <h3 className="text-2xl font-bold text-green-700 text-center mb-4">
+                  {contextScenario.taskB.question}
+                </h3>
 
                 <div className="bg-black text-green-400 p-6 rounded-xl font-['IBM_Plex_Mono',monospace] text-lg border-4 border-black">
-                  <pre className="whitespace-pre-wrap">{contextScenario.taskB.code}</pre>
+                  <pre className="whitespace-pre-wrap">
+                    {contextScenario.taskB.code}
+                  </pre>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
                   {contextScenario.taskB.options.map((option, index) => (
                     <button
                       key={index}
-                      onClick={() => !contextTaskBAnswer && handleTaskBAnswer(option)}
+                      onClick={() =>
+                        !contextTaskBAnswer && handleTaskBAnswer(option)
+                      }
                       disabled={!!contextTaskBAnswer}
-                      className={`px-6 py-4 border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide transition-all ${contextTaskBAnswer === option
-                        ? option === contextScenario.taskB.correctAnswer
-                          ? "bg-green-600 text-white"
-                          : "bg-red-600 text-white"
-                        : contextTaskBAnswer
+                      className={`px-6 py-4 border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide transition-all ${
+                        contextTaskBAnswer === option
+                          ? option === contextScenario.taskB.correctAnswer
+                            ? "bg-green-600 text-white"
+                            : "bg-red-600 text-white"
+                          : contextTaskBAnswer
                           ? option === contextScenario.taskB.correctAnswer
                             ? "bg-green-300 text-black"
                             : "bg-gray-200 text-gray-500"
                           : "bg-white text-black hover:bg-green-200 cursor-pointer transform hover:scale-105"
-                        }`}
+                      }`}
                     >
                       {option}
                     </button>
@@ -1036,13 +1200,21 @@ print(second_largest([1, 3, 2, 5, 4]))`,
                 {contextTaskBAnswer && (
                   <div className="border-l-8 border-green-600 bg-green-100 p-6 rounded-r-xl">
                     <p className="text-black text-xl font-bold">
-                      {contextTaskBAnswer === contextScenario.taskB.correctAnswer ? 'Correct!' : 'Incorrect!'}
-                      The answer is <strong>{contextScenario.taskB.correctAnswer}</strong>.
-                      {contextTaskBAnswer === contextScenario.taskB.correctAnswer && contextShowHint && (
-                        <span className="text-green-700">
-                          {' '}Great! You applied the contextual learning from Task A!
-                        </span>
-                      )}
+                      {contextTaskBAnswer ===
+                      contextScenario.taskB.correctAnswer
+                        ? "Correct!"
+                        : "Incorrect!"}
+                      The answer is{" "}
+                      <strong>{contextScenario.taskB.correctAnswer}</strong>.
+                      {contextTaskBAnswer ===
+                        contextScenario.taskB.correctAnswer &&
+                        contextShowHint && (
+                          <span className="text-green-700">
+                            {" "}
+                            Great! You applied the contextual learning from Task
+                            A!
+                          </span>
+                        )}
                     </p>
                   </div>
                 )}
@@ -1069,17 +1241,24 @@ print(second_largest([1, 3, 2, 5, 4]))`,
                     <div className="space-y-3">
                       <div className="bg-white p-4 border-2 border-blue-600 rounded-lg">
                         <p className="text-black font-bold text-sm">
-                          Student received contextual feedback on Task A {contextTaskAAnswer === contextScenario.taskA.correctAnswer ? '(reinforcement)' : '(corrective hint)'}, carrying that knowledge into Task B
+                          Student received contextual feedback on Task A{" "}
+                          {contextTaskAAnswer ===
+                          contextScenario.taskA.correctAnswer
+                            ? "(reinforcement)"
+                            : "(corrective hint)"}
+                          , carrying that knowledge into Task B
                         </p>
                       </div>
                       <div className="bg-white p-4 border-2 border-blue-600 rounded-lg">
                         <p className="text-black font-bold text-sm">
-                          Success on Task B was influenced by immediate contextual learning and timing
+                          Success on Task B was influenced by immediate
+                          contextual learning and timing
                         </p>
                       </div>
                       <div className="bg-white p-4 border-2 border-blue-600 rounded-lg">
                         <p className="text-black font-bold text-sm">
-                          This represents rapid learning from targeted contextual support
+                          This represents rapid learning from targeted
+                          contextual support
                         </p>
                       </div>
                     </div>
@@ -1092,7 +1271,8 @@ print(second_largest([1, 3, 2, 5, 4]))`,
                     <div className="space-y-3">
                       <div className="bg-white p-4 border-2 border-red-600 rounded-lg">
                         <p className="text-black font-bold text-sm">
-                          Simply counts: 2 total opportunities for "Python For Loops"
+                          Simply counts: 2 total opportunities for "Python For
+                          Loops"
                         </p>
                       </div>
                       <div className="bg-white p-4 border-2 border-red-600 rounded-lg">
@@ -1102,7 +1282,8 @@ print(second_largest([1, 3, 2, 5, 4]))`,
                       </div>
                       <div className="bg-white p-4 border-2 border-red-600 rounded-lg">
                         <p className="text-black font-bold text-sm">
-                          Ignores contextual feedback, timing, and learning sequence completely
+                          Ignores contextual feedback, timing, and learning
+                          sequence completely
                         </p>
                       </div>
                     </div>
@@ -1123,7 +1304,9 @@ print(second_largest([1, 3, 2, 5, 4]))`,
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="border-l-4 border-orange-600 bg-orange-50 p-4">
-                      <h4 className="font-bold text-orange-700 mb-2">MISSED PATTERNS</h4>
+                      <h4 className="font-bold text-orange-700 mb-2">
+                        MISSED PATTERNS
+                      </h4>
                       <ul className="text-sm text-black space-y-1">
                         <li>• Rapid learning from feedback</li>
                         <li>• Task sequence effects</li>
@@ -1131,7 +1314,9 @@ print(second_largest([1, 3, 2, 5, 4]))`,
                       </ul>
                     </div>
                     <div className="border-l-4 border-orange-600 bg-orange-50 p-4">
-                      <h4 className="font-bold text-orange-700 mb-2">POOR ADAPTATION</h4>
+                      <h4 className="font-bold text-orange-700 mb-2">
+                        POOR ADAPTATION
+                      </h4>
                       <ul className="text-sm text-black space-y-1">
                         <li>• Can't adapt feedback timing</li>
                         <li>• Misses optimal hint moments</li>
@@ -1139,7 +1324,9 @@ print(second_largest([1, 3, 2, 5, 4]))`,
                       </ul>
                     </div>
                     <div className="border-l-4 border-orange-600 bg-orange-50 p-4">
-                      <h4 className="font-bold text-orange-700 mb-2">LIMITED INSIGHTS</h4>
+                      <h4 className="font-bold text-orange-700 mb-2">
+                        LIMITED INSIGHTS
+                      </h4>
                       <ul className="text-sm text-black space-y-1">
                         <li>• Same estimate for hint vs random success</li>
                         <li>• No personalized instruction</li>
@@ -1220,12 +1407,13 @@ print(second_largest([1, 3, 2, 5, 4]))`,
                 key={index}
                 onClick={() => !showFeedback && handleAnswerSelect(option)}
                 disabled={showFeedback}
-                className={`px-6 py-4 border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide transition-all ${selectedAnswer === option
-                  ? "bg-red-600 text-white"
-                  : showFeedback
+                className={`px-6 py-4 border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide transition-all ${
+                  selectedAnswer === option
+                    ? "bg-red-600 text-white"
+                    : showFeedback
                     ? "bg-gray-200 text-gray-500 cursor-not-allowed"
                     : "bg-white text-black hover:bg-yellow-400 cursor-pointer transform hover:scale-105"
-                  }`}
+                }`}
               >
                 {option}
               </button>
@@ -1565,44 +1753,43 @@ print(second_largest([1, 3, 2, 5, 4]))`,
     // Two tasks with same knowledge component but very different difficulty
     const taskComparison = {
       easyTask: {
-        id: 'easy',
-        difficulty: 'Easy',
+        id: "easy",
+        difficulty: "Easy",
         // AFM has NO item difficulty parameter for this task
-        instruction: 'Complete this Python task:',
-        task: 'Assign the number 10 to a variable called x.',
+        instruction: "Complete this Python task:",
+        task: "Assign the number 10 to a variable called x.",
         code: `# Your task: Assign the number 10 to a variable called x
 # Write your answer below:
 
 `,
-        options: ['x = 10', 'x == 10', '10 = x', 'var x = 10'],
-        correctAnswer: 'x = 10',
-        skills: ['Using Variables in Python'],
-        afmPrediction: 0.72 // AFM gives same prediction for both tasks
+        options: ["x = 10", "x == 10", "10 = x", "var x = 10"],
+        correctAnswer: "x = 10",
+        skills: ["Using Variables in Python"],
+        afmPrediction: 0.72, // AFM gives same prediction for both tasks
       },
       hardTask: {
-        id: 'hard',
-        difficulty: 'Hard',
+        id: "hard",
+        difficulty: "Hard",
         // AFM has NO item difficulty parameter for this task
-        instruction: 'Complete this Python task:',
-        task: 'Write a function that takes a list and returns all even numbers.',
+        instruction: "Complete this Python task:",
+        task: "Write a function that takes a list and returns all even numbers.",
         code: `# Your task: Write a function that takes a list and returns all even numbers
 # Function should be named 'get_evens' and take parameter 'numbers'
 # Write your answer below:
 
 `,
         options: [
-          'def get_evens(numbers):\n    return [x for x in numbers if x % 2 == 0]',
-          'def get_evens(numbers):\n    return numbers % 2 == 0',
-          'function get_evens(numbers):\n    return [x for x in numbers if x % 2 == 0]',
-          'def get_evens(numbers):\n    return numbers.filter(x % 2 == 0)'
+          "def get_evens(numbers):\n    return [x for x in numbers if x % 2 == 0]",
+          "def get_evens(numbers):\n    return numbers % 2 == 0",
+          "function get_evens(numbers):\n    return [x for x in numbers if x % 2 == 0]",
+          "def get_evens(numbers):\n    return numbers.filter(x % 2 == 0)",
         ],
-        correctAnswer: 'def get_evens(numbers):\n    return [x for x in numbers if x % 2 == 0]',
-        skills: ['Using Variables in Python'], // Same KC as easy task!
-        afmPrediction: 0.72 // AFM gives same prediction for both tasks
-      }
+        correctAnswer:
+          "def get_evens(numbers):\n    return [x for x in numbers if x % 2 == 0]",
+        skills: ["Using Variables in Python"], // Same KC as easy task!
+        afmPrediction: 0.72, // AFM gives same prediction for both tasks
+      },
     };
-
-
 
     // Show how AFM's lack of item difficulty parameters causes problems
     const baseKCMastery = 0.72; // What AFM thinks the KC mastery is
@@ -1610,19 +1797,25 @@ print(second_largest([1, 3, 2, 5, 4]))`,
     // What the predictions SHOULD be if AFM had item difficulty parameters
     // (using hypothetical difficulty values that would make sense)
     const easyItemDifficulty = -1.8; // Variable assignment is very easy
-    const hardItemDifficulty = 1.4;  // Function writing is much harder
+    const hardItemDifficulty = 1.4; // Function writing is much harder
 
     const calculateCorrectPrediction = (itemDifficulty) => {
-      return Math.max(0.05, Math.min(0.95,
-        1 / (1 + Math.exp(-(baseKCMastery * 3 - itemDifficulty)))
-      ));
+      return Math.max(
+        0.05,
+        Math.min(
+          0.95,
+          1 / (1 + Math.exp(-(baseKCMastery * 3 - itemDifficulty)))
+        )
+      );
     };
 
-    const easyCorrectPrediction = calculateCorrectPrediction(easyItemDifficulty);
-    const hardCorrectPrediction = calculateCorrectPrediction(hardItemDifficulty);
+    const easyCorrectPrediction =
+      calculateCorrectPrediction(easyItemDifficulty);
+    const hardCorrectPrediction =
+      calculateCorrectPrediction(hardItemDifficulty);
 
     const handleTaskAnswer = (taskType, answer) => {
-      if (taskType === 'easy') {
+      if (taskType === "easy") {
         setEasyTaskAnswer(answer);
         if (hardTaskAnswer !== null) {
           setShowTaskComparison(true);
@@ -1649,9 +1842,11 @@ print(second_largest([1, 3, 2, 5, 4]))`,
               Item Difficulty Limitation
             </h1>
             <p className="text-black text-xl font-bold leading-relaxed">
-              Compare these two Python tasks that are mapped to the same knowledge component but have very different difficulty levels.{" "}
+              Compare these two Python tasks that are mapped to the same
+              knowledge component but have very different difficulty levels.{" "}
               <span className="text-yellow-600 font-bold underline decoration-4">
-                Notice how AFM gives identical predictions despite the obvious difficulty difference.
+                Notice how AFM gives identical predictions despite the obvious
+                difficulty difference.
               </span>
             </p>
           </div>
@@ -1664,22 +1859,32 @@ print(second_largest([1, 3, 2, 5, 4]))`,
             <div className="grid grid-cols-3 gap-4 items-center">
               <div className="text-center">
                 <div className="border-2 border-green-600 bg-green-50 p-4 rounded-lg">
-                  <div className="text-lg font-bold text-green-700 mb-2">Easy Task</div>
+                  <div className="text-lg font-bold text-green-700 mb-2">
+                    Easy Task
+                  </div>
                   <div className="text-sm text-black">"Assign variable x"</div>
                 </div>
               </div>
 
               <div className="text-center">
                 <div className="border-4 border-blue-600 bg-blue-100 p-4 rounded-lg">
-                  <div className="text-lg font-bold text-blue-700 mb-2">MAPPED TO SAME SKILL</div>
-                  <div className="text-xl font-bold text-black">"{taskComparison.easyTask.skills[0]}"</div>
-                  <div className="text-sm text-blue-700 mt-2">Therefore same prediction!</div>
+                  <div className="text-lg font-bold text-blue-700 mb-2">
+                    MAPPED TO SAME SKILL
+                  </div>
+                  <div className="text-xl font-bold text-black">
+                    "{taskComparison.easyTask.skills[0]}"
+                  </div>
+                  <div className="text-sm text-blue-700 mt-2">
+                    Therefore same prediction!
+                  </div>
                 </div>
               </div>
 
               <div className="text-center">
                 <div className="border-2 border-red-600 bg-red-50 p-4 rounded-lg">
-                  <div className="text-lg font-bold text-red-700 mb-2">Hard Task</div>
+                  <div className="text-lg font-bold text-red-700 mb-2">
+                    Hard Task
+                  </div>
                   <div className="text-sm text-black">"Write function"</div>
                 </div>
               </div>
@@ -1693,7 +1898,9 @@ print(second_largest([1, 3, 2, 5, 4]))`,
             </h3>
             <div className="text-center mb-4">
               <div className="border-4 border-blue-600 bg-blue-50 p-4 rounded-xl inline-block">
-                <div className="text-lg font-bold text-blue-700 mb-2">"{taskComparison.easyTask.skills[0]}" Knowledge Component</div>
+                <div className="text-lg font-bold text-blue-700 mb-2">
+                  "{taskComparison.easyTask.skills[0]}" Knowledge Component
+                </div>
                 <div className="text-3xl font-bold text-blue-600">β = 0.89</div>
                 <div className="text-sm font-mono text-blue-700 mt-2">
                   (Beta parameter - KC easiness learned from all mapped tasks)
@@ -1714,7 +1921,9 @@ print(second_largest([1, 3, 2, 5, 4]))`,
             </h3>
             <div className="grid grid-cols-2 gap-8">
               <div className="text-center">
-                <div className="text-lg font-bold text-black mb-2">Easy Task</div>
+                <div className="text-lg font-bold text-black mb-2">
+                  Easy Task
+                </div>
                 <div className="text-sm font-mono text-blue-600 mb-2">
                   KC: {taskComparison.easyTask.skills[0]}
                 </div>
@@ -1724,7 +1933,9 @@ print(second_largest([1, 3, 2, 5, 4]))`,
                 <div className="w-full bg-gray-200 border-2 border-black h-6">
                   <div
                     className="h-full bg-yellow-600 transition-all duration-500"
-                    style={{ width: `${taskComparison.easyTask.afmPrediction * 100}%` }}
+                    style={{
+                      width: `${taskComparison.easyTask.afmPrediction * 100}%`,
+                    }}
                   />
                 </div>
                 <div className="text-sm font-mono text-gray-600 mt-2">
@@ -1732,7 +1943,9 @@ print(second_largest([1, 3, 2, 5, 4]))`,
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-lg font-bold text-black mb-2">Hard Task</div>
+                <div className="text-lg font-bold text-black mb-2">
+                  Hard Task
+                </div>
                 <div className="text-sm font-mono text-blue-600 mb-2">
                   KC: {taskComparison.hardTask.skills[0]}
                 </div>
@@ -1742,7 +1955,9 @@ print(second_largest([1, 3, 2, 5, 4]))`,
                 <div className="w-full bg-gray-200 border-2 border-black h-6">
                   <div
                     className="h-full bg-yellow-600 transition-all duration-500"
-                    style={{ width: `${taskComparison.hardTask.afmPrediction * 100}%` }}
+                    style={{
+                      width: `${taskComparison.hardTask.afmPrediction * 100}%`,
+                    }}
                   />
                 </div>
                 <div className="text-sm font-mono text-gray-600 mt-2">
@@ -1762,7 +1977,9 @@ print(second_largest([1, 3, 2, 5, 4]))`,
             {/* Easy Task */}
             <div className="border-4 border-green-600 rounded-xl p-6 bg-green-50">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-2xl font-bold text-green-700 uppercase">Easy Task</h3>
+                <h3 className="text-2xl font-bold text-green-700 uppercase">
+                  Easy Task
+                </h3>
               </div>
 
               <div className="text-lg font-bold text-black mb-3">
@@ -1770,25 +1987,30 @@ print(second_largest([1, 3, 2, 5, 4]))`,
               </div>
 
               <div className="bg-black text-green-400 p-4 rounded-lg font-mono text-sm mb-4">
-                <pre className="whitespace-pre-wrap">{taskComparison.easyTask.code}</pre>
+                <pre className="whitespace-pre-wrap">
+                  {taskComparison.easyTask.code}
+                </pre>
               </div>
 
               <div className="grid grid-cols-1 gap-2 mb-4">
                 {taskComparison.easyTask.options.map((option, index) => (
                   <button
                     key={index}
-                    onClick={() => !showTaskComparison && handleTaskAnswer('easy', option)}
+                    onClick={() =>
+                      !showTaskComparison && handleTaskAnswer("easy", option)
+                    }
                     disabled={showTaskComparison}
-                    className={`px-4 py-3 border-2 border-black rounded font-mono text-base transition-all text-left ${easyTaskAnswer === option
-                      ? option === taskComparison.easyTask.correctAnswer
-                        ? "bg-green-600 text-white"
-                        : "bg-red-600 text-white"
-                      : showTaskComparison
+                    className={`px-4 py-3 border-2 border-black rounded font-mono text-base transition-all text-left ${
+                      easyTaskAnswer === option
+                        ? option === taskComparison.easyTask.correctAnswer
+                          ? "bg-green-600 text-white"
+                          : "bg-red-600 text-white"
+                        : showTaskComparison
                         ? option === taskComparison.easyTask.correctAnswer
                           ? "bg-green-300 text-black"
                           : "bg-gray-200 text-gray-500"
                         : "bg-white text-black hover:bg-green-200 cursor-pointer"
-                      }`}
+                    }`}
                   >
                     {option}
                   </button>
@@ -1796,14 +2018,16 @@ print(second_largest([1, 3, 2, 5, 4]))`,
               </div>
 
               <div className="text-sm font-mono text-green-700">
-                Knowledge Component: {taskComparison.easyTask.skills.join(', ')}
+                Knowledge Component: {taskComparison.easyTask.skills.join(", ")}
               </div>
             </div>
 
             {/* Hard Task */}
             <div className="border-4 border-red-600 rounded-xl p-6 bg-red-50">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-2xl font-bold text-red-700 uppercase">Hard Task</h3>
+                <h3 className="text-2xl font-bold text-red-700 uppercase">
+                  Hard Task
+                </h3>
               </div>
 
               <div className="text-lg font-bold text-black mb-3">
@@ -1811,25 +2035,30 @@ print(second_largest([1, 3, 2, 5, 4]))`,
               </div>
 
               <div className="bg-black text-green-400 p-4 rounded-lg font-mono text-sm mb-4">
-                <pre className="whitespace-pre-wrap">{taskComparison.hardTask.code}</pre>
+                <pre className="whitespace-pre-wrap">
+                  {taskComparison.hardTask.code}
+                </pre>
               </div>
 
               <div className="grid grid-cols-1 gap-2 mb-4">
                 {taskComparison.hardTask.options.map((option, index) => (
                   <button
                     key={index}
-                    onClick={() => !showTaskComparison && handleTaskAnswer('hard', option)}
+                    onClick={() =>
+                      !showTaskComparison && handleTaskAnswer("hard", option)
+                    }
                     disabled={showTaskComparison}
-                    className={`px-4 py-3 border-2 border-black rounded font-mono text-xs transition-all text-left ${hardTaskAnswer === option
-                      ? option === taskComparison.hardTask.correctAnswer
-                        ? "bg-green-600 text-white"
-                        : "bg-red-600 text-white"
-                      : showTaskComparison
+                    className={`px-4 py-3 border-2 border-black rounded font-mono text-xs transition-all text-left ${
+                      hardTaskAnswer === option
+                        ? option === taskComparison.hardTask.correctAnswer
+                          ? "bg-green-600 text-white"
+                          : "bg-red-600 text-white"
+                        : showTaskComparison
                         ? option === taskComparison.hardTask.correctAnswer
                           ? "bg-green-300 text-black"
                           : "bg-gray-200 text-gray-500"
                         : "bg-white text-black hover:bg-red-200 cursor-pointer"
-                      }`}
+                    }`}
                   >
                     <pre className="whitespace-pre-wrap">{option}</pre>
                   </button>
@@ -1837,13 +2066,14 @@ print(second_largest([1, 3, 2, 5, 4]))`,
               </div>
 
               <div className="text-sm font-mono text-red-700">
-                Knowledge Component: {taskComparison.hardTask.skills.join(', ')} (SAME as easy task!)
+                Knowledge Component: {taskComparison.hardTask.skills.join(", ")}{" "}
+                (SAME as easy task!)
               </div>
             </div>
           </div>
 
           {/* Results and Analysis */}
-          {(easyTaskAnswer && hardTaskAnswer) && (
+          {easyTaskAnswer && hardTaskAnswer && (
             <div className="space-y-6">
               <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
                 <h3 className="text-2xl font-bold text-black text-center mb-6 uppercase">
@@ -1852,29 +2082,41 @@ print(second_largest([1, 3, 2, 5, 4]))`,
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="border-l-8 border-yellow-600 bg-yellow-100 p-6 rounded-r-xl">
-                    <h4 className="font-bold text-yellow-700 text-lg mb-3">AFM'S LIMITATION</h4>
+                    <h4 className="font-bold text-yellow-700 text-lg mb-3">
+                      AFM'S LIMITATION
+                    </h4>
                     <p className="text-black font-bold">
-                      AFM gives both tasks the same {(taskComparison.easyTask.afmPrediction * 100).toFixed(0)}% prediction
-                      because they use the same KC beta parameter (β = 0.89).
-                      AFM has no item difficulty parameters, so it can't distinguish between easy and hard tasks!
+                      AFM gives both tasks the same{" "}
+                      {(taskComparison.easyTask.afmPrediction * 100).toFixed(0)}
+                      % prediction because they use the same KC beta parameter
+                      (β = 0.89). AFM has no item difficulty parameters, so it
+                      can't distinguish between easy and hard tasks!
                     </p>
                   </div>
 
                   <div className="border-l-8 border-orange-600 bg-orange-100 p-6 rounded-r-xl">
-                    <h4 className="font-bold text-orange-700 text-lg mb-3">PARAMETER BIAS</h4>
+                    <h4 className="font-bold text-orange-700 text-lg mb-3">
+                      PARAMETER BIAS
+                    </h4>
                     <p className="text-black font-bold">
-                      The KC's beta parameter (β = 0.89) is a "blended average" absorbing difficulty from both tasks.
-                      Easy variable assignments and hard function writing both influence this single parameter,
-                      creating biased estimates that don't reflect true KC mastery!
+                      The KC's beta parameter (β = 0.89) is a "blended average"
+                      absorbing difficulty from both tasks. Easy variable
+                      assignments and hard function writing both influence this
+                      single parameter, creating biased estimates that don't
+                      reflect true KC mastery!
                     </p>
                   </div>
 
                   <div className="border-l-8 border-red-600 bg-red-100 p-6 rounded-r-xl">
-                    <h4 className="font-bold text-red-700 text-lg mb-3">CONFOUNDED ESTIMATES</h4>
+                    <h4 className="font-bold text-red-700 text-lg mb-3">
+                      CONFOUNDED ESTIMATES
+                    </h4>
                     <p className="text-black font-bold">
-                      If a student gets the easy task correct but the hard task wrong, AFM cannot tell whether the mistake was due to
-                      not understanding "Using Variables in Python", or because writing functions is simply harder than variable assignment.
-                      The KC parameter becomes unreliable!
+                      If a student gets the easy task correct but the hard task
+                      wrong, AFM cannot tell whether the mistake was due to not
+                      understanding "Using Variables in Python", or because
+                      writing functions is simply harder than variable
+                      assignment. The KC parameter becomes unreliable!
                     </p>
                   </div>
                 </div>
@@ -1896,7 +2138,6 @@ print(second_largest([1, 3, 2, 5, 4]))`,
               </div>
             </div>
           )}
-
         </div>
       </TechnicalLayout>
     );
@@ -1905,42 +2146,42 @@ print(second_largest([1, 3, 2, 5, 4]))`,
   const renderQMatrixQuality = () => {
     const pythonProblems = [
       {
-        id: 'syntax_problem',
-        question: 'What will this Python code output?',
+        id: "syntax_problem",
+        question: "What will this Python code output?",
         code: `for i in range(3):
     print(i)`,
-        options: ['0 2 4', '1 2 3', '0\n1\n2', 'Error'],
-        correctAnswer: '0\n1\n2',
-        correctSkills: ['Loops', 'Print Function'], // Actually needed skills
-        incorrectSkills: ['Lists', 'Functions'], // Wrongly mapped skills
-        difficulty: 0.2 // 20% of students get this wrong
+        options: ["0 2 4", "1 2 3", "0\n1\n2", "Error"],
+        correctAnswer: "0\n1\n2",
+        correctSkills: ["Loops", "Print Function"], // Actually needed skills
+        incorrectSkills: ["Lists", "Functions"], // Wrongly mapped skills
+        difficulty: 0.2, // 20% of students get this wrong
       },
       {
-        id: 'list_problem',
-        question: 'What will this Python code output?',
+        id: "list_problem",
+        question: "What will this Python code output?",
         code: `data = [1, 2, 3]
 data.append(4)
 print(len(data))`,
-        options: ['3', '4', '7', 'Error'],
-        correctAnswer: '4',
-        correctSkills: ['Lists', 'Methods'], // Actually needed skills
-        incorrectSkills: ['Loops', 'Print Function'], // Wrongly mapped skills
-        difficulty: 0.4 // 40% of students get this wrong
+        options: ["3", "4", "7", "Error"],
+        correctAnswer: "4",
+        correctSkills: ["Lists", "Methods"], // Actually needed skills
+        incorrectSkills: ["Loops", "Print Function"], // Wrongly mapped skills
+        difficulty: 0.4, // 40% of students get this wrong
       },
       {
-        id: 'function_problem',
-        question: 'What will this Python code output?',
+        id: "function_problem",
+        question: "What will this Python code output?",
         code: `def double(x):
     return x * 2
 
 result = double(5)
 print(result)`,
-        options: ['5', '10', '25', 'Error'],
-        correctAnswer: '10',
-        correctSkills: ['Functions', 'Return Values'], // Actually needed skills
-        incorrectSkills: ['Lists', 'Methods'], // Wrongly mapped skills
-        difficulty: 0.6 // 60% of students get this wrong
-      }
+        options: ["5", "10", "25", "Error"],
+        correctAnswer: "10",
+        correctSkills: ["Functions", "Return Values"], // Actually needed skills
+        incorrectSkills: ["Lists", "Methods"], // Wrongly mapped skills
+        difficulty: 0.6, // 60% of students get this wrong
+      },
     ];
 
     const currentQ = pythonProblems[qMatrixCurrentProblem];
@@ -1948,10 +2189,15 @@ print(result)`,
 
     // Calculate AFM prediction based on mapping and user performance
     const calculateAFMPrediction = () => {
-      const currentSkills = qMatrixViewMode === 'correct' ? currentQ.correctSkills : currentQ.incorrectSkills;
+      const currentSkills =
+        qMatrixViewMode === "correct"
+          ? currentQ.correctSkills
+          : currentQ.incorrectSkills;
 
       // AFM averages the mastery of mapped skills (simplified for clarity)
-      const avgMastery = currentSkills.reduce((sum, skill) => sum + userSkillMastery[skill], 0) / currentSkills.length;
+      const avgMastery =
+        currentSkills.reduce((sum, skill) => sum + userSkillMastery[skill], 0) /
+        currentSkills.length;
 
       // Return the average mastery as the prediction (AFM's core logic)
       return Math.max(0.1, Math.min(0.95, avgMastery));
@@ -1965,11 +2211,14 @@ print(result)`,
 
       // Update skill mastery based on performance (AFM: always increases)
       const isAnswerCorrect = answer === currentQ.correctAnswer;
-      const relevantSkills = qMatrixViewMode === 'correct' ? currentQ.correctSkills : currentQ.incorrectSkills;
+      const relevantSkills =
+        qMatrixViewMode === "correct"
+          ? currentQ.correctSkills
+          : currentQ.incorrectSkills;
 
-      setUserSkillMastery(prev => {
+      setUserSkillMastery((prev) => {
         const updated = { ...prev };
-        relevantSkills.forEach(skill => {
+        relevantSkills.forEach((skill) => {
           // AFM principle: any attempt increases skill mastery
           if (isAnswerCorrect) {
             updated[skill] = Math.min(0.95, updated[skill] + 0.15);
@@ -1981,20 +2230,22 @@ print(result)`,
       });
 
       if (!qMatrixAttemptedProblems.includes(qMatrixCurrentProblem)) {
-        setQMatrixAttemptedProblems(prev => [...prev, qMatrixCurrentProblem]);
+        setQMatrixAttemptedProblems((prev) => [...prev, qMatrixCurrentProblem]);
       }
     };
 
     const nextProblem = () => {
       if (qMatrixCurrentProblem < pythonProblems.length - 1) {
-        setQMatrixCurrentProblem(prev => prev + 1);
+        setQMatrixCurrentProblem((prev) => prev + 1);
         setQMatrixSelectedAnswer(null);
         setQMatrixShowFeedback(false);
       }
     };
 
     const toggleMapping = () => {
-      setQMatrixViewMode(prev => prev === 'correct' ? 'incorrect' : 'correct');
+      setQMatrixViewMode((prev) =>
+        prev === "correct" ? "incorrect" : "correct"
+      );
       setQMatrixSelectedAnswer(null);
       setQMatrixShowFeedback(false);
     };
@@ -2003,19 +2254,22 @@ print(result)`,
       setQMatrixCurrentProblem(0);
       setQMatrixSelectedAnswer(null);
       setQMatrixShowFeedback(false);
-      setQMatrixViewMode('incorrect');
+      setQMatrixViewMode("incorrect");
       setQMatrixAttemptedProblems([]);
       setUserSkillMastery({
-        'Loops': 0.5,
-        'Print Function': 0.5,
-        'Lists': 0.5,
-        'Methods': 0.5,
-        'Functions': 0.5,
-        'Return Values': 0.5
+        Loops: 0.5,
+        "Print Function": 0.5,
+        Lists: 0.5,
+        Methods: 0.5,
+        Functions: 0.5,
+        "Return Values": 0.5,
       });
     };
 
-    const currentSkills = qMatrixViewMode === 'correct' ? currentQ.correctSkills : currentQ.incorrectSkills;
+    const currentSkills =
+      qMatrixViewMode === "correct"
+        ? currentQ.correctSkills
+        : currentQ.incorrectSkills;
 
     return (
       <TechnicalLayout>
@@ -2025,241 +2279,343 @@ print(result)`,
               Q-Matrix Quality Limitation
             </h1>
             <p className="text-black text-xl font-bold leading-relaxed">
-              See how Q-matrix mapping quality affects which skills AFM updates when you answer questions.{" "}
+              See how Q-matrix mapping quality affects which skills AFM updates
+              when you answer questions.{" "}
               <span className="text-indigo-600 font-bold underline decoration-4">
-                Watch how correct mapping updates the RIGHT skills (green) while incorrect mapping updates the WRONG skills (red).
+                Watch how correct mapping updates the RIGHT skills (green) while
+                incorrect mapping updates the WRONG skills (red).
               </span>
             </p>
           </div>
 
-          {/* Skill Mastery Display */}
-          <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
-            <h3 className="font-bold text-black text-lg mb-4 uppercase tracking-wide">
-              Current Skill Mastery (AFM's Internal Model):
-            </h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {['Loops', 'Print Function', 'Lists', 'Methods', 'Functions', 'Return Values'].map(skill => {
-                const isRelevantForCurrentTask = currentQ.correctSkills.includes(skill);
-                const isMappedToCurrentTask = qMatrixViewMode === 'correct'
-                  ? currentQ.correctSkills.includes(skill)
-                  : currentQ.incorrectSkills.includes(skill);
+          {/* Two-column layout: Question on left, Skills/Mapping/Prediction on right */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* LEFT COLUMN: Problem Display */}
+            <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg h-fit">
+              <div className="mb-6">
+                <h2 className="text-3xl font-bold text-black uppercase tracking-tight mb-4">
+                  {currentQ.question}
+                </h2>
+                <div className="flex justify-between items-center text-sm font-mono text-black">
+                  <div>
+                    <div className="mb-1">
+                      Real Skills:{" "}
+                      <span className="font-bold">
+                        {currentQ.correctSkills.join(", ")}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="px-4 py-2 border-2 border-black font-bold text-lg bg-blue-300">
+                    Problem {qMatrixCurrentProblem + 1} of{" "}
+                    {pythonProblems.length}
+                  </div>
+                </div>
+              </div>
 
-                let borderColor, bgColor, textColor, statusText;
+              <div className="bg-black text-green-400 p-6 rounded-xl font-['IBM_Plex_Mono',monospace] text-lg mb-8 border-4 border-black">
+                <pre className="whitespace-pre-wrap">{currentQ.code}</pre>
+              </div>
 
-                if (qMatrixViewMode === 'correct') {
-                  if (isRelevantForCurrentTask) {
-                    borderColor = 'border-green-600';
-                    bgColor = 'bg-green-50';
-                    textColor = 'text-green-700';
-                    statusText = '✓ Correctly mapped';
-                  } else {
-                    borderColor = 'border-gray-400';
-                    bgColor = 'bg-gray-50';
-                    textColor = 'text-gray-700';
-                    statusText = 'Not used for this task';
-                  }
-                } else {
-                  if (isMappedToCurrentTask) {
-                    borderColor = 'border-red-600';
-                    bgColor = 'bg-red-50';
-                    textColor = 'text-red-700';
-                    statusText = '✗ Incorrectly mapped!';
-                  } else {
-                    borderColor = 'border-gray-400';
-                    bgColor = 'bg-gray-50';
-                    textColor = 'text-gray-700';
-                    statusText = 'Not mapped';
-                  }
-                }
+              <div className="grid grid-cols-2 gap-4 mb-8">
+                {currentQ.options.map((option, index) => (
+                  <button
+                    key={index}
+                    onClick={() =>
+                      !qMatrixShowFeedback && handleAnswerSelect(option)
+                    }
+                    disabled={qMatrixShowFeedback}
+                    className={`px-6 py-4 border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide transition-all ${
+                      qMatrixSelectedAnswer === option
+                        ? isCorrect
+                          ? "bg-green-600 text-white"
+                          : "bg-red-600 text-white"
+                        : qMatrixShowFeedback
+                        ? option === currentQ.correctAnswer
+                          ? "bg-green-300 text-black"
+                          : "bg-gray-200 text-gray-500 cursor-not-allowed"
+                        : "bg-white text-black hover:bg-indigo-400 cursor-pointer transform hover:scale-105"
+                    }`}
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
 
-                return (
-                  <div key={skill} className={`border-2 ${borderColor} ${bgColor} p-3 rounded`}>
-                    <div className={`text-sm font-bold ${textColor} mb-1`}>{skill}</div>
-                    <div className="text-lg font-bold text-black">{(userSkillMastery[skill] * 100).toFixed(0)}%</div>
-                    <div className="w-full bg-gray-200 border border-black h-2 mb-1">
+              {qMatrixShowFeedback && (
+                <div className="space-y-6">
+                  <div
+                    className={`border-l-8 ${
+                      isCorrect
+                        ? "border-green-600 bg-green-100"
+                        : "border-red-600 bg-red-100"
+                    } p-6 rounded-r-xl`}
+                  >
+                    <p className="text-black text-xl font-bold">
+                      {isCorrect ? "Correct!" : "Incorrect!"} The answer is{" "}
+                      <strong>{currentQ.correctAnswer}</strong>.
+                    </p>
+                  </div>
+
+                  <div
+                    className={`border-l-8 border-indigo-600 bg-indigo-100 p-6 rounded-r-xl`}
+                  >
+                    <p className="text-black text-xl font-bold">
+                      <strong>AFM Learning Update:</strong>
+                      {qMatrixViewMode === "correct" ? (
+                        <span className="text-green-700">
+                          {" "}
+                          With correct mapping, AFM updated the RIGHT skills for
+                          this task: {currentSkills.join(", ")}. These are the
+                          skills actually needed to solve this problem!
+                        </span>
+                      ) : (
+                        <span className="text-red-700">
+                          {" "}
+                          With incorrect mapping, AFM updated the WRONG skills:{" "}
+                          {currentSkills.join(", ")}. These skills aren't
+                          actually needed for this task, leading to poor
+                          predictions!
+                        </span>
+                      )}
+                    </p>
+                  </div>
+
+                  {/* Show skill-specific feedback for correct mapping */}
+                  {qMatrixViewMode === "correct" && (
+                    <div className="border-l-8 border-green-600 bg-green-100 p-6 rounded-r-xl">
+                      <p className="text-black text-lg font-bold mb-2">
+                        Skills Updated:
+                      </p>
+                      <div className="grid grid-cols-2 gap-2">
+                        {currentSkills.map((skill) => (
+                          <div
+                            key={skill}
+                            className="bg-white border-2 border-green-600 p-2 rounded"
+                          >
+                            <span className="text-green-700 font-bold">
+                              {skill}
+                            </span>
+                            <span className="text-black">
+                              {" "}
+                              → {(userSkillMastery[skill] * 100).toFixed(0)}%
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex justify-center space-x-4">
+                    {!qMatrixAttemptedProblems.includes(
+                      qMatrixCurrentProblem
+                    ) && (
+                      <button
+                        onClick={toggleMapping}
+                        className={`px-6 py-3 border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide transition-all transform hover:scale-105 ${
+                          qMatrixViewMode === "correct"
+                            ? "bg-red-600 text-white hover:bg-white hover:text-red-600"
+                            : "bg-green-600 text-white hover:bg-white hover:text-green-600"
+                        }`}
+                      >
+                        Switch to{" "}
+                        {qMatrixViewMode === "correct"
+                          ? "Incorrect"
+                          : "Correct"}{" "}
+                        Mapping
+                      </button>
+                    )}
+
+                    {qMatrixCurrentProblem < pythonProblems.length - 1 ? (
+                      <button
+                        onClick={nextProblem}
+                        className="px-8 py-4 bg-indigo-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-indigo-600 transition-all transform hover:scale-105"
+                      >
+                        Next Problem →
+                      </button>
+                    ) : (
+                      <div className="space-x-4">
+                        <button
+                          onClick={resetSimulation}
+                          className="px-8 py-4 bg-gray-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-gray-600 transition-all transform hover:scale-105"
+                        >
+                          Try Again
+                        </button>
+                        <button
+                          onClick={backToOverview}
+                          className="px-8 py-4 bg-black text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-black transition-all transform hover:scale-105"
+                        >
+                          ← Back to Overview
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* RIGHT COLUMN: Skills, Mapping, and Prediction */}
+            <div className="space-y-6">
+              {/* Skill Mastery Display */}
+              <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
+                <h3 className="font-bold text-black text-lg mb-4 uppercase tracking-wide">
+                  Current Skill Mastery (AFM's Internal Model):
+                </h3>
+                <div className="grid grid-cols-2 gap-4">
+                  {[
+                    "Loops",
+                    "Print Function",
+                    "Lists",
+                    "Methods",
+                    "Functions",
+                    "Return Values",
+                  ].map((skill) => {
+                    const isRelevantForCurrentTask =
+                      currentQ.correctSkills.includes(skill);
+                    const isMappedToCurrentTask =
+                      qMatrixViewMode === "correct"
+                        ? currentQ.correctSkills.includes(skill)
+                        : currentQ.incorrectSkills.includes(skill);
+
+                    let borderColor, bgColor, textColor, statusText;
+
+                    if (qMatrixViewMode === "correct") {
+                      if (isRelevantForCurrentTask) {
+                        borderColor = "border-green-600";
+                        bgColor = "bg-green-50";
+                        textColor = "text-green-700";
+                        statusText = "✓ Correctly mapped";
+                      } else {
+                        borderColor = "border-gray-400";
+                        bgColor = "bg-gray-50";
+                        textColor = "text-gray-700";
+                        statusText = "Not used for this task";
+                      }
+                    } else {
+                      if (isMappedToCurrentTask) {
+                        borderColor = "border-red-600";
+                        bgColor = "bg-red-50";
+                        textColor = "text-red-700";
+                        statusText = "✗ Incorrectly mapped!";
+                      } else {
+                        borderColor = "border-gray-400";
+                        bgColor = "bg-gray-50";
+                        textColor = "text-gray-700";
+                        statusText = "Not mapped";
+                      }
+                    }
+
+                    return (
                       <div
-                        className={`h-full transition-all duration-500 ${qMatrixViewMode === 'correct' && isRelevantForCurrentTask ? 'bg-green-600' :
-                          qMatrixViewMode === 'incorrect' && isMappedToCurrentTask ? 'bg-red-600' : 'bg-gray-400'}`}
-                        style={{ width: `${userSkillMastery[skill] * 100}%` }}
+                        key={skill}
+                        className={`border-2 ${borderColor} ${bgColor} p-3 rounded`}
+                      >
+                        <div className={`text-sm font-bold ${textColor} mb-1`}>
+                          {skill}
+                        </div>
+                        <div className="text-lg font-bold text-black">
+                          {(userSkillMastery[skill] * 100).toFixed(0)}%
+                        </div>
+                        <div className="w-full bg-gray-200 border border-black h-2 mb-1">
+                          <div
+                            className={`h-full transition-all duration-500 ${
+                              qMatrixViewMode === "correct" &&
+                              isRelevantForCurrentTask
+                                ? "bg-green-600"
+                                : qMatrixViewMode === "incorrect" &&
+                                  isMappedToCurrentTask
+                                ? "bg-red-600"
+                                : "bg-gray-400"
+                            }`}
+                            style={{
+                              width: `${userSkillMastery[skill] * 100}%`,
+                            }}
+                          />
+                        </div>
+                        <div className={`text-xs ${textColor} font-bold`}>
+                          {statusText}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Mapping Mode Toggle */}
+              <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
+                <div className="mb-4">
+                  <span className="text-lg font-bold text-black uppercase tracking-wide block mb-3">
+                    Current Q-Matrix Mapping:
+                  </span>
+                  <button
+                    onClick={toggleMapping}
+                    disabled={qMatrixShowFeedback}
+                    className={`w-full px-6 py-3 border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide transition-all transform hover:scale-105 ${
+                      qMatrixViewMode === "correct"
+                        ? "bg-green-600 text-white hover:bg-white hover:text-green-600"
+                        : "bg-red-600 text-white hover:bg-white hover:text-red-600"
+                    } ${
+                      qMatrixShowFeedback ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
+                  >
+                    {qMatrixViewMode === "correct"
+                      ? "CORRECT MAPPING"
+                      : "INCORRECT MAPPING"}
+                  </button>
+                </div>
+                <div className="text-center">
+                  <span
+                    className={`px-4 py-2 border-2 border-black rounded font-bold ${
+                      qMatrixViewMode === "correct"
+                        ? "bg-green-300"
+                        : "bg-red-300"
+                    }`}
+                  >
+                    MAPPED TO: {currentSkills.join(", ")}
+                  </span>
+                </div>
+              </div>
+
+              {/* AFM Prediction Display */}
+              <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
+                <div className="mb-4">
+                  <span className="text-2xl font-bold text-black uppercase tracking-wide block mb-4">
+                    AFM SUCCESS PREDICTION:
+                  </span>
+                  <div className="text-center mb-4">
+                    <span className="text-4xl font-bold text-black">
+                      {(currentPrediction * 100).toFixed(0)}%
+                    </span>
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <span className="text-lg font-bold text-black">0%</span>
+                    <div className="flex-1 bg-gray-200 border-4 border-black rounded-none h-8 overflow-hidden">
+                      <div
+                        className={`h-full transition-all duration-1000 ease-out ${
+                          qMatrixViewMode === "correct"
+                            ? "bg-green-600"
+                            : "bg-red-600"
+                        }`}
+                        style={{ width: `${currentPrediction * 100}%` }}
                       />
                     </div>
-                    <div className={`text-xs ${textColor} font-bold`}>{statusText}</div>
+                    <span className="text-lg font-bold text-black">100%</span>
                   </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Mapping Mode Toggle */}
-          <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
-            <div className="flex justify-between items-center mb-4">
-              <span className="text-lg font-bold text-black uppercase tracking-wide">
-                Current Q-Matrix Mapping:
-              </span>
-              <button
-                onClick={toggleMapping}
-                disabled={qMatrixShowFeedback}
-                className={`px-6 py-3 border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide transition-all transform hover:scale-105 ${qMatrixViewMode === 'correct'
-                  ? 'bg-green-600 text-white hover:bg-white hover:text-green-600'
-                  : 'bg-red-600 text-white hover:bg-white hover:text-red-600'
-                  } ${qMatrixShowFeedback ? 'opacity-50 cursor-not-allowed' : ''}`}
-              >
-                {qMatrixViewMode === 'correct' ? 'CORRECT MAPPING' : 'INCORRECT MAPPING'}
-              </button>
-            </div>
-            <div className="text-center">
-              <span className={`px-4 py-2 border-2 border-black rounded font-bold ${qMatrixViewMode === 'correct' ? 'bg-green-300' : 'bg-red-300'
-                }`}>
-                MAPPED TO: {currentSkills.join(', ')}
-              </span>
-            </div>
-          </div>
-
-          {/* AFM Prediction Display */}
-          <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
-            <div className="flex justify-between items-center mb-4">
-              <span className="text-2xl font-bold text-black uppercase tracking-wide">
-                AFM SUCCESS PREDICTION: {(currentPrediction * 100).toFixed(0)}%
-              </span>
-              <div className="flex items-center space-x-4">
-                <span className="text-lg font-bold text-black">0%</span>
-                <div className="w-64 bg-gray-200 border-4 border-black rounded-none h-8 overflow-hidden">
-                  <div
-                    className={`h-full transition-all duration-1000 ease-out ${qMatrixViewMode === 'correct' ? 'bg-green-600' : 'bg-red-600'
-                      }`}
-                    style={{ width: `${currentPrediction * 100}%` }}
-                  />
                 </div>
-                <span className="text-lg font-bold text-black">100%</span>
-              </div>
-            </div>
-            <div className="text-center">
-              <span className={`px-4 py-2 border-2 border-black rounded font-bold ${qMatrixViewMode === 'correct' ? 'bg-green-300' : 'bg-red-300'
-                }`}>
-                {qMatrixViewMode === 'correct'
-                  ? 'ACCURATE SKILL-SPECIFIC PREDICTION'
-                  : 'GENERIC PREDICTION - ACCURACY LOST!'
-                }
-              </span>
-            </div>
-          </div>
-
-          {/* Problem Display */}
-          <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-3xl font-bold text-black uppercase tracking-tight">
-                {currentQ.question}
-              </h2>
-              <div className="text-right">
-                <div className="px-4 py-2 border-2 border-black font-bold text-lg bg-blue-300">
-                  Problem {qMatrixCurrentProblem + 1} of {pythonProblems.length}
-                </div>
-                <div className="text-sm font-mono text-black mt-2">
-                  Real Skills: {currentQ.correctSkills.join(', ')}
-                </div>
-                <div className="text-sm font-mono text-black">
-                  Difficulty: {(currentQ.difficulty * 100).toFixed(0)}% failure rate
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-black text-green-400 p-6 rounded-xl font-['IBM_Plex_Mono',monospace] text-lg mb-8 border-4 border-black">
-              <pre className="whitespace-pre-wrap">{currentQ.code}</pre>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4 max-w-md mx-auto mb-8">
-              {currentQ.options.map((option, index) => (
-                <button
-                  key={index}
-                  onClick={() => !qMatrixShowFeedback && handleAnswerSelect(option)}
-                  disabled={qMatrixShowFeedback}
-                  className={`px-6 py-4 border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide transition-all ${qMatrixSelectedAnswer === option
-                    ? isCorrect ? "bg-green-600 text-white" : "bg-red-600 text-white"
-                    : qMatrixShowFeedback
-                      ? option === currentQ.correctAnswer ? "bg-green-300 text-black" : "bg-gray-200 text-gray-500 cursor-not-allowed"
-                      : "bg-white text-black hover:bg-indigo-400 cursor-pointer transform hover:scale-105"
+                <div className="text-center">
+                  <span
+                    className={`px-4 py-2 border-2 border-black rounded font-bold ${
+                      qMatrixViewMode === "correct"
+                        ? "bg-green-300"
+                        : "bg-red-300"
                     }`}
-                >
-                  {option}
-                </button>
-              ))}
-            </div>
-
-            {qMatrixShowFeedback && (
-              <div className="space-y-6">
-                <div className={`border-l-8 ${isCorrect ? 'border-green-600 bg-green-100' : 'border-red-600 bg-red-100'} p-6 rounded-r-xl`}>
-                  <p className="text-black text-xl font-bold">
-                    {isCorrect ? 'Correct!' : 'Incorrect!'} The answer is <strong>{currentQ.correctAnswer}</strong>.
-                  </p>
-                </div>
-
-                <div className={`border-l-8 border-indigo-600 bg-indigo-100 p-6 rounded-r-xl`}>
-                  <p className="text-black text-xl font-bold">
-                    <strong>AFM Learning Update:</strong>
-                    {qMatrixViewMode === 'correct' ? (
-                      <span className="text-green-700"> With correct mapping, AFM updated the RIGHT skills for this task: {currentSkills.join(', ')}. These are the skills actually needed to solve this problem!</span>
-                    ) : (
-                      <span className="text-red-700"> With incorrect mapping, AFM updated the WRONG skills: {currentSkills.join(', ')}. These skills aren't actually needed for this task, leading to poor predictions!</span>
-                    )}
-                  </p>
-                </div>
-
-                {/* Show skill-specific feedback for correct mapping */}
-                {qMatrixViewMode === 'correct' && (
-                  <div className="border-l-8 border-green-600 bg-green-100 p-6 rounded-r-xl">
-                    <p className="text-black text-lg font-bold mb-2">
-                      Skills Updated:
-                    </p>
-                    <div className="grid grid-cols-2 gap-2">
-                      {currentSkills.map(skill => (
-                        <div key={skill} className="bg-white border-2 border-green-600 p-2 rounded">
-                          <span className="text-green-700 font-bold">{skill}</span>
-                          <span className="text-black"> → {(userSkillMastery[skill] * 100).toFixed(0)}%</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                <div className="flex justify-center space-x-4">
-                  {!qMatrixAttemptedProblems.includes(qMatrixCurrentProblem) && (
-                    <button
-                      onClick={toggleMapping}
-                      className={`px-6 py-3 border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide transition-all transform hover:scale-105 ${qMatrixViewMode === 'correct'
-                        ? 'bg-red-600 text-white hover:bg-white hover:text-red-600'
-                        : 'bg-green-600 text-white hover:bg-white hover:text-green-600'
-                        }`}
-                    >
-                      Switch to {qMatrixViewMode === 'correct' ? 'Incorrect' : 'Correct'} Mapping
-                    </button>
-                  )}
-
-                  {qMatrixCurrentProblem < pythonProblems.length - 1 ? (
-                    <button
-                      onClick={nextProblem}
-                      className="px-8 py-4 bg-indigo-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-indigo-600 transition-all transform hover:scale-105"
-                    >
-                      Next Problem →
-                    </button>
-                  ) : (
-                    <div className="space-x-4">
-                      <button
-                        onClick={resetSimulation}
-                        className="px-8 py-4 bg-gray-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-gray-600 transition-all transform hover:scale-105"
-                      >
-                        Try Again
-                      </button>
-                      <button
-                        onClick={backToOverview}
-                        className="px-8 py-4 bg-black text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-black transition-all transform hover:scale-105"
-                      >
-                        ← Back to Overview
-                      </button>
-                    </div>
-                  )}
+                  >
+                    {qMatrixViewMode === "correct"
+                      ? "ACCURATE SKILL-SPECIFIC PREDICTION"
+                      : "GENERIC PREDICTION - ACCURACY LOST!"}
+                  </span>
                 </div>
               </div>
-            )}
+            </div>
           </div>
 
           {/* Progress Display */}
@@ -2272,9 +2628,13 @@ print(result)`,
                 {pythonProblems.map((_, index) => (
                   <div
                     key={index}
-                    className={`w-4 h-4 border-2 border-black ${qMatrixAttemptedProblems.includes(index) ? 'bg-indigo-600' :
-                      index === qMatrixCurrentProblem ? 'bg-blue-600' : 'bg-gray-200'
-                      }`}
+                    className={`w-4 h-4 border-2 border-black ${
+                      qMatrixAttemptedProblems.includes(index)
+                        ? "bg-indigo-600"
+                        : index === qMatrixCurrentProblem
+                        ? "bg-blue-600"
+                        : "bg-gray-200"
+                    }`}
                   />
                 ))}
               </div>
@@ -2286,7 +2646,9 @@ print(result)`,
             <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
               <div className="text-center space-y-4">
                 <div className="border-l-4 border-red-600 bg-red-50 p-4">
-                  <h4 className="font-bold text-xl text-red-700 mb-2">Q-MATRIX PROBLEMS</h4>
+                  <h4 className="font-bold text-xl text-red-700 mb-2">
+                    Q-MATRIX PROBLEMS
+                  </h4>
                   <ul className="text-lg font-bold text-black space-y-1">
                     <li>• Updates irrelevant skills</li>
                     <li>• Misleading predictions</li>
@@ -2405,8 +2767,9 @@ print(result)`,
                 className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative"
               >
                 <div
-                  className={`absolute -top-6 left-4 px-3 py-1 font-semibold rounded-md text-xs tracking-wider flex items-center gap-2 border-4 border-black ${colorClasses[scenario.color]
-                    }`}
+                  className={`absolute -top-6 left-4 px-3 py-1 font-semibold rounded-md text-xs tracking-wider flex items-center gap-2 border-4 border-black ${
+                    colorClasses[scenario.color]
+                  }`}
                 >
                   <IconComponent className="w-4 h-4" />
                   SCENARIO
@@ -2423,10 +2786,11 @@ print(result)`,
                   </div>
 
                   <button
-                    className={`w-full px-6 py-4 border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide transition-all transform hover:scale-105 ${isCompleted
-                      ? "bg-green-600 text-white hover:bg-white hover:text-green-600"
-                      : "bg-purple-600 text-white hover:bg-white hover:text-purple-600"
-                      }`}
+                    className={`w-full px-6 py-4 border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide transition-all transform hover:scale-105 ${
+                      isCompleted
+                        ? "bg-green-600 text-white hover:bg-white hover:text-green-600"
+                        : "bg-purple-600 text-white hover:bg-white hover:text-purple-600"
+                    }`}
                     onClick={() => {
                       handleBeginTask(scenario.id);
                     }}
