@@ -17,7 +17,11 @@ import {
   HelpCircle,
 } from "lucide-react";
 import Chart from "chart.js/auto";
-import { trackButtonClick, trackSliderInteraction, trackCustomEvent } from "../utils/analytics";
+import {
+  trackButtonClick,
+  trackSliderInteraction,
+  trackCustomEvent,
+} from "../utils/analytics";
 
 const paramDefaults = {
   theta: 0.0,
@@ -125,7 +129,18 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
     let currentHints = 0;
 
     // Starting point
-    pathData.push(calcProb(params.theta, params.beta, params.mu, params.rho, params.nu, 0, 0, 0) * 100);
+    pathData.push(
+      calcProb(
+        params.theta,
+        params.beta,
+        params.mu,
+        params.rho,
+        params.nu,
+        0,
+        0,
+        0
+      ) * 100
+    );
     pathLabels.push("Start");
 
     // Add each response step (each represents one learning opportunity)
@@ -134,7 +149,17 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
       else currentFailures++;
       currentHints += response.hintsUsed; // Accumulate hints from this opportunity
 
-      const prob = calcProb(params.theta, params.beta, params.mu, params.rho, params.nu, currentSuccesses, currentFailures, currentHints) * 100;
+      const prob =
+        calcProb(
+          params.theta,
+          params.beta,
+          params.mu,
+          params.rho,
+          params.nu,
+          currentSuccesses,
+          currentFailures,
+          currentHints
+        ) * 100;
       pathData.push(prob);
       pathLabels.push(`Opportunity ${index + 1}`);
     });
@@ -144,31 +169,40 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
       chartInstance.current.data.datasets[0].data = pathData;
 
       // Highlight the current position (last point)
-      chartInstance.current.data.datasets[0].pointRadius = pathData.map((_, i) =>
-        i === pathData.length - 1 ? 12 : 6
+      chartInstance.current.data.datasets[0].pointRadius = pathData.map(
+        (_, i) => (i === pathData.length - 1 ? 12 : 6)
       );
-      chartInstance.current.data.datasets[0].pointBackgroundColor = pathData.map((_, i) => {
-        if (i === 0) return "#6b7280"; // Start point - gray
-        if (i === pathData.length - 1) return "#ef4444"; // Current position - red
-        const response = responseLog[i - 1];
-        // Color based on success/failure, with special border if hints were used
-        return response?.correct ? "#16a34a" : "#dc2626";
-      });
+      chartInstance.current.data.datasets[0].pointBackgroundColor =
+        pathData.map((_, i) => {
+          if (i === 0) return "#6b7280"; // Start point - gray
+          if (i === pathData.length - 1) return "#ef4444"; // Current position - red
+          const response = responseLog[i - 1];
+          // Color based on success/failure, with special border if hints were used
+          return response?.correct ? "#16a34a" : "#dc2626";
+        });
 
       // Add special border for opportunities that used hints
-      chartInstance.current.data.datasets[0].pointBorderColor = pathData.map((_, i) => {
-        if (i === 0) return "#6b7280";
-        if (i === pathData.length - 1) return "#dc2626";
-        const response = responseLog[i - 1];
-        return response?.hintsUsed > 0 ? "#f59e0b" : (response?.correct ? "#15803d" : "#b91c1c");
-      });
+      chartInstance.current.data.datasets[0].pointBorderColor = pathData.map(
+        (_, i) => {
+          if (i === 0) return "#6b7280";
+          if (i === pathData.length - 1) return "#dc2626";
+          const response = responseLog[i - 1];
+          return response?.hintsUsed > 0
+            ? "#f59e0b"
+            : response?.correct
+            ? "#15803d"
+            : "#b91c1c";
+        }
+      );
 
-      chartInstance.current.data.datasets[0].pointBorderWidth = pathData.map((_, i) => {
-        if (i === 0) return 2;
-        if (i === pathData.length - 1) return 4;
-        const response = responseLog[i - 1];
-        return response?.hintsUsed > 0 ? 4 : 2; // Thicker border for hint usage
-      });
+      chartInstance.current.data.datasets[0].pointBorderWidth = pathData.map(
+        (_, i) => {
+          if (i === 0) return 2;
+          if (i === pathData.length - 1) return 4;
+          const response = responseLog[i - 1];
+          return response?.hintsUsed > 0 ? 4 : 2; // Thicker border for hint usage
+        }
+      );
 
       chartInstance.current.update();
     } else if (chartRef.current) {
@@ -185,7 +219,9 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
               borderWidth: 4,
               fill: false,
               tension: 0.3,
-              pointRadius: pathData.map((_, i) => i === pathData.length - 1 ? 12 : 6),
+              pointRadius: pathData.map((_, i) =>
+                i === pathData.length - 1 ? 12 : 6
+              ),
               pointBackgroundColor: pathData.map((_, i) => {
                 if (i === 0) return "#6b7280";
                 if (i === pathData.length - 1) return "#ef4444";
@@ -196,7 +232,11 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
                 if (i === 0) return "#6b7280";
                 if (i === pathData.length - 1) return "#dc2626";
                 const response = responseLog[i - 1];
-                return response?.hintsUsed > 0 ? "#f59e0b" : (response?.correct ? "#15803d" : "#b91c1c");
+                return response?.hintsUsed > 0
+                  ? "#f59e0b"
+                  : response?.correct
+                  ? "#15803d"
+                  : "#b91c1c";
               }),
               pointBorderWidth: pathData.map((_, i) => {
                 if (i === 0) return 2;
@@ -212,7 +252,7 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
           maintainAspectRatio: false,
           interaction: {
             intersect: false,
-            mode: 'index',
+            mode: "index",
           },
           scales: {
             x: {
@@ -238,31 +278,37 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
           plugins: {
             legend: {
               display: true,
-              position: 'top',
+              position: "top",
               labels: {
-                font: { weight: 'bold', size: 12 },
+                font: { weight: "bold", size: 12 },
                 color: "#111",
               },
             },
             tooltip: {
-              backgroundColor: 'white',
-              titleColor: '#111',
-              bodyColor: '#111',
-              borderColor: '#000',
+              backgroundColor: "white",
+              titleColor: "#111",
+              bodyColor: "#111",
+              borderColor: "#000",
               borderWidth: 2,
               cornerRadius: 8,
               displayColors: true,
               callbacks: {
                 title: (context) => context[0].label,
-                label: (context) => `Probability: ${context.parsed.y.toFixed(1)}%`,
+                label: (context) =>
+                  `Probability: ${context.parsed.y.toFixed(1)}%`,
                 afterLabel: (context) => {
                   if (context.dataIndex === 0) return "Starting point";
                   const response = responseLog[context.dataIndex - 1];
                   if (!response) return "";
                   const result = response.correct ? "Correct ✓" : "Incorrect ✗";
-                  const hints = response.hintsUsed > 0 ? ` (${response.hintsUsed} hint${response.hintsUsed > 1 ? 's' : ''} used 💡)` : "";
+                  const hints =
+                    response.hintsUsed > 0
+                      ? ` (${response.hintsUsed} hint${
+                          response.hintsUsed > 1 ? "s" : ""
+                        } used 💡)`
+                      : "";
                   return `Response: ${result}${hints}`;
-                }
+                },
               },
             },
           },
@@ -270,7 +316,14 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
       });
     }
     // eslint-disable-next-line
-  }, [responseLog, params.theta, params.beta, params.mu, params.rho, params.nu]);
+  }, [
+    responseLog,
+    params.theta,
+    params.beta,
+    params.mu,
+    params.rho,
+    params.nu,
+  ]);
 
   // Clear highlight after 3 seconds
   useEffect(() => {
@@ -284,9 +337,9 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
 
   // Track slide entry
   useEffect(() => {
-    trackCustomEvent('ifm_dynamic_simulator_entered', {
+    trackCustomEvent("ifm_dynamic_simulator_entered", {
       initialParams: params,
-      slideContext: 'IFM Dynamic Simulator'
+      slideContext: "IFM Dynamic Simulator",
     });
   }, []);
 
@@ -302,10 +355,22 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
   }, [showTooltip]);
 
   // Derived
-  const currentSuccesses = responseLog.filter(r => r.correct).length;
-  const currentFailures = responseLog.filter(r => !r.correct).length;
-  const currentTotalHints = responseLog.reduce((sum, r) => sum + r.hintsUsed, 0);
-  const currentProb = calcProb(params.theta, params.beta, params.mu, params.rho, params.nu, currentSuccesses, currentFailures, currentTotalHints);
+  const currentSuccesses = responseLog.filter((r) => r.correct).length;
+  const currentFailures = responseLog.filter((r) => !r.correct).length;
+  const currentTotalHints = responseLog.reduce(
+    (sum, r) => sum + r.hintsUsed,
+    0
+  );
+  const currentProb = calcProb(
+    params.theta,
+    params.beta,
+    params.mu,
+    params.rho,
+    params.nu,
+    currentSuccesses,
+    currentFailures,
+    currentTotalHints
+  );
 
   // Handlers
   function setParam(p, v) {
@@ -323,17 +388,17 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
       oldValue,
       newValue,
       parameterName: p,
-      slideContext: 'IFM Dynamic Simulator'
+      slideContext: "IFM Dynamic Simulator",
     });
   }
 
   function addHint() {
     if (!sessionActive) return;
-    setPendingHints(prev => prev + 1);
+    setPendingHints((prev) => prev + 1);
 
-    trackButtonClick('ifm_add_hint', {
+    trackButtonClick("ifm_add_hint", {
       pendingHints: pendingHints + 1,
-      slideContext: 'IFM Dynamic Simulator'
+      slideContext: "IFM Dynamic Simulator",
     });
   }
 
@@ -343,7 +408,16 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
     const newSuccesses = isCorrect ? currentSuccesses + 1 : currentSuccesses;
     const newFailures = isCorrect ? currentFailures : currentFailures + 1;
     const newTotalHints = currentTotalHints + pendingHints;
-    const newProb = calcProb(params.theta, params.beta, params.mu, params.rho, params.nu, newSuccesses, newFailures, newTotalHints);
+    const newProb = calcProb(
+      params.theta,
+      params.beta,
+      params.mu,
+      params.rho,
+      params.nu,
+      newSuccesses,
+      newFailures,
+      newTotalHints
+    );
 
     const entry = {
       step: responseLog.length + 1,
@@ -360,12 +434,12 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
     setRetrainingData((prev) => [...prev, entry]);
     setPendingHints(0); // Reset pending hints after submitting response
 
-    trackButtonClick('ifm_dynamic_simulate_response', {
+    trackButtonClick("ifm_dynamic_simulate_response", {
       isCorrect,
       hintsUsed: pendingHints,
       stepNumber: entry.step,
       newProbability: newProb,
-      slideContext: 'IFM Dynamic Simulator'
+      slideContext: "IFM Dynamic Simulator",
     });
   }
 
@@ -373,17 +447,20 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
     const sessionStats = {
       finalParams: { ...params },
       totalResponses: responseLog.length,
-      correctResponses: responseLog.filter(r => r.correct).length,
+      correctResponses: responseLog.filter((r) => r.correct).length,
       totalHints: currentTotalHints,
       finalProbability: currentProb,
-      sessionDuration: responseLog.length ? responseLog[responseLog.length - 1].timestamp - responseLog[0].timestamp : 0
+      sessionDuration: responseLog.length
+        ? responseLog[responseLog.length - 1].timestamp -
+          responseLog[0].timestamp
+        : 0,
     };
 
     setSessionActive(false);
 
-    trackButtonClick('ifm_dynamic_end_session', {
+    trackButtonClick("ifm_dynamic_end_session", {
       sessionStats,
-      slideContext: 'IFM Dynamic Simulator'
+      slideContext: "IFM Dynamic Simulator",
     });
   }
 
@@ -392,134 +469,129 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
 
     const preRetrainParams = { ...params };
     const retrainDataSnapshot = [...retrainingData];
-    let recent = retrainingData.slice(-10);
-    let correct = recent.filter((r) => r.correct).length;
+
+    // Use larger window with exponential weighting (K=20, fallback to available data)
+    const K = Math.min(20, retrainingData.length);
+    let recent = retrainingData.slice(-K);
     let total = recent.length;
-    let acc = correct / total;
-    let avgErr = recent.reduce(
-      (sum, r) => sum + Math.abs((r.correct ? 1 : 0) - r.probability),
-      0
-    ) / total;
+
+    // Calculate exponentially weighted accuracy and prediction error
+    let weightedAcc = 0;
+    let weightedErr = 0;
+    let totalWeight = 0;
+
+    for (let i = 0; i < total; i++) {
+      const weight = Math.exp(-0.1 * (total - 1 - i)); // More weight to recent observations
+      const r = recent[i];
+      weightedAcc += weight * (r.correct ? 1 : 0);
+      weightedErr += weight * Math.abs((r.correct ? 1 : 0) - r.probability);
+      totalWeight += weight;
+    }
+
+    weightedAcc /= totalWeight;
+    weightedErr /= totalWeight;
 
     let { theta, beta, mu, rho, nu } = params;
 
-    // Ability adjustment based on overall performance
-    if (acc >= 0.7) theta = Math.min(3, theta + 0.3);
-    else if (acc >= 0.5) theta = Math.min(3, theta + 0.1);
-    else if (acc < 0.3) theta = Math.max(-3, theta - 0.2);
-    else if (acc < 0.5) theta = Math.max(-3, theta - 0.1);
+    // Hyperparameters for realistic updates
+    const etaTheta = 0.01; // Learning rate for ability
+    const etaBeta = 0.01; // Learning rate for difficulty
+    const alphaMu = 0.02; // EMA smoothing for success rate
+    const alphaRho = 0.02; // EMA smoothing for failure rate
+    const alphaNu = 0.02; // EMA smoothing for hint rate
+    const lambda = 0.005; // L2 regularization strength
+    const maxStepSize = 0.05; // Maximum parameter change per update
+    const noiseStd = 0.03; // Process noise standard deviation
 
-    // Difficulty adjustment based on prediction accuracy
-    if (acc > 0.8) {
-      beta = Math.max(-2, beta - 0.4); // Make harder
-    } else if (acc > 0.6) {
-      beta = Math.max(-2, beta - 0.2);
-    } else if (acc < 0.3) {
-      beta = Math.min(2, beta + 0.4); // Make easier
-    } else if (acc < 0.5) {
-      beta = Math.min(2, beta + 0.2);
+    // Prior means (regularization targets)
+    const thetaPrior = 0.0;
+    const betaPrior = 0.0;
+    const muPrior = 0.16;
+    const rhoPrior = -0.06;
+    const nuPrior = 0.12;
+
+    // SGD-style updates with regularization
+    // Theta update: gradient from prediction error + L2 regularization
+    const thetaGradient = (weightedAcc - 0.5) * 2; // Simple gradient approximation
+    const thetaUpdate =
+      etaTheta * (thetaGradient - lambda * (theta - thetaPrior));
+    theta += Math.max(-maxStepSize, Math.min(maxStepSize, thetaUpdate));
+    theta = Math.max(-3, Math.min(3, theta)); // Enforce bounds
+
+    // Beta update: based on prediction accuracy vs target (0.6-0.7 range)
+    const targetAcc = 0.65;
+    const betaGradient = (weightedAcc - targetAcc) * 2; // Positive if too easy, negative if too hard
+    const betaUpdate = etaBeta * (-betaGradient - lambda * (beta - betaPrior)); // Negative because higher beta = easier
+    beta += Math.max(-maxStepSize, Math.min(maxStepSize, betaUpdate));
+    beta = Math.max(-2, Math.min(2, beta)); // Enforce bounds
+
+    // IFM-specific: Separate learning rates for successes, failures, and hints
+    const windowSize = Math.max(8, Math.floor(total / 2));
+    if (total >= windowSize * 2) {
+      const early = recent.slice(0, windowSize);
+      const late = recent.slice(-windowSize);
+
+      const earlySuccessRate =
+        early.reduce((sum, r) => sum + (r.correct ? 1 : 0), 0) / early.length;
+      const lateSuccessRate =
+        late.reduce((sum, r) => sum + (r.correct ? 1 : 0), 0) / late.length;
+      const improvement = lateSuccessRate - earlySuccessRate;
+
+      // Adjust success learning rate based on improvement
+      const muSignal =
+        muPrior + 0.005 * Math.max(-1, Math.min(1, improvement * 5));
+      const muTarget = Math.max(0, Math.min(0.08, muSignal));
+      const muUpdate = alphaMu * (muTarget - mu);
+      mu += Math.max(-maxStepSize, Math.min(maxStepSize, muUpdate));
+      mu = Math.max(0, Math.min(0.08, mu));
+
+      // Adjust failure learning rate inversely to improvement
+      const rhoSignal =
+        rhoPrior - 0.005 * Math.max(-1, Math.min(1, improvement * 5));
+      const rhoTarget = Math.max(-0.08, Math.min(0, rhoSignal));
+      const rhoUpdate = alphaRho * (rhoTarget - rho);
+      rho += Math.max(-maxStepSize, Math.min(maxStepSize, rhoUpdate));
+      rho = Math.max(-0.08, Math.min(0, rho));
     }
 
-    // Additional β adjustment based on prediction error
-    if (avgErr > 0.3) {
-      if (acc < 0.5) {
-        beta = Math.min(2, beta + 0.3);
-      } else {
-        beta = Math.max(-2, beta - 0.2);
-      }
-    }
-
-    // IFM-specific: Adjust learning rates based on performance patterns
-    let early = recent.slice(0, Math.floor(total / 2));
-    let late = recent.slice(Math.floor(total / 2));
-
-    if (early.length && late.length) {
-      let eAcc = early.filter((r) => r.correct).length / early.length;
-      let lAcc = late.filter((r) => r.correct).length / late.length;
-      let improvement = lAcc - eAcc;
-
-      // If performance improved, increase success learning rate
-      if (improvement >= 0.2) {
-        mu = Math.min(0.3, mu + 0.03);
-        rho = Math.max(-0.2, rho - 0.02);
-      } else if (improvement < -0.2) {
-        // If performance declined, failures might be hurting more
-        mu = Math.max(0, mu - 0.02);
-        rho = Math.min(0, rho + 0.02);
-      }
-    }
-
-    // Analyze hint effectiveness
-    let hintEntries = recent.filter(r => r.hintsUsed > 0);
-    let noHintEntries = recent.filter(r => r.hintsUsed === 0);
+    // Special IFM logic: Adjust hint parameter based on hint effectiveness
+    let hintEntries = recent.filter((r) => r.hintsUsed > 0);
+    let noHintEntries = recent.filter((r) => r.hintsUsed === 0);
 
     if (hintEntries.length >= 3 && noHintEntries.length >= 3) {
-      let hintSuccessRate = hintEntries.filter(r => r.correct).length / hintEntries.length;
-      let noHintSuccessRate = noHintEntries.filter(r => r.correct).length / noHintEntries.length;
+      let hintSuccessRate =
+        hintEntries.filter((r) => r.correct).length / hintEntries.length;
+      let noHintSuccessRate =
+        noHintEntries.filter((r) => r.correct).length / noHintEntries.length;
       let hintEffectiveness = hintSuccessRate - noHintSuccessRate;
 
-      // Adjust hint learning rate based on effectiveness
-      if (hintEffectiveness > 0.2) {
-        // Hints are very effective, increase their impact
-        nu = Math.min(0.25, nu + 0.03);
-      } else if (hintEffectiveness < -0.1) {
-        // Hints might be hurting, decrease their impact
-        nu = Math.max(0, nu - 0.02);
-      } else if (hintEffectiveness > 0.05 && hintEffectiveness <= 0.2) {
-        // Hints are moderately effective
-        nu = Math.min(0.25, nu + 0.01);
-      }
+      // Adjust hint learning rate based on effectiveness with EMA
+      const nuSignal =
+        nuPrior + 0.005 * Math.max(-1, Math.min(1, hintEffectiveness * 10));
+      const nuTarget = Math.max(0, Math.min(0.08, nuSignal));
+      const nuUpdate = alphaNu * (nuTarget - nu);
+      nu += Math.max(-maxStepSize, Math.min(maxStepSize, nuUpdate));
+      nu = Math.max(0, Math.min(0.08, nu));
     }
 
-    // Analyze success vs failure impact (similar to PFM but for IFM)
-    let successEntries = recent.filter(r => r.correct);
-    let failureEntries = recent.filter(r => !r.correct);
+    // Add small amount of process noise to prevent deterministic behavior
+    const addNoise = (value, bounds) => {
+      const noise = (Math.random() - 0.5) * 2 * noiseStd;
+      return Math.max(bounds[0], Math.min(bounds[1], value + noise));
+    };
 
-    if (successEntries.length >= 3 && failureEntries.length >= 3) {
-      // Check if successes are having expected impact
-      let successImpact = successEntries.reduce((sum, entry, idx) => {
-        if (idx > 0) {
-          let prevEntry = successEntries[idx - 1];
-          return sum + (entry.probability - prevEntry.probability);
-        }
-        return sum;
-      }, 0) / Math.max(1, successEntries.length - 1);
-
-      // Check if failures are having expected impact  
-      let failureImpact = failureEntries.reduce((sum, entry, idx) => {
-        if (idx > 0) {
-          let prevEntry = failureEntries[idx - 1];
-          return sum + (entry.probability - prevEntry.probability);
-        }
-        return sum;
-      }, 0) / Math.max(1, failureEntries.length - 1);
-
-      // Adjust learning rates based on observed impact
-      if (successImpact < 0.05) { // Successes not helping enough
-        mu = Math.min(0.3, mu + 0.02);
-      }
-      if (failureImpact > -0.05) { // Failures not hurting enough
-        rho = Math.max(-0.2, rho - 0.02);
-      }
-    }
-
-    // Special IFM logic: Adjust parameters based on hint patterns
-    if (hintEntries.length >= 2) {
-      let avgHintsPerOpportunity = hintEntries.reduce((sum, entry) => sum + entry.hintsUsed, 0) / hintEntries.length;
-
-      // If lots of hints are needed, maybe the task is too hard or students need more support
-      if (avgHintsPerOpportunity > 2) {
-        beta = Math.min(2, beta + 0.1); // Make tasks slightly easier
-        nu = Math.min(0.25, nu + 0.01); // Make hints slightly more effective
-      }
-    }
+    theta = addNoise(theta, [-3, 3]);
+    beta = addNoise(beta, [-2, 2]);
+    mu = addNoise(mu, [0, 0.08]);
+    rho = addNoise(rho, [-0.08, 0]);
+    nu = addNoise(nu, [0, 0.08]);
 
     const newParams = {
-      theta: parseFloat(theta.toFixed(1)),
-      beta: parseFloat(beta.toFixed(1)),
-      mu: parseFloat(mu.toFixed(2)),
-      rho: parseFloat(rho.toFixed(2)),
-      nu: parseFloat(nu.toFixed(2)),
+      theta: parseFloat(theta.toFixed(2)),
+      beta: parseFloat(beta.toFixed(2)),
+      mu: parseFloat(mu.toFixed(3)),
+      rho: parseFloat(rho.toFixed(3)),
+      nu: parseFloat(nu.toFixed(3)),
     };
 
     setParams(newParams);
@@ -529,13 +601,16 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
     setLastChangedParam(null);
     setPendingHints(0);
 
-    trackButtonClick('ifm_dynamic_retrain_model', {
+    trackButtonClick("ifm_dynamic_retrain_model", {
       preRetrainParams,
       postRetrainParams: newParams,
       trainingDataCount: retrainDataSnapshot.length,
       recentAccuracy: acc,
-      hintUsage: retrainDataSnapshot.reduce((sum, entry) => sum + entry.hintsUsed, 0),
-      slideContext: 'IFM Dynamic Simulator'
+      hintUsage: retrainDataSnapshot.reduce(
+        (sum, entry) => sum + entry.hintsUsed,
+        0
+      ),
+      slideContext: "IFM Dynamic Simulator",
     });
   }
 
@@ -547,8 +622,8 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
     setLastChangedParam(null);
     setPendingHints(0);
 
-    trackButtonClick('ifm_dynamic_reset_all', {
-      slideContext: 'IFM Dynamic Simulator'
+    trackButtonClick("ifm_dynamic_reset_all", {
+      slideContext: "IFM Dynamic Simulator",
     });
   }
 
@@ -592,7 +667,7 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
         <div className="border-l-8 border-orange-600 bg-orange-100 p-3 rounded-r-lg">
           <div className="text-orange-800 font-bold text-sm tracking-wide">
             CURRENT VALUE:{" "}
-            {['mu', 'rho', 'nu'].includes(showTooltip)
+            {["mu", "rho", "nu"].includes(showTooltip)
               ? params[showTooltip].toFixed(2)
               : params[showTooltip]}
           </div>
@@ -640,10 +715,13 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
           {/* Introduction */}
           <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
             <p className="text-lg text-black leading-relaxed text-center">
-              Experience the most sophisticated approach - <strong>IFM</strong> in real-time! Unlike PFM,
-              IFM recognizes instructional supports (hints) that accumulate within each learning opportunity.
+              Experience the most sophisticated approach - <strong>IFM</strong>{" "}
+              in real-time! Unlike PFM, IFM recognizes instructional supports
+              (hints) that accumulate within each learning opportunity.
               <br />
-              <strong>IFM Innovation:</strong> Add hints to your current opportunity before responding to see their cumulative learning effect!
+              <strong>IFM Innovation:</strong> Add hints to your current
+              opportunity before responding to see their cumulative learning
+              effect!
             </p>
           </div>
 
@@ -671,7 +749,8 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
 
                     {/* Step 1: Formula */}
                     <div className="text-base font-mono mb-2">
-                      <strong>1.</strong> P(success) = 1 / (1 + e<sup>-logit</sup>)
+                      <strong>1.</strong> P(success) = 1 / (1 + e
+                      <sup>-logit</sup>)
                     </div>
 
                     {/* Step 2: Logit formula */}
@@ -682,15 +761,27 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
                     {/* Step 3: Substitute values */}
                     <div className="text-base font-mono mb-2">
                       <strong>3.</strong> logit =
-                      <span className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor('theta')}`}>
+                      <span
+                        className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor(
+                          "theta"
+                        )}`}
+                      >
                         {params.theta.toFixed(1)}
                       </span>
                       -
-                      <span className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor('beta')}`}>
+                      <span
+                        className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor(
+                          "beta"
+                        )}`}
+                      >
                         ({params.beta.toFixed(1)})
                       </span>
                       +
-                      <span className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor('mu')}`}>
+                      <span
+                        className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor(
+                          "mu"
+                        )}`}
+                      >
                         {params.mu.toFixed(2)}
                       </span>
                       ×
@@ -698,7 +789,11 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
                         {currentSuccesses}
                       </span>
                       +
-                      <span className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor('rho')}`}>
+                      <span
+                        className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor(
+                          "rho"
+                        )}`}
+                      >
                         ({params.rho.toFixed(2)})
                       </span>
                       ×
@@ -706,7 +801,11 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
                         {currentFailures}
                       </span>
                       +
-                      <span className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor('nu')}`}>
+                      <span
+                        className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor(
+                          "nu"
+                        )}`}
+                      >
                         {params.nu.toFixed(2)}
                       </span>
                       ×
@@ -717,12 +816,20 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
 
                     {/* Step 4: Calculate logit */}
                     <div className="text-base font-mono mb-2">
-                      <strong>4.</strong> logit = {(params.theta - params.beta + params.mu * currentSuccesses + params.rho * currentFailures + params.nu * currentTotalHints).toFixed(3)}
+                      <strong>4.</strong> logit ={" "}
+                      {(
+                        params.theta -
+                        params.beta +
+                        params.mu * currentSuccesses +
+                        params.rho * currentFailures +
+                        params.nu * currentTotalHints
+                      ).toFixed(3)}
                     </div>
 
                     {/* Step 5: Final probability */}
                     <div className="text-lg font-bold text-orange-600 border-t-2 border-orange-300 pt-2">
-                      <strong>5.</strong> P(success) = {(currentProb * 100).toFixed(1)}%
+                      <strong>5.</strong> P(success) ={" "}
+                      {(currentProb * 100).toFixed(1)}%
                     </div>
                   </div>
                 </div>
@@ -732,25 +839,35 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 bg-blue-200 border-2 border-blue-700 rounded"></div>
-                      <span className="font-bold text-blue-700">θ = Student Ability</span>
+                      <span className="font-bold text-blue-700">
+                        θ = Student Ability
+                      </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 bg-purple-200 border-2 border-purple-700 rounded"></div>
-                      <span className="font-bold text-purple-700">β = Skill Difficulty</span>
+                      <span className="font-bold text-purple-700">
+                        β = Skill Difficulty
+                      </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 bg-green-200 border-2 border-green-700 rounded"></div>
-                      <span className="font-bold text-green-700">μ = Success Rate</span>
+                      <span className="font-bold text-green-700">
+                        μ = Success Rate
+                      </span>
                     </div>
                   </div>
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 bg-red-200 border-2 border-red-700 rounded"></div>
-                      <span className="font-bold text-red-700">ρ = Failure Rate</span>
+                      <span className="font-bold text-red-700">
+                        ρ = Failure Rate
+                      </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 bg-orange-200 border-2 border-orange-700 rounded"></div>
-                      <span className="font-bold text-orange-700">ν = Hint Rate</span>
+                      <span className="font-bold text-orange-700">
+                        ν = Hint Rate
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -767,24 +884,40 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
 
                 <div className="grid grid-cols-3 gap-3 mb-6">
                   <div className="bg-green-200 border-2 border-green-600 rounded-lg p-3 text-center">
-                    <div className="font-bold text-green-800 text-sm">SUCCESSES</div>
-                    <div className="text-2xl font-bold text-green-600">{currentSuccesses}</div>
+                    <div className="font-bold text-green-800 text-sm">
+                      SUCCESSES
+                    </div>
+                    <div className="text-2xl font-bold text-green-600">
+                      {currentSuccesses}
+                    </div>
                   </div>
                   <div className="bg-red-200 border-2 border-red-600 rounded-lg p-3 text-center">
-                    <div className="font-bold text-red-800 text-sm">FAILURES</div>
-                    <div className="text-2xl font-bold text-red-600">{currentFailures}</div>
+                    <div className="font-bold text-red-800 text-sm">
+                      FAILURES
+                    </div>
+                    <div className="text-2xl font-bold text-red-600">
+                      {currentFailures}
+                    </div>
                   </div>
                   <div className="bg-orange-200 border-2 border-orange-600 rounded-lg p-3 text-center">
-                    <div className="font-bold text-orange-800 text-sm">TOTAL HINTS</div>
-                    <div className="text-2xl font-bold text-orange-600">{currentTotalHints}</div>
+                    <div className="font-bold text-orange-800 text-sm">
+                      TOTAL HINTS
+                    </div>
+                    <div className="text-2xl font-bold text-orange-600">
+                      {currentTotalHints}
+                    </div>
                   </div>
                 </div>
 
                 {/* Current Opportunity Section */}
                 <div className="p-4 border-4 border-blue-600 rounded-xl bg-blue-50 mb-4">
-                  <div className="text-blue-800 font-bold text-lg mb-2 text-center">CURRENT OPPORTUNITY</div>
+                  <div className="text-blue-800 font-bold text-lg mb-2 text-center">
+                    CURRENT OPPORTUNITY
+                  </div>
                   <div className="flex justify-center items-center gap-4">
-                    <span className="text-blue-700 font-bold">Hints for this opportunity:</span>
+                    <span className="text-blue-700 font-bold">
+                      Hints for this opportunity:
+                    </span>
                     <span className="text-2xl font-bold text-blue-600 px-3 py-1 bg-white border-2 border-blue-600 rounded">
                       {pendingHints}
                     </span>
@@ -792,7 +925,9 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
                 </div>
 
                 <div className="p-6 border-4 border-orange-600 rounded-xl bg-orange-50 text-center">
-                  <div className="text-orange-800 font-bold text-lg mb-2">CURRENT PROBABILITY</div>
+                  <div className="text-orange-800 font-bold text-lg mb-2">
+                    CURRENT PROBABILITY
+                  </div>
                   <div className="text-4xl font-bold text-orange-600 mb-4">
                     {(currentProb * 100).toFixed(1)}%
                   </div>
@@ -837,15 +972,18 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
                           value={params[key]}
                           disabled={!sessionActive}
                           onChange={(e) => setParam(key, e.target.value)}
-                          className={`flex-1 h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer border-2 border-black ${!sessionActive ? "opacity-50" : ""}`}
+                          className={`flex-1 h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer border-2 border-black ${
+                            !sessionActive ? "opacity-50" : ""
+                          }`}
                         />
                         <span
-                          className={`font-mono w-16 text-center font-bold text-lg border-2 border-black rounded px-2 py-1 bg-gray-50 transition-all duration-500 ${lastChangedParam === key
-                            ? "bg-yellow-300 text-yellow-900 border-yellow-500 scale-110"
-                            : `text-${meta.color}-800`
-                            }`}
+                          className={`font-mono w-16 text-center font-bold text-lg border-2 border-black rounded px-2 py-1 bg-gray-50 transition-all duration-500 ${
+                            lastChangedParam === key
+                              ? "bg-yellow-300 text-yellow-900 border-yellow-500 scale-110"
+                              : `text-${meta.color}-800`
+                          }`}
                         >
-                          {['mu', 'rho', 'nu'].includes(key)
+                          {["mu", "rho", "nu"].includes(key)
                             ? params[key].toFixed(2)
                             : params[key]}
                         </span>
@@ -900,13 +1038,16 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
               <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
                 <div className="flex items-center gap-3 mb-6">
                   <div
-                    className={`w-4 h-4 rounded-full border-2 border-black ${sessionActive
-                      ? "bg-green-500 animate-pulse"
-                      : "bg-gray-400"
-                      }`}
+                    className={`w-4 h-4 rounded-full border-2 border-black ${
+                      sessionActive
+                        ? "bg-green-500 animate-pulse"
+                        : "bg-gray-400"
+                    }`}
                   ></div>
                   <h3 className="text-xl font-bold text-black uppercase tracking-wide">
-                    {sessionActive ? "Learning Session Active" : "Session Ended"}
+                    {sessionActive
+                      ? "Learning Session Active"
+                      : "Session Ended"}
                   </h3>
                 </div>
 
@@ -920,10 +1061,11 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
                       <button
                         onClick={addHint}
                         disabled={!sessionActive}
-                        className={`px-6 py-3 bg-orange-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all transform hover:scale-105 ${!sessionActive
-                          ? "opacity-50 cursor-not-allowed"
-                          : "hover:bg-white hover:text-orange-600"
-                          }`}
+                        className={`px-6 py-3 bg-orange-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all transform hover:scale-105 ${
+                          !sessionActive
+                            ? "opacity-50 cursor-not-allowed"
+                            : "hover:bg-white hover:text-orange-600"
+                        }`}
                       >
                         💡 Add Hint ({pendingHints} added)
                       </button>
@@ -939,25 +1081,35 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
                   <button
                     onClick={() => simulateResponse(true)}
                     disabled={!sessionActive}
-                    className={`px-6 py-4 bg-green-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all transform hover:scale-105 ${!sessionActive
-                      ? "opacity-50 cursor-not-allowed"
-                      : "hover:bg-white hover:text-green-600"
-                      }`}
+                    className={`px-6 py-4 bg-green-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all transform hover:scale-105 ${
+                      !sessionActive
+                        ? "opacity-50 cursor-not-allowed"
+                        : "hover:bg-white hover:text-green-600"
+                    }`}
                   >
                     ✓ Got It Right
-                    {pendingHints > 0 && <div className="text-sm">+ {pendingHints} hint{pendingHints > 1 ? 's' : ''}</div>}
+                    {pendingHints > 0 && (
+                      <div className="text-sm">
+                        + {pendingHints} hint{pendingHints > 1 ? "s" : ""}
+                      </div>
+                    )}
                   </button>
 
                   <button
                     onClick={() => simulateResponse(false)}
                     disabled={!sessionActive}
-                    className={`px-6 py-4 bg-red-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all transform hover:scale-105 ${!sessionActive
-                      ? "opacity-50 cursor-not-allowed"
-                      : "hover:bg-white hover:text-red-600"
-                      }`}
+                    className={`px-6 py-4 bg-red-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all transform hover:scale-105 ${
+                      !sessionActive
+                        ? "opacity-50 cursor-not-allowed"
+                        : "hover:bg-white hover:text-red-600"
+                    }`}
                   >
                     ✗ Got It Wrong
-                    {pendingHints > 0 && <div className="text-sm">+ {pendingHints} hint{pendingHints > 1 ? 's' : ''}</div>}
+                    {pendingHints > 0 && (
+                      <div className="text-sm">
+                        + {pendingHints} hint{pendingHints > 1 ? "s" : ""}
+                      </div>
+                    )}
                   </button>
                 </div>
 
@@ -991,8 +1143,9 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
                       </h4>
                     </div>
                     <p className="text-yellow-800 font-bold mb-4">
-                      {retrainingData.length} opportunities collected. Ready to update IFM parameters
-                      based on your success/failure/hint patterns.
+                      {retrainingData.length} opportunities collected. Ready to
+                      update IFM parameters based on your success/failure/hint
+                      patterns.
                     </p>
                     <button
                       onClick={retrainModel}
@@ -1019,12 +1172,23 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
                         .slice(-5)
                         .reverse()
                         .map((entry, i) => {
-                          const bgColor = entry.correct ? "bg-green-200" : "bg-red-200";
-                          const borderColor = entry.hintsUsed > 0
-                            ? (entry.correct ? "border-l-4 border-green-700 border-r-4 border-orange-500" : "border-l-4 border-red-700 border-r-4 border-orange-500")
-                            : (entry.correct ? "border-l-4 border-green-700" : "border-l-4 border-red-700");
-                          const textColor = entry.correct ? "text-green-900" : "text-red-900";
-                          const icon = entry.correct ? "✓ Success" : "✗ Failure";
+                          const bgColor = entry.correct
+                            ? "bg-green-200"
+                            : "bg-red-200";
+                          const borderColor =
+                            entry.hintsUsed > 0
+                              ? entry.correct
+                                ? "border-l-4 border-green-700 border-r-4 border-orange-500"
+                                : "border-l-4 border-red-700 border-r-4 border-orange-500"
+                              : entry.correct
+                              ? "border-l-4 border-green-700"
+                              : "border-l-4 border-red-700";
+                          const textColor = entry.correct
+                            ? "text-green-900"
+                            : "text-red-900";
+                          const icon = entry.correct
+                            ? "✓ Success"
+                            : "✗ Failure";
 
                           return (
                             <div
@@ -1033,10 +1197,17 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
                             >
                               <div className="font-bold">
                                 Opportunity {entry.step}: {icon}
-                                {entry.hintsUsed > 0 && <span className="text-orange-700"> (+{entry.hintsUsed} hint{entry.hintsUsed > 1 ? 's' : ''})</span>}
+                                {entry.hintsUsed > 0 && (
+                                  <span className="text-orange-700">
+                                    {" "}
+                                    (+{entry.hintsUsed} hint
+                                    {entry.hintsUsed > 1 ? "s" : ""})
+                                  </span>
+                                )}
                               </div>
                               <div className="text-sm">
-                                New Probability: {(entry.probability * 100).toFixed(1)}%
+                                New Probability:{" "}
+                                {(entry.probability * 100).toFixed(1)}%
                               </div>
                             </div>
                           );
@@ -1064,7 +1235,9 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
                 </h4>
                 <ul className="space-y-2 text-black font-bold">
                   <li>• θ, β, μ, ρ, ν stay constant (no tuning!)</li>
-                  <li>• Each opportunity updates success/failure/hint counts</li>
+                  <li>
+                    • Each opportunity updates success/failure/hint counts
+                  </li>
                   <li>• Success probability updates in real-time</li>
                   <li>• Model tracks instructional patterns for retraining</li>
                 </ul>
@@ -1078,7 +1251,9 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
                   <li>• θ, β updated based on overall performance</li>
                   <li>• μ, ρ adjusted based on success/failure patterns</li>
                   <li>• ν tuned based on hint effectiveness analysis</li>
-                  <li>• Most sophisticated: accounts for instructional support</li>
+                  <li>
+                    • Most sophisticated: accounts for instructional support
+                  </li>
                 </ul>
               </div>
             </div>
@@ -1088,12 +1263,12 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
           <div className="flex justify-center">
             <button
               onClick={() => {
-                trackButtonClick('ifm_dynamic_continue', {
+                trackButtonClick("ifm_dynamic_continue", {
                   finalJourney: responseLog,
                   totalOpportunities: responseLog.length,
                   finalProbability: currentProb,
                   totalHints: currentTotalHints,
-                  slideContext: 'IFM Dynamic Simulator'
+                  slideContext: "IFM Dynamic Simulator",
                 });
                 navigate(23);
               }}

@@ -13,7 +13,11 @@ import {
   ArrowRight,
 } from "lucide-react";
 import Chart from "chart.js/auto";
-import { trackButtonClick, trackSliderInteraction, trackCustomEvent } from "../utils/analytics";
+import {
+  trackButtonClick,
+  trackSliderInteraction,
+  trackCustomEvent,
+} from "../utils/analytics";
 
 const paramDefaults = {
   theta: 0.0,
@@ -183,9 +187,9 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
 
   // Track slide entry
   useEffect(() => {
-    trackCustomEvent('afm_simulator_entered', {
+    trackCustomEvent("afm_simulator_entered", {
       initialParams: params,
-      slideContext: 'AFM Simulator'
+      slideContext: "AFM Simulator",
     });
   }, []);
 
@@ -193,9 +197,9 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
   useEffect(() => {
     const handler = (e) => {
       if (e.key === "Escape" && showTooltip) {
-        trackButtonClick('afm_tooltip_close_escape', {
+        trackButtonClick("afm_tooltip_close_escape", {
           parameter: showTooltip,
-          slideContext: 'AFM Simulator'
+          slideContext: "AFM Simulator",
         });
         setShowTooltip(null);
       }
@@ -234,10 +238,11 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
       parameterContext: paramMeta[p].tooltip.desc,
       sessionActive,
       slideNumber: 20,
-      slideName: 'AFM Simulator',
-      elementType: 'slider',
-      elementLocation: 'model_parameters_section',
-      interactionPurpose: p === 'practice' ? 'adjust_practice_count' : 'adjust_model_parameter'
+      slideName: "AFM Simulator",
+      elementType: "slider",
+      elementLocation: "model_parameters_section",
+      interactionPurpose:
+        p === "practice" ? "adjust_practice_count" : "adjust_model_parameter",
     });
   }
 
@@ -255,19 +260,19 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
     setLastChangedParam("practice");
 
     // Track response simulation with more context
-    trackButtonClick('slide20_afm_simulator_response', {
+    trackButtonClick("slide20_afm_simulator_response", {
       isCorrect,
       practiceAttempt: params.practice,
       currentProbability: prob,
       currentParams: params,
       logit,
       slideNumber: 20,
-      slideName: 'AFM Simulator',
-      elementType: 'button',
-      elementLocation: 'session_controls_section',
-      buttonType: isCorrect ? 'correct_response' : 'incorrect_response',
+      slideName: "AFM Simulator",
+      elementType: "button",
+      elementLocation: "session_controls_section",
+      buttonType: isCorrect ? "correct_response" : "incorrect_response",
       sessionActive,
-      totalResponses: responseLog.length + 1
+      totalResponses: responseLog.length + 1,
     });
   }
 
@@ -277,61 +282,94 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
     // Track retrain attempt with more context
     const preRetrainParams = { ...params };
     const retrainDataSnapshot = [...retrainingData];
-    let recent = retrainingData.slice(-10);
-    let correct = recent.filter((r) => r.correct).length;
+
+    // Use larger window with exponential weighting (K=20, fallback to available data)
+    const K = Math.min(20, retrainingData.length);
+    let recent = retrainingData.slice(-K);
     let total = recent.length;
-    let acc = correct / total;
-    let avgErr =
-      recent.reduce(
-        (sum, r) => sum + Math.abs((r.correct ? 1 : 0) - r.probability),
-        0
-      ) / total;
+
+    // Calculate exponentially weighted accuracy and prediction error
+    let weightedAcc = 0;
+    let weightedErr = 0;
+    let totalWeight = 0;
+
+    for (let i = 0; i < total; i++) {
+      const weight = Math.exp(-0.1 * (total - 1 - i)); // More weight to recent observations
+      const r = recent[i];
+      weightedAcc += weight * (r.correct ? 1 : 0);
+      weightedErr += weight * Math.abs((r.correct ? 1 : 0) - r.probability);
+      totalWeight += weight;
+    }
+
+    weightedAcc /= totalWeight;
+    weightedErr /= totalWeight;
+
     let { theta, beta, gamma } = params;
 
-    // ability adjustment
-    if (acc >= 0.5) theta = Math.min(3, theta + 0.3);
-    else if (acc < 0.2) theta = Math.max(-3, theta - 0.1);
+    // Hyperparameters for realistic updates
+    const etaTheta = 0.01; // Learning rate for ability
+    const etaBeta = 0.01; // Learning rate for difficulty
+    const alphaGamma = 0.02; // EMA smoothing for gamma
+    const lambda = 0.005; // L2 regularization strength
+    const maxStepSize = 0.05; // Maximum parameter change per update
+    const noiseStd = 0.03; // Process noise standard deviation
 
-    // difficulty adjustment - make β change faster
-    if (acc > 0.8) {
-      // Very high accuracy = tasks too easy, make harder (decrease beta)
-      beta = Math.max(-2, beta - 0.4);
-    } else if (acc > 0.6) {
-      // Good accuracy = slightly harder tasks (decrease beta)
-      beta = Math.max(-2, beta - 0.2);
-    } else if (acc < 0.3) {
-      // Low accuracy = tasks too hard, make easier (increase beta)
-      beta = Math.min(2, beta + 0.4);
-    } else if (acc < 0.5) {
-      // Below average accuracy = make tasks easier (increase beta)
-      beta = Math.min(2, beta + 0.2);
+    // Prior means (regularization targets)
+    const thetaPrior = 0.0;
+    const betaPrior = 0.0;
+    const gammaPrior = 0.15;
+
+    // SGD-style updates with regularization
+    // Theta update: gradient from prediction error + L2 regularization
+    const thetaGradient = (weightedAcc - 0.5) * 2; // Simple gradient approximation
+    const thetaUpdate =
+      etaTheta * (thetaGradient - lambda * (theta - thetaPrior));
+    theta += Math.max(-maxStepSize, Math.min(maxStepSize, thetaUpdate));
+    theta = Math.max(-3, Math.min(3, theta)); // Enforce bounds
+
+    // Beta update: based on prediction accuracy vs target (0.6-0.7 range)
+    const targetAcc = 0.65;
+    const betaGradient = (weightedAcc - targetAcc) * 2; // Positive if too easy, negative if too hard
+    const betaUpdate = etaBeta * (-betaGradient - lambda * (beta - betaPrior)); // Negative because higher beta = easier
+    beta += Math.max(-maxStepSize, Math.min(maxStepSize, betaUpdate));
+    beta = Math.max(-2, Math.min(2, beta)); // Enforce bounds
+
+    // Gamma update: EMA-based on learning improvement signal
+    const windowSize = Math.max(8, Math.floor(total / 2));
+    if (total >= windowSize * 2) {
+      const early = recent.slice(0, windowSize);
+      const late = recent.slice(-windowSize);
+
+      const earlyAcc =
+        early.reduce((sum, r) => sum + (r.correct ? 1 : 0), 0) / early.length;
+      const lateAcc =
+        late.reduce((sum, r) => sum + (r.correct ? 1 : 0), 0) / late.length;
+      const improvement = lateAcc - earlyAcc;
+
+      // Target gamma based on observed improvement
+      const gammaSignal = gammaPrior + 0.02 * improvement;
+      const gammaTarget = Math.max(0, Math.min(0.2, gammaSignal)); // Constrain to realistic range
+
+      // EMA update
+      const gammaUpdate = alphaGamma * (gammaTarget - gamma);
+      gamma += Math.max(-maxStepSize, Math.min(maxStepSize, gammaUpdate));
+      gamma = Math.max(0, Math.min(0.2, gamma)); // Enforce bounds
     }
 
-    // Additional β adjustment based on prediction error
-    if (avgErr > 0.3) {
-      // High prediction error suggests difficulty mismatch
-      if (acc < 0.5) {
-        beta = Math.min(2, beta + 0.3); // Make easier if struggling
-      } else {
-        beta = Math.max(-2, beta - 0.2); // Make harder if too accurate
-      }
-    }
+    // Add small amount of process noise to prevent deterministic behavior
+    const addNoise = (value, bounds) => {
+      const noise = (Math.random() - 0.5) * 2 * noiseStd;
+      return Math.max(bounds[0], Math.min(bounds[1], value + noise));
+    };
 
-    // More responsive learning rate
-    let early = recent.slice(0, Math.floor(total / 2)),
-      late = recent.slice(Math.floor(total / 2));
-    if (early.length && late.length) {
-      let eAcc = early.filter((r) => r.correct).length / early.length;
-      let lAcc = late.filter((r) => r.correct).length / late.length;
-      let imp = lAcc - eAcc;
-      if (imp >= 0) gamma = Math.min(1, gamma + 0.15);
-      else if (imp < -0.2) gamma = Math.max(0, gamma - 0.05);
-    }
+    theta = addNoise(theta, [-3, 3]);
+    beta = addNoise(beta, [-2, 2]);
+    gamma = addNoise(gamma, [0, 0.2]);
 
     const newParams = {
-      theta: parseFloat(theta.toFixed(1)),
-      beta: parseFloat(beta.toFixed(1)),
-      gamma: parseFloat(gamma.toFixed(2)),
+      theta: parseFloat(theta.toFixed(2)),
+      beta: parseFloat(beta.toFixed(2)),
+      gamma: parseFloat(gamma.toFixed(3)),
       practice: 0,
     };
 
@@ -340,35 +378,63 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
     setSessionActive(true);
     setLastChangedParam(null); // Clear highlight after retrain
 
+    // Store parameter change information for transparency
+    const parameterChanges = {
+      theta: {
+        before: preRetrainParams.theta,
+        after: newParams.theta,
+        change: newParams.theta - preRetrainParams.theta,
+        reason: `Weighted accuracy: ${(weightedAcc * 100).toFixed(1)}%`,
+      },
+      beta: {
+        before: preRetrainParams.beta,
+        after: newParams.beta,
+        change: newParams.beta - preRetrainParams.beta,
+        reason: `Target accuracy: ${(targetAcc * 100).toFixed(1)}%`,
+      },
+      gamma: {
+        before: preRetrainParams.gamma,
+        after: newParams.gamma,
+        change: newParams.gamma - preRetrainParams.gamma,
+        reason:
+          total >= windowSize * 2
+            ? "Learning improvement detected"
+            : "Insufficient data for gamma update",
+      },
+    };
+
+    // Store for UI display
+    setLastParameterChanges && setLastParameterChanges(parameterChanges);
+
     // Track retrain completion with more context
-    trackButtonClick('slide20_afm_simulator_retrain', {
+    trackButtonClick("slide20_afm_simulator_retrain", {
       preRetrainParams,
       postRetrainParams: newParams,
       trainingDataCount: retrainDataSnapshot.length,
       recentAccuracy: acc,
       avgPredictionError: avgErr,
       slideNumber: 20,
-      slideName: 'AFM Simulator',
-      elementType: 'button',
-      elementLocation: 'retrain_section',
-      buttonType: 'retrain_model',
+      slideName: "AFM Simulator",
+      elementType: "button",
+      elementLocation: "retrain_section",
+      buttonType: "retrain_model",
       modelUpdates: {
         theta: {
           before: preRetrainParams.theta,
           after: newParams.theta,
-          change: newParams.theta - preRetrainParams.theta
+          change: newParams.theta - preRetrainParams.theta,
         },
         beta: {
           before: preRetrainParams.beta,
           after: newParams.beta,
-          change: newParams.beta - preRetrainParams.beta
+          change: newParams.beta - preRetrainParams.beta,
         },
         gamma: {
           before: preRetrainParams.gamma,
           after: newParams.gamma,
-          change: newParams.gamma - preRetrainParams.gamma
-        }
-      }
+          change: newParams.gamma - preRetrainParams.gamma,
+        },
+      },
     });
   }
 
@@ -377,7 +443,7 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
       params: { ...params },
       responseLogCount: responseLog.length,
       retrainingDataCount: retrainingData.length,
-      sessionActive
+      sessionActive,
     };
 
     setParams(paramDefaults);
@@ -387,18 +453,18 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
     setLastChangedParam(null);
 
     // Track reset action with more context
-    trackButtonClick('slide20_afm_simulator_reset', {
+    trackButtonClick("slide20_afm_simulator_reset", {
       preResetState,
       slideNumber: 20,
-      slideName: 'AFM Simulator',
-      elementType: 'button',
-      elementLocation: 'session_controls_section',
-      buttonType: 'reset_all',
+      slideName: "AFM Simulator",
+      elementType: "button",
+      elementLocation: "session_controls_section",
+      buttonType: "reset_all",
       sessionState: {
         wasActive: sessionActive,
         hadResponses: responseLog.length > 0,
-        hadRetrainingData: retrainingData.length > 0
-      }
+        hadRetrainingData: retrainingData.length > 0,
+      },
     });
   }
 
@@ -406,32 +472,40 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
     const sessionStats = {
       finalParams: { ...params },
       totalResponses: responseLog.length,
-      correctResponses: responseLog.filter(r => r.correct).length,
+      correctResponses: responseLog.filter((r) => r.correct).length,
       finalProbability: prob,
-      sessionDuration: responseLog.length ? responseLog[responseLog.length - 1].timestamp - responseLog[0].timestamp : 0,
+      sessionDuration: responseLog.length
+        ? responseLog[responseLog.length - 1].timestamp -
+          responseLog[0].timestamp
+        : 0,
       learningProgress: {
         initialProb: responseLog[0]?.probability || prob,
         finalProb: prob,
-        improvement: responseLog[0] ? prob - responseLog[0].probability : 0
-      }
+        improvement: responseLog[0] ? prob - responseLog[0].probability : 0,
+      },
     };
 
     setSessionActive(false);
 
     // Track session end with more context
-    trackButtonClick('slide20_afm_simulator_end_session', {
+    trackButtonClick("slide20_afm_simulator_end_session", {
       sessionStats,
       slideNumber: 20,
-      slideName: 'AFM Simulator',
-      elementType: 'button',
-      elementLocation: 'session_controls_section',
-      buttonType: 'end_session',
+      slideName: "AFM Simulator",
+      elementType: "button",
+      elementLocation: "session_controls_section",
+      buttonType: "end_session",
       performanceMetrics: {
         accuracy: sessionStats.correctResponses / sessionStats.totalResponses,
-        averageProbability: responseLog.reduce((sum, r) => sum + r.probability, 0) / responseLog.length,
-        probabilityTrend: responseLog.length > 1 ?
-          (responseLog[responseLog.length - 1].probability - responseLog[0].probability) : 0
-      }
+        averageProbability:
+          responseLog.reduce((sum, r) => sum + r.probability, 0) /
+          responseLog.length,
+        probabilityTrend:
+          responseLog.length > 1
+            ? responseLog[responseLog.length - 1].probability -
+              responseLog[0].probability
+            : 0,
+      },
     });
   }
 
@@ -446,10 +520,10 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
     setTooltipPosition(position);
 
     // Track tooltip interaction
-    trackButtonClick('afm_tooltip_open', {
+    trackButtonClick("afm_tooltip_open", {
       parameter: param,
       currentValue: params[param],
-      slideContext: 'AFM Simulator'
+      slideContext: "AFM Simulator",
     });
   };
 
@@ -490,9 +564,9 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
 
         <button
           onClick={() => {
-            trackButtonClick('afm_tooltip_close', {
+            trackButtonClick("afm_tooltip_close", {
               parameter: showTooltip,
-              slideContext: 'AFM Simulator'
+              slideContext: "AFM Simulator",
             });
             setShowTooltip(null);
           }}
@@ -513,7 +587,7 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
       theta: "text-blue-700",
       beta: "text-purple-700",
       gamma: "text-green-700",
-      practice: "text-orange-700"
+      practice: "text-orange-700",
     };
     return colors[param] || "text-black";
   };
@@ -539,7 +613,8 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
               Experience the AFM in action! Adjust parameters, simulate student
               responses, and watch how the model learns and adapts.
               <br />
-              Disclaimer: For this simulation only the practice opportunities change during practice.
+              Disclaimer: For this simulation only the practice opportunities
+              change during practice.
             </p>
           </div>
 
@@ -567,7 +642,8 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
 
                     {/* Step 1: Formula */}
                     <div className="text-base font-mono mb-2">
-                      <strong>1.</strong> P(success) = 1 / (1 + e<sup>-logit</sup>)
+                      <strong>1.</strong> P(success) = 1 / (1 + e
+                      <sup>-logit</sup>)
                     </div>
 
                     {/* Step 2: Logit formula */}
@@ -578,19 +654,35 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
                     {/* Step 3: Substitute values */}
                     <div className="text-base font-mono mb-2">
                       <strong>3.</strong> logit =
-                      <span className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor('theta')}`}>
+                      <span
+                        className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor(
+                          "theta"
+                        )}`}
+                      >
                         {params.theta.toFixed(1)}
                       </span>
                       -
-                      <span className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor('beta')}`}>
+                      <span
+                        className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor(
+                          "beta"
+                        )}`}
+                      >
                         ({params.beta.toFixed(1)})
                       </span>
                       +
-                      <span className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor('gamma')}`}>
+                      <span
+                        className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor(
+                          "gamma"
+                        )}`}
+                      >
                         {params.gamma.toFixed(2)}
                       </span>
                       ×
-                      <span className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor('practice')}`}>
+                      <span
+                        className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor(
+                          "practice"
+                        )}`}
+                      >
                         {params.practice}
                       </span>
                     </div>
@@ -602,7 +694,8 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
 
                     {/* Step 5: Final probability */}
                     <div className="text-lg font-bold text-blue-600 border-t-2 border-blue-300 pt-2">
-                      <strong>5.</strong> P(success) = {(prob * 100).toFixed(1)}%
+                      <strong>5.</strong> P(success) = {(prob * 100).toFixed(1)}
+                      %
                     </div>
                   </div>
                 </div>
@@ -612,21 +705,29 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 bg-blue-200 border-2 border-blue-700 rounded"></div>
-                      <span className="font-bold text-blue-700">θ = Student Ability</span>
+                      <span className="font-bold text-blue-700">
+                        θ = Student Ability
+                      </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 bg-purple-200 border-2 border-purple-700 rounded"></div>
-                      <span className="font-bold text-purple-700">β = Skill Difficulty</span>
+                      <span className="font-bold text-purple-700">
+                        β = Skill Difficulty
+                      </span>
                     </div>
                   </div>
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 bg-green-200 border-2 border-green-700 rounded"></div>
-                      <span className="font-bold text-green-700">γ = Learning Rate</span>
+                      <span className="font-bold text-green-700">
+                        γ = Learning Rate
+                      </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 bg-orange-200 border-2 border-orange-700 rounded"></div>
-                      <span className="font-bold text-orange-700">T = Practice</span>
+                      <span className="font-bold text-orange-700">
+                        T = Practice
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -664,16 +765,18 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
                           value={params[key]}
                           disabled={!sessionActive && key !== "practice"}
                           onChange={(e) => setParam(key, e.target.value)}
-                          className={`flex-1 h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer border-2 border-black ${!sessionActive && key !== "practice"
-                            ? "opacity-50"
-                            : ""
-                            }`}
+                          className={`flex-1 h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer border-2 border-black ${
+                            !sessionActive && key !== "practice"
+                              ? "opacity-50"
+                              : ""
+                          }`}
                         />
                         <span
-                          className={`font-mono w-16 text-center font-bold text-lg border-2 border-black rounded px-2 py-1 bg-gray-50 transition-all duration-500 ${lastChangedParam === key
-                            ? "bg-yellow-300 text-yellow-900 border-yellow-500 scale-110"
-                            : `text-${meta.color}-800`
-                            }`}
+                          className={`font-mono w-16 text-center font-bold text-lg border-2 border-black rounded px-2 py-1 bg-gray-50 transition-all duration-500 ${
+                            lastChangedParam === key
+                              ? "bg-yellow-300 text-yellow-900 border-yellow-500 scale-110"
+                              : `text-${meta.color}-800`
+                          }`}
                         >
                           {key === "gamma"
                             ? params[key].toFixed(2)
@@ -731,10 +834,11 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
               <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
                 <div className="flex items-center gap-3 mb-6">
                   <div
-                    className={`w-4 h-4 rounded-full border-2 border-black ${sessionActive
-                      ? "bg-green-500 animate-pulse"
-                      : "bg-gray-400"
-                      }`}
+                    className={`w-4 h-4 rounded-full border-2 border-black ${
+                      sessionActive
+                        ? "bg-green-500 animate-pulse"
+                        : "bg-gray-400"
+                    }`}
                   ></div>
                   <h3 className="text-xl font-bold text-black uppercase tracking-wide">
                     {sessionActive
@@ -748,10 +852,11 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
                   <button
                     onClick={() => simulateResponse(true)}
                     disabled={!sessionActive}
-                    className={`px-4 py-3 bg-green-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all transform hover:scale-105 ${!sessionActive
-                      ? "opacity-50 cursor-not-allowed"
-                      : "hover:bg-white hover:text-green-600"
-                      }`}
+                    className={`px-4 py-3 bg-green-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all transform hover:scale-105 ${
+                      !sessionActive
+                        ? "opacity-50 cursor-not-allowed"
+                        : "hover:bg-white hover:text-green-600"
+                    }`}
                   >
                     ✓ Correct
                   </button>
@@ -759,10 +864,11 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
                   <button
                     onClick={() => simulateResponse(false)}
                     disabled={!sessionActive}
-                    className={`px-4 py-3 bg-red-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all transform hover:scale-105 ${!sessionActive
-                      ? "opacity-50 cursor-not-allowed"
-                      : "hover:bg-white hover:text-red-600"
-                      }`}
+                    className={`px-4 py-3 bg-red-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all transform hover:scale-105 ${
+                      !sessionActive
+                        ? "opacity-50 cursor-not-allowed"
+                        : "hover:bg-white hover:text-red-600"
+                    }`}
                   >
                     ✗ Incorrect
                   </button>
@@ -828,10 +934,11 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
                         .map((entry, i) => (
                           <div
                             key={i}
-                            className={`${entry.correct
-                              ? "bg-green-200 border-l-4 border-green-700 text-green-900"
-                              : "bg-red-200 border-l-4 border-red-700 text-red-900"
-                              } rounded-r-lg font-mono px-3 py-2`}
+                            className={`${
+                              entry.correct
+                                ? "bg-green-200 border-l-4 border-green-700 text-green-900"
+                                : "bg-red-200 border-l-4 border-red-700 text-red-900"
+                            } rounded-r-lg font-mono px-3 py-2`}
                           >
                             <div className="font-bold">
                               Practice {entry.practice}:{" "}
@@ -888,15 +995,16 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
           <div className="flex justify-center">
             <button
               onClick={() => {
-                trackButtonClick('afm_continue_next_slide', {
+                trackButtonClick("afm_continue_next_slide", {
                   finalState: {
                     params: params,
                     sessionActive,
                     totalResponses: responseLog.length,
-                    correctResponses: responseLog.filter(r => r.correct).length,
-                    currentProbability: prob
+                    correctResponses: responseLog.filter((r) => r.correct)
+                      .length,
+                    currentProbability: prob,
                   },
-                  slideContext: 'AFM Simulator'
+                  slideContext: "AFM Simulator",
                 });
                 navigate(16);
               }}
