@@ -50,6 +50,10 @@ export const LearningRateExplanation = ({ navigate }) => {
       textColor: "text-green-800",
       description: "Clear patterns, immediate feedback, rapid mastery",
       label: "High LR + Low Difficulty",
+      codeExample: `name = "Alice"
+age = 25
+greeting = f"Hello {name}, you are {age} years old!"
+print(greeting)`,
     },
     {
       id: "recursion",
@@ -63,6 +67,12 @@ export const LearningRateExplanation = ({ navigate }) => {
       textColor: "text-red-800",
       description: "Abstract concepts, slow progress, gradual understanding",
       label: "Low LR + High Difficulty",
+      codeExample: `def factorial(n):
+    if n <= 1:
+        return 1
+    return n * factorial(n - 1)
+
+result = factorial(5)  # Returns 120`,
     },
     {
       id: "list-comprehensions",
@@ -76,6 +86,10 @@ export const LearningRateExplanation = ({ navigate }) => {
       textColor: "text-yellow-800",
       description: "Compact syntax, quick learning, moderate challenge",
       label: "High LR + Medium Difficulty",
+      codeExample: `numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+# Get squares of even numbers only
+squares = [x**2 for x in numbers if x % 2 == 0]
+print(squares)  # [4, 16, 36, 64, 100]`,
     },
     {
       id: "decorators",
@@ -89,19 +103,42 @@ export const LearningRateExplanation = ({ navigate }) => {
       textColor: "text-purple-800",
       description: "Advanced meta-programming, very slow progress, complex",
       label: "Very Low LR + Very High Difficulty",
+      codeExample: `import time
+
+def timing_decorator(func):
+    def wrapper(*args, **kwargs):
+        start = time.time()
+        result = func(*args, **kwargs)
+        end = time.time()
+        print(f"{func.__name__} took {end-start:.4f}s")
+        return result
+    return wrapper
+
+@timing_decorator
+def slow_function():
+    time.sleep(0.1)
+    return "Done"`,
     },
     {
       id: "basic-functions",
       name: "BASIC FUNCTIONS",
       shortName: "Basic Functions",
       difficulty: 0.5,
-      learningRate: 0.6,
+      learningRate: 0.5,
       color: "#10b981",
       bgColor: "bg-emerald-50",
       borderColor: "border-emerald-400",
       textColor: "text-emerald-800",
       description: "Straightforward concepts, quick learning, simple logic",
       label: "High LR + Low Difficulty",
+      codeExample: `def add(a, b):
+    return a + b
+
+def greet(name, greeting="Hello"):
+    return f"{greeting}, {name}!"
+
+result = add(3, 5)  # 8
+message = greet("Alice")  # "Hello, Alice!"`,
     },
     {
       id: "traditional-loops",
@@ -115,19 +152,47 @@ export const LearningRateExplanation = ({ navigate }) => {
       textColor: "text-teal-800",
       description: "Familiar pattern, steady progress, easy start",
       label: "Medium LR + Low Difficulty",
+      codeExample: `for i in range(1, 11):
+    if i == 5:
+        continue  # Skip 5
+    print(i)
+# Output: 1, 2, 3, 4, 6, 7, 8, 9, 10
+
+# Alternative with while loop
+count = 0
+while count < 10:
+    count += 1
+    if count != 5:
+        print(count)`,
     },
     {
       id: "classes-oop",
       name: "CLASSES & OOP",
       shortName: "Classes & OOP",
       difficulty: -0.5,
-      learningRate: 0.4,
+      learningRate: 0.5,
       color: "#3b82f6",
       bgColor: "bg-blue-50",
       borderColor: "border-blue-400",
       textColor: "text-blue-800",
       description: "Object-oriented, moderate complexity, steady learning",
       label: "Medium LR + Medium Difficulty",
+      codeExample: `class Car:
+    def __init__(self, brand, model):
+        self.brand = brand
+        self.model = model
+        self.engine_running = False
+    
+    def start_engine(self):
+        self.engine_running = True
+        print(f"{self.brand} {self.model} engine started!")
+    
+    def stop_engine(self):
+        self.engine_running = False
+        print(f"{self.brand} {self.model} engine stopped!")
+
+my_car = Car("Toyota", "Camry")
+my_car.start_engine()`,
     },
     {
       id: "async-await",
@@ -141,6 +206,67 @@ export const LearningRateExplanation = ({ navigate }) => {
       textColor: "text-rose-800",
       description: "Asynchronous programming, complex flow, slow mastery",
       label: "Low LR + High Difficulty",
+      codeExample: `import asyncio
+import aiohttp
+
+async def fetch_data(url):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+            return await response.json()
+
+async def fetch_all_data():
+    urls = ["api1.com", "api2.com", "api3.com"]
+    # Fetch all APIs concurrently
+    tasks = [fetch_data(url) for url in urls]
+    results = await asyncio.gather(*tasks)
+    return {f"api_{i}": data for i, data in enumerate(results)}
+
+# Run the async function
+data = asyncio.run(fetch_all_data())`,
+    },
+    // Generic examples for extreme cases
+    {
+      id: "variable-assignment",
+      name: "VARIABLE ASSIGNMENT",
+      shortName: "Variable Assignment",
+      difficulty: 0.8,
+      learningRate: 0.1,
+      color: "#8b5cf6",
+      bgColor: "bg-violet-50",
+      borderColor: "border-violet-400",
+      textColor: "text-violet-800",
+      description:
+        "Simple concept but requires lots of repetition to become fluent",
+      label: "Low LR + Low Difficulty",
+      codeExample: `# Variable assignment - easy to understand, needs practice for fluency
+name = "Alice"
+age = 25
+is_student = True
+counter = counter + 1  # increment
+greeting = f"Hello {name}"`,
+    },
+    {
+      id: "regex-patterns",
+      name: "REGEX PATTERNS",
+      shortName: "Regex Patterns",
+      difficulty: -1.3,
+      learningRate: 0.9,
+      color: "#f97316",
+      bgColor: "bg-orange-50",
+      borderColor: "border-orange-400",
+      textColor: "text-orange-800",
+      description:
+        "Complex initially, but rapid improvement once breakthrough happens",
+      label: "High LR + High Difficulty",
+      codeExample: `import re
+
+# Email validation - complex initially
+email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+is_valid = re.match(email_pattern, "user@example.com")
+
+# Once understood, new patterns become intuitive
+phone_pattern = r'(\d{3})-(\d{3})-(\d{4})'
+date_pattern = r'(\d{1,2})/(\d{1,2})/(\d{4})'`,
     },
   ];
 
@@ -176,10 +302,10 @@ export const LearningRateExplanation = ({ navigate }) => {
       setCurrentTry(newTry);
 
       if (currentStep === 0) {
-        // Step 1: String Formatting vs Recursion
+        // Step 1: Basic Functions vs Classes & OOP (same learning rate, different difficulty)
         const examples = [
-          availableExamples.find((e) => e.id === "string-formatting"),
-          availableExamples.find((e) => e.id === "recursion"),
+          availableExamples.find((e) => e.id === "basic-functions"),
+          availableExamples.find((e) => e.id === "classes-oop"),
         ];
         const newData = generateDataForExamples(examples, newTry);
         setStep1Data(newData);
@@ -225,7 +351,7 @@ export const LearningRateExplanation = ({ navigate }) => {
 
   const handleDrop = (e) => {
     e.preventDefault();
-    if (draggedItem && selectedExamples.length < 3) {
+    if (draggedItem) {
       // Check if not already added
       if (!selectedExamples.find((ex) => ex.id === draggedItem.id)) {
         setSelectedExamples([...selectedExamples, draggedItem]);
@@ -242,10 +368,10 @@ export const LearningRateExplanation = ({ navigate }) => {
   const step2Data = generateDataForExamples(selectedExamples, 10);
 
   const renderStepOne = () => {
-    const stringFormatting = availableExamples.find(
-      (e) => e.id === "string-formatting"
+    const basicFunctions = availableExamples.find(
+      (e) => e.id === "basic-functions"
     );
-    const recursion = availableExamples.find((e) => e.id === "recursion");
+    const classesOOP = availableExamples.find((e) => e.id === "classes-oop");
 
     return (
       <div className="space-y-6">
@@ -276,9 +402,10 @@ export const LearningRateExplanation = ({ navigate }) => {
                 How quickly you improve with each practice attempt
               </div>
               <div className="text-green-800 text-sm">
-                <strong>Example:</strong> String formatting has a high learning
-                rate - once you understand the pattern, you can apply it to
-                increasingly complex scenarios.
+                <strong>Example:</strong> Basic Functions have a moderate
+                learning rate - once you understand function definitions and
+                parameters, each practice attempt builds on the previous
+                knowledge consistently.
               </div>
             </div>
             <div className="bg-red-100 border-2 border-red-600 rounded-lg p-4">
@@ -290,11 +417,31 @@ export const LearningRateExplanation = ({ navigate }) => {
                 How hard the skill is to learn initially
               </div>
               <div className="text-red-800 text-sm">
-                <strong>Example:</strong> Recursion is conceptually difficult to
-                grasp at first - it requires understanding abstract concepts
-                like function calls within functions.
+                <strong>Example:</strong> Classes & OOP are conceptually more
+                challenging initially - they require understanding abstract
+                concepts like objects, methods, inheritance, and encapsulation
+                before you can effectively practice them.
               </div>
             </div>
+          </div>
+          <div className="mt-4 bg-yellow-100 border-2 border-yellow-600 rounded-lg p-4">
+            <div className="font-bold text-yellow-800 text-base mb-2 flex items-center gap-2">
+              <Lightbulb className="w-5 h-5" />
+              Why Same Learning Rate but Different Difficulty?
+            </div>
+            <p className="text-yellow-900 text-sm">
+              <strong>
+                Both Basic Functions and Classes & OOP have identical Learning
+                Rate (γ = 0.5)
+              </strong>
+              because once you grasp the core concept in either area, you
+              progress at a similar steady pace with practice. However,{" "}
+              <strong>Classes & OOP start harder (β = -0.5 vs β = 0.5)</strong>{" "}
+              because they require understanding multiple interconnected
+              concepts (objects, methods, inheritance) before you can even begin
+              practicing effectively, while Basic Functions are more
+              straightforward from the start.
+            </p>
           </div>
         </div>
 
@@ -307,9 +454,9 @@ export const LearningRateExplanation = ({ navigate }) => {
             </h3>
           </div>
           <p className="text-blue-900 text-sm font-bold mb-4">
-            Watch how <strong>String Formatting</strong> (High LR + Low
-            Difficulty) compares to <strong>Recursion</strong> (Low LR + High
-            Difficulty):
+            Watch how <strong>Basic Functions</strong> (Easy + Same LR) compares
+            to <strong>Classes & OOP</strong> (Harder + Same LR). Both have
+            identical Learning Rate (γ = 0.5), but different Skill Difficulty!
           </p>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -367,29 +514,29 @@ export const LearningRateExplanation = ({ navigate }) => {
                 {/* Parameter Display */}
                 <div className="mt-4 space-y-2">
                   <div
-                    className={`border-2 ${stringFormatting.borderColor} ${stringFormatting.bgColor} rounded-lg p-3`}
+                    className={`border-2 ${basicFunctions.borderColor} ${basicFunctions.bgColor} rounded-lg p-3`}
                   >
                     <div
-                      className={`font-bold ${stringFormatting.textColor} text-xs mb-2`}
+                      className={`font-bold ${basicFunctions.textColor} text-xs mb-2`}
                     >
-                      {stringFormatting.shortName}
+                      {basicFunctions.shortName}
                     </div>
                     <div className="text-xs space-y-1">
-                      <div>β: {stringFormatting.difficulty} (Easy)</div>
-                      <div>γ: {stringFormatting.learningRate} (Fast)</div>
+                      <div>β: {basicFunctions.difficulty} (Easy)</div>
+                      <div>γ: {basicFunctions.learningRate} (Same)</div>
                     </div>
                   </div>
                   <div
-                    className={`border-2 ${recursion.borderColor} ${recursion.bgColor} rounded-lg p-3`}
+                    className={`border-2 ${classesOOP.borderColor} ${classesOOP.bgColor} rounded-lg p-3`}
                   >
                     <div
-                      className={`font-bold ${recursion.textColor} text-xs mb-2`}
+                      className={`font-bold ${classesOOP.textColor} text-xs mb-2`}
                     >
-                      {recursion.shortName}
+                      {classesOOP.shortName}
                     </div>
                     <div className="text-xs space-y-1">
-                      <div>β: {recursion.difficulty} (Hard)</div>
-                      <div>γ: {recursion.learningRate} (Slow)</div>
+                      <div>β: {classesOOP.difficulty} (Harder)</div>
+                      <div>γ: {classesOOP.learningRate} (Same)</div>
                     </div>
                   </div>
                 </div>
@@ -468,23 +615,23 @@ export const LearningRateExplanation = ({ navigate }) => {
                       />
                       <Line
                         type="monotone"
-                        dataKey="string-formatting"
-                        stroke={stringFormatting.color}
+                        dataKey="basic-functions"
+                        stroke={basicFunctions.color}
                         strokeWidth={5}
                         dot={{
-                          fill: stringFormatting.color,
+                          fill: basicFunctions.color,
                           strokeWidth: 3,
                           r: 6,
                         }}
-                        name={stringFormatting.shortName}
+                        name={basicFunctions.shortName}
                       />
                       <Line
                         type="monotone"
-                        dataKey="recursion"
-                        stroke={recursion.color}
+                        dataKey="classes-oop"
+                        stroke={classesOOP.color}
                         strokeWidth={5}
-                        dot={{ fill: recursion.color, strokeWidth: 3, r: 6 }}
-                        name={recursion.shortName}
+                        dot={{ fill: classesOOP.color, strokeWidth: 3, r: 6 }}
+                        name={classesOOP.shortName}
                       />
                     </LineChart>
                   </ResponsiveContainer>
@@ -495,11 +642,12 @@ export const LearningRateExplanation = ({ navigate }) => {
 
           <div className="mt-4 bg-blue-100 border-2 border-blue-700 rounded-lg p-3">
             <p className="text-blue-900 text-sm font-bold">
-              <strong>Key Insight:</strong> Learning Rate (γ) describes the{" "}
-              <em>slope</em> of your improvement curve (how much you improve
-              with each attempt), while Skill Difficulty (β) describes your{" "}
-              <em>starting point</em> (how hard it is initially). Both
-              independently affect your success probability!
+              <strong>Key Insight:</strong> Both examples have the{" "}
+              <strong>same Learning Rate (γ = 0.5)</strong> - notice how the
+              curves have identical slopes! The difference is the{" "}
+              <strong>starting point</strong>: Skill Difficulty (β) determines
+              where you begin, while Learning Rate determines how quickly you
+              improve.
             </p>
           </div>
         </div>
@@ -540,7 +688,8 @@ export const LearningRateExplanation = ({ navigate }) => {
           affect the learning trajectory.
         </p>
         <p className="text-base text-gray-700 text-center">
-          You can compare up to 3 examples simultaneously in real-time!
+          You can compare as many examples as you want simultaneously in
+          real-time!
         </p>
       </div>
 
@@ -602,7 +751,7 @@ export const LearningRateExplanation = ({ navigate }) => {
             <div className="border-4 border-purple-600 rounded-xl p-4 bg-purple-50">
               <div className="flex items-center justify-between mb-3">
                 <h4 className="font-bold text-purple-800 text-sm">
-                  ACTIVE COMPARISONS ({selectedExamples.length}/3)
+                  ACTIVE COMPARISONS ({selectedExamples.length})
                 </h4>
               </div>
               <div className="flex flex-wrap gap-2">
@@ -753,6 +902,16 @@ export const LearningRateExplanation = ({ navigate }) => {
                     </div>
                     <div className="text-xs text-gray-700 mb-3">
                       {example.description}
+                    </div>
+                    <div className="mb-3">
+                      <div className="text-xs font-bold text-gray-800 mb-2">
+                        Code Example:
+                      </div>
+                      <div className="bg-gray-900 rounded-lg p-3 overflow-x-auto">
+                        <pre className="text-xs text-green-400 font-mono whitespace-pre-wrap">
+                          <code>{example.codeExample}</code>
+                        </pre>
+                      </div>
                     </div>
                     <div className="bg-white border-2 border-black rounded-lg p-3 space-y-2 font-mono text-xs">
                       <div className="flex justify-between">
