@@ -23,6 +23,8 @@ export const PythonTasksAdvanced = ({ navigate }) => {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [showResult, setShowResult] = useState(false);
   const [completedTasks, setCompletedTasks] = useState([]);
+  const [draggedOption, setDraggedOption] = useState(null);
+  const [isOverDropZone, setIsOverDropZone] = useState(false);
 
   // Track component entry
   useEffect(() => {
@@ -74,10 +76,11 @@ export const PythonTasksAdvanced = ({ navigate }) => {
       title: "String Formatting",
       description:
         "Format user data into a readable string. Given a user dictionary with name, age, and city, create a formatted introduction string.",
+      testCase: {
+        input: '{"name": "Alice", "age": 25, "city": "New York"}',
+        output: '"Hi, I\'m Alice, 25 years old, from New York!"',
+      },
       code: `def format_user_intro(user):
-    # Create formatted introduction
-    # Input: user = {"name": "Alice", "age": 25, "city": "New York"}
-    # Output: "Hi, I'm Alice, 25 years old, from New York!"
     pass`,
       question: "What would be the correct implementation?",
       options: [
@@ -111,11 +114,12 @@ export const PythonTasksAdvanced = ({ navigate }) => {
       title: "Recursive Fibonacci",
       description:
         "Calculate the nth Fibonacci number using recursion. The Fibonacci sequence starts with 0, 1, and each subsequent number is the sum of the two preceding ones.",
+      testCase: {
+        rules:
+          "fibonacci(0) = 0, fibonacci(1) = 1, fibonacci(n) = fibonacci(n-1) + fibonacci(n-2)",
+        example: "fibonacci(5) = 5 (sequence: 0,1,1,2,3,5)",
+      },
       code: `def fibonacci(n):
-    # Calculate nth Fibonacci number recursively
-    # fibonacci(0) = 0, fibonacci(1) = 1
-    # fibonacci(n) = fibonacci(n-1) + fibonacci(n-2)
-    # Example: fibonacci(5) = 5 (sequence: 0,1,1,2,3,5)
     pass`,
       question: "What would be the correct recursive implementation?",
       options: [
@@ -187,6 +191,32 @@ return fibonacci(n-1) + fibonacci(n-2)`,
         timestamp: Date.now(),
       },
     ]);
+  };
+
+  const handleDragStart = (e, optionId) => {
+    setDraggedOption(optionId);
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/html", e.target);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    setIsOverDropZone(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsOverDropZone(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsOverDropZone(false);
+
+    if (draggedOption && !showResult) {
+      setSelectedAnswer(draggedOption);
+    }
+    setDraggedOption(null);
   };
 
   const handleAnswerSelect = (answerId) => {
@@ -271,6 +301,8 @@ return fibonacci(n-1) + fibonacci(n-2)`,
     setSelectedAnswer(null);
     setShowResult(false);
     setTaskStartTime(null);
+    setDraggedOption(null);
+    setIsOverDropZone(false);
 
     setInteractionHistory((prev) => [
       ...prev,
@@ -335,127 +367,218 @@ return fibonacci(n-1) + fibonacci(n-2)`,
             </div>
           </div>
 
-          {/* Task Description */}
-          <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
-            <div className="text-center space-y-6">
-              <div className="flex items-center justify-center gap-2 mb-4">
-                <IconComponent className="w-6 h-6 text-black" />
-                <h3 className="text-xl font-bold text-black uppercase tracking-tight">
-                  Instructions
-                </h3>
-              </div>
-
-              <p className="text-black font-bold text-lg mb-6">
-                {task.description}
-              </p>
-
-              <div className="bg-black text-green-400 p-6 rounded-lg font-mono text-sm border-4 border-gray-600 shadow-lg">
-                <div className="flex items-center gap-2 mb-3 text-gray-400">
-                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                  <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                  <span className="ml-2 text-xs">code_editor.py</span>
+          {/* Two Column Layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Left Column - Instructions */}
+            <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
+              <div className="space-y-6">
+                <div className="flex items-center justify-center gap-2 mb-4">
+                  <IconComponent className="w-6 h-6 text-black" />
+                  <h3 className="text-xl font-bold text-black uppercase tracking-tight">
+                    Instructions
+                  </h3>
                 </div>
-                <pre className="text-white whitespace-pre-wrap leading-relaxed">
-                  {task.code}
-                </pre>
+
+                <p className="text-black font-bold text-lg mb-6">
+                  {task.description}
+                </p>
+
+                <div
+                  className={`bg-black text-green-400 p-6 rounded-lg font-mono text-sm border-4 shadow-lg transition-all ${
+                    isOverDropZone && !showResult
+                      ? "border-yellow-400 shadow-yellow-400/50 scale-105"
+                      : "border-gray-600"
+                  }`}
+                  onDragOver={!showResult ? handleDragOver : undefined}
+                  onDragLeave={!showResult ? handleDragLeave : undefined}
+                  onDrop={!showResult ? handleDrop : undefined}
+                >
+                  <div className="flex items-center gap-2 mb-3 text-gray-400">
+                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                    <span className="ml-2 text-xs">code_editor.py</span>
+                  </div>
+                  <pre className="text-white whitespace-pre-wrap leading-relaxed">
+                    {task.code.split("pass")[0]}
+                    {!showResult && !selectedAnswer && (
+                      <span className="text-yellow-400 border-2 border-dashed border-yellow-400/50 rounded px-2 py-1 bg-yellow-400/10">
+                        Drag & Drop your answer here
+                      </span>
+                    )}
+                    {selectedAnswer && (
+                      <span className="text-cyan-400">
+                        {
+                          task.options.find((opt) => opt.id === selectedAnswer)
+                            ?.text
+                        }
+                      </span>
+                    )}
+                    {!selectedAnswer && showResult && (
+                      <span className="text-white">pass</span>
+                    )}
+                  </pre>
+                </div>
+
+                {/* Test Cases */}
+                <div className="bg-blue-50 border-4 border-blue-600 rounded-xl p-6">
+                  <h4 className="text-blue-800 font-bold text-lg mb-4 uppercase tracking-tight">
+                    Test Case
+                  </h4>
+                  {task.testCase.input && (
+                    <div className="space-y-2">
+                      <div className="flex flex-col gap-2">
+                        <span className="text-blue-700 font-bold">Input:</span>
+                        <code className="bg-blue-100 px-2 py-1 rounded text-blue-800 font-mono text-sm break-all overflow-wrap-anywhere">
+                          format_user_intro({task.testCase.input})
+                        </code>
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <span className="text-blue-700 font-bold">Output:</span>
+                        <code className="bg-blue-100 px-2 py-1 rounded text-blue-800 font-mono text-sm break-all overflow-wrap-anywhere">
+                          {task.testCase.output}
+                        </code>
+                      </div>
+                    </div>
+                  )}
+                  {task.testCase.rules && (
+                    <div className="space-y-2">
+                      <div>
+                        <span className="text-blue-700 font-bold">Rules:</span>
+                        <div className="bg-blue-100 p-3 rounded mt-2 overflow-hidden">
+                          <code className="text-blue-800 font-mono text-sm break-all overflow-wrap-anywhere whitespace-pre-wrap">
+                            {task.testCase.rules}
+                          </code>
+                        </div>
+                      </div>
+                      <div>
+                        <span className="text-blue-700 font-bold">
+                          Example:
+                        </span>
+                        <div className="bg-blue-100 p-3 rounded mt-2 overflow-hidden">
+                          <code className="text-blue-800 font-mono text-sm break-all overflow-wrap-anywhere whitespace-pre-wrap">
+                            {task.testCase.example}
+                          </code>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Question */}
-          <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
-            <h3 className="text-xl font-bold mb-6 text-black uppercase tracking-tight">
-              {task.question}
-            </h3>
+            {/* Right Column - Solutions */}
+            <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
+              <h3 className="text-xl font-bold mb-6 text-black uppercase tracking-tight">
+                {showResult
+                  ? task.question
+                  : "Drag one of these solutions into the code editor"}
+              </h3>
 
-            <div className="space-y-4">
-              {task.options.map((option) => (
-                <button
-                  key={option.id}
-                  onClick={() => handleAnswerSelect(option.id)}
-                  disabled={showResult}
-                  className={`w-full text-left p-4 rounded-lg border-4 border-black transition-all ${
-                    showResult
-                      ? option.correct
-                        ? "bg-green-100 border-green-600"
-                        : option.id === selectedAnswer
-                        ? "bg-red-100 border-red-600"
-                        : "bg-gray-50"
-                      : selectedAnswer === option.id
-                      ? colorClasses[task.color]
-                      : "bg-gray-50 hover:bg-gray-100"
-                  } ${
-                    !showResult
-                      ? "cursor-pointer hover:scale-105 transition-transform"
-                      : "cursor-default"
-                  }`}
-                >
-                  <div className="flex items-start gap-3">
-                    <div
-                      className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold border-2 border-black ${
-                        showResult
-                          ? option.correct
-                            ? "bg-green-600 text-white"
-                            : option.id === selectedAnswer
-                            ? "bg-red-600 text-white"
-                            : "bg-gray-300 text-gray-600"
-                          : "bg-black text-white"
-                      }`}
-                    >
-                      {option.id.toUpperCase()}
-                    </div>
-                    <pre className="text-sm font-mono text-black whitespace-pre-wrap flex-1 font-bold">
-                      {option.text}
-                    </pre>
-                    {showResult && option.correct && (
-                      <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
-                    )}
-                    {showResult &&
-                      !option.correct &&
-                      option.id === selectedAnswer && (
-                        <XCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
-                      )}
-                  </div>
-                </button>
-              ))}
-            </div>
-
-            {/* Result */}
-            {showResult && (
-              <div
-                className={`mt-8 p-6 rounded-xl border-4 border-black shadow-lg ${
-                  selectedOption?.correct ? "bg-green-100" : "bg-red-100"
-                }`}
-              >
-                <div className="flex items-center gap-2 mb-2">
-                  {selectedOption?.correct ? (
-                    <CheckCircle className="w-6 h-6 text-green-600" />
-                  ) : (
-                    <XCircle className="w-6 h-6 text-red-600" />
-                  )}
-                  <span
-                    className={`font-bold text-lg uppercase tracking-wide ${
-                      selectedOption?.correct
-                        ? "text-green-700"
-                        : "text-red-700"
+              <div className="space-y-4">
+                {task.options.map((option) => (
+                  <div
+                    key={option.id}
+                    draggable={!showResult}
+                    onDragStart={(e) => handleDragStart(e, option.id)}
+                    onClick={() => !showResult && setSelectedAnswer(option.id)}
+                    className={`w-full text-left p-4 rounded-lg border-4 border-black transition-all ${
+                      showResult
+                        ? option.correct
+                          ? "bg-green-100 border-green-600"
+                          : option.id === selectedAnswer
+                          ? "bg-red-100 border-red-600"
+                          : "bg-gray-50"
+                        : selectedAnswer === option.id
+                        ? colorClasses[task.color]
+                        : draggedOption === option.id
+                        ? "bg-yellow-100 opacity-50 scale-95"
+                        : "bg-gray-50 hover:bg-gray-100"
+                    } ${
+                      !showResult
+                        ? "cursor-grab active:cursor-grabbing hover:scale-105 transition-transform"
+                        : "cursor-default"
                     }`}
                   >
-                    {selectedOption?.correct ? "Correct!" : "Incorrect"}
-                  </span>
-                </div>
-                {!selectedOption?.correct && (
-                  <p className="text-black font-bold">
-                    The correct answer is option{" "}
-                    {correctAnswer.id.toUpperCase()}.
-                    {selectedTask === "A" &&
-                      " F-string formatting with dictionary key access is the most readable and efficient approach."}
-                    {selectedTask === "B" &&
-                      " Recursive functions need base cases (n <= 1) and must call themselves with smaller values (n-1, n-2)."}
-                  </p>
-                )}
+                    <div className="flex items-start gap-3">
+                      <div
+                        className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold border-2 border-black ${
+                          showResult
+                            ? option.correct
+                              ? "bg-green-600 text-white"
+                              : option.id === selectedAnswer
+                              ? "bg-red-600 text-white"
+                              : "bg-gray-300 text-gray-600"
+                            : "bg-black text-white"
+                        }`}
+                      >
+                        {option.id.toUpperCase()}
+                      </div>
+                      <pre className="text-sm font-mono text-black whitespace-pre-wrap flex-1 font-bold">
+                        {option.text}
+                      </pre>
+                      {showResult && option.correct && (
+                        <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
+                      )}
+                      {showResult &&
+                        !option.correct &&
+                        option.id === selectedAnswer && (
+                          <XCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
+                        )}
+                    </div>
+                  </div>
+                ))}
               </div>
-            )}
+
+              {/* Submit Button */}
+              {selectedAnswer && !showResult && (
+                <div className="mt-6 flex justify-center">
+                  <button
+                    onClick={() => handleAnswerSelect(selectedAnswer)}
+                    className="px-8 py-4 bg-blue-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-blue-700 transition-all transform hover:scale-105 flex items-center gap-2"
+                  >
+                    <CheckCircle className="w-6 h-6" />
+                    Submit Solution
+                  </button>
+                </div>
+              )}
+
+              {/* Result */}
+              {showResult && (
+                <div
+                  className={`mt-8 p-6 rounded-xl border-4 border-black shadow-lg ${
+                    selectedOption?.correct ? "bg-green-100" : "bg-red-100"
+                  }`}
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    {selectedOption?.correct ? (
+                      <CheckCircle className="w-6 h-6 text-green-600" />
+                    ) : (
+                      <XCircle className="w-6 h-6 text-red-600" />
+                    )}
+                    <span
+                      className={`font-bold text-lg uppercase tracking-wide ${
+                        selectedOption?.correct
+                          ? "text-green-700"
+                          : "text-red-700"
+                      }`}
+                    >
+                      {selectedOption?.correct ? "Correct!" : "Incorrect"}
+                    </span>
+                  </div>
+                  {!selectedOption?.correct && (
+                    <p className="text-black font-bold">
+                      The correct answer is option{" "}
+                      {correctAnswer.id.toUpperCase()}.
+                      {selectedTask === "A" &&
+                        " F-string formatting with dictionary key access is the most readable and efficient approach."}
+                      {selectedTask === "B" &&
+                        " Recursive functions need base cases (n <= 1) and must call themselves with smaller values (n-1, n-2)."}
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Back Button */}
