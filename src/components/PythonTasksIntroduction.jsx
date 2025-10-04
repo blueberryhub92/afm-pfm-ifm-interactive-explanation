@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Code,
   Play,
@@ -9,12 +9,16 @@ import {
   AlertTriangle,
   ArrowRight,
 } from "lucide-react";
-import { trackButtonClick, trackCustomEvent, trackInputChange } from '../utils/analytics';
-import { startConfetti } from '../utils/confetti';
+import {
+  trackButtonClick,
+  trackCustomEvent,
+  trackInputChange,
+} from "../utils/analytics";
+import { startConfetti } from "../utils/confetti";
 
 // Mock hook for demonstration - replace with your actual hook
 const useProbability = () => ({
-  updateProbability: (prob) => console.log(`Probability updated to: ${prob}`)
+  updateProbability: (prob) => console.log(`Probability updated to: ${prob}`),
 });
 
 export const PythonTasksIntroduction = ({ navigate }) => {
@@ -31,26 +35,26 @@ export const PythonTasksIntroduction = ({ navigate }) => {
 
   // Track component entry
   useEffect(() => {
-    trackCustomEvent('python_tasks_viewed', {
-      componentName: 'PythonTasksIntroduction',
-      elementType: 'task_selection',
+    trackCustomEvent("python_tasks_viewed", {
+      componentName: "PythonTasksIntroduction",
+      elementType: "task_selection",
       viewContext: {
         timestamp: startTime,
-        availableTasks: Object.keys(tasks).length
-      }
+        availableTasks: Object.keys(tasks).length,
+      },
     });
 
     return () => {
       // Track component exit
-      trackCustomEvent('python_tasks_exited', {
-        componentName: 'PythonTasksIntroduction',
-        elementType: 'task_selection',
+      trackCustomEvent("python_tasks_exited", {
+        componentName: "PythonTasksIntroduction",
+        elementType: "task_selection",
         completionMetrics: {
           timeSpent: Date.now() - startTime,
           completedTasks: completedTasks.length,
           totalTasks: Object.keys(tasks).length,
-          interactionPattern: summarizeInteractions(interactionHistory)
-        }
+          interactionPattern: summarizeInteractions(interactionHistory),
+        },
       });
     };
   }, [completedTasks, interactionHistory]);
@@ -58,12 +62,15 @@ export const PythonTasksIntroduction = ({ navigate }) => {
   const summarizeInteractions = (interactions) => {
     return {
       totalInteractions: interactions.length,
-      taskAttempts: interactions.filter(i => i.type === 'task_attempt').length,
-      codeEdits: interactions.filter(i => i.type === 'code_edit').length,
-      averageTimePerTask: interactions
-        .filter(i => i.type === 'task_complete')
-        .reduce((sum, i) => sum + i.duration, 0) / Math.max(1, completedTasks.length),
-      completionSequence: completedTasks
+      taskAttempts: interactions.filter((i) => i.type === "task_attempt")
+        .length,
+      codeEdits: interactions.filter((i) => i.type === "code_edit").length,
+      averageTimePerTask:
+        interactions
+          .filter((i) => i.type === "task_complete")
+          .reduce((sum, i) => sum + i.duration, 0) /
+        Math.max(1, completedTasks.length),
+      completionSequence: completedTasks,
     };
   };
 
@@ -71,54 +78,63 @@ export const PythonTasksIntroduction = ({ navigate }) => {
     1: {
       title: "Variable Declaration Task",
       description: "Create three variables to store personal information:",
-      color: 'green',
+      color: "green",
       icon: FileText,
       requirements: [
         'Create a variable called "name" and store the string "Alice"',
         'Create a variable called "age" and store the number 25',
-        'Create a variable called "city" and store the string "New York"'
+        'Create a variable called "city" and store the string "New York"',
       ],
       solution: `name = "Alice"
 age = 25
 city = "New York"`,
       checkFunction: (answer) => {
         const normalizedInput = answer.trim().toLowerCase();
-        const lines = normalizedInput.split('\n')
-          .map(line => line.trim())
-          .filter(line => line.length > 0);
+        const lines = normalizedInput
+          .split("\n")
+          .map((line) => line.trim())
+          .filter((line) => line.length > 0);
 
         if (lines.length !== 3) {
-          return { valid: false, error: "Please provide exactly 3 lines of code" };
+          return {
+            valid: false,
+            error: "Please provide exactly 3 lines of code",
+          };
         }
 
         const expectedLines = [
           'name = "alice"',
-          'age = 25',
-          'city = "new york"'
+          "age = 25",
+          'city = "new york"',
         ];
 
         const isCorrect = lines.every((line, index) => {
-          const cleanLine = line.replace(/\s*=\s*/, ' = ');
+          const cleanLine = line.replace(/\s*=\s*/, " = ");
           return cleanLine === expectedLines[index];
         });
 
         if (!isCorrect) {
-          return { valid: false, error: "Make sure you assign the exact values as shown in the requirements" };
+          return {
+            valid: false,
+            error:
+              "Make sure you assign the exact values as shown in the requirements",
+          };
         }
 
         return { valid: true };
-      }
+      },
     },
     2: {
       title: "For Loop Task",
-      description: "Calculate the sum of numbers from 1 to 10 using a for loop:",
-      color: 'orange',
+      description:
+        "Calculate the sum of numbers from 1 to 10 using a for loop:",
+      color: "orange",
       icon: RotateCcw,
       requirements: [
-        'Initialize a variable to store the running total (start with 0)',
-        'Create a for loop that iterates through numbers 1 to 10',
-        'Add each number to your running total inside the loop',
-        'Print the final sum (the result should be 55)'
+        "Initialize a variable to store the running total (start with 0)",
+        "Create a for loop that iterates through numbers 1 to 10",
+        "Add each number to your running total inside the loop",
+        "Print the final sum (the result should be 55)",
       ],
       solution: `total = 0
 for number in range(1, 11):
@@ -132,22 +148,23 @@ print(total)
           return { valid: false, error: "Please enter some code first!" };
         }
 
-        const hasForLoop = code.includes('for') &&
-          code.includes('in') &&
-          code.includes('range') &&
-          (code.includes('range(1,11)') ||
-            code.includes('range(1, 11)') ||
-            code.includes('range( 1, 11 )') ||
-            code.includes('range( 1,11 )'));
+        const hasForLoop =
+          code.includes("for") &&
+          code.includes("in") &&
+          code.includes("range") &&
+          (code.includes("range(1,11)") ||
+            code.includes("range(1, 11)") ||
+            code.includes("range( 1, 11 )") ||
+            code.includes("range( 1,11 )"));
 
-        const hasSum = code.includes('+=') ||
-          code.includes('total') ||
-          code.includes('sum');
+        const hasSum =
+          code.includes("+=") || code.includes("total") || code.includes("sum");
 
-        const hasPrint = code.includes('print');
+        const hasPrint = code.includes("print");
 
-        const hasInit = code.includes('total = 0') ||
-          code.includes('sum = 0') ||
+        const hasInit =
+          code.includes("total = 0") ||
+          code.includes("sum = 0") ||
           /\w+\s*=\s*0/.test(code);
 
         if (!hasForLoop) {
@@ -155,30 +172,40 @@ print(total)
         }
 
         if (!hasInit) {
-          return { valid: false, error: "Missing: Initialize a variable to 0 (e.g., total = 0)" };
+          return {
+            valid: false,
+            error: "Missing: Initialize a variable to 0 (e.g., total = 0)",
+          };
         }
 
         if (!hasSum) {
-          return { valid: false, error: "Missing: Add numbers together (use += or similar)" };
+          return {
+            valid: false,
+            error: "Missing: Add numbers together (use += or similar)",
+          };
         }
 
         if (!hasPrint) {
-          return { valid: false, error: "Missing: print() statement to display the result" };
+          return {
+            valid: false,
+            error: "Missing: print() statement to display the result",
+          };
         }
 
         return { valid: true };
-      }
-    }
+      },
+    },
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Tab') {
+    if (e.key === "Tab") {
       e.preventDefault();
       const textarea = e.target;
       const start = textarea.selectionStart;
       const end = textarea.selectionEnd;
 
-      const newValue = taskAnswer.substring(0, start) + '    ' + taskAnswer.substring(end);
+      const newValue =
+        taskAnswer.substring(0, start) + "    " + taskAnswer.substring(end);
       setTaskAnswer(newValue);
 
       setTimeout(() => {
@@ -186,14 +213,14 @@ print(total)
       }, 0);
 
       // Track tab usage
-      trackCustomEvent('python_task_code_indent', {
-        componentName: 'PythonTasksIntroduction',
-        elementType: 'code_editor',
+      trackCustomEvent("python_task_code_indent", {
+        componentName: "PythonTasksIntroduction",
+        elementType: "code_editor",
         indentContext: {
           taskId: selectedTask,
           position: start,
-          timestamp: Date.now()
-        }
+          timestamp: Date.now(),
+        },
       });
     }
   };
@@ -201,45 +228,54 @@ print(total)
   const handleCodeChange = (e) => {
     const newValue = e.target.value;
 
-    trackInputChange('python_task_code', `task_${selectedTask}_code`, newValue, taskAnswer, {
-      componentName: 'PythonTasksIntroduction',
-      elementType: 'code_editor',
-      elementLocation: 'task_code',
-      changeContext: {
-        taskId: selectedTask,
-        lineCount: newValue.split('\n').length,
-        characterCount: newValue.length,
-        timestamp: Date.now()
+    trackInputChange(
+      "python_task_code",
+      `task_${selectedTask}_code`,
+      newValue,
+      taskAnswer,
+      {
+        componentName: "PythonTasksIntroduction",
+        elementType: "code_editor",
+        elementLocation: "task_code",
+        changeContext: {
+          taskId: selectedTask,
+          lineCount: newValue.split("\n").length,
+          characterCount: newValue.length,
+          timestamp: Date.now(),
+        },
       }
-    });
+    );
 
     setTaskAnswer(newValue);
-    setInteractionHistory(prev => [...prev, {
-      type: 'code_edit',
-      taskId: selectedTask,
-      timestamp: Date.now(),
-      codeLength: newValue.length
-    }]);
+    setInteractionHistory((prev) => [
+      ...prev,
+      {
+        type: "code_edit",
+        taskId: selectedTask,
+        timestamp: Date.now(),
+        codeLength: newValue.length,
+      },
+    ]);
   };
 
   const handleTaskClick = (taskId) => {
     const task = tasks[taskId];
 
-    trackButtonClick('python_task_selected', {
-      componentName: 'PythonTasksIntroduction',
-      elementType: 'button',
-      elementLocation: 'task_selection',
+    trackButtonClick("python_task_selected", {
+      componentName: "PythonTasksIntroduction",
+      elementType: "button",
+      elementLocation: "task_selection",
       selectionContext: {
         taskId,
         taskTitle: task.title,
         taskType: task.color,
         isCompleted: completedTasks.includes(taskId),
         previousTask: selectedTask,
-        timeFromStart: Date.now() - startTime
-      }
+        timeFromStart: Date.now() - startTime,
+      },
     });
 
-    updateProbability(0.30);
+    updateProbability(0.3);
     setSelectedTask(taskId);
     setTaskAnswer("");
     setShowSolution(false);
@@ -247,96 +283,105 @@ print(total)
     setErrorMessage("");
     setTaskStartTime(Date.now());
 
-    setInteractionHistory(prev => [...prev, {
-      type: 'task_attempt',
-      taskId,
-      timestamp: Date.now()
-    }]);
+    setInteractionHistory((prev) => [
+      ...prev,
+      {
+        type: "task_attempt",
+        taskId,
+        timestamp: Date.now(),
+      },
+    ]);
   };
 
   const handleCheckAnswer = () => {
     const task = tasks[selectedTask];
     const result = task.checkFunction(taskAnswer);
 
-    trackButtonClick('python_task_check', {
-      componentName: 'PythonTasksIntroduction',
-      elementType: 'button',
-      elementLocation: 'task_submission',
+    trackButtonClick("python_task_check", {
+      componentName: "PythonTasksIntroduction",
+      elementType: "button",
+      elementLocation: "task_submission",
       submissionContext: {
         taskId: selectedTask,
         isCorrect: result.valid,
         codeLength: taskAnswer.length,
         timeSpent: Date.now() - taskStartTime,
-        attemptNumber: interactionHistory.filter(i =>
-          i.type === 'task_attempt' && i.taskId === selectedTask
-        ).length
-      }
+        attemptNumber: interactionHistory.filter(
+          (i) => i.type === "task_attempt" && i.taskId === selectedTask
+        ).length,
+      },
     });
 
     if (result.valid) {
       setShowSolution(true);
       setShowError(false);
       if (!completedTasks.includes(selectedTask)) {
-        trackCustomEvent('python_task_completed', {
-          componentName: 'PythonTasksIntroduction',
-          elementType: 'task',
+        trackCustomEvent("python_task_completed", {
+          componentName: "PythonTasksIntroduction",
+          elementType: "task",
           completionContext: {
             taskId: selectedTask,
             taskTitle: task.title,
             timeToComplete: Date.now() - taskStartTime,
             codeLength: taskAnswer.length,
             isFirstCompletion: true,
-            totalCompleted: completedTasks.length + 1
-          }
+            totalCompleted: completedTasks.length + 1,
+          },
         });
 
         setCompletedTasks([...completedTasks, selectedTask]);
-        setInteractionHistory(prev => [...prev, {
-          type: 'task_complete',
-          taskId: selectedTask,
-          timestamp: Date.now(),
-          duration: Date.now() - taskStartTime
-        }]);
+        setInteractionHistory((prev) => [
+          ...prev,
+          {
+            type: "task_complete",
+            taskId: selectedTask,
+            timestamp: Date.now(),
+            duration: Date.now() - taskStartTime,
+          },
+        ]);
 
         // Trigger confetti for task completion
         startConfetti(3000);
       }
     } else {
-      trackCustomEvent('python_task_error', {
-        componentName: 'PythonTasksIntroduction',
-        elementType: 'task',
+      trackCustomEvent("python_task_error", {
+        componentName: "PythonTasksIntroduction",
+        elementType: "task",
         errorContext: {
           taskId: selectedTask,
           errorType: result.error,
           codeLength: taskAnswer.length,
-          timeSpent: Date.now() - taskStartTime
-        }
+          timeSpent: Date.now() - taskStartTime,
+        },
       });
 
       setErrorMessage(result.error);
       setShowError(true);
       setTimeout(() => setShowError(false), 5000);
 
-      setInteractionHistory(prev => [...prev, {
-        type: 'task_error',
-        taskId: selectedTask,
-        timestamp: Date.now(),
-        error: result.error
-      }]);
+      setInteractionHistory((prev) => [
+        ...prev,
+        {
+          type: "task_error",
+          taskId: selectedTask,
+          timestamp: Date.now(),
+          error: result.error,
+        },
+      ]);
     }
   };
 
   const resetTask = () => {
-    trackButtonClick('python_task_reset', {
-      componentName: 'PythonTasksIntroduction',
-      elementType: 'button',
-      elementLocation: 'task_navigation',
+    trackButtonClick("python_task_reset", {
+      componentName: "PythonTasksIntroduction",
+      elementType: "button",
+      elementLocation: "task_navigation",
       resetContext: {
         taskId: selectedTask,
         wasCompleted: completedTasks.includes(selectedTask),
         timeSpent: Date.now() - taskStartTime,
-        codeLength: taskAnswer.length
-      }
+        codeLength: taskAnswer.length,
+      },
     });
 
     setSelectedTask(null);
@@ -346,24 +391,27 @@ print(total)
     setErrorMessage("");
     setTaskStartTime(null);
 
-    setInteractionHistory(prev => [...prev, {
-      type: 'task_reset',
-      taskId: selectedTask,
-      timestamp: Date.now()
-    }]);
+    setInteractionHistory((prev) => [
+      ...prev,
+      {
+        type: "task_reset",
+        taskId: selectedTask,
+        timestamp: Date.now(),
+      },
+    ]);
   };
 
   const handleContinue = () => {
-    trackButtonClick('python_tasks_continue', {
-      componentName: 'PythonTasksIntroduction',
-      elementType: 'button',
-      elementLocation: 'section_navigation',
+    trackButtonClick("python_tasks_continue", {
+      componentName: "PythonTasksIntroduction",
+      elementType: "button",
+      elementLocation: "section_navigation",
       navigationContext: {
         completedTasks: completedTasks.length,
         totalTasks: Object.keys(tasks).length,
         timeSpent: Date.now() - startTime,
-        interactionSummary: summarizeInteractions(interactionHistory)
-      }
+        interactionSummary: summarizeInteractions(interactionHistory),
+      },
     });
 
     navigate(9);
@@ -383,10 +431,13 @@ print(total)
     return (
       <div className="bg-white min-h-screen flex flex-col text-black font-['IBM_Plex_Mono',monospace] py-8 px-4 md:px-10">
         <div className="w-full max-w-4xl mx-auto flex flex-col gap-8">
-
           {/* Header */}
           <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
-            <div className={`absolute -top-6 left-4 px-3 py-1 font-semibold rounded-md text-xs tracking-wider flex items-center gap-2 border-4 border-black ${colorClasses[task.color]}`}>
+            <div
+              className={`absolute -top-6 left-4 px-3 py-1 font-semibold rounded-md text-xs tracking-wider flex items-center gap-2 border-4 border-black ${
+                colorClasses[task.color]
+              }`}
+            >
               <Target className="w-4 h-4" />
               TASK {selectedTask} OF 2
             </div>
@@ -411,7 +462,10 @@ print(total)
 
               <div className="text-left space-y-3">
                 {task.requirements.map((req, index) => (
-                  <div key={index} className="border-4 border-black rounded-xl p-4 bg-gray-50">
+                  <div
+                    key={index}
+                    className="border-4 border-black rounded-xl p-4 bg-gray-50"
+                  >
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 bg-black text-white border-2 border-black rounded-full flex items-center justify-center font-bold text-sm">
                         {index + 1}
@@ -464,15 +518,15 @@ print(total)
                   Error
                 </h4>
               </div>
-              <p className="text-red-700 font-bold">
-                {errorMessage}
-              </p>
+              <p className="text-red-700 font-bold">{errorMessage}</p>
             </div>
           )}
 
           {/* Success Message */}
           {showSolution && (
-            <div className={`border-4 border-black rounded-xl p-8 bg-white shadow-lg`}>
+            <div
+              className={`border-4 border-black rounded-xl p-8 bg-white shadow-lg`}
+            >
               <div className="flex items-center gap-3 mb-4">
                 <CheckCircle className="w-8 h-8 text-green-600" />
                 <h4 className="font-bold text-green-700 text-xl uppercase tracking-wide">
@@ -509,7 +563,6 @@ print(total)
   return (
     <div className="bg-white min-h-screen flex flex-col items-center justify-center text-black font-['IBM_Plex_Mono',monospace] py-8 px-4 md:px-10">
       <div className="w-full max-w-6xl mx-auto flex flex-col gap-8">
-
         {/* Header */}
         <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
           <div className="absolute -top-6 left-4 px-3 py-1 bg-black text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
@@ -520,10 +573,12 @@ print(total)
             Which task is more difficult?
           </div>
           <p className="text-lg text-black text-center mt-4 font-bold">
-            These tasks are optional - you can skip them and continue to the next section anytime.
+            Choose a task to practice and think about which task is more
+            difficult to solve.
           </p>
           <p className="text-md text-black text-center mt-2 font-bold">
-            The difference between the tasks is the skill difficulty.
+            These tasks are optional - you can skip them and continue to the
+            next section anytime.
           </p>
         </div>
 
@@ -552,7 +607,9 @@ print(total)
                 onClick={() => handleTaskClick(parseInt(taskId))}
               >
                 <div
-                  className={`absolute -top-6 left-4 px-3 py-1 font-semibold rounded-md text-xs tracking-wider flex items-center gap-2 border-4 border-black ${colorClasses[task.color]}`}
+                  className={`absolute -top-6 left-4 px-3 py-1 font-semibold rounded-md text-xs tracking-wider flex items-center gap-2 border-4 border-black ${
+                    colorClasses[task.color]
+                  }`}
                 >
                   <IconComponent className="w-4 h-4" />
                   TASK
@@ -580,7 +637,10 @@ print(total)
                       </div>
                       <div className="space-y-1">
                         {task.requirements.map((req, index) => (
-                          <div key={index} className="text-black font-bold text-sm">
+                          <div
+                            key={index}
+                            className="text-black font-bold text-sm"
+                          >
                             • {req}
                           </div>
                         ))}
@@ -599,7 +659,7 @@ print(total)
           className="px-12 py-4 bg-green-600 text-white border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide hover:bg-white hover:text-green-600 hover:border-green-600 transition-all transform hover:scale-105 flex items-center gap-3"
           onClick={handleContinue}
         >
-          <span>Continue to Next Section</span>
+          <span>Which task was more difficult?</span>
           <ArrowRight className="w-6 h-6" />
         </button>
       </div>
