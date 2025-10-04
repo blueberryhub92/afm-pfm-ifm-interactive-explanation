@@ -1,11 +1,10 @@
-import React from 'react';
-import { Eye, CheckCircle, ArrowRight, Brain } from 'lucide-react';
+import React from "react";
+import { Eye, CheckCircle, ArrowRight, Brain } from "lucide-react";
 
 export const ProbabilityGuessResult = ({ guess1, navigate }) => {
   return (
     <div className="bg-white min-h-screen flex flex-col items-center justify-center py-8 px-4 md:px-10 text-black font-['IBM_Plex_Mono',monospace]">
       <div className="w-full max-w-4xl mx-auto flex flex-col gap-8">
-
         {/* Guess Display */}
         <div className="border-4 border-orange-400 rounded-xl p-8 bg-orange-50 shadow-lg relative">
           <div className="absolute -top-6 left-4 px-3 py-1 bg-orange-400 text-black font-semibold rounded-md text-xs tracking-wider flex items-center gap-2 border-2 border-black">
@@ -19,28 +18,48 @@ export const ProbabilityGuessResult = ({ guess1, navigate }) => {
           </div>
         </div>
 
+        {/* Correct Answer Display */}
+        <div className="border-4 border-green-500 rounded-xl p-8 bg-green-50 shadow-lg relative mb-8">
+          <div className="absolute -top-6 left-4 px-3 py-1 bg-green-500 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2 border-2 border-black">
+            <CheckCircle className="w-4 h-4" />
+            CORRECT ANSWER
+          </div>
+          <div className="text-center">
+            <p className="text-xl font-bold text-green-800 mb-4 uppercase tracking-wide">
+              The correct answer to the task was:
+            </p>
+            <div className="bg-black text-white px-8 py-4 rounded-xl font-mono text-3xl md:text-4xl font-bold uppercase tracking-wider shadow-lg border-4 border-green-500 inline-block">
+              PYTHON
+            </div>
+            <p className="text-lg text-green-700 mt-4 font-semibold">
+              The programming language shown in the code snippet
+            </p>
+          </div>
+        </div>
+
         {/* Main Content */}
         <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
-
-          {/* Python Recognition */}
+          {/* Analysis */}
           <div className="border-4 border-blue-400 rounded-xl p-6 bg-blue-50 mb-8 relative">
             <div className="absolute -top-6 left-4 px-3 py-1 bg-blue-400 text-black font-semibold rounded-md text-xs tracking-wider flex items-center gap-2 border-2 border-black">
               <Brain className="w-4 h-4" />
               ANALYSIS
             </div>
             <p className="text-lg font-semibold text-center text-black leading-relaxed">
-              You may have recognized the programming language above as{" "}
-              <span className="bg-black text-white px-2 py-1 rounded font-mono uppercase tracking-wide">
-                Python
-              </span>
-              , but chances are, you probably didn't know how to solve the task.
+              You may have recognized this programming language, but chances
+              are, you probably didn't know how to solve the actual programming
+              task.
             </p>
           </div>
 
           {/* Transition to Probability Estimation */}
           <div className="text-center">
             <p className="text-lg text-black mb-6 leading-relaxed">
-              What do you think chances are that you answer the <span className="bg-yellow-200 px-2 py-1 border-2 border-black rounded font-bold uppercase">next programming task</span> correctly? Can you estimate your probability of success?
+              What do you think chances are that you answer the{" "}
+              <span className="bg-yellow-200 px-2 py-1 border-2 border-black rounded font-bold uppercase">
+                next programming task
+              </span>{" "}
+              correctly? Can you estimate your probability of success?
             </p>
 
             <button
@@ -55,6 +74,5 @@ export const ProbabilityGuessResult = ({ guess1, navigate }) => {
         </div>
       </div>
     </div>
-
   );
 };
