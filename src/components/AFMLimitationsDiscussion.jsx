@@ -69,6 +69,11 @@ export const AFMLimitationsDiscussion = ({ navigate }) => {
     "Return Values": 0.5,
   });
 
+  // Binary Skills states (new interactive version)
+  const [selectedCodeSolution, setSelectedCodeSolution] = useState(null);
+  const [testCaseResults, setTestCaseResults] = useState({});
+  const [showBetterSolution, setShowBetterSolution] = useState(false);
+
   const handleSliderChange = (period, value) => {
     setSliderValues((prev) => ({ ...prev, [period]: value }));
   };
@@ -140,8 +145,9 @@ print(result)`,
     } else if (taskId === "binary-skills") {
       setCurrentView("binary-skills");
       setSimStep(0);
-      setSelectedStudent(null);
-      setShowComparison(false);
+      setSelectedCodeSolution(null);
+      setTestCaseResults({});
+      setShowBetterSolution(false);
       setAnimating(false);
     } else if (taskId === "context-blind") {
       setCurrentView("context-blind");
@@ -324,326 +330,175 @@ print(result)`,
   };
 
   const renderBinarySkills = () => {
-    // Python programming assessment scenario - shows binary vs nuanced evaluation
-    const programmingAssessment = {
-      taskInfo:
-        "Write a Python function to find the second largest number in a list",
-      requirements: [
-        {
-          id: "functionality",
-          name: "Basic Functionality",
-          achieved: true,
-          points: 3,
-        },
-        {
-          id: "efficiency",
-          name: "Algorithm Efficiency",
-          achieved: false,
-          points: 2,
-        },
-        {
-          id: "edge_cases",
-          name: "Edge Case Handling",
-          achieved: false,
-          points: 2,
-        },
-        {
-          id: "documentation",
-          name: "Code Documentation",
-          achieved: false,
-          points: 1,
-        },
-        {
-          id: "style",
-          name: "Code Style & Readability",
-          achieved: true,
-          points: 1,
-        },
-      ],
-      studentCode: `def second_largest(nums):
+    // Define different code solutions with their characteristics
+    const codeSolutions = {
+      sortBased: {
+        id: "sortBased",
+        label: "Solution A: Sort-Based",
+        code: `def second_largest(nums):
     nums.sort()
-    return nums[-2]
-
-# Test
-print(second_largest([1, 3, 2, 5, 4]))`,
-      expectedOutput: "4",
-      actualOutput: "4",
-      codeRuns: true,
-      issues: {
-        efficiency:
-          "Uses sort() which is O(n log n) instead of O(n) single pass",
-        edgeCases:
-          "No handling for empty lists, single element, or duplicate values",
-        documentation: "No docstring, no comments explaining logic",
+    return nums[-2]`,
+        basicTest: { works: true, output: "4" },
+        issues: {
+          efficiency:
+            "Uses sort() which is O(n log n) instead of O(n) single pass",
+          edgeCases: "Fails with empty list, single element, or all duplicates",
+          documentation: "No docstring or input validation",
+        },
+        testCases: [
+          {
+            id: "basic",
+            input: "[1, 3, 2, 5, 4]",
+            expected: "4",
+            result: "4",
+            pass: true,
+            description: "Standard case with unique numbers",
+          },
+          {
+            id: "empty",
+            input: "[]",
+            expected: "None or error handling",
+            result: "IndexError: list index out of range",
+            pass: false,
+            description: "Empty list causes crash",
+            errorExplanation:
+              "The code tries to access nums[-2] on an empty list, causing an IndexError. Proper error handling is missing.",
+          },
+          {
+            id: "duplicates",
+            input: "[5, 5, 5, 5]",
+            expected: "5 or None",
+            result: "5",
+            pass: false,
+            description: "All duplicates - ambiguous result",
+            errorExplanation:
+              "When all numbers are the same, there's no true 'second largest'. The function returns 5, but should handle this edge case explicitly.",
+          },
+          {
+            id: "single",
+            input: "[7]",
+            expected: "None",
+            result: "IndexError: list index out of range",
+            pass: false,
+            description: "Single element causes crash",
+            errorExplanation:
+              "A list with only one element has no second largest number. The code crashes instead of handling this gracefully.",
+          },
+        ],
+      },
+      maxBased: {
+        id: "maxBased",
+        label: "Solution B: Max-Based",
+        code: `def second_largest(nums):
+    first_max = max(nums)
+    nums.remove(first_max)
+    return max(nums)`,
+        basicTest: { works: true, output: "4" },
+        issues: {
+          efficiency: "Calls max() twice, modifies original list",
+          edgeCases:
+            "Fails with empty list, single element, and duplicates of max",
+          documentation: "No docstring, destructive operation not documented",
+        },
+        testCases: [
+          {
+            id: "basic",
+            input: "[1, 3, 2, 5, 4]",
+            expected: "4",
+            result: "4",
+            pass: true,
+            description: "Standard case works fine",
+          },
+          {
+            id: "empty",
+            input: "[]",
+            expected: "None or error handling",
+            result: "ValueError: max() arg is an empty sequence",
+            pass: false,
+            description: "Empty list causes crash",
+            errorExplanation:
+              "The max() function fails on an empty list. The code doesn't check if the list is empty before processing.",
+          },
+          {
+            id: "duplicates",
+            input: "[5, 5, 3, 1]",
+            expected: "3",
+            result: "5",
+            pass: false,
+            description: "Duplicate maximum values",
+            errorExplanation:
+              "When the maximum value appears multiple times, remove() only removes the first occurrence. This leads to returning the max again instead of the second largest distinct value.",
+          },
+          {
+            id: "single",
+            input: "[7]",
+            expected: "None",
+            result: "ValueError: max() arg is an empty sequence",
+            pass: false,
+            description: "Single element causes crash",
+            errorExplanation:
+              "After removing the only element, max() is called on an empty list, causing a ValueError.",
+          },
+        ],
+      },
+      indexBased: {
+        id: "indexBased",
+        label: "Solution C: Index-Based",
+        code: `def second_largest(nums):
+    sorted_nums = sorted(nums, reverse=True)
+    return sorted_nums[1]`,
+        basicTest: { works: true, output: "4" },
+        issues: {
+          efficiency: "Uses sorted() which is O(n log n)",
+          edgeCases:
+            "Fails with lists shorter than 2 elements, doesn't handle duplicates",
+          documentation: "No docstring or validation",
+        },
+        testCases: [
+          {
+            id: "basic",
+            input: "[1, 3, 2, 5, 4]",
+            expected: "4",
+            result: "4",
+            pass: true,
+            description: "Standard case works correctly",
+          },
+          {
+            id: "empty",
+            input: "[]",
+            expected: "None or error handling",
+            result: "IndexError: list index out of range",
+            pass: false,
+            description: "Empty list causes crash",
+            errorExplanation:
+              "Accessing index [1] on an empty list causes an IndexError. No length check is performed.",
+          },
+          {
+            id: "duplicates",
+            input: "[5, 5, 3, 1]",
+            expected: "3",
+            result: "5",
+            pass: false,
+            description: "Doesn't skip duplicates",
+            errorExplanation:
+              "The sorted list is [5, 5, 3, 1], so index [1] returns 5 (duplicate) instead of 3 (actual second largest distinct value).",
+          },
+          {
+            id: "single",
+            input: "[7]",
+            expected: "None",
+            result: "IndexError: list index out of range",
+            pass: false,
+            description: "Single element causes crash",
+            errorExplanation:
+              "A single-element list only has index [0]. Accessing index [1] causes an IndexError.",
+          },
+        ],
       },
     };
 
-    const calculateRealScore = () => {
-      const totalPoints = programmingAssessment.requirements.reduce(
-        (acc, req) => acc + (req.achieved ? req.points : 0),
-        0
-      );
-      const maxPoints = programmingAssessment.requirements.reduce(
-        (acc, req) => acc + req.points,
-        0
-      );
-      return (totalPoints / maxPoints) * 100;
-    };
-
-    const afmScore = programmingAssessment.codeRuns ? 100 : 0; // Binary: either runs or doesn't
-    const realScore = calculateRealScore(); // ~44% - shows partial competency
-
-    const stepLabels = {
-      0: "Programming Task Overview",
-      1: "Code Analysis",
-      2: "Functionality Assessment",
-      3: "Quality Evaluation",
-      4: "Results Comparison",
-    };
-
-    const navigateSimStep = (direction) => {
-      const newStep = simStep + direction;
-      if (newStep >= 0 && newStep <= 4) {
-        setAnimating(true);
-        setTimeout(() => {
-          setSimStep(newStep);
-          setAnimating(false);
-        }, 300);
-      }
-    };
-
-    const resetSimulation = () => {
-      setSimStep(0);
-    };
-
-    const renderCaseOverview = () => (
-      <div className="space-y-6">
-        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
-          <div className="absolute -top-6 left-4 px-3 py-1 bg-blue-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
-            <Code className="w-4 h-4" />
-            PYTHON PROGRAMMING ASSESSMENT
-          </div>
-          <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center mb-6">
-            Python Programming Assessment
-          </div>
-          <p className="text-lg text-black text-center mb-8 font-bold">
-            Understand how AFM's binary approach fails in comprehensive code
-            evaluation
-          </p>
-
-          <div className="space-y-6">
-            <div className="border-4 border-blue-600 rounded-xl p-6 bg-blue-50">
-              <h3 className="font-bold text-blue-700 text-lg font-mono uppercase mb-3">
-                PROGRAMMING TASK
-              </h3>
-              <p className="text-black font-mono text-lg mb-4">
-                {programmingAssessment.taskInfo}
-              </p>
-              <div className="bg-black text-green-400 p-4 rounded-lg font-mono text-sm">
-                <div className="flex items-center gap-2 mb-2 text-gray-400">
-                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                  <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                  <span className="ml-2 text-xs">python_assessment.py</span>
-                </div>
-                <pre className="text-white whitespace-pre-wrap leading-relaxed">
-                  {programmingAssessment.studentCode}
-                </pre>
-              </div>
-            </div>
-
-            <div className="border-4 border-yellow-600 rounded-xl p-6 bg-yellow-50">
-              <h3 className="font-bold text-yellow-700 text-lg font-mono uppercase mb-3">
-                ASSESSMENT CHALLENGE
-              </h3>
-              <p className="text-black font-mono text-lg">
-                The code runs and produces the correct output. But is running
-                correctly the only measure of programming competency? We'll
-                compare AFM's binary approach with a comprehensive code
-                evaluation.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex justify-center">
-          <button
-            onClick={() => setSimStep(1)}
-            className="px-8 py-4 bg-black text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-black hover:border-black transition-all transform hover:scale-105 font-mono"
-          >
-            START CODE ANALYSIS →
-          </button>
-        </div>
-      </div>
-    );
-
-    const renderCodeAnalysis = () => (
-      <div className="space-y-6">
-        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
-          <div className="absolute -top-6 left-4 px-3 py-1 bg-green-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
-            <Target className="w-4 h-4" />
-            STEP 1: CODE ANALYSIS
-          </div>
-          <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center mb-6">
-            Step 1: Code Analysis
-          </div>
-          <p className="text-lg text-black text-center mb-8 font-bold">
-            Analyzing student's code submission across multiple dimensions
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="border-4 border-green-600 rounded-xl p-6 bg-green-50">
-              <h3 className="font-bold text-green-700 text-lg font-mono uppercase mb-3">
-                STUDENT'S SOLUTION
-              </h3>
-              <div className="bg-black text-green-400 p-4 rounded-lg font-mono text-sm">
-                <pre className="text-white whitespace-pre-wrap leading-relaxed">
-                  {programmingAssessment.studentCode}
-                </pre>
-              </div>
-              <div className="mt-4 p-3 bg-white border-2 border-green-600 rounded-lg">
-                <p className="font-mono text-black font-bold">
-                  Output: {programmingAssessment.actualOutput}
-                </p>
-                <p className="font-mono text-black font-bold">
-                  Expected: {programmingAssessment.expectedOutput}
-                </p>
-                <span
-                  className={`px-2 py-1 border-2 border-black font-mono font-bold text-xs ${
-                    programmingAssessment.codeRuns
-                      ? "bg-green-300"
-                      : "bg-red-300"
-                  }`}
-                >
-                  {programmingAssessment.codeRuns
-                    ? "RUNS CORRECTLY"
-                    : "EXECUTION ERROR"}
-                </span>
-              </div>
-            </div>
-
-            <div className="border-4 border-orange-600 rounded-xl p-6 bg-orange-50">
-              <h3 className="font-bold text-orange-700 text-lg font-mono uppercase mb-3">
-                CODE QUALITY ISSUES
-              </h3>
-              <div className="space-y-3">
-                <div className="p-3 bg-white border-2 border-orange-600 rounded-lg">
-                  <h4 className="font-bold text-orange-700 font-mono mb-2">
-                    EFFICIENCY:
-                  </h4>
-                  <p className="text-black font-mono text-sm">
-                    {programmingAssessment.issues.efficiency}
-                  </p>
-                </div>
-                <div className="p-3 bg-white border-2 border-orange-600 rounded-lg">
-                  <h4 className="font-bold text-orange-700 font-mono mb-2">
-                    EDGE CASES:
-                  </h4>
-                  <p className="text-black font-mono text-sm">
-                    {programmingAssessment.issues.edgeCases}
-                  </p>
-                </div>
-                <div className="p-3 bg-white border-2 border-orange-600 rounded-lg">
-                  <h4 className="font-bold text-orange-700 font-mono mb-2">
-                    DOCUMENTATION:
-                  </h4>
-                  <p className="text-black font-mono text-sm">
-                    {programmingAssessment.issues.documentation}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex justify-center space-x-4">
-          <button
-            onClick={() => navigateSimStep(-1)}
-            className="px-6 py-3 bg-white text-black border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-black hover:text-white transition-all transform hover:scale-105 font-mono"
-          >
-            ← PREVIOUS
-          </button>
-
-          <button
-            onClick={() => navigateSimStep(1)}
-            className="px-6 py-3 bg-black text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-black transition-all transform hover:scale-105 font-mono"
-          >
-            NEXT: FUNCTIONALITY →
-          </button>
-        </div>
-      </div>
-    );
-
-    const renderFunctionalityAssessment = () => (
-      <div className="space-y-6">
-        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
-          <div className="absolute -top-6 left-4 px-3 py-1 bg-blue-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
-            <Zap className="w-4 h-4" />
-            STEP 2: FUNCTIONALITY TEST
-          </div>
-          <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center mb-6">
-            Step 2: Functionality Test
-          </div>
-          <p className="text-lg text-black text-center mb-8 font-bold">
-            Testing the code with various inputs to evaluate robustness
-          </p>
-
-          <div className="space-y-4">
-            <div className="border-4 border-blue-600 rounded-xl p-6 bg-blue-50">
-              <h3 className="font-bold text-blue-700 text-lg font-mono uppercase mb-3">
-                TEST CASES
-              </h3>
-              <div className="space-y-3">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <div className="p-3 bg-white border-2 border-green-600 rounded-lg">
-                    <h4 className="font-bold text-green-700 font-mono mb-1">
-                      BASIC CASE
-                    </h4>
-                    <p className="font-mono text-black text-sm">
-                      Input: [1,3,2,5,4]
-                    </p>
-                    <p className="font-mono text-black text-sm">Expected: 4</p>
-                    <span className="px-2 py-1 bg-green-300 border border-black font-mono font-bold text-xs">
-                      PASS
-                    </span>
-                  </div>
-                  <div className="p-3 bg-white border-2 border-red-600 rounded-lg">
-                    <h4 className="font-bold text-red-700 font-mono mb-1">
-                      EDGE CASE
-                    </h4>
-                    <p className="font-mono text-black text-sm">Input: []</p>
-                    <p className="font-mono text-black text-sm">
-                      Expected: Handle gracefully
-                    </p>
-                    <span className="px-2 py-1 bg-red-300 border border-black font-mono font-bold text-xs">
-                      FAIL
-                    </span>
-                  </div>
-                  <div className="p-3 bg-white border-2 border-red-600 rounded-lg">
-                    <h4 className="font-bold text-red-700 font-mono mb-1">
-                      DUPLICATES
-                    </h4>
-                    <p className="font-mono text-black text-sm">
-                      Input: [5,5,5,5]
-                    </p>
-                    <p className="font-mono text-black text-sm">
-                      Expected: Handle duplicates
-                    </p>
-                    <span className="px-2 py-1 bg-red-300 border border-black font-mono font-bold text-xs">
-                      FAIL
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="border-4 border-yellow-600 rounded-xl p-6 bg-yellow-50">
-              <h3 className="font-bold text-yellow-700 text-lg font-mono uppercase mb-3">
-                BETTER SOLUTION EXAMPLE
-              </h3>
-              <div className="bg-black text-green-400 p-4 rounded-lg font-mono text-sm">
-                <pre className="text-white whitespace-pre-wrap leading-relaxed">
-                  {`def second_largest(nums):
+    // Better solution for comparison
+    const betterSolution = `def second_largest(nums):
     """
     Find the second largest number in a list.
     
@@ -665,8 +520,440 @@ print(second_largest([1, 3, 2, 5, 4]))`,
         elif num > second and num != first:
             second = num
     
-    return second if second != float('-inf') else None`}
+    return second if second != float('-inf') else None`;
+
+    const stepLabels = {
+      0: "Choose Your Solution",
+      1: "Code Analysis",
+      2: "Interactive Functionality Tests",
+      3: "Better Solution Example",
+      4: "Assessment Comparison",
+    };
+
+    const navigateSimStep = (direction) => {
+      const newStep = simStep + direction;
+      if (newStep >= 0 && newStep <= 4) {
+        setAnimating(true);
+        setTimeout(() => {
+          setSimStep(newStep);
+          setAnimating(false);
+        }, 300);
+      }
+    };
+
+    const resetSimulation = () => {
+      setSimStep(0);
+      setSelectedCodeSolution(null);
+      setTestCaseResults({});
+      setShowBetterSolution(false);
+    };
+
+    const handleSolutionSelect = (solutionId) => {
+      setSelectedCodeSolution(solutionId);
+      setTestCaseResults({});
+    };
+
+    const handleTestCase = (testCaseId) => {
+      setTestCaseResults((prev) => ({
+        ...prev,
+        [testCaseId]: true,
+      }));
+    };
+
+    const renderCaseOverview = () => (
+      <div className="space-y-6">
+        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
+          <div className="absolute -top-6 left-4 px-3 py-1 bg-blue-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
+            <Code className="w-4 h-4" />
+            PYTHON PROGRAMMING TASK
+          </div>
+          <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center mb-6">
+            Programming Task
+          </div>
+
+          <div className="space-y-6">
+            <div className="border-4 border-blue-600 rounded-xl p-6 bg-blue-50">
+              <h3 className="font-bold text-blue-700 text-lg font-mono uppercase mb-3">
+                YOUR TASK
+              </h3>
+              <p className="text-black font-mono text-lg mb-4">
+                Write a Python function to find the second largest number in a
+                list
+              </p>
+              <p className="text-black font-mono text-sm">
+                Example: second_largest([1, 3, 2, 5, 4]) should return 4
+              </p>
+            </div>
+
+            <div className="border-4 border-purple-600 rounded-xl p-6 bg-purple-50">
+              <h3 className="font-bold text-purple-700 text-lg font-mono uppercase mb-3">
+                CHOOSE YOUR SOLUTION
+              </h3>
+              <p className="text-black font-mono text-sm mb-4">
+                Select one of these working solutions. They all produce the
+                correct output for the basic test case, but each has different
+                characteristics.
+              </p>
+
+              <div className="space-y-4">
+                {Object.values(codeSolutions).map((solution) => (
+                  <div
+                    key={solution.id}
+                    className={`border-4 rounded-xl p-4 cursor-pointer transition-all ${
+                      selectedCodeSolution === solution.id
+                        ? "border-green-600 bg-green-100"
+                        : "border-gray-400 bg-white hover:border-gray-600"
+                    }`}
+                    onClick={() => handleSolutionSelect(solution.id)}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-bold text-black font-mono">
+                        {solution.label}
+                      </h4>
+                      {selectedCodeSolution === solution.id && (
+                        <span className="px-2 py-1 bg-green-600 text-white font-mono text-xs font-bold">
+                          SELECTED
+                        </span>
+                      )}
+                    </div>
+                    <div className="bg-black text-green-400 p-3 rounded-lg font-mono text-sm">
+                      <pre className="text-white whitespace-pre-wrap leading-relaxed">
+                        {solution.code}
+                      </pre>
+                    </div>
+                    <div className="mt-2 text-black font-mono text-xs">
+                      ✓ Basic test: returns {solution.basicTest.output}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-center">
+          <button
+            onClick={() => setSimStep(1)}
+            disabled={!selectedCodeSolution}
+            className={`px-8 py-4 border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide transition-all transform font-mono ${
+              selectedCodeSolution
+                ? "bg-black text-white hover:bg-white hover:text-black hover:scale-105"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+            }`}
+          >
+            CONTINUE WITH SELECTED SOLUTION →
+          </button>
+        </div>
+      </div>
+    );
+
+    const selectedSolution = selectedCodeSolution
+      ? codeSolutions[selectedCodeSolution]
+      : null;
+
+    const renderCodeAnalysis = () => {
+      if (!selectedSolution) return null;
+
+      return (
+        <div className="space-y-6">
+          <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
+            <div className="absolute -top-6 left-4 px-3 py-1 bg-green-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
+              <Target className="w-4 h-4" />
+              STEP 1: CODE ANALYSIS
+            </div>
+            <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center mb-6">
+              Your Selected Solution
+            </div>
+
+            <div className="space-y-6">
+              <div className="border-4 border-green-600 rounded-xl p-6 bg-green-50">
+                <h3 className="font-bold text-green-700 text-lg font-mono uppercase mb-3">
+                  YOUR CODE ({selectedSolution.label})
+                </h3>
+                <div className="bg-black text-green-400 p-4 rounded-lg font-mono text-sm mb-4">
+                  <pre className="text-white whitespace-pre-wrap leading-relaxed">
+                    {selectedSolution.code}
+                  </pre>
+                </div>
+                <div className="p-3 bg-white border-2 border-green-600 rounded-lg">
+                  <p className="font-mono text-black font-bold mb-2">
+                    Basic Test: second_largest([1, 3, 2, 5, 4])
+                  </p>
+                  <p className="font-mono text-black">
+                    Output: {selectedSolution.basicTest.output}
+                  </p>
+                  <span className="px-2 py-1 bg-green-300 border-2 border-black font-mono font-bold text-xs inline-block mt-2">
+                    ✓ RUNS CORRECTLY
+                  </span>
+                </div>
+              </div>
+
+              <div className="border-4 border-yellow-600 rounded-xl p-6 bg-yellow-50">
+                <h3 className="font-bold text-yellow-700 text-lg font-mono uppercase mb-3">
+                  THE QUESTION
+                </h3>
+                <p className="text-black font-mono text-lg">
+                  The code runs and produces the correct output. But is running
+                  correctly the only measure of programming competency? We'll
+                  compare AFM's binary approach with a comprehensive code
+                  evaluation.
+                </p>
+              </div>
+
+              <div className="border-4 border-orange-600 rounded-xl p-6 bg-orange-50">
+                <h3 className="font-bold text-orange-700 text-lg font-mono uppercase mb-3">
+                  POTENTIAL CODE QUALITY ISSUES
+                </h3>
+                <div className="space-y-3">
+                  <div className="p-3 bg-white border-2 border-orange-600 rounded-lg">
+                    <h4 className="font-bold text-orange-700 font-mono mb-2">
+                      EFFICIENCY:
+                    </h4>
+                    <p className="text-black font-mono text-sm">
+                      {selectedSolution.issues.efficiency}
+                    </p>
+                  </div>
+                  <div className="p-3 bg-white border-2 border-orange-600 rounded-lg">
+                    <h4 className="font-bold text-orange-700 font-mono mb-2">
+                      EDGE CASES:
+                    </h4>
+                    <p className="text-black font-mono text-sm">
+                      {selectedSolution.issues.edgeCases}
+                    </p>
+                  </div>
+                  <div className="p-3 bg-white border-2 border-orange-600 rounded-lg">
+                    <h4 className="font-bold text-orange-700 font-mono mb-2">
+                      DOCUMENTATION:
+                    </h4>
+                    <p className="text-black font-mono text-sm">
+                      {selectedSolution.issues.documentation}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-center space-x-4">
+            <button
+              onClick={() => navigateSimStep(-1)}
+              className="px-6 py-3 bg-white text-black border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-black hover:text-white transition-all transform hover:scale-105 font-mono"
+            >
+              ← PREVIOUS
+            </button>
+
+            <button
+              onClick={() => navigateSimStep(1)}
+              className="px-6 py-3 bg-black text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-black transition-all transform hover:scale-105 font-mono"
+            >
+              TEST YOUR CODE →
+            </button>
+          </div>
+        </div>
+      );
+    };
+
+    const renderFunctionalityAssessment = () => {
+      if (!selectedSolution) return null;
+
+      return (
+        <div className="space-y-6">
+          <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
+            <div className="absolute -top-6 left-4 px-3 py-1 bg-blue-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
+              <Zap className="w-4 h-4" />
+              STEP 2: INTERACTIVE FUNCTIONALITY TESTS
+            </div>
+            <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center mb-6">
+              Test Your Code
+            </div>
+            <p className="text-lg text-black text-center mb-8 font-bold">
+              Click on each test case to see how your code handles different
+              scenarios
+            </p>
+
+            <div className="space-y-4">
+              <div className="border-4 border-blue-600 rounded-xl p-6 bg-blue-50">
+                <h3 className="font-bold text-blue-700 text-lg font-mono uppercase mb-3">
+                  INTERACTIVE TEST CASES
+                </h3>
+                <div className="space-y-3">
+                  {selectedSolution.testCases.map((testCase) => (
+                    <div key={testCase.id} className="space-y-2">
+                      <div
+                        className={`p-4 bg-white rounded-lg cursor-pointer transition-all border-4 ${
+                          testCaseResults[testCase.id]
+                            ? testCase.pass
+                              ? "border-green-600"
+                              : "border-red-600"
+                            : "border-gray-400 hover:border-gray-600"
+                        }`}
+                        onClick={() => handleTestCase(testCase.id)}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-bold text-black font-mono text-lg">
+                            {testCase.description}
+                          </h4>
+                          {testCaseResults[testCase.id] && (
+                            <span
+                              className={`px-3 py-1 border-2 border-black font-mono font-bold text-xs ${
+                                testCase.pass ? "bg-green-300" : "bg-red-300"
+                              }`}
+                            >
+                              {testCase.pass ? "✓ PASS" : "✗ FAIL"}
+                            </span>
+                          )}
+                        </div>
+                        <div className="font-mono text-black text-sm space-y-1">
+                          <p>
+                            <span className="font-bold">Input:</span>{" "}
+                            {testCase.input}
+                          </p>
+                          <p>
+                            <span className="font-bold">Expected:</span>{" "}
+                            {testCase.expected}
+                          </p>
+                          {testCaseResults[testCase.id] && (
+                            <p
+                              className={
+                                testCase.pass
+                                  ? "text-green-700"
+                                  : "text-red-700"
+                              }
+                            >
+                              <span className="font-bold">Result:</span>{" "}
+                              {testCase.result}
+                            </p>
+                          )}
+                        </div>
+                        {!testCaseResults[testCase.id] && (
+                          <div className="mt-2 text-blue-600 font-mono text-xs font-bold">
+                            Click to run this test →
+                          </div>
+                        )}
+                      </div>
+
+                      {testCaseResults[testCase.id] &&
+                        !testCase.pass &&
+                        testCase.errorExplanation && (
+                          <div className="ml-4 p-3 bg-red-50 border-l-4 border-red-600 rounded">
+                            <h5 className="font-bold text-red-700 font-mono text-sm mb-1">
+                              WHY THIS FAILS:
+                            </h5>
+                            <p className="text-black font-mono text-sm">
+                              {testCase.errorExplanation}
+                            </p>
+                          </div>
+                        )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {Object.keys(testCaseResults).length ===
+                selectedSolution.testCases.length && (
+                <div className="border-4 border-yellow-600 rounded-xl p-6 bg-yellow-50 animate-fadeIn">
+                  <div className="flex items-center gap-3 mb-3">
+                    <AlertTriangle className="w-6 h-6 text-yellow-700" />
+                    <h3 className="font-bold text-yellow-700 text-lg font-mono uppercase">
+                      TESTING COMPLETE
+                    </h3>
+                  </div>
+                  <p className="text-black font-mono text-sm mb-2">
+                    Your code passed{" "}
+                    {selectedSolution.testCases.filter((tc) => tc.pass).length}{" "}
+                    out of {selectedSolution.testCases.length} test cases.
+                  </p>
+                  <p className="text-black font-mono text-sm">
+                    While your code works for basic scenarios, it has problems
+                    with edge cases. Let's look at a better solution.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="flex justify-center space-x-4">
+            <button
+              onClick={() => navigateSimStep(-1)}
+              className="px-6 py-3 bg-white text-black border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-black hover:text-white transition-all transform hover:scale-105 font-mono"
+            >
+              ← PREVIOUS
+            </button>
+
+            <button
+              onClick={() => navigateSimStep(1)}
+              className="px-6 py-3 bg-black text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-black transition-all transform hover:scale-105 font-mono"
+            >
+              SEE BETTER SOLUTION →
+            </button>
+          </div>
+        </div>
+      );
+    };
+
+    const renderBetterSolutionExample = () => (
+      <div className="space-y-6">
+        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
+          <div className="absolute -top-6 left-4 px-3 py-1 bg-purple-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
+            <CheckCircle className="w-4 h-4" />
+            STEP 3: BETTER SOLUTION EXAMPLE
+          </div>
+          <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center mb-6">
+            A More Robust Solution
+          </div>
+          <p className="text-lg text-black text-center mb-8 font-bold">
+            Here's how to handle all edge cases properly with O(n) efficiency
+          </p>
+
+          <div className="space-y-6">
+            <div className="border-4 border-green-600 rounded-xl p-6 bg-green-50">
+              <h3 className="font-bold text-green-700 text-lg font-mono uppercase mb-3">
+                IMPROVED SOLUTION
+              </h3>
+              <div className="bg-black text-green-400 p-4 rounded-lg font-mono text-sm">
+                <pre className="text-white whitespace-pre-wrap leading-relaxed">
+                  {betterSolution}
                 </pre>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="border-4 border-blue-600 rounded-xl p-6 bg-blue-50">
+                <h3 className="font-bold text-blue-700 text-lg font-mono uppercase mb-3">
+                  KEY IMPROVEMENTS
+                </h3>
+                <ul className="space-y-2 text-black font-mono text-sm">
+                  <li>✓ O(n) time complexity - single pass</li>
+                  <li>✓ Handles empty lists gracefully</li>
+                  <li>✓ Properly manages duplicates</li>
+                  <li>✓ No list modification</li>
+                  <li>✓ Clear documentation</li>
+                  <li>✓ Input validation</li>
+                </ul>
+              </div>
+
+              <div className="border-4 border-yellow-600 rounded-xl p-6 bg-yellow-50">
+                <h3 className="font-bold text-yellow-700 text-lg font-mono uppercase mb-3">
+                  TEST RESULTS
+                </h3>
+                <div className="space-y-2">
+                  <div className="p-2 bg-white border-2 border-green-600 rounded">
+                    <p className="font-mono text-sm text-black">
+                      [1, 3, 2, 5, 4] → 4 ✓
+                    </p>
+                  </div>
+                  <div className="p-2 bg-white border-2 border-green-600 rounded">
+                    <p className="font-mono text-sm text-black">[] → None ✓</p>
+                  </div>
+                  <div className="p-2 bg-white border-2 border-green-600 rounded">
+                    <p className="font-mono text-sm text-black">
+                      [5, 5, 3, 1] → 3 ✓
+                    </p>
+                  </div>
+                  <div className="p-2 bg-white border-2 border-green-600 rounded">
+                    <p className="font-mono text-sm text-black">[7] → None ✓</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -684,70 +971,7 @@ print(second_largest([1, 3, 2, 5, 4]))`,
             onClick={() => navigateSimStep(1)}
             className="px-6 py-3 bg-black text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-black transition-all transform hover:scale-105 font-mono"
           >
-            NEXT: QUALITY EVALUATION →
-          </button>
-        </div>
-      </div>
-    );
-
-    const renderQualityEvaluation = () => (
-      <div className="space-y-6">
-        <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
-          <div className="absolute -top-6 left-4 px-3 py-1 bg-purple-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
-            <Brain className="w-4 h-4" />
-            STEP 3: QUALITY EVALUATION
-          </div>
-          <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center mb-6">
-            Step 3: Quality Evaluation
-          </div>
-          <p className="text-lg text-black text-center mb-8 font-bold">
-            Comprehensive assessment across multiple programming competencies
-          </p>
-
-          <div className="border-4 border-purple-600 rounded-xl p-6 bg-purple-50">
-            <h3 className="font-bold text-purple-700 text-lg font-mono uppercase mb-3">
-              ASSESSMENT CRITERIA
-            </h3>
-            <div className="space-y-3">
-              {programmingAssessment.requirements.map((req) => (
-                <div
-                  key={req.id}
-                  className="flex items-center justify-between p-3 bg-white border-2 border-purple-600 rounded-lg"
-                >
-                  <span className="font-mono text-black font-bold">
-                    {req.name}
-                  </span>
-                  <div className="flex items-center space-x-2">
-                    <span
-                      className={`px-2 py-1 border-2 border-black font-mono font-bold text-xs ${
-                        req.achieved ? "bg-green-300" : "bg-red-300"
-                      }`}
-                    >
-                      {req.achieved ? "ACHIEVED" : "MISSING"}
-                    </span>
-                    <span className="text-sm font-mono font-bold">
-                      ({req.points} pts)
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="flex justify-center space-x-4">
-          <button
-            onClick={() => navigateSimStep(-1)}
-            className="px-6 py-3 bg-white text-black border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-black hover:text-white transition-all transform hover:scale-105 font-mono"
-          >
-            ← PREVIOUS
-          </button>
-
-          <button
-            onClick={() => navigateSimStep(1)}
-            className="px-6 py-3 bg-green-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-green-600 transition-all transform hover:scale-105 font-mono"
-          >
-            VIEW COMPARISON →
+            ASSESSMENT COMPARISON →
           </button>
         </div>
       </div>
@@ -757,14 +981,14 @@ print(second_largest([1, 3, 2, 5, 4]))`,
       <div className="space-y-6">
         <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
           <div className="absolute -top-6 left-4 px-3 py-1 bg-red-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
-            <CheckCircle className="w-4 h-4" />
+            <Brain className="w-4 h-4" />
             ASSESSMENT COMPARISON
           </div>
           <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center mb-6">
             Assessment Comparison
           </div>
           <p className="text-lg text-black text-center mb-8 font-bold">
-            Compare AFM's binary approach vs comprehensive code evaluation
+            AFM's binary approach vs. comprehensive code evaluation
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -773,102 +997,77 @@ print(second_largest([1, 3, 2, 5, 4]))`,
                 AFM Binary Assessment
               </h3>
               <div className="space-y-4">
-                <div className="bg-red-100 p-4 border-2 border-red-600">
+                <div className="bg-red-100 p-4 border-2 border-red-600 rounded-lg">
                   <h4 className="font-bold text-red-700 font-mono mb-2">
                     BINARY LOGIC:
                   </h4>
-                  <p className="text-black font-mono text-sm">
-                    Code runs correctly → Student gets 100%
+                  <p className="text-black font-mono text-sm mb-2">
+                    Code runs correctly → Skill mastered
                   </p>
                   <p className="text-black font-mono text-sm">
-                    Code fails/error → Student gets 0%
+                    Code fails/error → Skill not mastered
                   </p>
                 </div>
 
-                <div className="bg-white p-4 border-2 border-red-600">
-                  <h4 className="font-bold text-black font-mono mb-2">
-                    AFM SCORE:
-                  </h4>
-                  <div className="text-center">
-                    <div className="text-4xl font-bold text-red-600 font-mono">
-                      {afmScore.toFixed(0)}%
-                    </div>
-                    <div className="w-full bg-gray-200 border-2 border-black h-6 mt-2">
-                      <div
-                        className="h-full bg-red-600 transition-all duration-500"
-                        style={{ width: `${afmScore}%` }}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-red-50 p-4 border-2 border-red-600">
+                <div className="bg-red-50 p-4 border-2 border-red-600 rounded-lg">
                   <h4 className="font-bold text-red-700 font-mono mb-2">
-                    IGNORED FACTORS:
+                    WHAT AFM IGNORES:
                   </h4>
                   <ul className="text-black font-mono text-sm space-y-1">
                     <li>• Algorithm efficiency</li>
                     <li>• Edge case handling</li>
                     <li>• Code readability</li>
                     <li>• Documentation quality</li>
+                    <li>• Best practices</li>
+                    <li>• Robustness</li>
                   </ul>
+                </div>
+
+                <div className="bg-white p-4 border-2 border-red-600 rounded-lg">
+                  <p className="text-black font-mono text-sm italic">
+                    "Your code works for the test case, so you must understand
+                    everything perfectly!"
+                  </p>
                 </div>
               </div>
             </div>
 
             <div className="border-4 border-green-600 rounded-xl p-6 bg-green-50">
               <h3 className="font-bold text-green-700 text-lg font-mono uppercase mb-4 text-center">
-                Comprehensive Assessment
+                Holistic Assessment
               </h3>
               <div className="space-y-4">
-                <div className="bg-green-100 p-4 border-2 border-green-600">
+                <div className="bg-green-100 p-4 border-2 border-green-600 rounded-lg">
                   <h4 className="font-bold text-green-700 font-mono mb-2">
-                    HOLISTIC EVALUATION:
+                    COMPREHENSIVE EVALUATION:
                   </h4>
                   <p className="text-black font-mono text-sm">
-                    • Functionality: 3/3 points
-                  </p>
-                  <p className="text-black font-mono text-sm">
-                    • Efficiency: 0/2 points
-                  </p>
-                  <p className="text-black font-mono text-sm">
-                    • Edge cases: 0/2 points
-                  </p>
-                  <p className="text-black font-mono text-sm">
-                    • Documentation: 0/1 points
-                  </p>
-                  <p className="text-black font-mono text-sm">
-                    • Code style: 1/1 points
+                    Considers multiple dimensions of code quality beyond just
+                    "does it run?"
                   </p>
                 </div>
 
-                <div className="bg-white p-4 border-2 border-green-600">
-                  <h4 className="font-bold text-black font-mono mb-2">
-                    COMPREHENSIVE SCORE:
-                  </h4>
-                  <div className="text-center">
-                    <div className="text-4xl font-bold text-green-600 font-mono">
-                      {realScore.toFixed(0)}%
-                    </div>
-                    <div className="w-full bg-gray-200 border-2 border-black h-6 mt-2">
-                      <div
-                        className="h-full bg-green-600 transition-all duration-500"
-                        style={{ width: `${realScore}%` }}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-green-50 p-4 border-2 border-green-600">
+                <div className="bg-green-50 p-4 border-2 border-green-600 rounded-lg">
                   <h4 className="font-bold text-green-700 font-mono mb-2">
-                    CAPTURED INSIGHTS:
+                    WHAT GETS CONSIDERED:
                   </h4>
                   <ul className="text-black font-mono text-sm space-y-1">
-                    <li>• Solid basic programming skills</li>
-                    <li>• Needs efficiency optimization</li>
-                    <li>• Lacks robustness thinking</li>
-                    <li>• Should improve documentation</li>
+                    <li>✓ Correctness for various inputs</li>
+                    <li>✓ Algorithmic efficiency (time/space)</li>
+                    <li>✓ Edge case handling</li>
+                    <li>✓ Code style and readability</li>
+                    <li>✓ Documentation and comments</li>
+                    <li>✓ Error handling and robustness</li>
+                    <li>✓ Following best practices</li>
+                    <li>✓ Maintainability</li>
                   </ul>
+                </div>
+
+                <div className="bg-white p-4 border-2 border-green-600 rounded-lg">
+                  <p className="text-black font-mono text-sm italic">
+                    "Your code works for basic cases, but needs improvement in
+                    efficiency and edge case handling."
+                  </p>
                 </div>
               </div>
             </div>
@@ -878,37 +1077,55 @@ print(second_largest([1, 3, 2, 5, 4]))`,
         <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
           <div className="absolute -top-6 left-4 px-3 py-1 bg-yellow-600 text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
             <AlertTriangle className="w-4 h-4" />
-            THE PROBLEM WITH BINARY CODE ASSESSMENT
+            THE LIMITATION OF BINARY ASSESSMENT
           </div>
-          <div className="text-center space-y-4">
-            <div className="bg-yellow-300 border-2 border-black px-6 py-4 inline-block">
-              <span className="text-black font-bold text-xl font-mono">
-                56% DIFFERENCE IN ASSESSMENT
-              </span>
+          <div className="space-y-6">
+            <div className="text-center">
+              <div className="bg-yellow-300 border-2 border-black px-6 py-4 inline-block mb-4">
+                <span className="text-black font-bold text-xl font-mono">
+                  WHY THIS MATTERS
+                </span>
+              </div>
             </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="border-l-4 border-yellow-600 bg-white p-4">
+              <div className="border-l-4 border-yellow-600 bg-yellow-50 p-4 rounded">
                 <h4 className="font-bold text-yellow-700 mb-2 font-mono">
                   LOST INFORMATION
                 </h4>
                 <ul className="text-black font-mono text-sm space-y-1">
-                  <li>• ALGORITHM QUALITY IGNORED</li>
-                  <li>• MAINTAINABILITY UNMEASURED</li>
-                  <li>• LEARNING GAPS HIDDEN</li>
-                  <li>• PROFESSIONAL SKILLS MISSED</li>
+                  <li>• Code quality differences invisible</li>
+                  <li>• No feedback on efficiency</li>
+                  <li>• Edge case gaps undetected</li>
+                  <li>• Best practices not reinforced</li>
+                  <li>• Partial understanding missed</li>
                 </ul>
               </div>
-              <div className="border-l-4 border-yellow-600 bg-white p-4">
+              <div className="border-l-4 border-yellow-600 bg-yellow-50 p-4 rounded">
                 <h4 className="font-bold text-yellow-700 mb-2 font-mono">
                   EDUCATIONAL IMPACT
                 </h4>
                 <ul className="text-black font-mono text-sm space-y-1">
-                  <li>• STUDENTS LEARN BAD PRACTICES</li>
-                  <li>• TEACHERS MISS SKILL GAPS</li>
-                  <li>• EMPLOYERS GET POOR SIGNALS</li>
-                  <li>• CODE QUALITY SUFFERS</li>
+                  <li>• Students think "works" = "perfect"</li>
+                  <li>• No incentive for code quality</li>
+                  <li>• Reinforces "shortcut" thinking</li>
+                  <li>• Misses learning opportunities</li>
+                  <li>• Poor preparation for real work</li>
                 </ul>
               </div>
+            </div>
+
+            <div className="bg-blue-50 border-4 border-blue-600 p-6 rounded-xl">
+              <h4 className="font-bold text-blue-700 mb-3 font-mono text-center text-lg">
+                THE BOTTOM LINE
+              </h4>
+              <p className="text-black font-mono text-sm text-center">
+                AFM treats programming skill as binary (can/cannot), but real
+                programming competency exists on a spectrum. A holistic
+                assessment approach captures the nuances of code quality,
+                helping students develop not just working code, but
+                professional-grade solutions.
+              </p>
             </div>
           </div>
         </div>
@@ -918,7 +1135,7 @@ print(second_largest([1, 3, 2, 5, 4]))`,
             onClick={resetSimulation}
             className="px-6 py-3 bg-white text-black border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-black hover:text-white transition-all transform hover:scale-105 font-mono"
           >
-            RESTART SIMULATION
+            TRY ANOTHER SOLUTION
           </button>
           <button
             onClick={backToOverview}
@@ -935,7 +1152,7 @@ print(second_largest([1, 3, 2, 5, 4]))`,
       0: renderCaseOverview,
       1: renderCodeAnalysis,
       2: renderFunctionalityAssessment,
-      3: renderQualityEvaluation,
+      3: renderBetterSolutionExample,
       4: renderResults,
     };
 
