@@ -2515,6 +2515,10 @@ print(result)`,
               <span className="text-lg font-bold text-black uppercase tracking-wide block mb-3">
                 Current Q-Matrix Mapping:
               </span>
+              <p className="text-sm text-black font-mono mb-3">
+                Click the button below to switch between correct and incorrect
+                mapping
+              </p>
               <button
                 onClick={toggleMapping}
                 disabled={qMatrixShowFeedback}
@@ -2537,7 +2541,8 @@ print(result)`,
                   qMatrixViewMode === "correct" ? "bg-green-300" : "bg-red-300"
                 }`}
               >
-                MAPPED TO: {currentSkills.join(", ")}
+                PROBLEM {qMatrixCurrentProblem + 1} MAPPED TO:{" "}
+                {currentSkills.join(", ")}
               </span>
             </div>
           </div>
@@ -2550,13 +2555,13 @@ print(result)`,
                 <h2 className="text-3xl font-bold text-black uppercase tracking-tight mb-4">
                   {currentQ.question}
                 </h2>
-                <div className="flex justify-between items-center text-sm font-mono text-black">
-                  <div>
-                    <div className="mb-1">
-                      Real Skills:{" "}
-                      <span className="font-bold">
-                        {currentQ.correctSkills.join(", ")}
-                      </span>
+                <div className="flex justify-between items-center font-mono text-black">
+                  <div className="px-4 py-2 bg-blue-100 border-4 border-blue-600 rounded-lg">
+                    <div className="text-blue-700 font-bold uppercase text-xs mb-1">
+                      Real Skills Needed:
+                    </div>
+                    <div className="font-bold text-black text-base">
+                      {currentQ.correctSkills.join(", ")}
                     </div>
                   </div>
                   <div className="px-4 py-2 border-2 border-black font-bold text-lg bg-blue-300">
@@ -2710,7 +2715,7 @@ print(result)`,
             {/* RIGHT COLUMN: Skill Mastery Display */}
             <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg h-fit">
               <h3 className="font-bold text-black text-lg mb-4 uppercase tracking-wide">
-                Current Skill Mastery (AFM's Internal Model):
+                Current Mapping and Prediction (AFM's Internal Model):
               </h3>
               <div className="grid grid-cols-2 gap-4">
                 {[
@@ -2832,29 +2837,6 @@ print(result)`,
             </div>
           </div>
 
-          {/* Progress Display */}
-          <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
-            <div className="flex justify-between items-center">
-              <span className="text-lg font-bold text-black">
-                Problem {qMatrixCurrentProblem + 1} of {pythonProblems.length}
-              </span>
-              <div className="flex space-x-2">
-                {pythonProblems.map((_, index) => (
-                  <div
-                    key={index}
-                    className={`w-4 h-4 border-2 border-black ${
-                      qMatrixAttemptedProblems.includes(index)
-                        ? "bg-indigo-600"
-                        : index === qMatrixCurrentProblem
-                        ? "bg-blue-600"
-                        : "bg-gray-200"
-                    }`}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-
           {/* Research Evidence */}
           {qMatrixAttemptedProblems.length === pythonProblems.length && (
             <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
@@ -2864,7 +2846,7 @@ print(result)`,
                     Q-MATRIX PROBLEMS
                   </h4>
                   <ul className="text-lg font-bold text-black space-y-1">
-                    <li>• Updates irrelevant skills</li>
+                    <li>• Updates irrelevant skills if not mapped correctly</li>
                     <li>• Misleading predictions</li>
                     <li>• Wrong intervention recommendations</li>
                     <li>• Systematic assessment bias</li>
