@@ -1,7 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { Code, Target, Zap, ArrowRight, List, Brain, Users, CheckCircle, XCircle, Clock, TrendingUp } from "lucide-react";
-import { trackButtonClick, trackCustomEvent } from '../utils/analytics';
-import { startConfetti } from '../utils/confetti';
+import {
+  Code,
+  Target,
+  Zap,
+  ArrowRight,
+  List,
+  Brain,
+  Users,
+  CheckCircle,
+  XCircle,
+  Clock,
+  TrendingUp,
+} from "lucide-react";
+import { trackButtonClick, trackCustomEvent } from "../utils/analytics";
+import { startConfetti } from "../utils/confetti";
 
 export const PythonTasksAdvanced = ({ navigate }) => {
   const [startTime] = useState(Date.now());
@@ -14,26 +26,26 @@ export const PythonTasksAdvanced = ({ navigate }) => {
 
   // Track component entry
   useEffect(() => {
-    trackCustomEvent('advanced_python_tasks_viewed', {
-      componentName: 'PythonTasksAdvanced',
-      elementType: 'task_selection',
+    trackCustomEvent("advanced_python_tasks_viewed", {
+      componentName: "PythonTasksAdvanced",
+      elementType: "task_selection",
       viewContext: {
         timestamp: startTime,
-        availableTasks: Object.keys(tasks).length
-      }
+        availableTasks: Object.keys(tasks).length,
+      },
     });
 
     return () => {
       // Track component exit
-      trackCustomEvent('advanced_python_tasks_exited', {
-        componentName: 'PythonTasksAdvanced',
-        elementType: 'task_selection',
+      trackCustomEvent("advanced_python_tasks_exited", {
+        componentName: "PythonTasksAdvanced",
+        elementType: "task_selection",
         completionMetrics: {
           timeSpent: Date.now() - startTime,
           completedTasks: completedTasks.length,
           totalTasks: Object.keys(tasks).length,
-          interactionPattern: summarizeInteractions(interactionHistory)
-        }
+          interactionPattern: summarizeInteractions(interactionHistory),
+        },
       });
     };
   }, [completedTasks, interactionHistory]);
@@ -41,20 +53,27 @@ export const PythonTasksAdvanced = ({ navigate }) => {
   const summarizeInteractions = (interactions) => {
     return {
       totalInteractions: interactions.length,
-      taskAttempts: interactions.filter(i => i.type === 'task_attempt').length,
-      correctAnswers: interactions.filter(i => i.type === 'correct_answer').length,
-      incorrectAnswers: interactions.filter(i => i.type === 'incorrect_answer').length,
-      averageTimePerTask: interactions
-        .filter(i => i.type === 'task_complete')
-        .reduce((sum, i) => sum + i.duration, 0) / Math.max(1, completedTasks.length),
-      completionSequence: completedTasks
+      taskAttempts: interactions.filter((i) => i.type === "task_attempt")
+        .length,
+      correctAnswers: interactions.filter((i) => i.type === "correct_answer")
+        .length,
+      incorrectAnswers: interactions.filter(
+        (i) => i.type === "incorrect_answer"
+      ).length,
+      averageTimePerTask:
+        interactions
+          .filter((i) => i.type === "task_complete")
+          .reduce((sum, i) => sum + i.duration, 0) /
+        Math.max(1, completedTasks.length),
+      completionSequence: completedTasks,
     };
   };
 
   const tasks = {
     A: {
       title: "String Formatting",
-      description: "Format user data into a readable string. Given a user dictionary with name, age, and city, create a formatted introduction string.",
+      description:
+        "Format user data into a readable string. Given a user dictionary with name, age, and city, create a formatted introduction string.",
       code: `def format_user_intro(user):
     # Create formatted introduction
     # Input: user = {"name": "Alice", "age": 25, "city": "New York"}
@@ -63,33 +82,35 @@ export const PythonTasksAdvanced = ({ navigate }) => {
       question: "What would be the correct implementation?",
       options: [
         {
-          id: 'a',
+          id: "a",
           text: `return f"Hi, I'm {user['name']}, {user['age']} years old, from {user['city']}!"`,
-          correct: true
+          correct: true,
         },
         {
-          id: 'b',
+          id: "b",
           text: `return "Hi, I'm " + user.name + ", " + user.age + " years old, from " + user.city + "!"`,
-          correct: false
+          correct: false,
         },
         {
-          id: 'c',
+          id: "c",
           text: `return f"Hi, I'm {user.name}, {user.age} years old, from {user.city}!"`,
-          correct: false
+          correct: false,
         },
         {
-          id: 'd',
+          id: "d",
           text: `return "Hi, I'm {}, {} years old, from {}!".format(user['name'], user['age'], user['city'])`,
-          correct: false
-        }
+          correct: false,
+        },
       ],
-      color: 'green',
-      learningRate: 'high',
-      explanation: "String formatting has clear patterns and immediate visual feedback. Each practice attempt builds directly on the previous one."
+      color: "green",
+      learningRate: "high",
+      explanation:
+        "String formatting has clear patterns and immediate visual feedback. Each practice attempt builds directly on the previous one.",
     },
     B: {
       title: "Recursive Fibonacci",
-      description: "Calculate the nth Fibonacci number using recursion. The Fibonacci sequence starts with 0, 1, and each subsequent number is the sum of the two preceding ones.",
+      description:
+        "Calculate the nth Fibonacci number using recursion. The Fibonacci sequence starts with 0, 1, and each subsequent number is the sum of the two preceding ones.",
       code: `def fibonacci(n):
     # Calculate nth Fibonacci number recursively
     # fibonacci(0) = 0, fibonacci(1) = 1
@@ -99,48 +120,49 @@ export const PythonTasksAdvanced = ({ navigate }) => {
       question: "What would be the correct recursive implementation?",
       options: [
         {
-          id: 'a',
+          id: "a",
           text: `if n <= 1:
     return n
 return fibonacci(n-1) + fibonacci(n-2)`,
-          correct: true
+          correct: true,
         },
         {
-          id: 'b',
+          id: "b",
           text: `if n == 0:
     return 0
 elif n == 1:
     return 1
 else:
     return fibonacci(n-1) + fibonacci(n+1)`,
-          correct: false
+          correct: false,
         },
         {
-          id: 'c',
+          id: "c",
           text: `if n <= 1:
     return 1
 return fibonacci(n-1) + fibonacci(n-2)`,
-          correct: false
+          correct: false,
         },
         {
-          id: 'd',
+          id: "d",
           text: `return fibonacci(n-1) + fibonacci(n-2)`,
-          correct: false
-        }
+          correct: false,
+        },
       ],
-      color: 'orange',
-      learningRate: 'low',
-      explanation: "Recursive thinking requires understanding abstract concepts like function calls within functions. Mastery comes slowly even with practice."
-    }
+      color: "orange",
+      learningRate: "low",
+      explanation:
+        "Recursive thinking requires understanding abstract concepts like function calls within functions. Mastery comes slowly even with practice.",
+    },
   };
 
   const handleTaskClick = (taskId) => {
     const task = tasks[taskId];
 
-    trackButtonClick('advanced_python_task_selected', {
-      componentName: 'PythonTasksAdvanced',
-      elementType: 'button',
-      elementLocation: 'task_selection',
+    trackButtonClick("advanced_python_task_selected", {
+      componentName: "PythonTasksAdvanced",
+      elementType: "button",
+      elementLocation: "task_selection",
       selectionContext: {
         taskId,
         taskTitle: task.title,
@@ -148,8 +170,8 @@ return fibonacci(n-1) + fibonacci(n-2)`,
         learningRate: task.learningRate,
         isCompleted: completedTasks.includes(taskId),
         previousTask: selectedTask,
-        timeFromStart: Date.now() - startTime
-      }
+        timeFromStart: Date.now() - startTime,
+      },
     });
 
     setSelectedTask(taskId);
@@ -157,21 +179,24 @@ return fibonacci(n-1) + fibonacci(n-2)`,
     setShowResult(false);
     setTaskStartTime(Date.now());
 
-    setInteractionHistory(prev => [...prev, {
-      type: 'task_attempt',
-      taskId,
-      timestamp: Date.now()
-    }]);
+    setInteractionHistory((prev) => [
+      ...prev,
+      {
+        type: "task_attempt",
+        taskId,
+        timestamp: Date.now(),
+      },
+    ]);
   };
 
   const handleAnswerSelect = (answerId) => {
     const task = tasks[selectedTask];
-    const selectedOption = task.options.find(opt => opt.id === answerId);
+    const selectedOption = task.options.find((opt) => opt.id === answerId);
     const isCorrect = selectedOption?.correct;
 
-    trackCustomEvent('advanced_python_task_answer', {
-      componentName: 'PythonTasksAdvanced',
-      elementType: 'task',
+    trackCustomEvent("advanced_python_task_answer", {
+      componentName: "PythonTasksAdvanced",
+      elementType: "task",
       answerContext: {
         taskId: selectedTask,
         taskTitle: task.title,
@@ -179,44 +204,50 @@ return fibonacci(n-1) + fibonacci(n-2)`,
         isCorrect,
         timeToAnswer: Date.now() - taskStartTime,
         learningRate: task.learningRate,
-        previousAttempts: interactionHistory.filter(i =>
-          i.type === 'task_attempt' && i.taskId === selectedTask
-        ).length
-      }
+        previousAttempts: interactionHistory.filter(
+          (i) => i.type === "task_attempt" && i.taskId === selectedTask
+        ).length,
+      },
     });
 
     setSelectedAnswer(answerId);
     setShowResult(true);
 
-    setInteractionHistory(prev => [...prev, {
-      type: isCorrect ? 'correct_answer' : 'incorrect_answer',
-      taskId: selectedTask,
-      answerId,
-      timestamp: Date.now()
-    }]);
+    setInteractionHistory((prev) => [
+      ...prev,
+      {
+        type: isCorrect ? "correct_answer" : "incorrect_answer",
+        taskId: selectedTask,
+        answerId,
+        timestamp: Date.now(),
+      },
+    ]);
 
     // Mark task as completed if answer is correct
     if (isCorrect && !completedTasks.includes(selectedTask)) {
-      trackCustomEvent('advanced_python_task_completed', {
-        componentName: 'PythonTasksAdvanced',
-        elementType: 'task',
+      trackCustomEvent("advanced_python_task_completed", {
+        componentName: "PythonTasksAdvanced",
+        elementType: "task",
         completionContext: {
           taskId: selectedTask,
           taskTitle: task.title,
           timeToComplete: Date.now() - taskStartTime,
           learningRate: task.learningRate,
           isFirstCompletion: true,
-          totalCompleted: completedTasks.length + 1
-        }
+          totalCompleted: completedTasks.length + 1,
+        },
       });
 
       setCompletedTasks([...completedTasks, selectedTask]);
-      setInteractionHistory(prev => [...prev, {
-        type: 'task_complete',
-        taskId: selectedTask,
-        timestamp: Date.now(),
-        duration: Date.now() - taskStartTime
-      }]);
+      setInteractionHistory((prev) => [
+        ...prev,
+        {
+          type: "task_complete",
+          taskId: selectedTask,
+          timestamp: Date.now(),
+          duration: Date.now() - taskStartTime,
+        },
+      ]);
 
       // Trigger confetti for correct answer
       startConfetti(3000);
@@ -224,16 +255,16 @@ return fibonacci(n-1) + fibonacci(n-2)`,
   };
 
   const resetTask = () => {
-    trackButtonClick('advanced_python_task_reset', {
-      componentName: 'PythonTasksAdvanced',
-      elementType: 'button',
-      elementLocation: 'task_navigation',
+    trackButtonClick("advanced_python_task_reset", {
+      componentName: "PythonTasksAdvanced",
+      elementType: "button",
+      elementLocation: "task_navigation",
       resetContext: {
         taskId: selectedTask,
         wasCompleted: completedTasks.includes(selectedTask),
         timeSpent: Date.now() - taskStartTime,
-        learningRate: tasks[selectedTask]?.learningRate
-      }
+        learningRate: tasks[selectedTask]?.learningRate,
+      },
     });
 
     setSelectedTask(null);
@@ -241,28 +272,31 @@ return fibonacci(n-1) + fibonacci(n-2)`,
     setShowResult(false);
     setTaskStartTime(null);
 
-    setInteractionHistory(prev => [...prev, {
-      type: 'task_reset',
-      taskId: selectedTask,
-      timestamp: Date.now()
-    }]);
+    setInteractionHistory((prev) => [
+      ...prev,
+      {
+        type: "task_reset",
+        taskId: selectedTask,
+        timestamp: Date.now(),
+      },
+    ]);
   };
 
   const handleContinue = () => {
-    trackButtonClick('advanced_python_tasks_continue', {
-      componentName: 'PythonTasksAdvanced',
-      elementType: 'button',
-      elementLocation: 'section_navigation',
+    trackButtonClick("advanced_python_tasks_continue", {
+      componentName: "PythonTasksAdvanced",
+      elementType: "button",
+      elementLocation: "section_navigation",
       navigationContext: {
         completedTasks: completedTasks.length,
         totalTasks: Object.keys(tasks).length,
         timeSpent: Date.now() - startTime,
         interactionSummary: summarizeInteractions(interactionHistory),
         learningRateComparison: {
-          highRateCompleted: completedTasks.includes('A'),
-          lowRateCompleted: completedTasks.includes('B')
-        }
-      }
+          highRateCompleted: completedTasks.includes("A"),
+          lowRateCompleted: completedTasks.includes("B"),
+        },
+      },
     });
 
     navigate(12);
@@ -277,17 +311,22 @@ return fibonacci(n-1) + fibonacci(n-2)`,
   // Task Detail View
   if (selectedTask) {
     const task = tasks[selectedTask];
-    const IconComponent = task.learningRate === 'high' ? TrendingUp : Clock;
-    const correctAnswer = task.options.find(opt => opt.correct);
-    const selectedOption = task.options.find(opt => opt.id === selectedAnswer);
+    const IconComponent = task.learningRate === "high" ? TrendingUp : Clock;
+    const correctAnswer = task.options.find((opt) => opt.correct);
+    const selectedOption = task.options.find(
+      (opt) => opt.id === selectedAnswer
+    );
 
     return (
       <div className="bg-white min-h-screen flex flex-col text-black font-['IBM_Plex_Mono',monospace] py-8 px-4 md:px-10">
         <div className="w-full max-w-4xl mx-auto flex flex-col gap-8">
-
           {/* Header */}
           <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
-            <div className={`absolute -top-6 left-4 px-3 py-1 font-semibold rounded-md text-xs tracking-wider flex items-center gap-2 border-4 border-black ${colorClasses[task.color]}`}>
+            <div
+              className={`absolute -top-6 left-4 px-3 py-1 font-semibold rounded-md text-xs tracking-wider flex items-center gap-2 border-4 border-black ${
+                colorClasses[task.color]
+              }`}
+            >
               <Target className="w-4 h-4" />
               TASK {selectedTask} OF 2
             </div>
@@ -317,7 +356,9 @@ return fibonacci(n-1) + fibonacci(n-2)`,
                   <div className="w-3 h-3 rounded-full bg-green-500"></div>
                   <span className="ml-2 text-xs">code_editor.py</span>
                 </div>
-                <pre className="text-white whitespace-pre-wrap leading-relaxed">{task.code}</pre>
+                <pre className="text-white whitespace-pre-wrap leading-relaxed">
+                  {task.code}
+                </pre>
               </div>
             </div>
           </div>
@@ -334,26 +375,34 @@ return fibonacci(n-1) + fibonacci(n-2)`,
                   key={option.id}
                   onClick={() => handleAnswerSelect(option.id)}
                   disabled={showResult}
-                  className={`w-full text-left p-4 rounded-lg border-4 border-black transition-all ${showResult
-                    ? option.correct
-                      ? 'bg-green-100 border-green-600'
-                      : option.id === selectedAnswer
-                        ? 'bg-red-100 border-red-600'
-                        : 'bg-gray-50'
-                    : selectedAnswer === option.id
+                  className={`w-full text-left p-4 rounded-lg border-4 border-black transition-all ${
+                    showResult
+                      ? option.correct
+                        ? "bg-green-100 border-green-600"
+                        : option.id === selectedAnswer
+                        ? "bg-red-100 border-red-600"
+                        : "bg-gray-50"
+                      : selectedAnswer === option.id
                       ? colorClasses[task.color]
-                      : 'bg-gray-50 hover:bg-gray-100'
-                    } ${!showResult ? 'cursor-pointer hover:scale-105 transition-transform' : 'cursor-default'}`}
+                      : "bg-gray-50 hover:bg-gray-100"
+                  } ${
+                    !showResult
+                      ? "cursor-pointer hover:scale-105 transition-transform"
+                      : "cursor-default"
+                  }`}
                 >
                   <div className="flex items-start gap-3">
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold border-2 border-black ${showResult
-                      ? option.correct
-                        ? 'bg-green-600 text-white'
-                        : option.id === selectedAnswer
-                          ? 'bg-red-600 text-white'
-                          : 'bg-gray-300 text-gray-600'
-                      : 'bg-black text-white'
-                      }`}>
+                    <div
+                      className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold border-2 border-black ${
+                        showResult
+                          ? option.correct
+                            ? "bg-green-600 text-white"
+                            : option.id === selectedAnswer
+                            ? "bg-red-600 text-white"
+                            : "bg-gray-300 text-gray-600"
+                          : "bg-black text-white"
+                      }`}
+                    >
                       {option.id.toUpperCase()}
                     </div>
                     <pre className="text-sm font-mono text-black whitespace-pre-wrap flex-1 font-bold">
@@ -362,9 +411,11 @@ return fibonacci(n-1) + fibonacci(n-2)`,
                     {showResult && option.correct && (
                       <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
                     )}
-                    {showResult && !option.correct && option.id === selectedAnswer && (
-                      <XCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
-                    )}
+                    {showResult &&
+                      !option.correct &&
+                      option.id === selectedAnswer && (
+                        <XCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
+                      )}
                   </div>
                 </button>
               ))}
@@ -372,25 +423,35 @@ return fibonacci(n-1) + fibonacci(n-2)`,
 
             {/* Result */}
             {showResult && (
-              <div className={`mt-8 p-6 rounded-xl border-4 border-black shadow-lg ${selectedOption?.correct
-                ? 'bg-green-100'
-                : 'bg-red-100'
-                }`}>
+              <div
+                className={`mt-8 p-6 rounded-xl border-4 border-black shadow-lg ${
+                  selectedOption?.correct ? "bg-green-100" : "bg-red-100"
+                }`}
+              >
                 <div className="flex items-center gap-2 mb-2">
                   {selectedOption?.correct ? (
                     <CheckCircle className="w-6 h-6 text-green-600" />
                   ) : (
                     <XCircle className="w-6 h-6 text-red-600" />
                   )}
-                  <span className={`font-bold text-lg uppercase tracking-wide ${selectedOption?.correct ? 'text-green-700' : 'text-red-700'}`}>
-                    {selectedOption?.correct ? 'Correct!' : 'Incorrect'}
+                  <span
+                    className={`font-bold text-lg uppercase tracking-wide ${
+                      selectedOption?.correct
+                        ? "text-green-700"
+                        : "text-red-700"
+                    }`}
+                  >
+                    {selectedOption?.correct ? "Correct!" : "Incorrect"}
                   </span>
                 </div>
                 {!selectedOption?.correct && (
                   <p className="text-black font-bold">
-                    The correct answer is option {correctAnswer.id.toUpperCase()}.
-                    {selectedTask === 'A' && " F-string formatting with dictionary key access is the most readable and efficient approach."}
-                    {selectedTask === 'B' && " Recursive functions need base cases (n <= 1) and must call themselves with smaller values (n-1, n-2)."}
+                    The correct answer is option{" "}
+                    {correctAnswer.id.toUpperCase()}.
+                    {selectedTask === "A" &&
+                      " F-string formatting with dictionary key access is the most readable and efficient approach."}
+                    {selectedTask === "B" &&
+                      " Recursive functions need base cases (n <= 1) and must call themselves with smaller values (n-1, n-2)."}
                   </p>
                 )}
               </div>
@@ -415,7 +476,6 @@ return fibonacci(n-1) + fibonacci(n-2)`,
   return (
     <div className="bg-white min-h-screen flex flex-col items-center justify-center text-black font-['IBM_Plex_Mono',monospace] py-8 px-4 md:px-10">
       <div className="w-full max-w-6xl mx-auto flex flex-col gap-8">
-
         {/* Header */}
         <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg relative">
           <div className="absolute -top-6 left-4 px-3 py-1 bg-black text-white font-semibold rounded-md text-xs tracking-wider flex items-center gap-2">
@@ -426,7 +486,8 @@ return fibonacci(n-1) + fibonacci(n-2)`,
             Which task has a faster learning rate?
           </div>
           <p className="text-lg text-black text-center mt-4 font-bold">
-            Choose a task to practice and see how learning rate affects skill acquisition.
+            Choose a task to practice and see how learning rate affects skill
+            acquisition.
           </p>
           <p className="text-md text-black text-center mt-2 font-bold">
             Learning rate measures how quickly someone improves with practice.
@@ -448,8 +509,12 @@ return fibonacci(n-1) + fibonacci(n-2)`,
         {/* Task Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {Object.entries(tasks).map(([taskId, task]) => {
-            const IconComponent = task.learningRate === 'high' ? TrendingUp : Clock;
-            const learningRateColor = task.learningRate === 'high' ? 'bg-blue-100 border-blue-600 text-blue-700' : 'bg-red-100 border-red-600 text-red-700';
+            const IconComponent =
+              task.learningRate === "high" ? TrendingUp : Clock;
+            const learningRateColor =
+              task.learningRate === "high"
+                ? "bg-blue-100 border-blue-600 text-blue-700"
+                : "bg-red-100 border-red-600 text-red-700";
             const isCompleted = completedTasks.includes(taskId);
 
             return (
@@ -459,7 +524,9 @@ return fibonacci(n-1) + fibonacci(n-2)`,
                 onClick={() => handleTaskClick(taskId)}
               >
                 <div
-                  className={`absolute -top-6 left-4 px-3 py-1 font-semibold rounded-md text-xs tracking-wider flex items-center gap-2 border-4 border-black ${colorClasses[task.color]}`}
+                  className={`absolute -top-6 left-4 px-3 py-1 font-semibold rounded-md text-xs tracking-wider flex items-center gap-2 border-4 border-black ${
+                    colorClasses[task.color]
+                  }`}
                 >
                   <IconComponent className="w-4 h-4" />
                   TASK
@@ -480,19 +547,6 @@ return fibonacci(n-1) + fibonacci(n-2)`,
                     <p className="text-black font-bold text-md">
                       {task.description}
                     </p>
-
-                    {/* Learning Rate Indicator */}
-                    <div className={`border-4 border-black rounded-xl p-4 ${learningRateColor}`}>
-                      <div className="flex items-center justify-center gap-2 mb-2">
-                        <IconComponent className="w-5 h-5" />
-                        <span className="font-bold text-sm uppercase tracking-wide">
-                          {task.learningRate === 'high' ? 'High Learning Rate' : 'Low Learning Rate'}
-                        </span>
-                      </div>
-                      <p className="text-sm text-center font-bold">
-                        {task.explanation}
-                      </p>
-                    </div>
                   </div>
                 </div>
               </div>
