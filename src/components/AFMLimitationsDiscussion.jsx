@@ -2288,7 +2288,42 @@ print(result)`,
             </p>
           </div>
 
-          {/* Two-column layout: Question on left, Skills/Mapping/Prediction on right */}
+          {/* New layout: Q-Matrix Mapping at top, then question and skills side by side, then prediction at bottom */}
+
+          {/* TOP: Q-Matrix Mapping - Wide narrow box */}
+          <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
+            <div className="mb-4">
+              <span className="text-lg font-bold text-black uppercase tracking-wide block mb-3">
+                Current Q-Matrix Mapping:
+              </span>
+              <button
+                onClick={toggleMapping}
+                disabled={qMatrixShowFeedback}
+                className={`w-full px-6 py-3 border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide transition-all transform hover:scale-105 ${
+                  qMatrixViewMode === "correct"
+                    ? "bg-green-600 text-white hover:bg-white hover:text-green-600"
+                    : "bg-red-600 text-white hover:bg-white hover:text-red-600"
+                } ${
+                  qMatrixShowFeedback ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+              >
+                {qMatrixViewMode === "correct"
+                  ? "CORRECT MAPPING"
+                  : "INCORRECT MAPPING"}
+              </button>
+            </div>
+            <div className="text-center">
+              <span
+                className={`px-4 py-2 border-2 border-black rounded font-bold ${
+                  qMatrixViewMode === "correct" ? "bg-green-300" : "bg-red-300"
+                }`}
+              >
+                MAPPED TO: {currentSkills.join(", ")}
+              </span>
+            </div>
+          </div>
+
+          {/* MIDDLE: Two-column layout: Question on left, Skills on right */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* LEFT COLUMN: Problem Display */}
             <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg h-fit">
@@ -2453,168 +2488,128 @@ print(result)`,
               )}
             </div>
 
-            {/* RIGHT COLUMN: Skills, Mapping, and Prediction */}
-            <div className="space-y-6">
-              {/* Skill Mastery Display */}
-              <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
-                <h3 className="font-bold text-black text-lg mb-4 uppercase tracking-wide">
-                  Current Skill Mastery (AFM's Internal Model):
-                </h3>
-                <div className="grid grid-cols-2 gap-4">
-                  {[
-                    "Loops",
-                    "Print Function",
-                    "Lists",
-                    "Methods",
-                    "Functions",
-                    "Return Values",
-                  ].map((skill) => {
-                    const isRelevantForCurrentTask =
-                      currentQ.correctSkills.includes(skill);
-                    const isMappedToCurrentTask =
-                      qMatrixViewMode === "correct"
-                        ? currentQ.correctSkills.includes(skill)
-                        : currentQ.incorrectSkills.includes(skill);
+            {/* RIGHT COLUMN: Skill Mastery Display */}
+            <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg h-fit">
+              <h3 className="font-bold text-black text-lg mb-4 uppercase tracking-wide">
+                Current Skill Mastery (AFM's Internal Model):
+              </h3>
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  "Loops",
+                  "Print Function",
+                  "Lists",
+                  "Methods",
+                  "Functions",
+                  "Return Values",
+                ].map((skill) => {
+                  const isRelevantForCurrentTask =
+                    currentQ.correctSkills.includes(skill);
+                  const isMappedToCurrentTask =
+                    qMatrixViewMode === "correct"
+                      ? currentQ.correctSkills.includes(skill)
+                      : currentQ.incorrectSkills.includes(skill);
 
-                    let borderColor, bgColor, textColor, statusText;
+                  let borderColor, bgColor, textColor, statusText;
 
-                    if (qMatrixViewMode === "correct") {
-                      if (isRelevantForCurrentTask) {
-                        borderColor = "border-green-600";
-                        bgColor = "bg-green-50";
-                        textColor = "text-green-700";
-                        statusText = "✓ Correctly mapped";
-                      } else {
-                        borderColor = "border-gray-400";
-                        bgColor = "bg-gray-50";
-                        textColor = "text-gray-700";
-                        statusText = "Not used for this task";
-                      }
+                  if (qMatrixViewMode === "correct") {
+                    if (isRelevantForCurrentTask) {
+                      borderColor = "border-green-600";
+                      bgColor = "bg-green-50";
+                      textColor = "text-green-700";
+                      statusText = "✓ Correctly mapped";
                     } else {
-                      if (isMappedToCurrentTask) {
-                        borderColor = "border-red-600";
-                        bgColor = "bg-red-50";
-                        textColor = "text-red-700";
-                        statusText = "✗ Incorrectly mapped!";
-                      } else {
-                        borderColor = "border-gray-400";
-                        bgColor = "bg-gray-50";
-                        textColor = "text-gray-700";
-                        statusText = "Not mapped";
-                      }
+                      borderColor = "border-gray-400";
+                      bgColor = "bg-gray-50";
+                      textColor = "text-gray-700";
+                      statusText = "Not used for this task";
                     }
+                  } else {
+                    if (isMappedToCurrentTask) {
+                      borderColor = "border-red-600";
+                      bgColor = "bg-red-50";
+                      textColor = "text-red-700";
+                      statusText = "✗ Incorrectly mapped!";
+                    } else {
+                      borderColor = "border-gray-400";
+                      bgColor = "bg-gray-50";
+                      textColor = "text-gray-700";
+                      statusText = "Not mapped";
+                    }
+                  }
 
-                    return (
-                      <div
-                        key={skill}
-                        className={`border-2 ${borderColor} ${bgColor} p-3 rounded`}
-                      >
-                        <div className={`text-sm font-bold ${textColor} mb-1`}>
-                          {skill}
-                        </div>
-                        <div className="text-lg font-bold text-black">
-                          {(userSkillMastery[skill] * 100).toFixed(0)}%
-                        </div>
-                        <div className="w-full bg-gray-200 border border-black h-2 mb-1">
-                          <div
-                            className={`h-full transition-all duration-500 ${
-                              qMatrixViewMode === "correct" &&
-                              isRelevantForCurrentTask
-                                ? "bg-green-600"
-                                : qMatrixViewMode === "incorrect" &&
-                                  isMappedToCurrentTask
-                                ? "bg-red-600"
-                                : "bg-gray-400"
-                            }`}
-                            style={{
-                              width: `${userSkillMastery[skill] * 100}%`,
-                            }}
-                          />
-                        </div>
-                        <div className={`text-xs ${textColor} font-bold`}>
-                          {statusText}
-                        </div>
+                  return (
+                    <div
+                      key={skill}
+                      className={`border-2 ${borderColor} ${bgColor} p-3 rounded`}
+                    >
+                      <div className={`text-sm font-bold ${textColor} mb-1`}>
+                        {skill}
                       </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Mapping Mode Toggle */}
-              <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
-                <div className="mb-4">
-                  <span className="text-lg font-bold text-black uppercase tracking-wide block mb-3">
-                    Current Q-Matrix Mapping:
-                  </span>
-                  <button
-                    onClick={toggleMapping}
-                    disabled={qMatrixShowFeedback}
-                    className={`w-full px-6 py-3 border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide transition-all transform hover:scale-105 ${
-                      qMatrixViewMode === "correct"
-                        ? "bg-green-600 text-white hover:bg-white hover:text-green-600"
-                        : "bg-red-600 text-white hover:bg-white hover:text-red-600"
-                    } ${
-                      qMatrixShowFeedback ? "opacity-50 cursor-not-allowed" : ""
-                    }`}
-                  >
-                    {qMatrixViewMode === "correct"
-                      ? "CORRECT MAPPING"
-                      : "INCORRECT MAPPING"}
-                  </button>
-                </div>
-                <div className="text-center">
-                  <span
-                    className={`px-4 py-2 border-2 border-black rounded font-bold ${
-                      qMatrixViewMode === "correct"
-                        ? "bg-green-300"
-                        : "bg-red-300"
-                    }`}
-                  >
-                    MAPPED TO: {currentSkills.join(", ")}
-                  </span>
-                </div>
-              </div>
-
-              {/* AFM Prediction Display */}
-              <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
-                <div className="mb-4">
-                  <span className="text-2xl font-bold text-black uppercase tracking-wide block mb-4">
-                    AFM SUCCESS PREDICTION:
-                  </span>
-                  <div className="text-center mb-4">
-                    <span className="text-4xl font-bold text-black">
-                      {(currentPrediction * 100).toFixed(0)}%
-                    </span>
-                  </div>
-                  <div className="flex items-center space-x-4">
-                    <span className="text-lg font-bold text-black">0%</span>
-                    <div className="flex-1 bg-gray-200 border-4 border-black rounded-none h-8 overflow-hidden">
-                      <div
-                        className={`h-full transition-all duration-1000 ease-out ${
-                          qMatrixViewMode === "correct"
-                            ? "bg-green-600"
-                            : "bg-red-600"
-                        }`}
-                        style={{ width: `${currentPrediction * 100}%` }}
-                      />
+                      <div className="text-lg font-bold text-black">
+                        {(userSkillMastery[skill] * 100).toFixed(0)}%
+                      </div>
+                      <div className="w-full bg-gray-200 border border-black h-2 mb-1">
+                        <div
+                          className={`h-full transition-all duration-500 ${
+                            qMatrixViewMode === "correct" &&
+                            isRelevantForCurrentTask
+                              ? "bg-green-600"
+                              : qMatrixViewMode === "incorrect" &&
+                                isMappedToCurrentTask
+                              ? "bg-red-600"
+                              : "bg-gray-400"
+                          }`}
+                          style={{
+                            width: `${userSkillMastery[skill] * 100}%`,
+                          }}
+                        />
+                      </div>
+                      <div className={`text-xs ${textColor} font-bold`}>
+                        {statusText}
+                      </div>
                     </div>
-                    <span className="text-lg font-bold text-black">100%</span>
-                  </div>
-                </div>
-                <div className="text-center">
-                  <span
-                    className={`px-4 py-2 border-2 border-black rounded font-bold ${
-                      qMatrixViewMode === "correct"
-                        ? "bg-green-300"
-                        : "bg-red-300"
-                    }`}
-                  >
-                    {qMatrixViewMode === "correct"
-                      ? "ACCURATE SKILL-SPECIFIC PREDICTION"
-                      : "GENERIC PREDICTION - ACCURACY LOST!"}
-                  </span>
-                </div>
+                  );
+                })}
               </div>
+            </div>
+          </div>
+
+          {/* BOTTOM: AFM Prediction Display - Wide narrow box */}
+          <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
+            <div className="mb-4">
+              <span className="text-2xl font-bold text-black uppercase tracking-wide block mb-4">
+                AFM SUCCESS PREDICTION:
+              </span>
+              <div className="text-center mb-4">
+                <span className="text-4xl font-bold text-black">
+                  {(currentPrediction * 100).toFixed(0)}%
+                </span>
+              </div>
+              <div className="flex items-center space-x-4">
+                <span className="text-lg font-bold text-black">0%</span>
+                <div className="flex-1 bg-gray-200 border-4 border-black rounded-none h-8 overflow-hidden">
+                  <div
+                    className={`h-full transition-all duration-1000 ease-out ${
+                      qMatrixViewMode === "correct"
+                        ? "bg-green-600"
+                        : "bg-red-600"
+                    }`}
+                    style={{ width: `${currentPrediction * 100}%` }}
+                  />
+                </div>
+                <span className="text-lg font-bold text-black">100%</span>
+              </div>
+            </div>
+            <div className="text-center">
+              <span
+                className={`px-4 py-2 border-2 border-black rounded font-bold ${
+                  qMatrixViewMode === "correct" ? "bg-green-300" : "bg-red-300"
+                }`}
+              >
+                {qMatrixViewMode === "correct"
+                  ? "ACCURATE SKILL-SPECIFIC PREDICTION"
+                  : "GENERIC PREDICTION - ACCURACY LOST!"}
+              </span>
             </div>
           </div>
 
