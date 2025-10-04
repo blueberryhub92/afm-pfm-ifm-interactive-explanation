@@ -1190,9 +1190,9 @@ print(result)`,
         options: ["0 2 4", "1 2 3", "2 4 6", "0 1 2"],
         correctAnswer: "0 2 4",
         incorrectHint:
-          "Remember: range(3) gives you 0, 1, 2. Then multiply each by 2: 0*2=0, 1*2=2, 2*2=4",
+          "Not quite! range(3) gives you 0, 1, 2 (not 1, 2, 3). Then multiply each by 2: 0×2=0, 1×2=2, 2×2=4. Remember: range(n) always starts at 0 and goes up to (but not including) n. Apply this pattern to similar problems!",
         correctFeedback:
-          "Great! You understand that range(3) creates 0, 1, 2, and each gets multiplied by 2. This pattern-recognition skill will help you with similar problems!",
+          "Correct! You understand that range(3) creates 0, 1, 2, and each gets multiplied by 2 → giving 0, 2, 4. Remember this pattern: range(n) starts at 0 and goes up to (but not including) n. This understanding will help with similar loop problems!",
       },
       taskB: {
         question: "What will this Python code output?",
@@ -1262,14 +1262,13 @@ print(result)`,
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="p-3 bg-white border-2 border-blue-600 rounded-lg">
                     <span className="font-mono text-black font-bold text-sm">
-                      1. TASK A: Student attempts task, receives contextual
+                      1. TASK A: You attempt the task, and receive contextual
                       feedback
                     </span>
                   </div>
                   <div className="p-3 bg-white border-2 border-blue-600 rounded-lg">
                     <span className="font-mono text-black font-bold text-sm">
-                      2. TASK B: Student applies learning from context to
-                      similar task
+                      2. TASK B: You apply learning from context to similar task
                     </span>
                   </div>
                 </div>
@@ -1354,10 +1353,7 @@ print(result)`,
                             : "text-yellow-700"
                         }`}
                       >
-                        {contextTaskAAnswer ===
-                        contextScenario.taskA.correctAnswer
-                          ? "✅ CONTEXTUAL FEEDBACK PROVIDED:"
-                          : "💡 HELPFUL HINT PROVIDED:"}
+                        CONTEXTUAL FEEDBACK:
                       </h4>
                       <p className="text-black text-lg font-bold">
                         {contextTaskAAnswer ===
@@ -1415,7 +1411,13 @@ print(result)`,
                 </div>
 
                 {contextTaskBAnswer && (
-                  <div className="border-l-8 border-green-600 bg-green-100 p-6 rounded-r-xl">
+                  <div
+                    className={`border-l-8 ${
+                      contextTaskBAnswer === contextScenario.taskB.correctAnswer
+                        ? "border-green-600 bg-green-100"
+                        : "border-red-600 bg-red-100"
+                    } p-6 rounded-r-xl`}
+                  >
                     <p className="text-black text-xl font-bold">
                       {contextTaskBAnswer ===
                       contextScenario.taskB.correctAnswer
