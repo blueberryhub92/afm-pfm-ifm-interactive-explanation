@@ -1719,7 +1719,7 @@ print(result)`,
               <span className="bg-yellow-300 px-2 py-1 border-2 border-black rounded font-bold">
                 80%
               </span>
-              . If Kris doesn't review or practice Python after today, what do
+              . If Aileen doesn't review or practice Python after today, what do
               you predict her success probability to be in:
             </p>
           </div>
