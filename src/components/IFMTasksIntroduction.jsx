@@ -154,9 +154,6 @@ const TaskOverview = ({ onNavigate, navigate, completedTasks }) => {
           <div className="text-2xl md:text-3xl font-bold tracking-tight text-black text-center">
             Test your Python skills with these challenges
           </div>
-          <p className="text-lg text-black text-center mt-4 font-bold">
-            These tasks will help us understand different learning patterns.
-          </p>
           <p className="text-md text-black text-center mt-2 font-bold">
             Notice how some tasks include hints while others don't.
           </p>
@@ -221,10 +218,6 @@ const TaskOverview = ({ onNavigate, navigate, completedTasks }) => {
                         <div className="text-black font-bold text-sm">
                           • Difficulty: {task.difficulty}
                         </div>
-                        <div className="text-black font-bold text-sm">
-                          • Hints:{" "}
-                          {task.hasHints ? "Available" : "Not available"}
-                        </div>
                       </div>
                     </div>
 
@@ -255,7 +248,7 @@ const TaskOverview = ({ onNavigate, navigate, completedTasks }) => {
             onClick={() => navigate(21)}
             className="px-12 py-4 bg-green-600 text-white border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide hover:bg-white hover:text-green-600 hover:border-green-600 transition-all transform hover:scale-105 flex items-center gap-3"
           >
-            <span>Continue to Next Section</span>
+            <span>Is there a model that includes hints?</span>
             <ArrowRight className="w-6 h-6" />
           </button>
         </div>

@@ -1044,7 +1044,7 @@ export const PFMInteractiveSimulator = ({ navigate }) => {
               }}
               className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-blue-600 hover:to-purple-600 transition-all transform hover:scale-105 flex items-center gap-3"
             >
-              <span>Continue</span>
+              <span>What happens if we add hints?</span>
               <ArrowRight className="w-5 h-5" />
             </button>
           </div>
