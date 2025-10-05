@@ -505,10 +505,10 @@ date_pattern = r'(\d{1,2})/(\d{1,2})/(\d{4})'`,
 
           {/* Start Demo Button */}
           {!demoMode && (
-            <div className="flex justify-center">
+            <div className="flex justify-center mt-6">
               <button
                 onClick={() => startDemo("same-lr")}
-                className="px-8 py-4 bg-purple-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-purple-600 transition-all transform hover:scale-105 flex items-center gap-3"
+                className="px-8 py-3 bg-purple-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-purple-600 transition-all transform hover:scale-105 flex items-center gap-3"
               >
                 <Play className="w-6 h-6" />
                 <span>Watch this behaviour live</span>
