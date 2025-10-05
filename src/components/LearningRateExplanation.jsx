@@ -31,8 +31,12 @@ export const LearningRateExplanation = ({ navigate }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTry, setCurrentTry] = useState(0);
   const [step1Data, setStep1Data] = useState([]);
+  const [step1bData, setStep1bData] = useState([]);
+  const [currentTry1b, setCurrentTry1b] = useState(0);
+  const [isPlaying1b, setIsPlaying1b] = useState(false);
   const [selectedExamples, setSelectedExamples] = useState([]);
   const [draggedItem, setDraggedItem] = useState(null);
+  const [demoMode, setDemoMode] = useState(null); // null, "same-lr", "same-difficulty"
 
   const studentAbility = 0.3;
 
@@ -296,6 +300,12 @@ date_pattern = r'(\d{1,2})/(\d{1,2})/(\d{4})'`,
     setStep1Data([]);
   };
 
+  const resetStep1b = () => {
+    setIsPlaying1b(false);
+    setCurrentTry1b(0);
+    setStep1bData([]);
+  };
+
   const stepForward = () => {
     if (currentTry < 10) {
       const newTry = currentTry + 1;
@@ -313,6 +323,25 @@ date_pattern = r'(\d{1,2})/(\d{1,2})/(\d{4})'`,
     }
   };
 
+  const stepForward1b = () => {
+    if (currentTry1b < 10) {
+      const newTry = currentTry1b + 1;
+      setCurrentTry1b(newTry);
+
+      // Step 1b: String Formatting vs Variable Assignment (same difficulty, very different learning rate)
+      const stringFormatting = availableExamples.find(
+        (e) => e.id === "string-formatting"
+      );
+      const variableAssignment = {
+        ...availableExamples.find((e) => e.id === "variable-assignment"),
+        difficulty: 0.5, // Adjust to match string-formatting's difficulty for fair comparison
+      };
+      const examples = [stringFormatting, variableAssignment];
+      const newData = generateDataForExamples(examples, newTry);
+      setStep1bData(newData);
+    }
+  };
+
   useEffect(() => {
     if (isPlaying && currentTry < 10) {
       const timer = setTimeout(stepForward, 800);
@@ -323,10 +352,40 @@ date_pattern = r'(\d{1,2})/(\d{1,2})/(\d{4})'`,
   }, [isPlaying, currentTry]);
 
   useEffect(() => {
+    if (isPlaying1b && currentTry1b < 10) {
+      const timer = setTimeout(stepForward1b, 800);
+      return () => clearTimeout(timer);
+    } else if (currentTry1b >= 10) {
+      setIsPlaying1b(false);
+    }
+  }, [isPlaying1b, currentTry1b]);
+
+  useEffect(() => {
     if (currentStep === 0) {
       resetStep1();
+      resetStep1b();
+      setDemoMode(null);
     }
   }, [currentStep]);
+
+  const startDemo = (mode) => {
+    setDemoMode(mode);
+    if (mode === "same-lr") {
+      resetStep1();
+    } else if (mode === "same-difficulty") {
+      resetStep1b();
+    }
+  };
+
+  const switchDemoMode = () => {
+    if (demoMode === "same-lr") {
+      setDemoMode("same-difficulty");
+      resetStep1b();
+    } else {
+      setDemoMode("same-lr");
+      resetStep1();
+    }
+  };
 
   const handleNext = () => {
     if (currentStep < 1) {
@@ -433,7 +492,7 @@ date_pattern = r'(\d{1,2})/(\d{1,2})/(\d{4})'`,
               <strong>
                 Both Basic Functions and Classes & OOP have identical Learning
                 Rate (γ = 0.5)
-              </strong>
+              </strong>{" "}
               because once you grasp the core concept in either area, you
               progress at a similar steady pace with practice. However,{" "}
               <strong>Classes & OOP start harder (β = -0.5 vs β = 0.5)</strong>{" "}
@@ -443,231 +502,529 @@ date_pattern = r'(\d{1,2})/(\d{1,2})/(\d{4})'`,
               straightforward from the start.
             </p>
           </div>
+
+          {/* Start Demo Button */}
+          {!demoMode && (
+            <div className="flex justify-center">
+              <button
+                onClick={() => startDemo("same-lr")}
+                className="px-8 py-4 bg-purple-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-purple-600 transition-all transform hover:scale-105 flex items-center gap-3"
+              >
+                <Play className="w-6 h-6" />
+                <span>Watch this behaviour live</span>
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Visual Learning Curve Demo */}
-        <div className="border-4 border-blue-600 rounded-xl p-6 bg-blue-50">
-          <div className="flex items-center gap-3 mb-4">
-            <Code className="w-8 h-8 text-blue-600" />
-            <h3 className="text-xl font-bold text-blue-700 uppercase tracking-wide">
-              Visual Learning Curve Example
-            </h3>
-          </div>
-          <p className="text-blue-900 text-sm font-bold mb-4">
-            Watch how <strong>Basic Functions</strong> (Easy + Same LR) compares
-            to <strong>Classes & OOP</strong> (Harder + Same LR). Both have
-            identical Learning Rate (γ = 0.5), but different Skill Difficulty!
-          </p>
+        {demoMode === "same-lr" && (
+          <div className="border-4 border-blue-600 rounded-xl p-6 bg-blue-50">
+            <div className="flex items-center gap-3 mb-4">
+              <Code className="w-8 h-8 text-blue-600" />
+              <h3 className="text-xl font-bold text-blue-700 uppercase tracking-wide">
+                Same Learning Rate, Different Difficulty
+              </h3>
+            </div>
+            <p className="text-blue-900 text-sm font-bold mb-4">
+              Watch how <strong>Basic Functions</strong> (Easy + Same LR)
+              compares to <strong>Classes & OOP</strong> (Harder + Same LR).
+              Both have identical Learning Rate (γ = 0.5), but different Skill
+              Difficulty!
+            </p>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Controls */}
-            <div className="col-span-1">
-              <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
-                <div className="flex items-center gap-3 mb-4">
-                  <Play className="w-6 h-6 text-green-700" />
-                  <h3 className="text-lg font-bold text-black uppercase tracking-wide">
-                    Controls
-                  </h3>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="bg-gray-50 border-4 border-black rounded-lg p-3 font-mono text-center">
-                    <div className="text-xs mb-1 font-bold">AFM FORMULA:</div>
-                    <div className="text-base font-bold mb-1">
-                      P = θᵢ + βₖ + γₖ × T
-                    </div>
-                    <div className="text-xs">
-                      <div>STUDENT: {studentAbility}</div>
-                      <div>ITERATION: {currentTry}</div>
-                    </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Controls */}
+              <div className="col-span-1">
+                <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Play className="w-6 h-6 text-green-700" />
+                    <h3 className="text-lg font-bold text-black uppercase tracking-wide">
+                      Controls
+                    </h3>
                   </div>
 
-                  <button
-                    onClick={() => setIsPlaying(!isPlaying)}
-                    disabled={currentTry >= 10}
-                    className={`w-full px-4 py-3 border-4 border-black rounded-xl font-bold text-sm tracking-wider transition-all ${
-                      isPlaying
-                        ? "bg-red-600 text-white hover:bg-white hover:text-red-600"
-                        : "bg-green-600 text-white hover:bg-white hover:text-green-600"
-                    } disabled:opacity-50 disabled:cursor-not-allowed`}
-                  >
-                    {isPlaying ? "PAUSE" : "START"} SIMULATION
-                  </button>
-
-                  <button
-                    onClick={stepForward}
-                    disabled={isPlaying || currentTry >= 10}
-                    className="w-full px-4 py-3 bg-blue-600 text-white border-4 border-black rounded-xl font-bold text-sm tracking-wider transition-all hover:bg-white hover:text-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    STEP FORWARD
-                  </button>
-
-                  <button
-                    onClick={resetStep1}
-                    className="w-full px-4 py-3 bg-gray-600 text-white border-4 border-black rounded-xl font-bold text-sm tracking-wider transition-all hover:bg-white hover:text-gray-600 flex items-center justify-center gap-2"
-                  >
-                    <RotateCcw className="w-4 h-4" />
-                    RESET
-                  </button>
-                </div>
-
-                {/* Parameter Display */}
-                <div className="mt-4 space-y-2">
-                  <div
-                    className={`border-2 ${basicFunctions.borderColor} ${basicFunctions.bgColor} rounded-lg p-3`}
-                  >
-                    <div
-                      className={`font-bold ${basicFunctions.textColor} text-xs mb-2`}
-                    >
-                      {basicFunctions.shortName}
+                  <div className="space-y-4">
+                    <div className="bg-gray-50 border-4 border-black rounded-lg p-3 font-mono text-center">
+                      <div className="text-xs mb-1 font-bold">AFM FORMULA:</div>
+                      <div className="text-base font-bold mb-1">
+                        P = θᵢ + βₖ + γₖ × T
+                      </div>
+                      <div className="text-xs">
+                        <div>FIXED STUDENT ABILITY: {studentAbility}</div>
+                        <div>ITERATION: {currentTry}</div>
+                      </div>
                     </div>
-                    <div className="text-xs space-y-1">
-                      <div>β: {basicFunctions.difficulty} (Easy)</div>
-                      <div>γ: {basicFunctions.learningRate} (Same)</div>
+
+                    <button
+                      onClick={() => setIsPlaying(!isPlaying)}
+                      disabled={currentTry >= 10}
+                      className={`w-full px-4 py-3 border-4 border-black rounded-xl font-bold text-sm tracking-wider transition-all ${
+                        isPlaying
+                          ? "bg-red-600 text-white hover:bg-white hover:text-red-600"
+                          : "bg-green-600 text-white hover:bg-white hover:text-green-600"
+                      } disabled:opacity-50 disabled:cursor-not-allowed`}
+                    >
+                      {isPlaying ? "PAUSE" : "START"} SIMULATION
+                    </button>
+
+                    <button
+                      onClick={stepForward}
+                      disabled={isPlaying || currentTry >= 10}
+                      className="w-full px-4 py-3 bg-blue-600 text-white border-4 border-black rounded-xl font-bold text-sm tracking-wider transition-all hover:bg-white hover:text-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      STEP FORWARD
+                    </button>
+
+                    <button
+                      onClick={resetStep1}
+                      className="w-full px-4 py-3 bg-gray-600 text-white border-4 border-black rounded-xl font-bold text-sm tracking-wider transition-all hover:bg-white hover:text-gray-600 flex items-center justify-center gap-2"
+                    >
+                      <RotateCcw className="w-4 h-4" />
+                      RESET
+                    </button>
+                  </div>
+
+                  {/* Parameter Display */}
+                  <div className="mt-4 space-y-2">
+                    <div
+                      className={`border-2 ${basicFunctions.borderColor} ${basicFunctions.bgColor} rounded-lg p-3`}
+                    >
+                      <div
+                        className={`font-bold ${basicFunctions.textColor} text-xs mb-2`}
+                      >
+                        {basicFunctions.shortName}
+                      </div>
+                      <div className="text-xs space-y-1">
+                        <div>β: {basicFunctions.difficulty} (Easy)</div>
+                        <div>γ: {basicFunctions.learningRate} (Same)</div>
+                      </div>
+                    </div>
+                    <div
+                      className={`border-2 ${classesOOP.borderColor} ${classesOOP.bgColor} rounded-lg p-3`}
+                    >
+                      <div
+                        className={`font-bold ${classesOOP.textColor} text-xs mb-2`}
+                      >
+                        {classesOOP.shortName}
+                      </div>
+                      <div className="text-xs space-y-1">
+                        <div>β: {classesOOP.difficulty} (Harder)</div>
+                        <div>γ: {classesOOP.learningRate} (Same)</div>
+                      </div>
                     </div>
                   </div>
-                  <div
-                    className={`border-2 ${classesOOP.borderColor} ${classesOOP.bgColor} rounded-lg p-3`}
-                  >
-                    <div
-                      className={`font-bold ${classesOOP.textColor} text-xs mb-2`}
-                    >
-                      {classesOOP.shortName}
-                    </div>
-                    <div className="text-xs space-y-1">
-                      <div>β: {classesOOP.difficulty} (Harder)</div>
-                      <div>γ: {classesOOP.learningRate} (Same)</div>
-                    </div>
+                </div>
+              </div>
+
+              {/* Graph */}
+              <div className="col-span-1 lg:col-span-2">
+                <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
+                  <div className="flex items-center gap-3 mb-4">
+                    <TrendingUp className="w-6 h-6 text-blue-700" />
+                    <h3 className="text-lg font-bold text-black uppercase tracking-wide">
+                      Success Probability Over Time
+                    </h3>
+                  </div>
+
+                  <div className="bg-gray-50 border-4 border-black rounded-lg p-4 h-96">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart
+                        data={step1Data}
+                        margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" stroke="#d1d5db" />
+                        <XAxis
+                          dataKey="try"
+                          label={{
+                            value: "PRACTICE ATTEMPTS",
+                            position: "insideBottom",
+                            offset: -10,
+                            style: {
+                              fontSize: "14px",
+                              fontWeight: "bold",
+                              fontFamily: "IBM Plex Mono",
+                            },
+                          }}
+                          tick={{
+                            fontSize: 12,
+                            fontFamily: "IBM Plex Mono",
+                            fontWeight: "bold",
+                          }}
+                        />
+                        <YAxis
+                          label={{
+                            value: "SUCCESS PROBABILITY (%)",
+                            angle: -90,
+                            position: "insideLeft",
+                            style: {
+                              fontSize: "14px",
+                              fontWeight: "bold",
+                              fontFamily: "IBM Plex Mono",
+                            },
+                          }}
+                          tick={{
+                            fontSize: 12,
+                            fontFamily: "IBM Plex Mono",
+                            fontWeight: "bold",
+                          }}
+                        />
+                        <Tooltip
+                          contentStyle={{
+                            fontFamily: "IBM Plex Mono",
+                            fontSize: "12px",
+                            backgroundColor: "#f8f9fa",
+                            border: "3px solid #000",
+                            borderRadius: "8px",
+                            fontWeight: "bold",
+                          }}
+                        />
+                        <Legend
+                          wrapperStyle={{
+                            fontFamily: "IBM Plex Mono",
+                            fontSize: "12px",
+                            fontWeight: "bold",
+                            paddingTop: "10px",
+                          }}
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="basic-functions"
+                          stroke={basicFunctions.color}
+                          strokeWidth={5}
+                          dot={{
+                            fill: basicFunctions.color,
+                            strokeWidth: 3,
+                            r: 6,
+                          }}
+                          name={basicFunctions.shortName}
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="classes-oop"
+                          stroke={classesOOP.color}
+                          strokeWidth={5}
+                          dot={{ fill: classesOOP.color, strokeWidth: 3, r: 6 }}
+                          name={classesOOP.shortName}
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Graph */}
-            <div className="col-span-1 lg:col-span-2">
-              <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
-                <div className="flex items-center gap-3 mb-4">
-                  <TrendingUp className="w-6 h-6 text-blue-700" />
-                  <h3 className="text-lg font-bold text-black uppercase tracking-wide">
-                    Success Probability Over Time
-                  </h3>
-                </div>
+            <div className="mt-4 bg-blue-100 border-2 border-blue-700 rounded-lg p-3">
+              <p className="text-blue-900 text-sm font-bold">
+                <strong>Key Insight:</strong> Both examples have the{" "}
+                <strong>same Learning Rate (γ = 0.5)</strong> - notice how the
+                curves have identical slopes! The difference is the{" "}
+                <strong>starting point</strong>: Skill Difficulty (β) determines
+                where you begin, while Learning Rate determines how quickly you
+                improve.
+              </p>
+            </div>
 
-                <div className="bg-gray-50 border-4 border-black rounded-lg p-4 h-96">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart
-                      data={step1Data}
-                      margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+            {/* Toggle to other demo */}
+            <div className="flex justify-center mt-6">
+              <button
+                onClick={switchDemoMode}
+                className="px-6 py-3 bg-orange-600 text-white border-4 border-black rounded-xl font-bold text-base uppercase tracking-wide hover:bg-white hover:text-orange-600 transition-all transform hover:scale-105 flex items-center gap-3"
+              >
+                <Zap className="w-5 h-5" />
+                <span>
+                  What about Same Difficulty, but Different Learning Rate?
+                </span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Second Visual Learning Curve Demo - Same Difficulty, Different Learning Rate */}
+        {demoMode === "same-difficulty" && (
+          <div className="border-4 border-orange-600 rounded-xl p-6 bg-orange-50">
+            <div className="flex items-center gap-3 mb-4">
+              <Zap className="w-8 h-8 text-orange-600" />
+              <h3 className="text-xl font-bold text-orange-700 uppercase tracking-wide">
+                Same Difficulty, Different Learning Rate
+              </h3>
+            </div>
+            <p className="text-orange-900 text-sm font-bold mb-4">
+              Now watch how <strong>String Formatting</strong> (Same Difficulty
+              + High LR = 0.8) compares to <strong>Variable Assignment</strong>{" "}
+              (Same Difficulty + Very Low LR = 0.1). Both have identical Skill
+              Difficulty (β = 0.5), but vastly different Learning Rates -
+              creating a dramatic visual difference!
+            </p>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Controls */}
+              <div className="col-span-1">
+                <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Play className="w-6 h-6 text-green-700" />
+                    <h3 className="text-lg font-bold text-black uppercase tracking-wide">
+                      Controls
+                    </h3>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="bg-gray-50 border-4 border-black rounded-lg p-3 font-mono text-center">
+                      <div className="text-xs mb-1 font-bold">AFM FORMULA:</div>
+                      <div className="text-base font-bold mb-1">
+                        P = θᵢ + βₖ + γₖ × T
+                      </div>
+                      <div className="text-xs">
+                        <div>FIXED STUDENT ABILITY: {studentAbility}</div>
+                        <div>ITERATION: {currentTry1b}</div>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => setIsPlaying1b(!isPlaying1b)}
+                      disabled={currentTry1b >= 10}
+                      className={`w-full px-4 py-3 border-4 border-black rounded-xl font-bold text-sm tracking-wider transition-all ${
+                        isPlaying1b
+                          ? "bg-red-600 text-white hover:bg-white hover:text-red-600"
+                          : "bg-green-600 text-white hover:bg-white hover:text-green-600"
+                      } disabled:opacity-50 disabled:cursor-not-allowed`}
                     >
-                      <CartesianGrid strokeDasharray="3 3" stroke="#d1d5db" />
-                      <XAxis
-                        dataKey="try"
-                        label={{
-                          value: "PRACTICE ATTEMPTS",
-                          position: "insideBottom",
-                          offset: -10,
-                          style: {
-                            fontSize: "14px",
-                            fontWeight: "bold",
+                      {isPlaying1b ? "PAUSE" : "START"} SIMULATION
+                    </button>
+
+                    <button
+                      onClick={stepForward1b}
+                      disabled={isPlaying1b || currentTry1b >= 10}
+                      className="w-full px-4 py-3 bg-blue-600 text-white border-4 border-black rounded-xl font-bold text-sm tracking-wider transition-all hover:bg-white hover:text-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      STEP FORWARD
+                    </button>
+
+                    <button
+                      onClick={resetStep1b}
+                      className="w-full px-4 py-3 bg-gray-600 text-white border-4 border-black rounded-xl font-bold text-sm tracking-wider transition-all hover:bg-white hover:text-gray-600 flex items-center justify-center gap-2"
+                    >
+                      <RotateCcw className="w-4 h-4" />
+                      RESET
+                    </button>
+                  </div>
+
+                  {/* Parameter Display */}
+                  <div className="mt-4 space-y-2">
+                    <div
+                      className={`border-2 ${
+                        availableExamples.find(
+                          (e) => e.id === "string-formatting"
+                        ).borderColor
+                      } ${
+                        availableExamples.find(
+                          (e) => e.id === "string-formatting"
+                        ).bgColor
+                      } rounded-lg p-3`}
+                    >
+                      <div
+                        className={`font-bold ${
+                          availableExamples.find(
+                            (e) => e.id === "string-formatting"
+                          ).textColor
+                        } text-xs mb-2`}
+                      >
+                        String Formatting
+                      </div>
+                      <div className="text-xs space-y-1">
+                        <div>β: 0.5 (Same)</div>
+                        <div>γ: 0.8 (High LR)</div>
+                      </div>
+                    </div>
+                    <div
+                      className={`border-2 ${
+                        availableExamples.find(
+                          (e) => e.id === "variable-assignment"
+                        ).borderColor
+                      } ${
+                        availableExamples.find(
+                          (e) => e.id === "variable-assignment"
+                        ).bgColor
+                      } rounded-lg p-3`}
+                    >
+                      <div
+                        className={`font-bold ${
+                          availableExamples.find(
+                            (e) => e.id === "variable-assignment"
+                          ).textColor
+                        } text-xs mb-2`}
+                      >
+                        Variable Assignment
+                      </div>
+                      <div className="text-xs space-y-1">
+                        <div>β: 0.5 (Same)</div>
+                        <div>γ: 0.1 (Very Low LR)</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Graph */}
+              <div className="col-span-1 lg:col-span-2">
+                <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
+                  <div className="flex items-center gap-3 mb-4">
+                    <TrendingUp className="w-6 h-6 text-orange-700" />
+                    <h3 className="text-lg font-bold text-black uppercase tracking-wide">
+                      Success Probability Over Time
+                    </h3>
+                  </div>
+
+                  <div className="bg-gray-50 border-4 border-black rounded-lg p-4 h-96">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart
+                        data={step1bData}
+                        margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" stroke="#d1d5db" />
+                        <XAxis
+                          dataKey="try"
+                          label={{
+                            value: "PRACTICE ATTEMPTS",
+                            position: "insideBottom",
+                            offset: -10,
+                            style: {
+                              fontSize: "14px",
+                              fontWeight: "bold",
+                              fontFamily: "IBM Plex Mono",
+                            },
+                          }}
+                          tick={{
+                            fontSize: 12,
                             fontFamily: "IBM Plex Mono",
-                          },
-                        }}
-                        tick={{
-                          fontSize: 12,
-                          fontFamily: "IBM Plex Mono",
-                          fontWeight: "bold",
-                        }}
-                      />
-                      <YAxis
-                        label={{
-                          value: "SUCCESS PROBABILITY (%)",
-                          angle: -90,
-                          position: "insideLeft",
-                          style: {
-                            fontSize: "14px",
                             fontWeight: "bold",
+                          }}
+                        />
+                        <YAxis
+                          label={{
+                            value: "SUCCESS PROBABILITY (%)",
+                            angle: -90,
+                            position: "insideLeft",
+                            style: {
+                              fontSize: "14px",
+                              fontWeight: "bold",
+                              fontFamily: "IBM Plex Mono",
+                            },
+                          }}
+                          tick={{
+                            fontSize: 12,
                             fontFamily: "IBM Plex Mono",
-                          },
-                        }}
-                        tick={{
-                          fontSize: 12,
-                          fontFamily: "IBM Plex Mono",
-                          fontWeight: "bold",
-                        }}
-                      />
-                      <Tooltip
-                        contentStyle={{
-                          fontFamily: "IBM Plex Mono",
-                          fontSize: "12px",
-                          backgroundColor: "#f8f9fa",
-                          border: "3px solid #000",
-                          borderRadius: "8px",
-                          fontWeight: "bold",
-                        }}
-                      />
-                      <Legend
-                        wrapperStyle={{
-                          fontFamily: "IBM Plex Mono",
-                          fontSize: "12px",
-                          fontWeight: "bold",
-                          paddingTop: "10px",
-                        }}
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="basic-functions"
-                        stroke={basicFunctions.color}
-                        strokeWidth={5}
-                        dot={{
-                          fill: basicFunctions.color,
-                          strokeWidth: 3,
-                          r: 6,
-                        }}
-                        name={basicFunctions.shortName}
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="classes-oop"
-                        stroke={classesOOP.color}
-                        strokeWidth={5}
-                        dot={{ fill: classesOOP.color, strokeWidth: 3, r: 6 }}
-                        name={classesOOP.shortName}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
+                            fontWeight: "bold",
+                          }}
+                        />
+                        <Tooltip
+                          contentStyle={{
+                            fontFamily: "IBM Plex Mono",
+                            fontSize: "12px",
+                            backgroundColor: "#f8f9fa",
+                            border: "3px solid #000",
+                            borderRadius: "8px",
+                            fontWeight: "bold",
+                          }}
+                        />
+                        <Legend
+                          wrapperStyle={{
+                            fontFamily: "IBM Plex Mono",
+                            fontSize: "12px",
+                            fontWeight: "bold",
+                            paddingTop: "10px",
+                          }}
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="string-formatting"
+                          stroke={
+                            availableExamples.find(
+                              (e) => e.id === "string-formatting"
+                            ).color
+                          }
+                          strokeWidth={5}
+                          dot={{
+                            fill: availableExamples.find(
+                              (e) => e.id === "string-formatting"
+                            ).color,
+                            strokeWidth: 3,
+                            r: 6,
+                          }}
+                          name="String Formatting (γ=0.8)"
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="variable-assignment"
+                          stroke={
+                            availableExamples.find(
+                              (e) => e.id === "variable-assignment"
+                            ).color
+                          }
+                          strokeWidth={5}
+                          dot={{
+                            fill: availableExamples.find(
+                              (e) => e.id === "variable-assignment"
+                            ).color,
+                            strokeWidth: 3,
+                            r: 6,
+                          }}
+                          name="Variable Assignment (γ=0.1)"
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div className="mt-4 bg-blue-100 border-2 border-blue-700 rounded-lg p-3">
-            <p className="text-blue-900 text-sm font-bold">
-              <strong>Key Insight:</strong> Both examples have the{" "}
-              <strong>same Learning Rate (γ = 0.5)</strong> - notice how the
-              curves have identical slopes! The difference is the{" "}
-              <strong>starting point</strong>: Skill Difficulty (β) determines
-              where you begin, while Learning Rate determines how quickly you
-              improve.
+            <div className="mt-4 bg-orange-100 border-2 border-orange-700 rounded-lg p-3">
+              <p className="text-orange-900 text-sm font-bold">
+                <strong>Key Insight:</strong> Both examples have the{" "}
+                <strong>same Skill Difficulty (β = 0.5)</strong> - notice how
+                they start at the same point! The dramatic difference is the{" "}
+                <strong>learning speed (slope)</strong>: Learning Rate (γ)
+                determines how steep the curve is. String Formatting (γ = 0.8)
+                has a very steep slope showing rapid improvement, while Variable
+                Assignment (γ = 0.1) has a very shallow slope showing very slow
+                progress per practice attempt - despite starting at the same
+                difficulty level!
+              </p>
+            </div>
+
+            {/* Toggle to other demo */}
+            <div className="flex justify-center mt-6">
+              <button
+                onClick={switchDemoMode}
+                className="px-6 py-3 bg-blue-600 text-white border-4 border-black rounded-xl font-bold text-base uppercase tracking-wide hover:bg-white hover:text-blue-600 transition-all transform hover:scale-105 flex items-center gap-3"
+              >
+                <Code className="w-5 h-5" />
+                <span>
+                  What about Same Learning Rate, but Different Difficulty?
+                </span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {demoMode && (
+          <div className="border-4 border-purple-600 rounded-xl p-6 bg-purple-50">
+            <div className="flex items-center gap-3 mb-4">
+              <Brain className="w-8 h-8 text-purple-600" />
+              <h3 className="text-xl font-bold text-purple-700 uppercase tracking-wide">
+                Next: Try Different Combinations!
+              </h3>
+            </div>
+            <p className="text-black text-lg font-bold leading-relaxed mb-3">
+              In the next section, you can{" "}
+              <strong className="text-purple-700">
+                drag & drop different Python concepts
+              </strong>{" "}
+              into the graph to see how various combinations of Learning Rate
+              and Skill Difficulty create different learning trajectories.
             </p>
           </div>
-        </div>
-
-        <div className="border-4 border-purple-600 rounded-xl p-6 bg-purple-50">
-          <div className="flex items-center gap-3 mb-4">
-            <Brain className="w-8 h-8 text-purple-600" />
-            <h3 className="text-xl font-bold text-purple-700 uppercase tracking-wide">
-              Next: Try Different Combinations!
-            </h3>
-          </div>
-          <p className="text-black text-lg font-bold leading-relaxed mb-3">
-            In the next section, you can{" "}
-            <strong className="text-purple-700">
-              drag & drop different Python concepts
-            </strong>{" "}
-            into the graph to see how various combinations of Learning Rate and
-            Skill Difficulty create different learning trajectories.
-          </p>
-        </div>
+        )}
       </div>
     );
   };
