@@ -2,8 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import {
   CheckCircle,
   XCircle,
-  Play,
-  Pause,
   RotateCcw,
   TrendingUp,
   Calculator,
@@ -15,11 +13,11 @@ import {
   Lightbulb,
   Info,
   X,
+  AlertTriangle,
 } from "lucide-react";
 import { getUserId } from "../utils/analytics";
 
 export const ModelComparison = ({ navigate }) => {
-  const [isPlaying, setIsPlaying] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [ifmProbability, setIfmProbability] = useState(0.4);
   const [afmProbability, setAfmProbability] = useState(0.4);
@@ -35,7 +33,6 @@ export const ModelComparison = ({ navigate }) => {
 
   const simulationRef = useRef(null);
   const parameterRef = useRef(null);
-  const intervalRef = useRef(null);
   const endSectionsTimeoutRef = useRef(null);
   const hintInterpretationRef = useRef(null);
 
@@ -164,30 +161,16 @@ export const ModelComparison = ({ navigate }) => {
     };
   };
 
-  useEffect(() => {
-    if (isPlaying) {
-      intervalRef.current = setInterval(() => {
-        setCurrentStep((prev) => {
-          const nextStep = prev + 1;
-          if (nextStep > answerSequence.length) {
-            setIsPlaying(false);
-            return 0; // Reset
-          }
-
-          const probabilities = calculateProbabilities(nextStep);
-          setAfmProbability(probabilities.afm);
-          setPfmProbability(probabilities.pfm);
-          setIfmProbability(probabilities.ifm);
-
-          return nextStep;
-        });
-      }, 2000);
-    } else {
-      clearInterval(intervalRef.current);
+  const handleNextStep = () => {
+    if (currentStep < answerSequence.length) {
+      const nextStep = currentStep + 1;
+      const probabilities = calculateProbabilities(nextStep);
+      setAfmProbability(probabilities.afm);
+      setPfmProbability(probabilities.pfm);
+      setIfmProbability(probabilities.ifm);
+      setCurrentStep(nextStep);
     }
-
-    return () => clearInterval(intervalRef.current);
-  }, [isPlaying]);
+  };
 
   // Scroll to top on mount (instant)
   useEffect(() => {
@@ -233,7 +216,6 @@ export const ModelComparison = ({ navigate }) => {
     setAfmProbability(0.4);
     setPfmProbability(0.4);
     setIfmProbability(0.4);
-    setIsPlaying(false);
   };
 
   const calculateTooltipPosition = () => {
@@ -654,24 +636,48 @@ export const ModelComparison = ({ navigate }) => {
             </p>
           </div>
 
+          {/* Important Note about Hint Interpretation */}
+          <div className="border-4 border-red-600 rounded-xl p-6 bg-red-50 shadow-lg">
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <AlertTriangle className="w-8 h-8 text-red-700" />
+              <h3 className="text-2xl font-bold text-red-800 uppercase tracking-wide text-center">
+                IMPORTANT: Hints are penalized in this simulation!
+              </h3>
+              <AlertTriangle className="w-8 h-8 text-red-700" />
+            </div>
+            <div className="bg-white border-2 border-red-700 rounded-lg p-4">
+              <p className="text-black font-bold text-center text-lg mb-3">
+                In the IFM model used in this comparative simulation, hints have
+                a <span className="text-red-700 underline">NEGATIVE</span>{" "}
+                effect (ν = -0.08). This differs from the IFM simulator on the
+                previous slide, where hints were interpreted as positive. More
+                details in the collapsible section at the end of this page!
+              </p>
+            </div>
+          </div>
+
           {/* Controls and Current Status */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Controls */}
             <div className="border-4 border-black rounded-xl p-6 bg-gray-50 shadow-lg">
-              <h3 className="text-xl font-bold text-black uppercase tracking-wide mb-4 text-center">
+              <h3 className="text-xl font-bold text-black uppercase tracking-wide mb-2 text-center">
                 Simulate the difference in progress tracking
               </h3>
+              <p className="text-sm text-gray-700 text-center mb-4 font-bold">
+                Click step by step to follow the progress
+              </p>
               <div className="flex items-center justify-center space-x-4">
                 <button
-                  onClick={() => setIsPlaying(!isPlaying)}
+                  onClick={handleNextStep}
+                  disabled={currentStep >= answerSequence.length}
                   className={`flex items-center space-x-2 px-6 py-3 border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide transition-all transform hover:scale-105 ${
-                    isPlaying
-                      ? "bg-red-600 text-white hover:bg-white hover:text-red-600"
+                    currentStep >= answerSequence.length
+                      ? "bg-gray-400 text-gray-600 cursor-not-allowed opacity-50"
                       : "bg-green-600 text-white hover:bg-white hover:text-green-600"
                   }`}
                 >
-                  {isPlaying ? <Pause size={20} /> : <Play size={20} />}
-                  <span>{isPlaying ? "PAUSE" : "PLAY"}</span>
+                  <ArrowRight size={20} />
+                  <span>NEXT PRACTICE ATTEMPT</span>
                 </button>
 
                 <button
@@ -741,12 +747,23 @@ export const ModelComparison = ({ navigate }) => {
                       {getCurrentAnswer().correct ? "SUCCESS" : "FAILURE"}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2 text-yellow-600 border-4 border-yellow-600 bg-yellow-100 px-3 py-1 rounded-lg">
-                    <Lightbulb size={16} />
-                    <span className="font-bold">
+                  <div
+                    className={`flex items-center gap-2 border-4 px-4 py-2 rounded-lg ${
+                      getCurrentAnswer().hints > 0
+                        ? "text-red-600 border-red-600 bg-red-100"
+                        : "text-yellow-600 border-yellow-600 bg-yellow-100"
+                    }`}
+                  >
+                    <Lightbulb size={20} />
+                    <span className="font-bold text-lg">
                       {getCurrentAnswer().hints} HINT
                       {getCurrentAnswer().hints !== 1 ? "S" : ""}
                     </span>
+                    {getCurrentAnswer().hints > 0 && (
+                      <span className="text-red-800 font-bold ml-2">
+                        → PENALIZED!
+                      </span>
+                    )}
                   </div>
                 </div>
                 <p className="text-black font-bold text-base">
@@ -835,9 +852,12 @@ export const ModelComparison = ({ navigate }) => {
                 ></div>
               </div>
 
-              <div className="border-l-4 border-orange-600 bg-orange-100 p-3 rounded-r-lg">
-                <div className="text-xs text-black font-bold uppercase">
-                  MOST CONSERVATIVE: HINTS & FAILURES PENALIZED
+              <div className="border-l-4 border-red-600 bg-red-100 p-3 rounded-r-lg">
+                <div className="text-xs text-black font-bold uppercase mb-1">
+                  MOST CONSERVATIVE
+                </div>
+                <div className="text-xs text-red-800 font-bold">
+                  HINTS PENALIZED (ν = -0.08)
                 </div>
               </div>
             </div>
@@ -882,13 +902,16 @@ export const ModelComparison = ({ navigate }) => {
                 </p>
               </div>
 
-              <div className="border-4 border-orange-600 rounded-lg p-4 bg-orange-50">
-                <h4 className="font-bold text-orange-800 mb-2 text-sm tracking-wide">
+              <div className="border-4 border-red-600 rounded-lg p-4 bg-red-50">
+                <h4 className="font-bold text-red-800 mb-2 text-sm tracking-wide">
                   IFM - LEAST OPTIMISTIC:
                 </h4>
-                <p className="text-black text-sm font-mono">
+                <p className="text-black text-sm font-mono mb-2">
                   Penalizes failures and hints - most conservative, least likely
                   to overestimate
+                </p>
+                <p className="text-red-800 text-xs font-bold">
+                  Hints have NEGATIVE EFFECT (ν = -0.08) in this comparison!
                 </p>
               </div>
             </div>
@@ -926,12 +949,13 @@ export const ModelComparison = ({ navigate }) => {
 
                 <div className="border-4 border-red-600 rounded-xl p-6 bg-red-50 mb-6">
                   <div className="text-red-800 font-bold text-lg mb-4 text-center">
-                    IMPORTANT: This comparison shows hints as PENALIZED (ν =
-                    -0.08)
+                    IMPORTANT: The comparison on this slide shows hints as
+                    PENALIZED (ν = -0.08)
                   </div>
                   <p className="text-red-700 font-bold text-center mb-4">
                     But in the IFM simulator (previous slide), hints are
-                    BENEFICIAL (ν = +0.12)!
+                    BENEFICIAL (parameter ν can only be manipulated in positive
+                    direction)!
                   </p>
                   <div className="border-l-4 border-red-700 bg-white p-4 rounded-r-lg">
                     <p className="text-black font-bold text-sm">
@@ -961,7 +985,7 @@ export const ModelComparison = ({ navigate }) => {
                       HINTS AS BENEFIT (IFM Simulator)
                     </h4>
                     <ul className="text-black text-sm font-bold space-y-2">
-                      <li>• ν = +0.12 (positive effect)</li>
+                      <li>• ν = positive value / positive effect</li>
                       <li>• Theory: Hints provide learning</li>
                       <li>• More scaffolding = better outcomes</li>
                       <li>• Supportive instruction approach</li>
