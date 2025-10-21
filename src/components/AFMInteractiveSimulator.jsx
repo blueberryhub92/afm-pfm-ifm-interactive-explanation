@@ -27,7 +27,7 @@ const paramDefaults = {
 };
 
 function calcProb(theta, beta, gamma, practice) {
-  const logit = theta - beta + gamma * practice;
+  const logit = theta + beta + gamma * practice;
   return 1 / (1 + Math.exp(-logit));
 }
 
@@ -209,7 +209,7 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
   }, [showTooltip]);
 
   // Derived
-  const logit = params.theta - params.beta + params.gamma * params.practice;
+  const logit = params.theta + params.beta + params.gamma * params.practice;
   const prob = calcProb(
     params.theta,
     params.beta,
@@ -330,7 +330,7 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
     // Beta update: based on prediction accuracy vs target (0.6-0.7 range)
     const targetAcc = 0.65;
     const betaGradient = (weightedAcc - targetAcc) * 2; // Positive if too easy, negative if too hard
-    const betaUpdate = etaBeta * (-betaGradient - lambda * (beta - betaPrior)); // Negative because higher beta = easier
+    const betaUpdate = etaBeta * (-betaGradient - lambda * (beta - betaPrior)); // Negative gradient if too easy (decrease beta to make harder)
     beta += Math.max(-maxStepSize, Math.min(maxStepSize, betaUpdate));
     beta = Math.max(-2, Math.min(2, beta)); // Enforce bounds
 
@@ -861,7 +861,7 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
 
                 {/* Step 2: Logit formula */}
                 <div className="text-base font-mono mb-2">
-                  <strong>2.</strong> logit = θ - β + γ × T
+                  <strong>2.</strong> logit = θ + β + γ × T
                 </div>
 
                 {/* Step 3: Substitute values */}
@@ -874,13 +874,13 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
                   >
                     {params.theta.toFixed(1)}
                   </span>
-                  -
+                  +
                   <span
                     className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor(
                       "beta"
                     )}`}
                   >
-                    ({params.beta.toFixed(1)})
+                    {params.beta.toFixed(1)}
                   </span>
                   +
                   <span

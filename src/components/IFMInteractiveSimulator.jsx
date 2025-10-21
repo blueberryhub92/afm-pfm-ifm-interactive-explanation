@@ -32,7 +32,7 @@ const paramDefaults = {
 };
 
 function calcProb(theta, beta, mu, rho, nu, successes, failures, hints) {
-  const logit = theta - beta + mu * successes + rho * failures + nu * hints;
+  const logit = theta + beta + mu * successes + rho * failures + nu * hints;
   return 1 / (1 + Math.exp(-logit));
 }
 
@@ -521,7 +521,7 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
     // Beta update: based on prediction accuracy vs target (0.6-0.7 range)
     const targetAcc = 0.65;
     const betaGradient = (weightedAcc - targetAcc) * 2; // Positive if too easy, negative if too hard
-    const betaUpdate = etaBeta * (-betaGradient - lambda * (beta - betaPrior)); // Negative because higher beta = easier
+    const betaUpdate = etaBeta * (-betaGradient - lambda * (beta - betaPrior)); // Negative gradient if too easy (decrease beta to make harder)
     beta += Math.max(-maxStepSize, Math.min(maxStepSize, betaUpdate));
     beta = Math.max(-2, Math.min(2, beta)); // Enforce bounds
 
@@ -1078,7 +1078,7 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
 
                 {/* Step 2: Logit formula */}
                 <div className="text-base font-mono mb-2">
-                  <strong>2.</strong> logit = θ - β + μ × S + ρ × F + ν × H
+                  <strong>2.</strong> logit = θ + β + μ × S + ρ × F + ν × H
                 </div>
 
                 {/* Step 3: Substitute values */}
@@ -1091,13 +1091,13 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
                   >
                     {params.theta.toFixed(1)}
                   </span>
-                  -
+                  +
                   <span
                     className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor(
                       "beta"
                     )}`}
                   >
-                    ({params.beta.toFixed(1)})
+                    {params.beta.toFixed(1)}
                   </span>
                   +
                   <span
