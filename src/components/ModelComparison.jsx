@@ -6,6 +6,7 @@ import {
   TrendingUp,
   Calculator,
   ArrowRight,
+  ArrowLeft,
   Brain,
   Zap,
   Target,
@@ -169,6 +170,17 @@ export const ModelComparison = ({ navigate }) => {
       setPfmProbability(probabilities.pfm);
       setIfmProbability(probabilities.ifm);
       setCurrentStep(nextStep);
+    }
+  };
+
+  const handlePreviousStep = () => {
+    if (currentStep > 0) {
+      const prevStep = currentStep - 1;
+      const probabilities = calculateProbabilities(prevStep);
+      setAfmProbability(probabilities.afm);
+      setPfmProbability(probabilities.pfm);
+      setIfmProbability(probabilities.ifm);
+      setCurrentStep(prevStep);
     }
   };
 
@@ -667,6 +679,19 @@ export const ModelComparison = ({ navigate }) => {
                 Click step by step to follow the progress
               </p>
               <div className="flex items-center justify-center space-x-4">
+                <button
+                  onClick={handlePreviousStep}
+                  disabled={currentStep === 0}
+                  className={`flex items-center space-x-2 px-6 py-3 border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide transition-all transform hover:scale-105 ${
+                    currentStep === 0
+                      ? "bg-gray-400 text-gray-600 cursor-not-allowed opacity-50"
+                      : "bg-blue-600 text-white hover:bg-white hover:text-blue-600"
+                  }`}
+                >
+                  <ArrowLeft size={20} />
+                  <span>STEP BACK</span>
+                </button>
+
                 <button
                   onClick={handleNextStep}
                   disabled={currentStep >= answerSequence.length}

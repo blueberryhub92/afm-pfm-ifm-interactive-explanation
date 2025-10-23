@@ -332,195 +332,67 @@ print(result)`,
   const renderBinarySkills = () => {
     // Define different code solutions with their characteristics
     const codeSolutions = {
-      sortBased: {
-        id: "sortBased",
-        label: "Solution A: Sort-Based",
-        code: `def second_largest(nums):
-    nums.sort()
-    return nums[-2]`,
-        basicTest: { works: true, output: "4" },
+      loopBased: {
+        id: "loopBased",
+        label: "Your Solution",
+        code: `def get_even_numbers(nums):
+    result = []
+    for num in nums:
+        if num % 2 == 0:
+            result.append(num)
+    return result`,
+        basicTest: { works: true, output: "[2, 4, 6]" },
         issues: {
-          efficiency:
-            "Uses sort() which is O(n log n) instead of O(n) single pass",
-          edgeCases: "Fails with empty list, single element, or all duplicates",
+          efficiency: "Works correctly but uses more lines than necessary",
+          edgeCases: "Doesn't handle None or non-number values in list",
           documentation: "No docstring or input validation",
         },
         testCases: [
           {
             id: "basic",
-            input: "[1, 3, 2, 5, 4]",
-            expected: "4",
-            result: "4",
+            input: "[1, 2, 3, 4, 5, 6]",
+            expected: "[2, 4, 6]",
+            result: "[2, 4, 6]",
             pass: true,
-            description: "Standard case with unique numbers",
+            description: "Standard case with mixed numbers",
           },
           {
-            id: "empty",
-            input: "[]",
-            expected: "None or error handling",
-            result: "IndexError: list index out of range",
+            id: "invalid",
+            input: "[2, 'hello', 4]",
+            expected: "Error or skip invalid",
+            result:
+              "TypeError: not all arguments converted during string formatting",
             pass: false,
-            description: "Empty list causes crash",
+            description: "Non-number values cause crash",
             errorExplanation:
-              "The code tries to access nums[-2] on an empty list, causing an IndexError. Proper error handling is missing.",
-          },
-          {
-            id: "duplicates",
-            input: "[5, 5, 5, 5]",
-            expected: "5 or None",
-            result: "5",
-            pass: false,
-            description: "All duplicates - ambiguous result",
-            errorExplanation:
-              "When all numbers are the same, there's no true 'second largest'. The function returns 5, but should handle this edge case explicitly.",
-          },
-          {
-            id: "single",
-            input: "[7]",
-            expected: "None",
-            result: "IndexError: list index out of range",
-            pass: false,
-            description: "Single element causes crash",
-            errorExplanation:
-              "A list with only one element has no second largest number. The code crashes instead of handling this gracefully.",
-          },
-        ],
-      },
-      maxBased: {
-        id: "maxBased",
-        label: "Solution B: Max-Based",
-        code: `def second_largest(nums):
-    first_max = max(nums)
-    nums.remove(first_max)
-    return max(nums)`,
-        basicTest: { works: true, output: "4" },
-        issues: {
-          efficiency: "Calls max() twice, modifies original list",
-          edgeCases:
-            "Fails with empty list, single element, and duplicates of max",
-          documentation: "No docstring, destructive operation not documented",
-        },
-        testCases: [
-          {
-            id: "basic",
-            input: "[1, 3, 2, 5, 4]",
-            expected: "4",
-            result: "4",
-            pass: true,
-            description: "Standard case works fine",
-          },
-          {
-            id: "empty",
-            input: "[]",
-            expected: "None or error handling",
-            result: "ValueError: max() arg is an empty sequence",
-            pass: false,
-            description: "Empty list causes crash",
-            errorExplanation:
-              "The max() function fails on an empty list. The code doesn't check if the list is empty before processing.",
-          },
-          {
-            id: "duplicates",
-            input: "[5, 5, 3, 1]",
-            expected: "3",
-            result: "5",
-            pass: false,
-            description: "Duplicate maximum values",
-            errorExplanation:
-              "When the maximum value appears multiple times, remove() only removes the first occurrence. This leads to returning the max again instead of the second largest distinct value.",
-          },
-          {
-            id: "single",
-            input: "[7]",
-            expected: "None",
-            result: "ValueError: max() arg is an empty sequence",
-            pass: false,
-            description: "Single element causes crash",
-            errorExplanation:
-              "After removing the only element, max() is called on an empty list, causing a ValueError.",
-          },
-        ],
-      },
-      indexBased: {
-        id: "indexBased",
-        label: "Solution C: Index-Based",
-        code: `def second_largest(nums):
-    sorted_nums = sorted(nums, reverse=True)
-    return sorted_nums[1]`,
-        basicTest: { works: true, output: "4" },
-        issues: {
-          efficiency: "Uses sorted() which is O(n log n)",
-          edgeCases:
-            "Fails with lists shorter than 2 elements, doesn't handle duplicates",
-          documentation: "No docstring or validation",
-        },
-        testCases: [
-          {
-            id: "basic",
-            input: "[1, 3, 2, 5, 4]",
-            expected: "4",
-            result: "4",
-            pass: true,
-            description: "Standard case works correctly",
-          },
-          {
-            id: "empty",
-            input: "[]",
-            expected: "None or error handling",
-            result: "IndexError: list index out of range",
-            pass: false,
-            description: "Empty list causes crash",
-            errorExplanation:
-              "Accessing index [1] on an empty list causes an IndexError. No length check is performed.",
-          },
-          {
-            id: "duplicates",
-            input: "[5, 5, 3, 1]",
-            expected: "3",
-            result: "5",
-            pass: false,
-            description: "Doesn't skip duplicates",
-            errorExplanation:
-              "The sorted list is [5, 5, 3, 1], so index [1] returns 5 (duplicate) instead of 3 (actual second largest distinct value).",
-          },
-          {
-            id: "single",
-            input: "[7]",
-            expected: "None",
-            result: "IndexError: list index out of range",
-            pass: false,
-            description: "Single element causes crash",
-            errorExplanation:
-              "A single-element list only has index [0]. Accessing index [1] causes an IndexError.",
+              "The code tries to use % operator on a string, causing a TypeError. It should validate that all items are numbers or skip invalid values.",
           },
         ],
       },
     };
 
     // Better solution for comparison
-    const betterSolution = `def second_largest(nums):
+    const betterSolution = `def get_even_numbers(nums):
     """
-    Find the second largest number in a list.
+    Get all even numbers from a list.
     
     Args:
-        nums: List of numbers
+        nums: List of values
     
     Returns:
-        Second largest number or None if not possible
+        List of even numbers, or empty list if none found
     """
-    if len(nums) < 2:
-        return None
+    if not isinstance(nums, list):
+        return []
     
-    first = second = float('-inf')
-    
+    result = []
     for num in nums:
-        if num > first:
-            second = first
-            first = num
-        elif num > second and num != first:
-            second = num
+        # Check if value is a number
+        if isinstance(num, (int, float)) and not isinstance(num, bool):
+            if num % 2 == 0:
+                result.append(num)
     
-    return second if second != float('-inf') else None`;
+    return result`;
 
     const stepLabels = {
       0: "Choose Your Solution",
@@ -551,6 +423,10 @@ print(result)`,
     const handleSolutionSelect = (solutionId) => {
       setSelectedCodeSolution(solutionId);
       setTestCaseResults({});
+      // Immediately advance to step 2 (code analysis)
+      setTimeout(() => {
+        setSimStep(1);
+      }, 300);
     };
 
     const handleTestCase = (testCaseId) => {
@@ -577,44 +453,37 @@ print(result)`,
                 YOUR TASK
               </h3>
               <p className="text-black font-mono text-lg mb-4">
-                Write a Python function to find the second largest number in a
-                list
+                Write a Python function to get all even numbers from a list
               </p>
               <p className="text-black font-mono text-sm">
-                Example: second_largest([1, 3, 2, 5, 4]) should return 4
+                Example: get_even_numbers([1, 2, 3, 4, 5, 6]) should return [2,
+                4, 6]
               </p>
             </div>
 
             <div className="border-4 border-purple-600 rounded-xl p-6 bg-purple-50">
               <h3 className="font-bold text-purple-700 text-lg font-mono uppercase mb-3">
-                CHOOSE YOUR SOLUTION
+                YOUR SOLUTION
               </h3>
               <p className="text-black font-mono text-sm mb-4">
-                Select one of these working solutions. They all produce the
-                correct output for the basic test case, but each has different
-                characteristics.
+                Here's a working solution that produces the correct output for
+                the basic test case. Click it to analyze the code.
               </p>
 
               <div className="space-y-4">
                 {Object.values(codeSolutions).map((solution) => (
                   <div
                     key={solution.id}
-                    className={`border-4 rounded-xl p-4 cursor-pointer transition-all ${
-                      selectedCodeSolution === solution.id
-                        ? "border-green-600 bg-green-100"
-                        : "border-gray-400 bg-white hover:border-gray-600"
-                    }`}
+                    className="border-4 border-purple-600 rounded-xl p-4 cursor-pointer transition-all bg-white hover:bg-purple-50 hover:border-purple-700 hover:scale-105"
                     onClick={() => handleSolutionSelect(solution.id)}
                   >
                     <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-bold text-black font-mono">
+                      <h4 className="font-bold text-black font-mono text-lg">
                         {solution.label}
                       </h4>
-                      {selectedCodeSolution === solution.id && (
-                        <span className="px-2 py-1 bg-green-600 text-white font-mono text-xs font-bold">
-                          SELECTED
-                        </span>
-                      )}
+                      <span className="px-3 py-1 bg-purple-600 text-white font-mono text-xs font-bold">
+                        CLICK TO ANALYZE →
+                      </span>
                     </div>
                     <div className="bg-black text-green-400 p-3 rounded-lg font-mono text-sm">
                       <pre className="text-white whitespace-pre-wrap leading-relaxed">
@@ -629,20 +498,6 @@ print(result)`,
               </div>
             </div>
           </div>
-        </div>
-
-        <div className="flex justify-center">
-          <button
-            onClick={() => setSimStep(1)}
-            disabled={!selectedCodeSolution}
-            className={`px-8 py-4 border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide transition-all transform font-mono ${
-              selectedCodeSolution
-                ? "bg-black text-white hover:bg-white hover:text-black hover:scale-105"
-                : "bg-gray-300 text-gray-500 cursor-not-allowed"
-            }`}
-          >
-            CONTINUE WITH SELECTED SOLUTION →
-          </button>
         </div>
       </div>
     );
@@ -677,7 +532,7 @@ print(result)`,
                 </div>
                 <div className="p-3 bg-white border-2 border-green-600 rounded-lg">
                   <p className="font-mono text-black font-bold mb-2">
-                    Basic Test: second_largest([1, 3, 2, 5, 4])
+                    Basic Test: get_even_numbers([1, 2, 3, 4, 5, 6])
                   </p>
                   <p className="font-mono text-black">
                     Output: {selectedSolution.basicTest.output}
@@ -902,7 +757,8 @@ print(result)`,
             A More Robust Solution
           </div>
           <p className="text-lg text-black text-center mb-8 font-bold">
-            Here's how to handle all edge cases properly with O(n) efficiency
+            Here's how to handle all edge cases properly by looking through the
+            list just once
           </p>
 
           <div className="space-y-6">
@@ -923,7 +779,7 @@ print(result)`,
                   KEY IMPROVEMENTS
                 </h3>
                 <ul className="space-y-2 text-black font-mono text-sm">
-                  <li>✓ O(n) time complexity - single pass</li>
+                  <li>✓ Looks through list just once</li>
                   <li>✓ Handles empty lists gracefully</li>
                   <li>✓ Properly manages duplicates</li>
                   <li>✓ No list modification</li>
@@ -939,19 +795,21 @@ print(result)`,
                 <div className="space-y-2">
                   <div className="p-2 bg-white border-2 border-green-600 rounded">
                     <p className="font-mono text-sm text-black">
-                      [1, 3, 2, 5, 4] → 4 ✓
+                      [1, 2, 3, 4, 5, 6] → [2, 4, 6] ✓
                     </p>
                   </div>
                   <div className="p-2 bg-white border-2 border-green-600 rounded">
-                    <p className="font-mono text-sm text-black">[] → None ✓</p>
+                    <p className="font-mono text-sm text-black">[] → [] ✓</p>
                   </div>
                   <div className="p-2 bg-white border-2 border-green-600 rounded">
                     <p className="font-mono text-sm text-black">
-                      [5, 5, 3, 1] → 3 ✓
+                      [1, 3, 5, 7] → [] ✓
                     </p>
                   </div>
                   <div className="p-2 bg-white border-2 border-green-600 rounded">
-                    <p className="font-mono text-sm text-black">[7] → None ✓</p>
+                    <p className="font-mono text-sm text-black">
+                      [2, 'hi', 4] → [2, 4] ✓
+                    </p>
                   </div>
                 </div>
               </div>
@@ -1014,7 +872,7 @@ print(result)`,
                     WHAT AFM IGNORES:
                   </h4>
                   <ul className="text-black font-mono text-sm space-y-1">
-                    <li>• Algorithm efficiency</li>
+                    <li>• Code efficiency</li>
                     <li>• Edge case handling</li>
                     <li>• Code readability</li>
                     <li>• Documentation quality</li>
@@ -1053,7 +911,7 @@ print(result)`,
                   </h4>
                   <ul className="text-black font-mono text-sm space-y-1">
                     <li>✓ Correctness for various inputs</li>
-                    <li>✓ Algorithmic efficiency (time/space)</li>
+                    <li>✓ Code efficiency</li>
                     <li>✓ Edge case handling</li>
                     <li>✓ Code style and readability</li>
                     <li>✓ Documentation and comments</li>
@@ -1131,12 +989,6 @@ print(result)`,
         </div>
 
         <div className="flex justify-center space-x-4">
-          <button
-            onClick={resetSimulation}
-            className="px-6 py-3 bg-white text-black border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-black hover:text-white transition-all transform hover:scale-105 font-mono"
-          >
-            TRY ANOTHER SOLUTION
-          </button>
           <button
             onClick={backToOverview}
             className="px-6 py-3 bg-black text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-black transition-all transform hover:scale-105 font-mono"
@@ -1590,7 +1442,7 @@ print(result)`,
           </p>
         </div>
 
-        <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
+        <div className="sticky top-4 z-50 border-4 border-black rounded-xl p-6 bg-white shadow-2xl">
           <div className="flex justify-between items-center mb-4">
             <span className="text-2xl font-bold text-black uppercase tracking-wide">
               SUCCESS PROBABILITY: {(initialProb * 100).toFixed(0)}%
@@ -2492,7 +2344,7 @@ print(result)`,
 
     return (
       <TechnicalLayout>
-        <div className="max-w-5xl mx-auto space-y-8">
+        <div className="max-w-7xl mx-auto space-y-8">
           <div className="text-center mb-6">
             <h1 className="text-3xl font-bold text-black mb-4 uppercase tracking-wide">
               Q-Matrix Quality Limitation
@@ -2547,8 +2399,8 @@ print(result)`,
             </div>
           </div>
 
-          {/* MIDDLE: Two-column layout: Question on left, Skills on right */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* MIDDLE: Three-column layout: Question on left, Skills in middle, Prediction on right */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* LEFT COLUMN: Problem Display */}
             <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg h-fit">
               <div className="mb-6">
@@ -2796,44 +2648,52 @@ print(result)`,
                 })}
               </div>
             </div>
-          </div>
 
-          {/* BOTTOM: AFM Prediction Display - Wide narrow box */}
-          <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
-            <div className="mb-4">
-              <span className="text-2xl font-bold text-black uppercase tracking-wide block mb-4">
-                AFM SUCCESS PREDICTION:
-              </span>
-              <div className="text-center mb-4">
-                <span className="text-4xl font-bold text-black">
-                  {(currentPrediction * 100).toFixed(0)}%
+            {/* THIRD COLUMN: AFM Prediction Display */}
+            <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg h-fit">
+              <div className="mb-4">
+                <span className="text-2xl font-bold text-black uppercase tracking-wide block mb-2">
+                  AFM SUCCESS PREDICTION:
+                </span>
+                <p className="text-sm text-gray-700 mb-4 text-center">
+                  Based on current skill mastery in the mapped skills
+                </p>
+                <div className="text-center mb-4">
+                  <span className="text-4xl font-bold text-black">
+                    {(currentPrediction * 100).toFixed(0)}%
+                  </span>
+                  <p className="text-xs text-gray-600 mt-1">
+                    for the current problem
+                  </p>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <span className="text-lg font-bold text-black">0%</span>
+                  <div className="flex-1 bg-gray-200 border-4 border-black rounded-none h-8 overflow-hidden">
+                    <div
+                      className={`h-full transition-all duration-1000 ease-out ${
+                        qMatrixViewMode === "correct"
+                          ? "bg-green-600"
+                          : "bg-red-600"
+                      }`}
+                      style={{ width: `${currentPrediction * 100}%` }}
+                    />
+                  </div>
+                  <span className="text-lg font-bold text-black">100%</span>
+                </div>
+              </div>
+              <div className="text-center">
+                <span
+                  className={`px-4 py-2 border-2 border-black rounded font-bold ${
+                    qMatrixViewMode === "correct"
+                      ? "bg-green-300"
+                      : "bg-red-300"
+                  }`}
+                >
+                  {qMatrixViewMode === "correct"
+                    ? "ACCURATE SKILL-SPECIFIC PREDICTION"
+                    : "GENERIC PREDICTION - ACCURACY LOST!"}
                 </span>
               </div>
-              <div className="flex items-center space-x-4">
-                <span className="text-lg font-bold text-black">0%</span>
-                <div className="flex-1 bg-gray-200 border-4 border-black rounded-none h-8 overflow-hidden">
-                  <div
-                    className={`h-full transition-all duration-1000 ease-out ${
-                      qMatrixViewMode === "correct"
-                        ? "bg-green-600"
-                        : "bg-red-600"
-                    }`}
-                    style={{ width: `${currentPrediction * 100}%` }}
-                  />
-                </div>
-                <span className="text-lg font-bold text-black">100%</span>
-              </div>
-            </div>
-            <div className="text-center">
-              <span
-                className={`px-4 py-2 border-2 border-black rounded font-bold ${
-                  qMatrixViewMode === "correct" ? "bg-green-300" : "bg-red-300"
-                }`}
-              >
-                {qMatrixViewMode === "correct"
-                  ? "ACCURATE SKILL-SPECIFIC PREDICTION"
-                  : "GENERIC PREDICTION - ACCURACY LOST!"}
-              </span>
             </div>
           </div>
 

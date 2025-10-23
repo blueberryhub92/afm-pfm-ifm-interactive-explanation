@@ -711,7 +711,7 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
 
       {/* Content */}
       <div className="flex-1 px-8 py-8">
-        <div className="max-w-6xl mx-auto space-y-8">
+        <div className="w-full space-y-8">
           {/* Introduction */}
           <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
             <p className="text-lg text-black leading-relaxed text-center">
@@ -722,508 +722,543 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
               <strong>IFM Innovation:</strong> Add hints to your current
               opportunity before responding to see their cumulative learning
               effect!
+              <br />
+              <span className="relative group inline-block cursor-help">
+                <span className="border-b-2 border-dashed border-gray-400">
+                  Disclaimer: For the student simulation only the practice
+                  opportunities change during practice.
+                </span>
+
+                {/* Hover Box */}
+                <div className="absolute left-1/2 transform -translate-x-1/2 top-full mt-4 w-[600px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                  <div className="border-4 border-black rounded-xl p-6 bg-gradient-to-r from-orange-100 to-red-100 shadow-2xl">
+                    <div className="flex items-center gap-3 mb-4">
+                      <Lightbulb className="w-6 h-6 text-orange-700" />
+                      <h3 className="text-xl font-bold text-black uppercase tracking-wide">
+                        IFM: Real-Time Learning and Retraining
+                      </h3>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="border-4 border-green-600 rounded-xl p-4 bg-green-50">
+                        <h4 className="font-bold text-green-800 mb-3 text-lg uppercase tracking-wide">
+                          During Session
+                        </h4>
+                        <ul className="space-y-2 text-black font-bold text-sm">
+                          <li>• θ, β, μ, ρ, ν stay constant (no tuning!)</li>
+                          <li>
+                            • Each opportunity updates success/failure/hint
+                            counts
+                          </li>
+                          <li>• Success probability updates in real-time</li>
+                          <li>
+                            • Model tracks instructional patterns for retraining
+                          </li>
+                        </ul>
+                      </div>
+
+                      <div className="border-4 border-orange-600 rounded-xl p-4 bg-orange-50">
+                        <h4 className="font-bold text-orange-800 mb-3 text-lg uppercase tracking-wide">
+                          During Retrain
+                        </h4>
+                        <ul className="space-y-2 text-black font-bold text-sm">
+                          <li>• θ, β updated based on overall performance</li>
+                          <li>
+                            • μ, ρ adjusted based on success/failure patterns
+                          </li>
+                          <li>
+                            • ν tuned based on hint effectiveness analysis
+                          </li>
+                          <li>
+                            • Most sophisticated: accounts for instructional
+                            support
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </span>
             </p>
           </div>
 
-          {/* Main Content Grid - 3 Columns */}
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-            {/* Left Column - Session Controls */}
-            <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
-              <div className="flex items-center gap-3 mb-6">
-                <div
-                  className={`w-4 h-4 rounded-full border-2 border-black ${
-                    sessionActive ? "bg-green-500 animate-pulse" : "bg-gray-400"
-                  }`}
-                ></div>
-                <h3 className="text-xl font-bold text-black uppercase tracking-wide">
-                  {sessionActive
-                    ? "Simulate Student Responses"
-                    : "Session Ended"}
-                </h3>
-              </div>
-
-              {/* Add Hint Button */}
-              {sessionActive && (
-                <div className="mb-6 p-4 border-4 border-orange-600 rounded-xl bg-orange-50">
-                  <div className="text-center mb-4">
-                    <p className="text-orange-800 font-bold mb-2 text-sm">
-                      Add instructional support to this opportunity:
-                    </p>
-                    <button
-                      onClick={addHint}
-                      disabled={!sessionActive}
-                      className={`w-full px-4 py-3 bg-orange-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all transform hover:scale-105 ${
-                        !sessionActive
-                          ? "opacity-50 cursor-not-allowed"
-                          : "hover:bg-white hover:text-orange-600"
-                      }`}
-                    >
-                      Add Hint ({pendingHints})
-                    </button>
-                  </div>
-                  <p className="text-orange-700 text-xs text-center font-bold">
-                    Hints accumulate within the same opportunity!
-                  </p>
+          {/* Main Layout: Left side (3 grids) + Right side (formula) */}
+          <div className="grid grid-cols-1 xl:grid-cols-[3fr_1fr] gap-6">
+            {/* Left Side: 3 Grid Boxes */}
+            <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr_1.5fr] gap-6">
+              {/* Left Column - Session Controls */}
+              <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
+                <div className="flex items-center gap-3 mb-6">
+                  <div
+                    className={`w-4 h-4 rounded-full border-2 border-black ${
+                      sessionActive
+                        ? "bg-green-500 animate-pulse"
+                        : "bg-gray-400"
+                    }`}
+                  ></div>
+                  <h3 className="text-xl font-bold text-black uppercase tracking-wide">
+                    {sessionActive
+                      ? "Simulate Student Responses"
+                      : "Session Ended"}
+                  </h3>
                 </div>
-              )}
 
-              {/* Response Buttons */}
-              <div className="grid grid-cols-1 gap-4 mb-6">
-                <button
-                  onClick={() => simulateResponse(true)}
-                  disabled={!sessionActive}
-                  className={`px-4 py-3 bg-green-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all transform hover:scale-105 ${
-                    !sessionActive
-                      ? "opacity-50 cursor-not-allowed"
-                      : "hover:bg-white hover:text-green-600"
-                  }`}
-                >
-                  ✓ Got It Right
-                  {pendingHints > 0 && (
-                    <div className="text-sm">
-                      + {pendingHints} hint{pendingHints > 1 ? "s" : ""}
-                    </div>
-                  )}
-                </button>
-
-                <button
-                  onClick={() => simulateResponse(false)}
-                  disabled={!sessionActive}
-                  className={`px-4 py-3 bg-red-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all transform hover:scale-105 ${
-                    !sessionActive
-                      ? "opacity-50 cursor-not-allowed"
-                      : "hover:bg-white hover:text-red-600"
-                  }`}
-                >
-                  ✗ Got It Wrong
-                  {pendingHints > 0 && (
-                    <div className="text-sm">
-                      + {pendingHints} hint{pendingHints > 1 ? "s" : ""}
-                    </div>
-                  )}
-                </button>
-
-                <button
-                  onClick={resetAll}
-                  className="px-4 py-3 bg-gray-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide hover:bg-white hover:text-gray-600 transition-all transform hover:scale-105 flex items-center justify-center gap-2"
-                >
-                  <RotateCcw className="w-5 h-5" />
-                  Reset
-                </button>
-              </div>
-
-              {/* End Session Button */}
-              {sessionActive && (
-                <div className="mb-6">
-                  <button
-                    onClick={endSession}
-                    className="w-full px-4 py-3 bg-orange-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide hover:bg-white hover:text-orange-600 transition-all transform hover:scale-105"
-                  >
-                    End Session
-                  </button>
-                </div>
-              )}
-
-              {/* Retrain Section */}
-              {!sessionActive && retrainingData.length > 0 && (
-                <div className="border-4 border-yellow-600 rounded-xl p-6 bg-yellow-100 mb-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <Database className="w-6 h-6 text-yellow-700" />
-                    <h4 className="font-bold text-yellow-800 text-lg uppercase">
-                      IFM Retraining Ready
-                    </h4>
-                  </div>
-                  <p className="text-yellow-800 font-bold mb-4 text-sm">
-                    {retrainingData.length} opportunities collected. Ready to
-                    update IFM parameters based on your success/failure/hint
-                    patterns.
-                  </p>
-                  <button
-                    onClick={retrainModel}
-                    className="w-full px-4 py-3 bg-yellow-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide hover:bg-white hover:text-yellow-600 transition-all transform hover:scale-105 flex items-center justify-center gap-2"
-                  >
-                    <RefreshCw className="w-5 h-5" />
-                    Retrain IFM Model
-                  </button>
-                </div>
-              )}
-
-              {/* Response History */}
-              <div className="border-l-8 border-orange-600 bg-orange-100 rounded-r-xl p-4">
-                <h4 className="font-bold text-orange-800 mb-3 text-lg uppercase">
-                  Recent Responses
-                </h4>
-                <div className="space-y-2 max-h-32 overflow-y-auto">
-                  {responseLog.length === 0 ? (
-                    <div className="text-orange-700 text-center py-2 font-bold">
-                      Your IFM learning journey starts here!
-                    </div>
-                  ) : (
-                    responseLog
-                      .slice(-5)
-                      .reverse()
-                      .map((entry, i) => {
-                        const bgColor = entry.correct
-                          ? "bg-green-200"
-                          : "bg-red-200";
-                        const borderColor =
-                          entry.hintsUsed > 0
-                            ? entry.correct
-                              ? "border-l-4 border-green-700 border-r-4 border-orange-500"
-                              : "border-l-4 border-red-700 border-r-4 border-orange-500"
-                            : entry.correct
-                            ? "border-l-4 border-green-700"
-                            : "border-l-4 border-red-700";
-                        const textColor = entry.correct
-                          ? "text-green-900"
-                          : "text-red-900";
-                        const icon = entry.correct ? "✓ Success" : "✗ Failure";
-
-                        return (
-                          <div
-                            key={entry.step}
-                            className={`${bgColor} ${borderColor} ${textColor} rounded-r-lg font-mono px-3 py-2`}
-                          >
-                            <div className="font-bold text-sm">
-                              Opp. {entry.step}: {icon}
-                              {entry.hintsUsed > 0 && (
-                                <span className="text-orange-700">
-                                  {" "}
-                                  (+{entry.hintsUsed})
-                                </span>
-                              )}
-                            </div>
-                            <div className="text-xs">
-                              Prob: {(entry.probability * 100).toFixed(1)}%
-                            </div>
-                          </div>
-                        );
-                      })
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Middle Column - Parameters */}
-            <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
-              <div className="flex items-center gap-3 mb-6">
-                <Brain className="w-6 h-6 text-orange-700" />
-                <h3 className="text-xl font-bold text-black uppercase tracking-wide">
-                  Model Parameters
-                </h3>
-              </div>
-
-              <div className="space-y-4">
-                {Object.entries(paramMeta).map(([key, meta]) => (
-                  <div key={key} className="space-y-2">
-                    <label
-                      className={`font-bold text-${meta.color}-700 flex items-center gap-2 cursor-pointer hover:text-${meta.color}-800 transition-colors text-sm`}
-                      onClick={() => handleTooltipShow(key)}
-                    >
-                      {meta.icon}
-                      {meta.label}
-                      <span className="text-xs font-normal text-gray-600">
-                        (click for info)
-                      </span>
-                    </label>
-
-                    <div className="flex items-center gap-3">
-                      <input
-                        type="range"
-                        min={meta.min}
-                        max={meta.max}
-                        step={meta.step}
-                        value={params[key]}
+                {/* Add Hint Button */}
+                {sessionActive && (
+                  <div className="mb-6 p-4 border-4 border-orange-600 rounded-xl bg-orange-50">
+                    <div className="text-center mb-4">
+                      <p className="text-orange-800 font-bold mb-2 text-sm">
+                        Add instructional support to this opportunity:
+                      </p>
+                      <button
+                        onClick={addHint}
                         disabled={!sessionActive}
-                        onChange={(e) => setParam(key, e.target.value)}
-                        className={`flex-1 h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer border-2 border-black ${
-                          !sessionActive ? "opacity-50" : ""
-                        }`}
-                      />
-                      <span
-                        className={`font-mono w-14 text-center font-bold text-sm border-2 border-black rounded px-1 py-1 bg-gray-50 transition-all duration-500 ${
-                          lastChangedParam === key
-                            ? "bg-yellow-300 text-yellow-900 border-yellow-500 scale-110"
-                            : `text-${meta.color}-800`
+                        className={`w-full px-4 py-3 bg-orange-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all transform hover:scale-105 ${
+                          !sessionActive
+                            ? "opacity-50 cursor-not-allowed"
+                            : "hover:bg-white hover:text-orange-600"
                         }`}
                       >
-                        {["mu", "rho", "nu"].includes(key)
-                          ? params[key].toFixed(2)
-                          : params[key]}
-                      </span>
+                        Add Hint ({pendingHints})
+                      </button>
+                    </div>
+                    <p className="text-orange-700 text-xs text-center font-bold">
+                      Hints accumulate within the same opportunity!
+                    </p>
+                  </div>
+                )}
+
+                {/* Response Buttons */}
+                <div className="grid grid-cols-1 gap-4 mb-6">
+                  <button
+                    onClick={() => simulateResponse(true)}
+                    disabled={!sessionActive}
+                    className={`px-4 py-3 bg-green-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all transform hover:scale-105 ${
+                      !sessionActive
+                        ? "opacity-50 cursor-not-allowed"
+                        : "hover:bg-white hover:text-green-600"
+                    }`}
+                  >
+                    ✓ Got It Right
+                    {pendingHints > 0 && (
+                      <div className="text-sm">
+                        + {pendingHints} hint{pendingHints > 1 ? "s" : ""}
+                      </div>
+                    )}
+                  </button>
+
+                  <button
+                    onClick={() => simulateResponse(false)}
+                    disabled={!sessionActive}
+                    className={`px-4 py-3 bg-red-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all transform hover:scale-105 ${
+                      !sessionActive
+                        ? "opacity-50 cursor-not-allowed"
+                        : "hover:bg-white hover:text-red-600"
+                    }`}
+                  >
+                    ✗ Got It Wrong
+                    {pendingHints > 0 && (
+                      <div className="text-sm">
+                        + {pendingHints} hint{pendingHints > 1 ? "s" : ""}
+                      </div>
+                    )}
+                  </button>
+
+                  <button
+                    onClick={resetAll}
+                    className="px-4 py-3 bg-gray-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide hover:bg-white hover:text-gray-600 transition-all transform hover:scale-105 flex items-center justify-center gap-2"
+                  >
+                    <RotateCcw className="w-5 h-5" />
+                    Reset
+                  </button>
+                </div>
+
+                {/* End Session Button */}
+                {sessionActive && (
+                  <div className="mb-6">
+                    <button
+                      onClick={endSession}
+                      className="w-full px-4 py-3 bg-orange-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide hover:bg-white hover:text-orange-600 transition-all transform hover:scale-105 flex items-center justify-center gap-2"
+                    >
+                      <Database className="w-5 h-5" />
+                      <span>End Session → Retrain Model</span>
+                    </button>
+                  </div>
+                )}
+
+                {/* Retrain Section */}
+                {!sessionActive && retrainingData.length > 0 && (
+                  <div className="border-4 border-yellow-600 rounded-xl p-6 bg-yellow-100 mb-6">
+                    <div className="flex items-center gap-3 mb-4">
+                      <Database className="w-6 h-6 text-yellow-700" />
+                      <h4 className="font-bold text-yellow-800 text-lg uppercase">
+                        IFM Retraining Ready
+                      </h4>
+                    </div>
+                    <p className="text-yellow-800 font-bold mb-4 text-sm">
+                      {retrainingData.length} opportunities collected. Ready to
+                      update IFM parameters based on your success/failure/hint
+                      patterns.
+                    </p>
+                    <button
+                      onClick={retrainModel}
+                      className="w-full px-4 py-3 bg-yellow-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide hover:bg-white hover:text-yellow-600 transition-all transform hover:scale-105 flex items-center justify-center gap-2"
+                    >
+                      <RefreshCw className="w-5 h-5" />
+                      Retrain IFM Model
+                    </button>
+                  </div>
+                )}
+
+                {/* Response History */}
+                <div className="border-l-8 border-orange-600 bg-orange-100 rounded-r-xl p-4">
+                  <h4 className="font-bold text-orange-800 mb-3 text-lg uppercase">
+                    Recent Responses
+                  </h4>
+                  <div className="space-y-2 max-h-32 overflow-y-auto">
+                    {responseLog.length === 0 ? (
+                      <div className="text-orange-700 text-center py-2 font-bold">
+                        Your IFM learning journey starts here!
+                      </div>
+                    ) : (
+                      responseLog
+                        .slice(-5)
+                        .reverse()
+                        .map((entry, i) => {
+                          const bgColor = entry.correct
+                            ? "bg-green-200"
+                            : "bg-red-200";
+                          const borderColor =
+                            entry.hintsUsed > 0
+                              ? entry.correct
+                                ? "border-l-4 border-green-700 border-r-4 border-orange-500"
+                                : "border-l-4 border-red-700 border-r-4 border-orange-500"
+                              : entry.correct
+                              ? "border-l-4 border-green-700"
+                              : "border-l-4 border-red-700";
+                          const textColor = entry.correct
+                            ? "text-green-900"
+                            : "text-red-900";
+                          const icon = entry.correct
+                            ? "✓ Success"
+                            : "✗ Failure";
+
+                          return (
+                            <div
+                              key={entry.step}
+                              className={`${bgColor} ${borderColor} ${textColor} rounded-r-lg font-mono px-3 py-2`}
+                            >
+                              <div className="font-bold text-sm">
+                                Opp. {entry.step}: {icon}
+                                {entry.hintsUsed > 0 && (
+                                  <span className="text-orange-700">
+                                    {" "}
+                                    (+{entry.hintsUsed})
+                                  </span>
+                                )}
+                              </div>
+                              <div className="text-xs">
+                                Prob: {(entry.probability * 100).toFixed(1)}%
+                              </div>
+                            </div>
+                          );
+                        })
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Middle Column - Parameters */}
+              <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
+                <div className="flex items-center gap-3 mb-6">
+                  <Brain className="w-6 h-6 text-orange-700" />
+                  <h3 className="text-xl font-bold text-black uppercase tracking-wide">
+                    Model Parameters
+                  </h3>
+                </div>
+
+                <div className="space-y-4">
+                  {Object.entries(paramMeta).map(([key, meta]) => (
+                    <div key={key} className="space-y-2">
+                      <label
+                        className={`font-bold text-${meta.color}-700 flex items-center gap-2 cursor-pointer hover:text-${meta.color}-800 transition-colors text-sm`}
+                        onClick={() => handleTooltipShow(key)}
+                      >
+                        {meta.icon}
+                        {meta.label}
+                        <span className="text-xs font-normal text-gray-600">
+                          (click for info)
+                        </span>
+                      </label>
+
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="range"
+                          min={meta.min}
+                          max={meta.max}
+                          step={meta.step}
+                          value={params[key]}
+                          disabled={!sessionActive}
+                          onChange={(e) => setParam(key, e.target.value)}
+                          className={`flex-1 h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer border-2 border-black ${
+                            !sessionActive ? "opacity-50" : ""
+                          }`}
+                        />
+                        <span
+                          className={`font-mono w-14 text-center font-bold text-sm border-2 border-black rounded px-1 py-1 bg-gray-50 transition-all duration-500 ${
+                            lastChangedParam === key
+                              ? "bg-yellow-300 text-yellow-900 border-yellow-500 scale-110"
+                              : `text-${meta.color}-800`
+                          }`}
+                        >
+                          {["mu", "rho", "nu"].includes(key)
+                            ? params[key].toFixed(2)
+                            : params[key]}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Success Probability Display */}
+                <div className="mt-6 p-4 border-4 border-orange-600 rounded-xl bg-orange-50">
+                  <div className="text-center mb-3">
+                    <span className="text-black font-bold text-sm">
+                      SUCCESS PROBABILITY
+                    </span>
+                  </div>
+                  <div className="text-2xl font-bold text-orange-600 text-center mb-3">
+                    {(currentProb * 100).toFixed(1)}%
+                  </div>
+                  <div className="w-full bg-gray-300 border-4 border-black rounded-full h-4">
+                    <div
+                      className="h-full bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 rounded-full transition-all duration-300"
+                      style={{ width: `${(currentProb * 100).toFixed(0)}%` }}
+                    ></div>
+                  </div>
+                </div>
+
+                {/* Current Status */}
+                <div className="mt-6 grid grid-cols-3 gap-2">
+                  <div className="bg-green-200 border-2 border-green-600 rounded-lg p-3 text-center">
+                    <div className="font-bold text-green-800 text-xs">
+                      SUCCESSES
+                    </div>
+                    <div className="text-xl font-bold text-green-600">
+                      {currentSuccesses}
                     </div>
                   </div>
-                ))}
-              </div>
+                  <div className="bg-red-200 border-2 border-red-600 rounded-lg p-3 text-center">
+                    <div className="font-bold text-red-800 text-xs">
+                      FAILURES
+                    </div>
+                    <div className="text-xl font-bold text-red-600">
+                      {currentFailures}
+                    </div>
+                  </div>
+                  <div className="bg-orange-200 border-2 border-orange-600 rounded-lg p-3 text-center">
+                    <div className="font-bold text-orange-800 text-xs">
+                      HINTS
+                    </div>
+                    <div className="text-xl font-bold text-orange-600">
+                      {currentTotalHints}
+                    </div>
+                  </div>
+                </div>
 
-              {/* Success Probability Display */}
-              <div className="mt-6 p-4 border-4 border-orange-600 rounded-xl bg-orange-50">
-                <div className="text-center mb-3">
-                  <span className="text-black font-bold text-sm">
-                    SUCCESS PROBABILITY
-                  </span>
-                </div>
-                <div className="text-2xl font-bold text-orange-600 text-center mb-3">
-                  {(currentProb * 100).toFixed(1)}%
-                </div>
-                <div className="w-full bg-gray-300 border-4 border-black rounded-full h-4">
-                  <div
-                    className="h-full bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 rounded-full transition-all duration-300"
-                    style={{ width: `${(currentProb * 100).toFixed(0)}%` }}
-                  ></div>
-                </div>
-              </div>
-
-              {/* Current Status */}
-              <div className="mt-6 grid grid-cols-3 gap-2">
-                <div className="bg-green-200 border-2 border-green-600 rounded-lg p-3 text-center">
-                  <div className="font-bold text-green-800 text-xs">
-                    SUCCESSES
+                {/* Current Opportunity Section */}
+                <div className="mt-4 p-3 border-4 border-blue-600 rounded-xl bg-blue-50">
+                  <div className="text-blue-800 font-bold text-sm mb-2 text-center">
+                    CURRENT OPPORTUNITY
                   </div>
-                  <div className="text-xl font-bold text-green-600">
-                    {currentSuccesses}
-                  </div>
-                </div>
-                <div className="bg-red-200 border-2 border-red-600 rounded-lg p-3 text-center">
-                  <div className="font-bold text-red-800 text-xs">FAILURES</div>
-                  <div className="text-xl font-bold text-red-600">
-                    {currentFailures}
-                  </div>
-                </div>
-                <div className="bg-orange-200 border-2 border-orange-600 rounded-lg p-3 text-center">
-                  <div className="font-bold text-orange-800 text-xs">HINTS</div>
-                  <div className="text-xl font-bold text-orange-600">
-                    {currentTotalHints}
+                  <div className="flex justify-center items-center gap-2 text-sm">
+                    <span className="text-blue-700 font-bold">
+                      Pending hints:
+                    </span>
+                    <span className="text-xl font-bold text-blue-600 px-2 py-1 bg-white border-2 border-blue-600 rounded">
+                      {pendingHints}
+                    </span>
                   </div>
                 </div>
               </div>
 
-              {/* Current Opportunity Section */}
-              <div className="mt-4 p-3 border-4 border-blue-600 rounded-xl bg-blue-50">
-                <div className="text-blue-800 font-bold text-sm mb-2 text-center">
-                  CURRENT OPPORTUNITY
+              {/* Right Column - Chart */}
+              <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
+                <div className="flex items-center gap-3 mb-6">
+                  <LineChart className="w-6 h-6 text-orange-700" />
+                  <h3 className="text-xl font-bold text-black uppercase tracking-wide">
+                    Learning Curve
+                  </h3>
                 </div>
-                <div className="flex justify-center items-center gap-2 text-sm">
-                  <span className="text-blue-700 font-bold">
-                    Pending hints:
-                  </span>
-                  <span className="text-xl font-bold text-blue-600 px-2 py-1 bg-white border-2 border-blue-600 rounded">
-                    {pendingHints}
-                  </span>
+
+                <div className="h-64 w-full bg-gray-50 border-4 border-black rounded-lg p-4">
+                  <canvas ref={chartRef} />
+                </div>
+
+                <div className="mt-4 p-3 border-4 border-orange-600 rounded-lg bg-orange-50 text-center">
+                  <div className="font-bold text-orange-800 text-sm mb-2">
+                    Journey Progress: {responseLog.length} opportunities
+                    completed
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="flex items-center gap-1">
+                      <div className="w-3 h-3 bg-gray-500 rounded-full"></div>
+                      <span>Start</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                      <span>Success</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <div className="w-3 h-3 bg-red-600 rounded-full"></div>
+                      <span>Failure</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <div className="w-3 h-3 bg-green-500 rounded-full border-2 border-orange-500"></div>
+                      <span>+Hints</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Right Column - Chart */}
-            <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
+            {/* Right Side: Formula Box */}
+            <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
               <div className="flex items-center gap-3 mb-6">
-                <LineChart className="w-6 h-6 text-orange-700" />
+                <Calculator className="w-6 h-6 text-orange-700" />
                 <h3 className="text-xl font-bold text-black uppercase tracking-wide">
-                  Learning Curve
+                  IFM Formula
                 </h3>
               </div>
 
-              <div className="h-64 w-full bg-gray-50 border-4 border-black rounded-lg p-4">
-                <canvas ref={chartRef} />
-              </div>
-
-              <div className="mt-4 p-3 border-4 border-orange-600 rounded-lg bg-orange-50 text-center">
-                <div className="font-bold text-orange-800 text-sm mb-2">
-                  Journey Progress: {responseLog.length} opportunities completed
+              {/* Live Formula Display */}
+              <div className="text-center mb-6 p-6 bg-gray-50 border-4 border-black rounded-lg space-y-4">
+                <div className="text-2xl font-bold text-black mb-4">
+                  P(success) = {(currentProb * 100).toFixed(1)}%
                 </div>
-                <div className="grid grid-cols-2 gap-2 text-xs">
-                  <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 bg-gray-500 rounded-full"></div>
-                    <span>Start</span>
+
+                <div className="border-t-2 border-gray-300 pt-4">
+                  <div className="text-lg font-bold mb-2">Step-by-step:</div>
+
+                  {/* Step 1: Formula */}
+                  <div className="text-base font-mono mb-2">
+                    <strong>1.</strong> P(success) = 1 / (1 + e<sup>-logit</sup>
+                    )
                   </div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                    <span>Success</span>
+
+                  {/* Step 2: Logit formula */}
+                  <div className="text-base font-mono mb-2">
+                    <strong>2.</strong> logit = θ + β + μ × S + ρ × F + ν × H
                   </div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 bg-red-600 rounded-full"></div>
-                    <span>Failure</span>
+
+                  {/* Step 3: Substitute values */}
+                  <div className="text-base font-mono mb-2">
+                    <strong>3.</strong> logit =
+                    <span
+                      className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor(
+                        "theta"
+                      )}`}
+                    >
+                      {params.theta.toFixed(1)}
+                    </span>
+                    +
+                    <span
+                      className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor(
+                        "beta"
+                      )}`}
+                    >
+                      {params.beta.toFixed(1)}
+                    </span>
+                    +
+                    <span
+                      className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor(
+                        "mu"
+                      )}`}
+                    >
+                      {params.mu.toFixed(2)}
+                    </span>
+                    ×
+                    <span className="mx-1 px-2 py-1 rounded font-bold bg-green-200 text-green-800">
+                      {currentSuccesses}
+                    </span>
+                    +
+                    <span
+                      className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor(
+                        "rho"
+                      )}`}
+                    >
+                      ({params.rho.toFixed(2)})
+                    </span>
+                    ×
+                    <span className="mx-1 px-2 py-1 rounded font-bold bg-red-200 text-red-800">
+                      {currentFailures}
+                    </span>
+                    +
+                    <span
+                      className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor(
+                        "nu"
+                      )}`}
+                    >
+                      {params.nu.toFixed(2)}
+                    </span>
+                    ×
+                    <span className="mx-1 px-2 py-1 rounded font-bold bg-orange-200 text-orange-800">
+                      {currentTotalHints}
+                    </span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 bg-green-500 rounded-full border-2 border-orange-500"></div>
-                    <span>+Hints</span>
+
+                  {/* Step 4: Calculate logit */}
+                  <div className="text-base font-mono mb-2">
+                    <strong>4.</strong> logit ={" "}
+                    {(
+                      params.theta -
+                      params.beta +
+                      params.mu * currentSuccesses +
+                      params.rho * currentFailures +
+                      params.nu * currentTotalHints
+                    ).toFixed(3)}
+                  </div>
+
+                  {/* Step 5: Final probability */}
+                  <div className="text-lg font-bold text-orange-600 border-t-2 border-orange-300 pt-2">
+                    <strong>5.</strong> P(success) ={" "}
+                    {(currentProb * 100).toFixed(1)}%
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
 
-          {/* Formula Section - Full Width */}
-          <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
-            <div className="flex items-center gap-3 mb-6">
-              <Calculator className="w-6 h-6 text-orange-700" />
-              <h3 className="text-xl font-bold text-black uppercase tracking-wide">
-                IFM Formula
-              </h3>
-            </div>
-
-            {/* Live Formula Display */}
-            <div className="text-center mb-6 p-6 bg-gray-50 border-4 border-black rounded-lg space-y-4">
-              <div className="text-2xl font-bold text-black mb-4">
-                P(success) = {(currentProb * 100).toFixed(1)}%
-              </div>
-
-              <div className="border-t-2 border-gray-300 pt-4">
-                <div className="text-lg font-bold mb-2">Step-by-step:</div>
-
-                {/* Step 1: Formula */}
-                <div className="text-base font-mono mb-2">
-                  <strong>1.</strong> P(success) = 1 / (1 + e<sup>-logit</sup>)
-                </div>
-
-                {/* Step 2: Logit formula */}
-                <div className="text-base font-mono mb-2">
-                  <strong>2.</strong> logit = θ + β + μ × S + ρ × F + ν × H
-                </div>
-
-                {/* Step 3: Substitute values */}
-                <div className="text-base font-mono mb-2">
-                  <strong>3.</strong> logit =
-                  <span
-                    className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor(
-                      "theta"
-                    )}`}
-                  >
-                    {params.theta.toFixed(1)}
-                  </span>
-                  +
-                  <span
-                    className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor(
-                      "beta"
-                    )}`}
-                  >
-                    {params.beta.toFixed(1)}
-                  </span>
-                  +
-                  <span
-                    className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor(
-                      "mu"
-                    )}`}
-                  >
-                    {params.mu.toFixed(2)}
-                  </span>
-                  ×
-                  <span className="mx-1 px-2 py-1 rounded font-bold bg-green-200 text-green-800">
-                    {currentSuccesses}
-                  </span>
-                  +
-                  <span
-                    className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor(
-                      "rho"
-                    )}`}
-                  >
-                    ({params.rho.toFixed(2)})
-                  </span>
-                  ×
-                  <span className="mx-1 px-2 py-1 rounded font-bold bg-red-200 text-red-800">
-                    {currentFailures}
-                  </span>
-                  +
-                  <span
-                    className={`mx-1 px-2 py-1 rounded font-bold transition-all duration-500 ${getParamColor(
-                      "nu"
-                    )}`}
-                  >
-                    {params.nu.toFixed(2)}
-                  </span>
-                  ×
-                  <span className="mx-1 px-2 py-1 rounded font-bold bg-orange-200 text-orange-800">
-                    {currentTotalHints}
+              {/* Parameter Legend */}
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-blue-200 border-2 border-blue-700 rounded"></div>
+                  <span className="font-bold text-blue-700">
+                    θ = Student Ability
                   </span>
                 </div>
-
-                {/* Step 4: Calculate logit */}
-                <div className="text-base font-mono mb-2">
-                  <strong>4.</strong> logit ={" "}
-                  {(
-                    params.theta -
-                    params.beta +
-                    params.mu * currentSuccesses +
-                    params.rho * currentFailures +
-                    params.nu * currentTotalHints
-                  ).toFixed(3)}
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-purple-200 border-2 border-purple-700 rounded"></div>
+                  <span className="font-bold text-purple-700">
+                    β = Skill Difficulty
+                  </span>
                 </div>
-
-                {/* Step 5: Final probability */}
-                <div className="text-lg font-bold text-orange-600 border-t-2 border-orange-300 pt-2">
-                  <strong>5.</strong> P(success) ={" "}
-                  {(currentProb * 100).toFixed(1)}%
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-green-200 border-2 border-green-700 rounded"></div>
+                  <span className="font-bold text-green-700">
+                    μ = Success Rate
+                  </span>
                 </div>
-              </div>
-            </div>
-
-            {/* Parameter Legend */}
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 bg-blue-200 border-2 border-blue-700 rounded"></div>
-                <span className="font-bold text-blue-700">
-                  θ = Student Ability
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 bg-purple-200 border-2 border-purple-700 rounded"></div>
-                <span className="font-bold text-purple-700">
-                  β = Skill Difficulty
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 bg-green-200 border-2 border-green-700 rounded"></div>
-                <span className="font-bold text-green-700">
-                  μ = Success Rate
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 bg-red-200 border-2 border-red-700 rounded"></div>
-                <span className="font-bold text-red-700">ρ = Failure Rate</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 bg-orange-200 border-2 border-orange-700 rounded"></div>
-                <span className="font-bold text-orange-700">ν = Hint Rate</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Key Insights */}
-          <div className="border-4 border-black rounded-xl p-8 bg-gradient-to-r from-orange-100 to-red-100 shadow-lg">
-            <div className="flex items-center gap-3 mb-6">
-              <Lightbulb className="w-6 h-6 text-orange-700" />
-              <h3 className="text-2xl font-bold text-black uppercase tracking-wide">
-                IFM: Real-Time Learning and Retraining
-              </h3>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="border-4 border-green-600 rounded-xl p-6 bg-green-50">
-                <h4 className="font-bold text-green-800 mb-4 text-xl uppercase tracking-wide">
-                  During Session
-                </h4>
-                <ul className="space-y-2 text-black font-bold">
-                  <li>• θ, β, μ, ρ, ν stay constant (no tuning!)</li>
-                  <li>
-                    • Each opportunity updates success/failure/hint counts
-                  </li>
-                  <li>• Success probability updates in real-time</li>
-                  <li>• Model tracks instructional patterns for retraining</li>
-                </ul>
-              </div>
-
-              <div className="border-4 border-orange-600 rounded-xl p-6 bg-orange-50">
-                <h4 className="font-bold text-orange-800 mb-4 text-xl uppercase tracking-wide">
-                  During Retrain
-                </h4>
-                <ul className="space-y-2 text-black font-bold">
-                  <li>• θ, β updated based on overall performance</li>
-                  <li>• μ, ρ adjusted based on success/failure patterns</li>
-                  <li>• ν tuned based on hint effectiveness analysis</li>
-                  <li>
-                    • Most sophisticated: accounts for instructional support
-                  </li>
-                </ul>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-red-200 border-2 border-red-700 rounded"></div>
+                  <span className="font-bold text-red-700">
+                    ρ = Failure Rate
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-orange-200 border-2 border-orange-700 rounded"></div>
+                  <span className="font-bold text-orange-700">
+                    ν = Hint Rate
+                  </span>
+                </div>
               </div>
             </div>
           </div>
