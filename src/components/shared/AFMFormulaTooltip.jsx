@@ -1,8 +1,26 @@
 import React, { useState } from "react";
 import { Calculator, Code, X, Minimize2 } from "lucide-react";
 
-export const AFMFormulaTooltip = ({ stage, opportunityChoiceClicked }) => {
+export const AFMFormulaTooltip = ({
+  stage,
+  opportunityChoiceClicked,
+  userSkillLevel,
+}) => {
   const [isExpanded, setIsExpanded] = useState(true);
+
+  // Get student ability value based on skill level
+  const getStudentAbility = () => {
+    switch (userSkillLevel) {
+      case "beginner":
+        return "0.3";
+      case "intermediate":
+        return "1.2";
+      case "pro":
+        return "2.1";
+      default:
+        return "1.2"; // default if not set
+    }
+  };
 
   const renderSkillDefinition = () => (
     // Stage 1: Formula with placeholders and brief skill explanation
@@ -190,7 +208,7 @@ export const AFMFormulaTooltip = ({ stage, opportunityChoiceClicked }) => {
           <sub className="text-xs font-bold">i</sub>
           <span className="text-gray-600">=</span>
           <span className="font-mono text-sm bg-blue-50 px-2 py-1 rounded border">
-            1.2
+            {getStudentAbility()}
           </span>
           <span className="text-xs text-gray-500">(student ability)</span>
         </div>

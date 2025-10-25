@@ -1,8 +1,25 @@
 import React, { useState } from "react";
 import { Eye, CheckCircle, ArrowRight, Brain } from "lucide-react";
+import { trackCustomEvent } from "../utils/analytics";
 
-export const ProbabilityGuessResult = ({ guess1, navigate }) => {
+export const ProbabilityGuessResult = ({
+  guess1,
+  navigate,
+  setUserSkillLevel,
+}) => {
   const [skillLevel, setSkillLevel] = useState(null);
+
+  const handleSkillLevelSelect = (level) => {
+    setSkillLevel(level);
+    setUserSkillLevel(level);
+
+    // Track skill level selection
+    trackCustomEvent("python_skill_level_selected", {
+      componentName: "ProbabilityGuessResult",
+      elementType: "button",
+      skillLevel: level,
+    });
+  };
 
   return (
     <div className="bg-white min-h-screen flex flex-col items-center justify-center py-8 px-4 md:px-10 text-black font-['IBM_Plex_Mono',monospace]">
@@ -53,7 +70,7 @@ export const ProbabilityGuessResult = ({ guess1, navigate }) => {
               {["beginner", "intermediate", "pro"].map((level) => (
                 <button
                   key={level}
-                  onClick={() => setSkillLevel(level)}
+                  onClick={() => handleSkillLevelSelect(level)}
                   className={`px-8 py-4 border-4 rounded-xl font-semibold uppercase tracking-wide transition-all text-lg ${
                     skillLevel === level
                       ? "bg-black text-white border-black"

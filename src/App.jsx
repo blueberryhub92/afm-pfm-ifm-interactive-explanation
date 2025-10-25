@@ -173,6 +173,7 @@ function AFMLearningAppContent() {
   const [guess1, setGuess1] = useState("");
   const [guess2, setGuess2] = useState("");
   const [taskChoice, setTaskChoice] = useState("");
+  const [userSkillLevel, setUserSkillLevel] = useState(null);
   const [currentSlide, setCurrentSlide] = useState(() => {
     // Initialize from URL hash or default to 0
     const hash = window.location.hash.replace("#", "");
@@ -415,7 +416,7 @@ function AFMLearningAppContent() {
       case 2:
         return renderSlide(
           ProbabilityGuessResult,
-          { guess1, navigate: handleNavigation },
+          { guess1, navigate: handleNavigation, setUserSkillLevel },
           2,
           "ProbabilityGuessResult"
         );
@@ -633,6 +634,7 @@ function AFMLearningAppContent() {
         <AFMFormulaTooltip
           stage={getFormulaStage(currentSlide)}
           opportunityChoiceClicked={opportunityChoiceClicked}
+          userSkillLevel={userSkillLevel}
         />
       )}
 
