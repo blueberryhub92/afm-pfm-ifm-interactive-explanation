@@ -615,6 +615,11 @@ return fibonacci(n-1) + fibonacci(n-2)`,
           <p className="text-md text-black text-center mt-2 font-bold">
             Learning rate measures how quickly someone improves with practice.
           </p>
+
+          <p className="text-md text-black text-center mt-2 font-bold">
+            These tasks are optional - you can skip them and continue to the
+            next section anytime.
+          </p>
         </div>
 
         {/* Progress Indicator */}

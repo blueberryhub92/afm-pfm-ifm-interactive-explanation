@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Calculator, Code, X, Minimize2 } from "lucide-react";
 
-export const AFMFormulaTooltip = ({ stage }) => {
+export const AFMFormulaTooltip = ({ stage, opportunityChoiceClicked }) => {
   const [isExpanded, setIsExpanded] = useState(true);
 
   const renderSkillDefinition = () => (
@@ -10,26 +10,42 @@ export const AFMFormulaTooltip = ({ stage }) => {
       <div className="flex items-center justify-center space-x-2 flex-wrap mb-4">
         <span className="font-bold text-lg text-green-600">P(success)</span>
         <span className="mx-2 font-bold text-xl">=</span>
-        <span className="mx-2 font-bold text-xl text-gray-400">? + ? + ? x ?</span>
+        <span className="mx-2 font-bold text-xl text-gray-400">
+          ? + ? + ? x ?
+        </span>
       </div>
-      <h4 className="font-bold text-green-800 mb-4 text-lg uppercase tracking-wide">What is a "Skill" in AFM?</h4>
+      <h4 className="font-bold text-green-800 mb-4 text-lg uppercase tracking-wide">
+        What is a "Skill" in AFM?
+      </h4>
       <p className="text-black text-sm leading-relaxed mb-4 font-semibold">
-        In AFM, a "skill" is a specific concept or technique that can be learned and practiced independently. Each skill represents a distinct cognitive ability.
+        In AFM, a "skill" is a specific concept or technique that can be learned
+        and practiced independently. Each skill represents a distinct cognitive
+        ability.
       </p>
       <div>
-        <h5 className="font-bold text-black mb-3 uppercase tracking-wide border-b-2 border-black pb-1">Examplary Python Skills:</h5>
+        <h5 className="font-bold text-black mb-3 uppercase tracking-wide border-b-2 border-black pb-1">
+          Examplary Python Skills:
+        </h5>
         <div className="space-y-2 text-sm">
           <div className="border-l-4 border-blue-600 pl-3">
-            <strong className="text-blue-600 uppercase">Functions:</strong> <span className="text-black">Defining, calling, parameters, returns</span>
+            <strong className="text-blue-600 uppercase">Functions:</strong>{" "}
+            <span className="text-black">
+              Defining, calling, parameters, returns
+            </span>
           </div>
           <div className="border-l-4 border-green-600 pl-3">
-            <strong className="text-green-600 uppercase">OOP:</strong> <span className="text-black">Classes, objects, inheritance</span>
+            <strong className="text-green-600 uppercase">OOP:</strong>{" "}
+            <span className="text-black">Classes, objects, inheritance</span>
           </div>
           <div className="border-l-4 border-purple-600 pl-3">
-            <strong className="text-purple-600 uppercase">Recursion:</strong> <span className="text-black">Base cases, recursive calls</span>
+            <strong className="text-purple-600 uppercase">Recursion:</strong>{" "}
+            <span className="text-black">Base cases, recursive calls</span>
           </div>
           <div className="border-l-4 border-orange-600 pl-3">
-            <strong className="text-orange-600 uppercase">Data Structures:</strong> <span className="text-black">Lists, dicts, sets, tuples</span>
+            <strong className="text-orange-600 uppercase">
+              Data Structures:
+            </strong>{" "}
+            <span className="text-black">Lists, dicts, sets, tuples</span>
           </div>
         </div>
       </div>
@@ -173,7 +189,9 @@ export const AFMFormulaTooltip = ({ stage }) => {
           <span className="italic font-bold text-blue-700">θ</span>
           <sub className="text-xs font-bold">i</sub>
           <span className="text-gray-600">=</span>
-          <span className="font-mono text-sm bg-blue-50 px-2 py-1 rounded border">1.2</span>
+          <span className="font-mono text-sm bg-blue-50 px-2 py-1 rounded border">
+            1.2
+          </span>
           <span className="text-xs text-gray-500">(student ability)</span>
         </div>
       );
@@ -185,8 +203,12 @@ export const AFMFormulaTooltip = ({ stage }) => {
           <span className="italic font-bold text-orange-700">T</span>
           <sub className="text-xs font-bold">ik</sub>
           <span className="text-gray-600">=</span>
-          <span className="font-mono text-sm bg-orange-50 px-2 py-1 rounded border">2</span>
-          <span className="text-xs text-gray-500">(practice opportunities)</span>
+          <span className="font-mono text-sm bg-orange-50 px-2 py-1 rounded border">
+            {opportunityChoiceClicked ? "2" : "?"}
+          </span>
+          <span className="text-xs text-gray-500">
+            (practice opportunities)
+          </span>
         </div>
       );
     }
@@ -197,7 +219,9 @@ export const AFMFormulaTooltip = ({ stage }) => {
           <span className="italic font-bold text-purple-700">β</span>
           <sub className="text-xs font-bold">k</sub>
           <span className="text-gray-600">=</span>
-          <span className="font-mono text-sm bg-purple-50 px-2 py-1 rounded border">-0.8</span>
+          <span className="font-mono text-sm bg-purple-50 px-2 py-1 rounded border">
+            -0.8
+          </span>
           <span className="text-xs text-gray-500">(skill difficulty)</span>
         </div>
       );
@@ -209,7 +233,9 @@ export const AFMFormulaTooltip = ({ stage }) => {
           <span className="italic font-bold text-green-700">γ</span>
           <sub className="text-xs font-bold">k</sub>
           <span className="text-gray-600">=</span>
-          <span className="font-mono text-sm bg-green-50 px-2 py-1 rounded border">0.3</span>
+          <span className="font-mono text-sm bg-green-50 px-2 py-1 rounded border">
+            0.3
+          </span>
           <span className="text-xs text-gray-500">(learning rate)</span>
         </div>
       );
@@ -221,7 +247,9 @@ export const AFMFormulaTooltip = ({ stage }) => {
           <span className="italic font-bold">q</span>
           <sub className="text-xs font-bold">ijk</sub>
           <span className="text-gray-600">=</span>
-          <span className="font-mono text-sm bg-gray-50 px-2 py-1 rounded border">1</span>
+          <span className="font-mono text-sm bg-gray-50 px-2 py-1 rounded border">
+            1
+          </span>
           <span className="text-xs text-gray-500">(Q-matrix indicator)</span>
         </div>
       );
@@ -291,10 +319,20 @@ export const AFMFormulaTooltip = ({ stage }) => {
 
       {/* Expanded state - full tooltip */}
       {isExpanded && (
-        <div className={`${stage === 6 ? 'w-96 lg:w-auto lg:max-w-2xl' : 'w-80 lg:max-w-sm lg:w-auto'} max-w-[95vw] bg-white border-4 border-black rounded-xl shadow-xl p-4`}>
+        <div
+          className={`${
+            stage === 6
+              ? "w-96 lg:w-auto lg:max-w-2xl"
+              : "w-80 lg:max-w-sm lg:w-auto"
+          } max-w-[95vw] bg-white border-4 border-black rounded-xl shadow-xl p-4`}
+        >
           {/* Header with collapse button */}
           <div className="flex items-center justify-between mb-3">
-            <div className={`px-3 py-1 ${stage === 0 ? 'bg-green-700' : 'bg-black'} text-white font-bold rounded-lg text-xs tracking-wider flex items-center gap-1 uppercase`}>
+            <div
+              className={`px-3 py-1 ${
+                stage === 0 ? "bg-green-700" : "bg-black"
+              } text-white font-bold rounded-lg text-xs tracking-wider flex items-center gap-1 uppercase`}
+            >
               <StageIcon className="w-3 h-3" />
               {getStageTitle()}
             </div>
@@ -309,9 +347,7 @@ export const AFMFormulaTooltip = ({ stage }) => {
 
           {/* Formula content */}
           <div className="text-black font-['IBM_Plex_Mono',monospace] select-none mb-3 overflow-x-auto">
-            <div className="min-w-fit text-sm">
-              {renderFormula()}
-            </div>
+            <div className="min-w-fit text-sm">{renderFormula()}</div>
           </div>
 
           {/* Example parameters - only show for stages 1+ */}

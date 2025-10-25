@@ -195,6 +195,8 @@ function AFMLearningAppContent() {
   });
   const [slide3DoneClicked, setSlide3DoneClicked] = useState(false);
   const [showTellMe, setShowTellMe] = useState(false);
+  const [opportunityChoiceClicked, setOpportunityChoiceClicked] =
+    useState(false);
   const [isNavExpanded, setIsNavExpanded] = useState(false);
   const [consentGiven, setConsentGiven] = useState(false);
   const [showConsentDialog, setShowConsentDialog] = useState(false);
@@ -451,7 +453,10 @@ function AFMLearningAppContent() {
       case 7:
         return renderSlide(
           LearningOpportunityChoices,
-          { navigate: handleNavigation },
+          {
+            navigate: handleNavigation,
+            onChoiceClick: () => setOpportunityChoiceClicked(true),
+          },
           7,
           "LearningOpportunities"
         );
@@ -588,7 +593,8 @@ function AFMLearningAppContent() {
     }
     if (slideIndex > 6 && slideIndex < 10) return 3; // θ + T
     if (slideIndex >= 10 && slideIndex < 13) return 4; // θ + β + T (skill difficulty from Slide14)
-    if (slideIndex >= 13 && slideIndex < 14) return 5; // θ + β + γ + T (learning rate from Slide17)
+    if (slideIndex === 13) return 0; // No tooltip on LearningRateExplanation
+    if (slideIndex > 13 && slideIndex < 14) return 5; // θ + β + γ + T (learning rate from Slide17)
     if (slideIndex === 14) return 6; // Full formula (from Slide20)
     return 0; // No formula
   };
@@ -624,11 +630,14 @@ function AFMLearningAppContent() {
 
       {/* AFM Formula Tooltip - conditionally rendered */}
       {shouldShowTooltip() && (
-        <AFMFormulaTooltip stage={getFormulaStage(currentSlide)} />
+        <AFMFormulaTooltip
+          stage={getFormulaStage(currentSlide)}
+          opportunityChoiceClicked={opportunityChoiceClicked}
+        />
       )}
 
-      {/* Questionnaire Notification - always visible */}
-      <QuestionnaireNotification />
+      {/* Questionnaire Notification - visible on all slides except LearningRateExplanation */}
+      {currentSlide !== 13 && <QuestionnaireNotification />}
     </div>
   );
 }
