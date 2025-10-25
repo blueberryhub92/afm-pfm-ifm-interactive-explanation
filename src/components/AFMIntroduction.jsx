@@ -12,7 +12,7 @@ import {
   ArrowDownRight,
 } from "lucide-react";
 
-export const AFMIntroduction = ({ navigate }) => {
+export const AFMIntroduction = ({ navigate, userSkillLevel }) => {
   const [hoveredTerm, setHoveredTerm] = useState(null);
   const [baselineProficiency] = useState(0.15); // θ (theta) - starting baseline
   const [probability, setProbability] = useState(0.15);
@@ -23,6 +23,20 @@ export const AFMIntroduction = ({ navigate }) => {
 
   const baselineRef = useRef(null);
   const successRef = useRef(null);
+
+  // Get student ability value based on skill level
+  const getStudentAbility = () => {
+    switch (userSkillLevel) {
+      case "beginner":
+        return "0.3";
+      case "intermediate":
+        return "1.2";
+      case "pro":
+        return "2.1";
+      default:
+        return "1.2"; // default if not set
+    }
+  };
 
   // Simulate realistic AFM learning progression
   useEffect(() => {
@@ -228,7 +242,11 @@ export const AFMIntroduction = ({ navigate }) => {
               . This is what the model estimates about your ability in specific
               skills. Watch the AFM formula build up in the lower right corner
               as we progress! Based on your self-reported familiarity with
-              Python, the model estimates your baseline proficiency to be 1.2.
+              Python, the model estimates your baseline proficiency to be{" "}
+              <span className="bg-blue-200 px-2 py-1 border-2 border-black rounded font-bold">
+                {getStudentAbility()}
+              </span>
+              .
             </p>
           </div>
         </div>

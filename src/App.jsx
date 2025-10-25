@@ -433,7 +433,7 @@ function AFMLearningAppContent() {
       case 4:
         return renderSlide(
           AFMIntroduction,
-          { navigate: handleNavigation },
+          { navigate: handleNavigation, userSkillLevel },
           4,
           "AFMIntroduction"
         );
