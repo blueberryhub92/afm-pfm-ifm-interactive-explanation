@@ -43,12 +43,18 @@ import { WelcomePage } from "./components/WelcomePage";
 import { ConsentDialog } from "./components/ConsentDialog";
 import { QuestionnaireNotification } from "./components/QuestionnaireNotification";
 import { ModelComparison } from "./components/ModelComparison";
+import { CompletionSlide } from "./components/CompletionSlide";
 import { AFMFormulaTooltip } from "./components/shared/AFMFormulaTooltip";
 import { SlideTracker } from "./components/shared/SlideTracker";
-import { trackSlideChange, trackButtonClick, syncEvents, getUserId } from "./utils/analytics";
+import {
+  trackSlideChange,
+  trackButtonClick,
+  syncEvents,
+  getUserId,
+} from "./utils/analytics";
 
 // Constants
-const TOTAL_SLIDES = 24;
+const TOTAL_SLIDES = 25;
 
 // Navigation configuration
 const SLIDE_TITLES = [
@@ -75,22 +81,28 @@ const SLIDE_TITLES = [
   "IFM Tasks Introduction",
   "IFM Concept Explanation",
   "IFM Interactive Simulator",
-  "Model Comparison"
+  "Model Comparison",
+  "Completion",
 ];
 
-function NavigationBar({ currentSlide, maxVisitedSlide, onNavigate, isExpanded, setIsExpanded }) {
+function NavigationBar({
+  currentSlide,
+  maxVisitedSlide,
+  onNavigate,
+  isExpanded,
+  setIsExpanded,
+}) {
   return (
     <>
       {/* Toggle Button - Moves with navigation state */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className={`fixed top-4 z-[9999] w-12 h-12 bg-black text-white border-4 border-black rounded-lg font-bold text-xl uppercase tracking-wide hover:bg-white hover:text-black transition-all transform hover:scale-105 flex items-center justify-center shadow-xl ${isExpanded ? 'left-[336px]' : 'left-4'
-          }`}
+        className={`fixed top-4 z-[9999] w-12 h-12 bg-black text-white border-4 border-black rounded-lg font-bold text-xl uppercase tracking-wide hover:bg-white hover:text-black transition-all transform hover:scale-105 flex items-center justify-center shadow-xl ${
+          isExpanded ? "left-[336px]" : "left-4"
+        }`}
         title={isExpanded ? "COLLAPSE NAVIGATION" : "EXPAND NAVIGATION"}
       >
-        <span className="font-black text-2xl">
-          {isExpanded ? '×' : '☰'}
-        </span>
+        <span className="font-black text-2xl">{isExpanded ? "×" : "☰"}</span>
       </button>
 
       {/* Backdrop/Overlay when navigation is expanded */}
@@ -102,8 +114,11 @@ function NavigationBar({ currentSlide, maxVisitedSlide, onNavigate, isExpanded, 
       )}
 
       {/* Navigation Panel - Slides in from left and overlays content */}
-      <div className={`fixed top-0 left-0 z-50 h-full w-80 bg-white border-r-8 border-black shadow-2xl transform transition-transform duration-300 ${isExpanded ? 'translate-x-0' : '-translate-x-full'
-        }`}>
+      <div
+        className={`fixed top-0 left-0 z-50 h-full w-80 bg-white border-r-8 border-black shadow-2xl transform transition-transform duration-300 ${
+          isExpanded ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
         <div className="pt-20 px-4 h-full overflow-y-auto">
           <div className="border-4 border-black rounded-xl p-4 bg-gray-100 mb-6">
             <h3 className="text-2xl font-black text-black uppercase tracking-tight text-center">
@@ -116,13 +131,16 @@ function NavigationBar({ currentSlide, maxVisitedSlide, onNavigate, isExpanded, 
               <button
                 key={index}
                 onClick={() => onNavigate(index)}
-                className={`w-full text-left border-4 border-black rounded-xl font-bold text-sm uppercase tracking-wide transition-all transform hover:scale-105 ${index === currentSlide
-                  ? 'bg-purple-600 text-white border-l-8 border-l-yellow-500 p-3'
-                  : 'bg-white text-black hover:bg-gray-100 p-3'
-                  }`}
+                className={`w-full text-left border-4 border-black rounded-xl font-bold text-sm uppercase tracking-wide transition-all transform hover:scale-105 ${
+                  index === currentSlide
+                    ? "bg-purple-600 text-white border-l-8 border-l-yellow-500 p-3"
+                    : "bg-white text-black hover:bg-gray-100 p-3"
+                }`}
               >
                 <div className="flex items-center">
-                  <span className="font-black w-8 text-center">{index + 1}.</span>
+                  <span className="font-black w-8 text-center">
+                    {index + 1}.
+                  </span>
                   <span className="flex-1 ml-2">{title}</span>
                   {index === currentSlide && (
                     <span className="bg-yellow-500 text-black px-2 py-1 border-2 border-black rounded-xl font-black text-xs">
@@ -133,8 +151,6 @@ function NavigationBar({ currentSlide, maxVisitedSlide, onNavigate, isExpanded, 
               </button>
             ))}
           </div>
-
-
 
           {/* Navigation Instructions */}
           <div className="mt-6 border-l-8 border-purple-600 bg-purple-100 p-4 rounded-r-xl">
@@ -159,15 +175,23 @@ function AFMLearningAppContent() {
   const [taskChoice, setTaskChoice] = useState("");
   const [currentSlide, setCurrentSlide] = useState(() => {
     // Initialize from URL hash or default to 0
-    const hash = window.location.hash.replace('#', '');
+    const hash = window.location.hash.replace("#", "");
     const slideFromHash = parseInt(hash, 10);
-    return !isNaN(slideFromHash) && slideFromHash >= 0 && slideFromHash < SLIDE_TITLES.length ? slideFromHash : 0;
+    return !isNaN(slideFromHash) &&
+      slideFromHash >= 0 &&
+      slideFromHash < SLIDE_TITLES.length
+      ? slideFromHash
+      : 0;
   });
   const [maxVisitedSlide, setMaxVisitedSlide] = useState(() => {
     // Initialize max visited slide to at least the current slide from URL
-    const hash = window.location.hash.replace('#', '');
+    const hash = window.location.hash.replace("#", "");
     const slideFromHash = parseInt(hash, 10);
-    return !isNaN(slideFromHash) && slideFromHash >= 0 && slideFromHash < SLIDE_TITLES.length ? slideFromHash : 0;
+    return !isNaN(slideFromHash) &&
+      slideFromHash >= 0 &&
+      slideFromHash < SLIDE_TITLES.length
+      ? slideFromHash
+      : 0;
   });
   const [slide3DoneClicked, setSlide3DoneClicked] = useState(false);
   const [showTellMe, setShowTellMe] = useState(false);
@@ -175,21 +199,24 @@ function AFMLearningAppContent() {
   const [consentGiven, setConsentGiven] = useState(false);
   const [showConsentDialog, setShowConsentDialog] = useState(false);
 
-
   // Check consent status and sync events on app load
   useEffect(() => {
-    const consentStatus = localStorage.getItem('study_consent_given');
-    if (consentStatus === 'true') {
+    const consentStatus = localStorage.getItem("study_consent_given");
+    if (consentStatus === "true") {
       setConsentGiven(true);
       syncEvents();
-      console.log('Anonymous User ID:', getUserId());
+      console.log("Anonymous User ID:", getUserId());
     } else {
       setShowConsentDialog(true);
     }
 
     // Initialize browser history state if not already set
     if (!window.history.state || window.history.state.slide !== currentSlide) {
-      window.history.replaceState({ slide: currentSlide }, '', `#${currentSlide}`);
+      window.history.replaceState(
+        { slide: currentSlide },
+        "",
+        `#${currentSlide}`
+      );
     }
   }, [currentSlide]);
 
@@ -206,7 +233,7 @@ function AFMLearningAppContent() {
     setConsentGiven(true);
     setShowConsentDialog(false);
     syncEvents();
-    console.log('Anonymous User ID:', getUserId());
+    console.log("Anonymous User ID:", getUserId());
   };
 
   // Handle consent declined
@@ -214,7 +241,9 @@ function AFMLearningAppContent() {
     setShowConsentDialog(false);
     // Don't track anything if consent is declined
     // You might want to show a message or redirect instead
-    alert('Ohne Einverständnis zur Studienteilnahme kann die Anwendung nicht verwendet werden.');
+    alert(
+      "Ohne Einverständnis zur Studienteilnahme kann die Anwendung nicht verwendet werden."
+    );
   };
 
   const handleNavigation = (targetSlide, updateHistory = true) => {
@@ -224,7 +253,7 @@ function AFMLearningAppContent() {
 
       // Update browser history (unless this navigation is from browser back/forward)
       if (updateHistory) {
-        window.history.pushState({ slide: targetSlide }, '', `#${targetSlide}`);
+        window.history.pushState({ slide: targetSlide }, "", `#${targetSlide}`);
       }
 
       // Update max visited slide if we're going to a higher slide
@@ -240,11 +269,11 @@ function AFMLearningAppContent() {
 
       // Track navigation
       if (consentGiven) {
-        trackButtonClick('navigation_menu', {
+        trackButtonClick("navigation_menu", {
           from: previousSlide,
           to: targetSlide,
-          method: 'navigation_click',
-          slideName: SLIDE_TITLES[targetSlide] || `Slide ${targetSlide}`
+          method: "navigation_click",
+          slideName: SLIDE_TITLES[targetSlide] || `Slide ${targetSlide}`,
         });
       }
     }
@@ -258,10 +287,10 @@ function AFMLearningAppContent() {
           event.preventDefault();
           if (currentSlide > 0) {
             if (consentGiven) {
-              trackButtonClick('keyboard_navigation', {
-                key: 'ArrowLeft',
+              trackButtonClick("keyboard_navigation", {
+                key: "ArrowLeft",
                 from: currentSlide,
-                to: currentSlide - 1
+                to: currentSlide - 1,
               });
             }
             handleNavigation(currentSlide - 1);
@@ -270,10 +299,10 @@ function AFMLearningAppContent() {
           event.preventDefault();
           if (currentSlide < maxVisitedSlide) {
             if (consentGiven) {
-              trackButtonClick('keyboard_navigation', {
-                key: 'ArrowRight',
+              trackButtonClick("keyboard_navigation", {
+                key: "ArrowRight",
                 from: currentSlide,
-                to: currentSlide + 1
+                to: currentSlide + 1,
               });
             }
             handleNavigation(currentSlide + 1);
@@ -282,20 +311,26 @@ function AFMLearningAppContent() {
       }
 
       // Toggle navigation with 'n' key
-      if (event.key === 'n' && !event.ctrlKey && !event.altKey && !event.shiftKey) {
+      if (
+        event.key === "n" &&
+        !event.ctrlKey &&
+        !event.altKey &&
+        !event.shiftKey
+      ) {
         // Only if not focused on an input field
-        if (document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+        if (
+          document.activeElement?.tagName !== "INPUT" &&
+          document.activeElement?.tagName !== "TEXTAREA"
+        ) {
           if (consentGiven) {
-            trackButtonClick('navigation_toggle', {
-              key: 'n',
-              expanded: !isNavExpanded
+            trackButtonClick("navigation_toggle", {
+              key: "n",
+              expanded: !isNavExpanded,
             });
           }
           setIsNavExpanded(!isNavExpanded);
         }
       }
-
-
     };
 
     window.addEventListener("keydown", handleKeyDown);
@@ -305,16 +340,21 @@ function AFMLearningAppContent() {
   // Browser history navigation (back/forward buttons)
   useEffect(() => {
     const handlePopState = (event) => {
-      const hash = window.location.hash.replace('#', '');
+      const hash = window.location.hash.replace("#", "");
       const slideFromHash = parseInt(hash, 10);
-      const targetSlide = !isNaN(slideFromHash) && slideFromHash >= 0 && slideFromHash < SLIDE_TITLES.length ? slideFromHash : 0;
+      const targetSlide =
+        !isNaN(slideFromHash) &&
+        slideFromHash >= 0 &&
+        slideFromHash < SLIDE_TITLES.length
+          ? slideFromHash
+          : 0;
 
       if (targetSlide !== currentSlide) {
         if (consentGiven) {
-          trackButtonClick('browser_navigation', {
-            button: 'browser_back_forward',
+          trackButtonClick("browser_navigation", {
+            button: "browser_back_forward",
             from: currentSlide,
-            to: targetSlide
+            to: targetSlide,
           });
         }
         // Don't update history since this IS a history navigation
@@ -322,11 +362,9 @@ function AFMLearningAppContent() {
       }
     };
 
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
   }, [currentSlide, consentGiven]);
-
-
 
   const renderSlide = (Component, props, slideNumber, slideName) => (
     <SlideTracker
@@ -354,12 +392,17 @@ function AFMLearningAppContent() {
       setGuess2,
       taskChoice,
       setTaskChoice,
-      navigate: handleNavigation
+      navigate: handleNavigation,
     };
 
     switch (currentSlide) {
       case 0:
-        return renderSlide(WelcomePage, { navigate: handleNavigation }, 0, "Welcome");
+        return renderSlide(
+          WelcomePage,
+          { navigate: handleNavigation },
+          0,
+          "Welcome"
+        );
       case 1:
         return renderSlide(
           IntroductoryProbabilityQuestion,
@@ -377,7 +420,10 @@ function AFMLearningAppContent() {
       case 3:
         return renderSlide(
           ProbabilitySliderEstimation,
-          { navigate: handleNavigation, onDoneClick: () => setSlide3DoneClicked(true) },
+          {
+            navigate: handleNavigation,
+            onDoneClick: () => setSlide3DoneClicked(true),
+          },
           3,
           "ProbabilityEstimation"
         );
@@ -521,6 +567,13 @@ function AFMLearningAppContent() {
           23,
           "ModelComparison"
         );
+      case 24:
+        return renderSlide(
+          CompletionSlide,
+          { navigate: handleNavigation },
+          24,
+          "Completion"
+        );
       default:
         return null;
     }
@@ -567,9 +620,7 @@ function AFMLearningAppContent() {
       />
 
       {/* Main content - no margin adjustments, always full width */}
-      <div className="w-full">
-        {renderCurrentSlide()}
-      </div>
+      <div className="w-full">{renderCurrentSlide()}</div>
 
       {/* AFM Formula Tooltip - conditionally rendered */}
       {shouldShowTooltip() && (
@@ -578,8 +629,6 @@ function AFMLearningAppContent() {
 
       {/* Questionnaire Notification - always visible */}
       <QuestionnaireNotification />
-
-
     </div>
   );
 }

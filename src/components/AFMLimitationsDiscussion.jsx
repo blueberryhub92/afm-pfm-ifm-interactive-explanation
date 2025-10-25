@@ -12,6 +12,7 @@ import {
   CheckCircle,
   BarChart3,
   Grid3x3,
+  X,
 } from "lucide-react";
 import { ArrowLeft, TrendingDown, Calendar } from "lucide-react";
 
@@ -33,6 +34,8 @@ export const AFMLimitationsDiscussion = ({ navigate }) => {
   const [contextTaskBAnswer, setContextTaskBAnswer] = useState(null);
   const [contextShowHint, setContextShowHint] = useState(false);
   const [contextShowComparison, setContextShowComparison] = useState(false);
+  const [showContextFeedbackPopup, setShowContextFeedbackPopup] =
+    useState(false);
   const [initialProb, setInitialProb] = useState(0.25);
   const [sliderValues, setSliderValues] = useState({
     days: 0.8,
@@ -53,6 +56,7 @@ export const AFMLimitationsDiscussion = ({ navigate }) => {
   const [easyTaskAnswer, setEasyTaskAnswer] = useState(null);
   const [hardTaskAnswer, setHardTaskAnswer] = useState(null);
   const [showTaskComparison, setShowTaskComparison] = useState(false);
+  const [showItemDifficultyPopup, setShowItemDifficultyPopup] = useState(false);
 
   // Q-Matrix Quality states
   const [qMatrixCurrentProblem, setQMatrixCurrentProblem] = useState(0);
@@ -1060,6 +1064,8 @@ print(result)`,
       setContextTaskAAnswer(answer);
       // Always show contextual feedback to demonstrate context-based learning
       setContextShowHint(true);
+      // Show the feedback popup
+      setTimeout(() => setShowContextFeedbackPopup(true), 300);
     };
 
     const handleTaskBAnswer = (answer) => {
@@ -1072,6 +1078,7 @@ print(result)`,
       setContextTaskBAnswer(null);
       setContextShowHint(false);
       setContextShowComparison(false);
+      setShowContextFeedbackPopup(false);
     };
 
     return (
@@ -1187,34 +1194,6 @@ print(result)`,
                       <strong>{contextScenario.taskA.correctAnswer}</strong>.
                     </p>
                   </div>
-
-                  {contextShowHint && (
-                    <div
-                      className={`border-l-8 p-6 rounded-r-xl ${
-                        contextTaskAAnswer ===
-                        contextScenario.taskA.correctAnswer
-                          ? "border-blue-600 bg-blue-100"
-                          : "border-yellow-600 bg-yellow-100"
-                      }`}
-                    >
-                      <h4
-                        className={`font-bold text-lg mb-2 ${
-                          contextTaskAAnswer ===
-                          contextScenario.taskA.correctAnswer
-                            ? "text-blue-700"
-                            : "text-yellow-700"
-                        }`}
-                      >
-                        CONTEXTUAL FEEDBACK:
-                      </h4>
-                      <p className="text-black text-lg font-bold">
-                        {contextTaskAAnswer ===
-                        contextScenario.taskA.correctAnswer
-                          ? contextScenario.taskA.correctFeedback
-                          : contextScenario.taskA.incorrectHint}
-                      </p>
-                    </div>
-                  )}
                 </div>
               )}
             </div>
@@ -1425,6 +1404,82 @@ print(result)`,
             </div>
           )}
         </div>
+
+        {/* Contextual Feedback Popup */}
+        {showContextFeedbackPopup && contextTaskAAnswer && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 p-4 animate-in fade-in duration-300">
+            <div className="bg-white border-8 border-black rounded-2xl max-w-2xl w-full shadow-2xl transform scale-100 animate-in zoom-in duration-300">
+              <div className="p-8 space-y-6">
+                {/* Header */}
+                <div className="flex justify-between items-start">
+                  <div
+                    className={`flex-1 border-l-8 pl-6 py-2 ${
+                      contextTaskAAnswer === contextScenario.taskA.correctAnswer
+                        ? "border-blue-600"
+                        : "border-yellow-600"
+                    }`}
+                  >
+                    <h3
+                      className={`font-bold text-2xl font-mono uppercase ${
+                        contextTaskAAnswer ===
+                        contextScenario.taskA.correctAnswer
+                          ? "text-blue-700"
+                          : "text-yellow-700"
+                      }`}
+                    >
+                      CONTEXTUAL FEEDBACK
+                    </h3>
+                  </div>
+                  <button
+                    onClick={() => setShowContextFeedbackPopup(false)}
+                    className="ml-4 p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                    aria-label="Close"
+                  >
+                    <X className="w-6 h-6 text-black" />
+                  </button>
+                </div>
+
+                {/* Content */}
+                <div
+                  className={`border-4 p-6 rounded-xl ${
+                    contextTaskAAnswer === contextScenario.taskA.correctAnswer
+                      ? "border-blue-600 bg-blue-50"
+                      : "border-yellow-600 bg-yellow-50"
+                  }`}
+                >
+                  <p className="text-black text-xl font-bold leading-relaxed">
+                    {contextTaskAAnswer === contextScenario.taskA.correctAnswer
+                      ? contextScenario.taskA.correctFeedback
+                      : contextScenario.taskA.incorrectHint}
+                  </p>
+                </div>
+
+                {/* Highlight box */}
+                <div
+                  className={`border-l-8 pl-6 py-4 ${
+                    contextTaskAAnswer === contextScenario.taskA.correctAnswer
+                      ? "border-blue-600 bg-blue-100"
+                      : "border-yellow-600 bg-yellow-100"
+                  }`}
+                >
+                  <p className="text-black font-bold text-lg">
+                    This contextual feedback will help you in Task B!
+                  </p>
+                </div>
+
+                {/* Close button */}
+                <div className="flex justify-center pt-4">
+                  <button
+                    onClick={() => setShowContextFeedbackPopup(false)}
+                    className="px-8 py-4 bg-black text-white border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide hover:bg-white hover:text-black transition-all transform hover:scale-105 font-mono"
+                  >
+                    Continue to Task B →
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   };
@@ -1639,7 +1694,7 @@ print(result)`,
                       type="range"
                       min="0"
                       max="1"
-                      step="0.1"
+                      step="0.01"
                       value={sliderValues[key]}
                       onChange={(e) =>
                         handleSliderChange(key, parseFloat(e.target.value))
@@ -1647,7 +1702,7 @@ print(result)`,
                       className="absolute top-0 w-full h-8 opacity-0 cursor-pointer"
                     />
                     <div
-                      className="absolute top-0 w-8 h-8 bg-black border-2 border-white rounded-full cursor-pointer transform -translate-x-4 flex items-center justify-center"
+                      className="absolute top-0 w-8 h-8 bg-black border-2 border-white rounded-full cursor-pointer transform -translate-x-4 flex items-center justify-center pointer-events-none"
                       style={{ left: `${sliderValues[key] * 100}%` }}
                     >
                       <div className="w-2 h-2 bg-white rounded-full"></div>
@@ -1828,14 +1883,22 @@ print(result)`,
         difficulty: "Easy",
         // AFM has NO item difficulty parameter for this task
         instruction: "Complete this Python task:",
-        task: "Assign the number 10 to a variable called x.",
-        code: `# Your task: Assign the number 10 to a variable called x
-# Write your answer below:
+        task: "Access the first element of the list numbers.",
+        code: `# Given a list:
+numbers = [10, 20, 30, 40, 50]
+
+# Your task: Access the first element
+# Choose your answer below:
 
 `,
-        options: ["x = 10", "x == 10", "10 = x", "var x = 10"],
-        correctAnswer: "x = 10",
-        skills: ["Using Variables in Python"],
+        options: [
+          "numbers[0]",
+          "numbers[1]",
+          "numbers.first()",
+          "first(numbers)",
+        ],
+        correctAnswer: "numbers[0]",
+        skills: ["Working with Lists in Python"],
         afmPrediction: 0.72, // AFM gives same prediction for both tasks
       },
       hardTask: {
@@ -1843,21 +1906,22 @@ print(result)`,
         difficulty: "Hard",
         // AFM has NO item difficulty parameter for this task
         instruction: "Complete this Python task:",
-        task: "Write a function that takes a list and returns all even numbers.",
-        code: `# Your task: Write a function that takes a list and returns all even numbers
-# Function should be named 'get_evens' and take parameter 'numbers'
-# Write your answer below:
+        task: "Access the last three elements of the list using slice notation.",
+        code: `# Given a list:
+numbers = [10, 20, 30, 40, 50]
+
+# Your task: Get the last three elements [30, 40, 50]
+# Choose your answer below:
 
 `,
         options: [
-          "def get_evens(numbers):\n    return [x for x in numbers if x % 2 == 0]",
-          "def get_evens(numbers):\n    return numbers % 2 == 0",
-          "function get_evens(numbers):\n    return [x for x in numbers if x % 2 == 0]",
-          "def get_evens(numbers):\n    return numbers.filter(x % 2 == 0)",
+          "numbers[-3:]",
+          "numbers[3:]",
+          "numbers[:3]",
+          "numbers[-3:-1]",
         ],
-        correctAnswer:
-          "def get_evens(numbers):\n    return [x for x in numbers if x % 2 == 0]",
-        skills: ["Using Variables in Python"], // Same KC as easy task!
+        correctAnswer: "numbers[-3:]",
+        skills: ["Working with Lists in Python"], // Same KC as easy task!
         afmPrediction: 0.72, // AFM gives same prediction for both tasks
       },
     };
@@ -1867,8 +1931,8 @@ print(result)`,
 
     // What the predictions SHOULD be if AFM had item difficulty parameters
     // (using hypothetical difficulty values that would make sense)
-    const easyItemDifficulty = -1.8; // Variable assignment is very easy
-    const hardItemDifficulty = 1.4; // Function writing is much harder
+    const easyItemDifficulty = -1.2; // Simple indexing is easy
+    const hardItemDifficulty = 1.1; // Negative slicing is harder
 
     const calculateCorrectPrediction = (itemDifficulty) => {
       return Math.max(
@@ -1890,11 +1954,15 @@ print(result)`,
         setEasyTaskAnswer(answer);
         if (hardTaskAnswer !== null) {
           setShowTaskComparison(true);
+          // Show popup when both tasks are answered
+          setTimeout(() => setShowItemDifficultyPopup(true), 300);
         }
       } else {
         setHardTaskAnswer(answer);
         if (easyTaskAnswer !== null) {
           setShowTaskComparison(true);
+          // Show popup when both tasks are answered
+          setTimeout(() => setShowItemDifficultyPopup(true), 300);
         }
       }
     };
@@ -1903,6 +1971,7 @@ print(result)`,
       setEasyTaskAnswer(null);
       setHardTaskAnswer(null);
       setShowTaskComparison(false);
+      setShowItemDifficultyPopup(false);
     };
 
     return (
@@ -1933,7 +2002,9 @@ print(result)`,
                   <div className="text-lg font-bold text-green-700 mb-2">
                     Easy Task
                   </div>
-                  <div className="text-sm text-black">"Assign variable x"</div>
+                  <div className="text-sm text-black">
+                    "Access first element"
+                  </div>
                 </div>
               </div>
 
@@ -1956,7 +2027,9 @@ print(result)`,
                   <div className="text-lg font-bold text-red-700 mb-2">
                     Hard Task
                   </div>
-                  <div className="text-sm text-black">"Write function"</div>
+                  <div className="text-sm text-black">
+                    "Negative slice notation"
+                  </div>
                 </div>
               </div>
             </div>
@@ -1988,8 +2061,22 @@ print(result)`,
           {/* AFM Prediction Comparison */}
           <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
             <h3 className="text-2xl font-bold text-black text-center mb-4 uppercase tracking-wide">
-              AFM's Identical Predictions
+              AFM's Identical Success Predictions for Both Tasks
             </h3>
+            <div className="bg-blue-100 border-2 border-blue-600 p-4 rounded-lg mb-6">
+              <p className="text-black font-bold text-center">
+                Imagine that a learner has already completed several tasks
+                related to lists. AFM now predicts how likely it is that this
+                learner will{" "}
+                <span className="underline">solve the next task correctly</span>
+                . Since both tasks below belong to the same KC, AFM gives them
+                <span className="text-yellow-600">
+                  {" "}
+                  the same probability of success
+                </span>
+                :
+              </p>
+            </div>
             <div className="grid grid-cols-2 gap-8">
               <div className="text-center">
                 <div className="text-lg font-bold text-black mb-2">
@@ -1997,6 +2084,9 @@ print(result)`,
                 </div>
                 <div className="text-sm font-mono text-blue-600 mb-2">
                   KC: {taskComparison.easyTask.skills[0]}
+                </div>
+                <div className="text-base text-gray-700 font-bold mb-2">
+                  Erfolgswahrscheinlichkeit:
                 </div>
                 <div className="text-3xl font-bold text-yellow-600 mb-2">
                   {(taskComparison.easyTask.afmPrediction * 100).toFixed(0)}%
@@ -2019,6 +2109,9 @@ print(result)`,
                 </div>
                 <div className="text-sm font-mono text-blue-600 mb-2">
                   KC: {taskComparison.hardTask.skills[0]}
+                </div>
+                <div className="text-base text-gray-700 font-bold mb-2">
+                  Probability of Success:
                 </div>
                 <div className="text-3xl font-bold text-yellow-600 mb-2">
                   {(taskComparison.hardTask.afmPrediction * 100).toFixed(0)}%
@@ -2148,7 +2241,7 @@ print(result)`,
             <div className="space-y-6">
               <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
                 <h3 className="text-2xl font-bold text-black text-center mb-6 uppercase">
-                  AFM Parameter Bias Demonstration
+                  AFM Parameter Bias Summary
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -2185,9 +2278,10 @@ print(result)`,
                     <p className="text-black font-bold">
                       If a student gets the easy task correct but the hard task
                       wrong, AFM cannot tell whether the mistake was due to not
-                      understanding "Using Variables in Python", or because
-                      writing functions is simply harder than variable
-                      assignment. The KC parameter becomes unreliable!
+                      understanding "Working with Lists in Python", or because
+                      "negative slice notation" is simply harder than "accessing
+                      the first element of a list". The KC parameter becomes
+                      unreliable!
                     </p>
                   </div>
                 </div>
@@ -2210,6 +2304,71 @@ print(result)`,
             </div>
           )}
         </div>
+
+        {/* Item Difficulty Popup Modal */}
+        {showItemDifficultyPopup && easyTaskAnswer && hardTaskAnswer && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 p-4 animate-in fade-in duration-300">
+            <div className="bg-white border-8 border-black rounded-2xl max-w-2xl w-full shadow-2xl transform scale-100 animate-in zoom-in duration-300">
+              <div className="p-8 space-y-6">
+                {/* Header */}
+                <div className="flex justify-between items-start">
+                  <div className="flex-1 border-l-8 border-yellow-600 pl-6 py-2">
+                    <h3 className="font-bold text-2xl font-mono uppercase text-yellow-700">
+                      DID YOU NOTICE?
+                    </h3>
+                  </div>
+                  <button
+                    onClick={() => setShowItemDifficultyPopup(false)}
+                    className="ml-4 p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                    aria-label="Close"
+                  >
+                    <X className="w-6 h-6 text-black" />
+                  </button>
+                </div>
+
+                {/* Content */}
+                <div className="border-4 border-yellow-600 bg-yellow-50 p-6 rounded-xl">
+                  <p className="text-black text-xl font-bold leading-relaxed mb-4">
+                    The two tasks didn't feel like the same difficulty, right?
+                  </p>
+                  <p className="text-black text-lg font-bold leading-relaxed">
+                    Accessing the first element (
+                    <code className="bg-white px-2 py-1 rounded">
+                      numbers[0]
+                    </code>
+                    ) is much easier than using negative slice notation (
+                    <code className="bg-white px-2 py-1 rounded">
+                      numbers[-3:]
+                    </code>
+                    ).
+                  </p>
+                </div>
+
+                {/* Highlight box */}
+                <div className="border-l-8 border-red-600 bg-red-100 pl-6 py-4">
+                  <p className="text-black font-bold text-lg mb-2">
+                    AFM doesn't inherently know this!
+                  </p>
+                  <p className="text-black font-bold">
+                    It just uses the same beta parameter (β = 0.89) that was
+                    learned from all "Working with Lists in Python" tasks,
+                    regardless of their individual difficulty.
+                  </p>
+                </div>
+
+                {/* Close button */}
+                <div className="flex justify-center pt-4">
+                  <button
+                    onClick={() => setShowItemDifficultyPopup(false)}
+                    className="px-8 py-4 bg-black text-white border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide hover:bg-white hover:text-black transition-all transform hover:scale-105 font-mono"
+                  >
+                    Continue →
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </TechnicalLayout>
     );
   };

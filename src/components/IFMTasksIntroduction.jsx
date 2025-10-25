@@ -416,6 +416,72 @@ const MultipleChoiceTask = ({ task, onNavigate, onTaskComplete }) => {
 
           {/* Options */}
           <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
+            {/* Hints Section */}
+            {task.hasHints && (
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-bold flex items-center gap-2 uppercase tracking-tight">
+                    <Lightbulb className="w-5 h-5" />
+                    Hints Available
+                  </h3>
+                  <button
+                    onClick={() => setShowHints(!showHints)}
+                    className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white border-4 border-black rounded-lg font-bold hover:bg-white hover:text-green-600 hover:border-green-600 transition-all"
+                  >
+                    {showHints ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
+                    {showHints ? "Hide" : "Show"} Hints
+                  </button>
+                </div>
+
+                {showHints && (
+                  <div className="space-y-3 mb-6">
+                    {task.hints.map((hint, index) => (
+                      <div
+                        key={index}
+                        className="border-4 border-green-600 rounded-xl"
+                      >
+                        <button
+                          onClick={() => toggleHint(index)}
+                          className="w-full p-3 text-left bg-green-50 hover:bg-green-100 transition-all flex items-center justify-between border-4 border-transparent hover:border-green-300 rounded-xl"
+                        >
+                          <span className="font-bold text-green-800">
+                            Hint {index + 1}: {hint.title}
+                          </span>
+                          <HelpCircle className="w-4 h-4 text-green-600" />
+                        </button>
+                        {visibleHints.includes(index) && (
+                          <div className="p-4 bg-white border-t-4 border-green-600 rounded-b-xl">
+                            <p className="text-black font-bold text-sm">
+                              {hint.content}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Placeholder for non-hint tasks */}
+            {!task.hasHints && (
+              <div className="border-4 border-gray-400 rounded-xl p-6 bg-gray-50 mb-6">
+                <div className="text-center">
+                  <Brain className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                  <h3 className="text-lg font-bold text-gray-600 mb-2 uppercase tracking-wide">
+                    No Hints Available
+                  </h3>
+                  <p className="text-gray-600 font-bold text-sm">
+                    This advanced task challenges you to solve it independently.
+                  </p>
+                </div>
+              </div>
+            )}
+
             <h3 className="text-xl font-bold mb-6 flex items-center gap-2 uppercase tracking-tight">
               <Brain className="w-6 h-6" />
               Choose the correct answer:
@@ -443,75 +509,6 @@ const MultipleChoiceTask = ({ task, onNavigate, onTaskComplete }) => {
               ))}
             </div>
           </div>
-        </div>
-
-        {/* Hints Section (full width below) */}
-        <div className="space-y-6">
-          {task.hasHints && (
-            <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold flex items-center gap-2 uppercase tracking-tight">
-                  <Lightbulb className="w-5 h-5" />
-                  Hints Available
-                </h3>
-                <button
-                  onClick={() => setShowHints(!showHints)}
-                  className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white border-4 border-black rounded-lg font-bold hover:bg-white hover:text-green-600 hover:border-green-600 transition-all"
-                >
-                  {showHints ? (
-                    <EyeOff className="w-4 h-4" />
-                  ) : (
-                    <Eye className="w-4 h-4" />
-                  )}
-                  {showHints ? "Hide" : "Show"} Hints
-                </button>
-              </div>
-
-              {showHints && (
-                <div className="space-y-3">
-                  {task.hints.map((hint, index) => (
-                    <div
-                      key={index}
-                      className="border-4 border-green-600 rounded-xl"
-                    >
-                      <button
-                        onClick={() => toggleHint(index)}
-                        className="w-full p-3 text-left bg-green-50 hover:bg-green-100 transition-all flex items-center justify-between border-4 border-transparent hover:border-green-300 rounded-xl"
-                      >
-                        <span className="font-bold text-green-800">
-                          Hint {index + 1}: {hint.title}
-                        </span>
-                        <HelpCircle className="w-4 h-4 text-green-600" />
-                      </button>
-                      {visibleHints.includes(index) && (
-                        <div className="p-4 bg-white border-t-4 border-green-600 rounded-b-xl">
-                          <p className="text-black font-bold text-sm">
-                            {hint.content}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Placeholder for non-hint tasks */}
-          {!task.hasHints && (
-            <div className="border-4 border-black rounded-xl p-8 bg-gray-50 shadow-lg">
-              <div className="text-center">
-                <Brain className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-xl font-bold text-gray-600 mb-4 uppercase tracking-wide">
-                  No Hints Available
-                </h3>
-                <p className="text-gray-600 font-bold">
-                  This advanced task challenges you to solve it independently.
-                  Use your knowledge of Python decorators!
-                </p>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Controls */}

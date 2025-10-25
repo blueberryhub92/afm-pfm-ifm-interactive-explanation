@@ -105,7 +105,7 @@ export const PythonTasksAdvanced = ({ navigate }) => {
           correct: false,
         },
       ],
-      color: "green",
+      color: "orange",
       learningRate: "high",
       explanation:
         "String formatting has clear patterns and immediate visual feedback. Each practice attempt builds directly on the previous one.",

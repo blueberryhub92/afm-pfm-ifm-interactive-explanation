@@ -25,16 +25,13 @@ export const ModelComparison = ({ navigate }) => {
   const [pfmProbability, setPfmProbability] = useState(0.4);
   const [hoveredTerm, setHoveredTerm] = useState(null);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
-  const [showQuestionnaire, setShowQuestionnaire] = useState(false);
   const [showDebriefingTooltip, setShowDebriefingTooltip] = useState(false);
   const [showHintInterpretation, setShowHintInterpretation] = useState(false);
-  const [showEndSections, setShowEndSections] = useState(false);
 
   const userId = getUserId();
 
   const simulationRef = useRef(null);
   const parameterRef = useRef(null);
-  const endSectionsTimeoutRef = useRef(null);
   const hintInterpretationRef = useRef(null);
 
   // Learning scenario: For loops and while loops in Python
@@ -201,27 +198,6 @@ export const ModelComparison = ({ navigate }) => {
       }, 100);
     }
   }, [showHintInterpretation]);
-
-  // Handle end sections appearing after hint interpretation is opened
-  useEffect(() => {
-    if (showHintInterpretation && !showEndSections) {
-      // Clear any existing timeout
-      if (endSectionsTimeoutRef.current) {
-        clearTimeout(endSectionsTimeoutRef.current);
-      }
-
-      // Set timeout for 5 seconds
-      endSectionsTimeoutRef.current = setTimeout(() => {
-        setShowEndSections(true);
-      }, 5000);
-    }
-
-    return () => {
-      if (endSectionsTimeoutRef.current) {
-        clearTimeout(endSectionsTimeoutRef.current);
-      }
-    };
-  }, [showHintInterpretation, showEndSections]);
 
   const resetSimulation = () => {
     setCurrentStep(0);
@@ -661,11 +637,88 @@ export const ModelComparison = ({ navigate }) => {
               <p className="text-black font-bold text-center text-lg mb-3">
                 In the IFM model used in this comparative simulation, hints have
                 a <span className="text-red-700 underline">NEGATIVE</span>{" "}
-                effect (ν = -0.08). This differs from the IFM simulator on the
-                previous slide, where hints were interpreted as positive. More
-                details in the collapsible section at the end of this page!
+                effect (ν = -0.08).
               </p>
             </div>
+          </div>
+
+          {/* Design Decision Callout - Foldable */}
+          <div
+            ref={hintInterpretationRef}
+            className="border-4 border-black rounded-xl bg-gradient-to-r from-yellow-100 to-red-100 shadow-lg overflow-hidden"
+          >
+            <button
+              onClick={() => setShowHintInterpretation(!showHintInterpretation)}
+              className="w-full bg-red-700 text-white px-6 py-4 text-left font-bold text-lg hover:bg-red-800 transition-colors flex items-center justify-between border-b-4 border-black"
+            >
+              <div className="flex items-center gap-3">
+                <HelpCircle className="w-6 h-6" />
+                <span>
+                  But wait: Hints are penalized? The IFM Simulator (previous
+                  slide) rewarded the use of hints!
+                </span>
+              </div>
+              <span className="text-2xl font-mono">
+                {showHintInterpretation ? "−" : "+"}
+              </span>
+            </button>
+
+            {showHintInterpretation && (
+              <div className="p-8 space-y-6 bg-white">
+                <div className="flex items-center gap-3 mb-6">
+                  <HelpCircle className="w-6 h-6 text-red-700" />
+                  <h3 className="text-xl font-bold text-black uppercase tracking-wide">
+                    Critical Design Decision: Hint Interpretation
+                  </h3>
+                </div>
+
+                <div className="border-4 border-red-600 rounded-xl p-6 bg-red-50 mb-6">
+                  <div className="text-red-800 font-bold text-lg mb-4 text-center">
+                    IMPORTANT: The comparison on this slide shows hints as
+                    PENALIZED (ν = -0.08)
+                  </div>
+                  <p className="text-red-700 font-bold text-center mb-4">
+                    But in the IFM simulator (previous slide), hints are
+                    BENEFICIAL (parameter ν can only be manipulated in positive
+                    direction)!
+                  </p>
+                  <div className="border-l-4 border-red-700 bg-white p-4 rounded-r-lg">
+                    <p className="text-black font-bold text-sm">
+                      <strong>Why the difference?</strong> This demonstrates a
+                      crucial design choice in educational modeling: Are
+                      instructional supports (hints) a sign of learning
+                      difficulty (penalty) or effective scaffolding (benefit)?
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="border-4 border-orange-600 rounded-xl p-4 bg-orange-50">
+                    <h4 className="font-bold text-orange-800 mb-3 text-center">
+                      HINTS AS PENALTY (This Demo)
+                    </h4>
+                    <ul className="text-black text-sm font-bold space-y-2">
+                      <li>• ν = -0.08 (negative effect)</li>
+                      <li>• Theory: Hints indicate struggle</li>
+                      <li>• More hints = lower confidence</li>
+                      <li>• Conservative assessment approach</li>
+                    </ul>
+                  </div>
+
+                  <div className="border-4 border-green-600 rounded-xl p-4 bg-green-50">
+                    <h4 className="font-bold text-green-800 mb-3 text-center">
+                      HINTS AS BENEFIT (IFM Simulator)
+                    </h4>
+                    <ul className="text-black text-sm font-bold space-y-2">
+                      <li>• ν = positive value / positive effect</li>
+                      <li>• Theory: Hints provide learning</li>
+                      <li>• More scaffolding = better outcomes</li>
+                      <li>• Supportive instruction approach</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Controls and Current Status */}
@@ -942,210 +995,16 @@ export const ModelComparison = ({ navigate }) => {
             </div>
           </div>
 
-          {/* Design Decision Callout - Foldable */}
-          <div
-            ref={hintInterpretationRef}
-            className="border-4 border-black rounded-xl bg-gradient-to-r from-yellow-100 to-red-100 shadow-lg overflow-hidden"
-          >
+          {/* Continue Button */}
+          <div className="flex justify-center">
             <button
-              onClick={() => setShowHintInterpretation(!showHintInterpretation)}
-              className="w-full bg-red-700 text-white px-6 py-4 text-left font-bold text-lg hover:bg-red-800 transition-colors flex items-center justify-between border-b-4 border-black"
+              onClick={() => navigate(24)}
+              className="px-12 py-6 bg-gradient-to-r from-purple-600 to-blue-600 text-white border-4 border-black rounded-xl font-bold text-2xl uppercase tracking-wide hover:from-purple-700 hover:to-blue-700 transition-all transform hover:scale-105 shadow-lg flex items-center gap-3"
             >
-              <div className="flex items-center gap-3">
-                <HelpCircle className="w-6 h-6" />
-                <span>
-                  But wait: Hints are penalized? The IFM Simulator (previous
-                  slide) rewarded the use of hints!
-                </span>
-              </div>
-              <span className="text-2xl font-mono">
-                {showHintInterpretation ? "−" : "+"}
-              </span>
+              <span>Continue</span>
+              <ArrowRight className="w-8 h-8" />
             </button>
-
-            {showHintInterpretation && (
-              <div className="p-8 space-y-6 bg-white">
-                <div className="flex items-center gap-3 mb-6">
-                  <HelpCircle className="w-6 h-6 text-red-700" />
-                  <h3 className="text-xl font-bold text-black uppercase tracking-wide">
-                    Critical Design Decision: Hint Interpretation
-                  </h3>
-                </div>
-
-                <div className="border-4 border-red-600 rounded-xl p-6 bg-red-50 mb-6">
-                  <div className="text-red-800 font-bold text-lg mb-4 text-center">
-                    IMPORTANT: The comparison on this slide shows hints as
-                    PENALIZED (ν = -0.08)
-                  </div>
-                  <p className="text-red-700 font-bold text-center mb-4">
-                    But in the IFM simulator (previous slide), hints are
-                    BENEFICIAL (parameter ν can only be manipulated in positive
-                    direction)!
-                  </p>
-                  <div className="border-l-4 border-red-700 bg-white p-4 rounded-r-lg">
-                    <p className="text-black font-bold text-sm">
-                      <strong>Why the difference?</strong> This demonstrates a
-                      crucial design choice in educational modeling: Are
-                      instructional supports (hints) a sign of learning
-                      difficulty (penalty) or effective scaffolding (benefit)?
-                    </p>
-                  </div>
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="border-4 border-orange-600 rounded-xl p-4 bg-orange-50">
-                    <h4 className="font-bold text-orange-800 mb-3 text-center">
-                      HINTS AS PENALTY (This Demo)
-                    </h4>
-                    <ul className="text-black text-sm font-bold space-y-2">
-                      <li>• ν = -0.08 (negative effect)</li>
-                      <li>• Theory: Hints indicate struggle</li>
-                      <li>• More hints = lower confidence</li>
-                      <li>• Conservative assessment approach</li>
-                    </ul>
-                  </div>
-
-                  <div className="border-4 border-green-600 rounded-xl p-4 bg-green-50">
-                    <h4 className="font-bold text-green-800 mb-3 text-center">
-                      HINTS AS BENEFIT (IFM Simulator)
-                    </h4>
-                    <ul className="text-black text-sm font-bold space-y-2">
-                      <li>• ν = positive value / positive effect</li>
-                      <li>• Theory: Hints provide learning</li>
-                      <li>• More scaffolding = better outcomes</li>
-                      <li>• Supportive instruction approach</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
-
-          {/* End of App Navigation - Appears after hint interpretation */}
-          {showEndSections && (
-            <div
-              className="border-4 border-black rounded-xl p-8 bg-gradient-to-r from-gray-100 to-purple-100 shadow-lg transition-opacity duration-1000 ease-in"
-              style={{
-                animation: "fadeIn 1s ease-in",
-              }}
-            >
-              <div className="text-center mb-8">
-                <div className="flex items-center justify-center gap-3 mb-4">
-                  <div className="w-4 h-4 bg-purple-600 rounded-full animate-pulse"></div>
-                  <h3 className="text-2xl font-bold text-black uppercase tracking-wide">
-                    Congratulations! You've completed the learning journey!
-                  </h3>
-                  <div className="w-4 h-4 bg-purple-600 rounded-full animate-pulse"></div>
-                </div>
-                <p className="text-lg text-black font-bold">
-                  You've explored AFM, PFM, and IFM models. Choose where to go
-                  next:
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {/* Back to Welcome */}
-                <button
-                  onClick={() => navigate(0)}
-                  className="px-6 py-4 bg-gray-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-gray-600 transition-all transform hover:scale-105 flex flex-col items-center gap-2"
-                >
-                  <span>Home</span>
-                </button>
-
-                {/* AFM Simulator */}
-                <button
-                  onClick={() => navigate(15)}
-                  className="px-6 py-4 bg-green-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-green-600 transition-all transform hover:scale-105 flex flex-col items-center gap-2"
-                >
-                  <span>AFM Simulator</span>
-                </button>
-
-                {/* PFM Simulator */}
-                <button
-                  onClick={() => navigate(19)}
-                  className="px-6 py-4 bg-blue-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-blue-600 transition-all transform hover:scale-105 flex flex-col items-center gap-2"
-                >
-                  <span>PFM Simulator</span>
-                </button>
-
-                {/* IFM Simulator */}
-                <button
-                  onClick={() => navigate(22)}
-                  className="px-6 py-4 bg-orange-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-orange-600 transition-all transform hover:scale-105 flex flex-col items-center gap-2"
-                >
-                  <span>IFM Simulator</span>
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Questionnaire Request - Foldable - Appears after hint interpretation */}
-          {showEndSections && (
-            <div
-              className="border-4 border-black rounded-xl bg-gradient-to-r from-blue-100 to-green-100 shadow-lg overflow-hidden transition-opacity duration-1000 ease-in"
-              style={{
-                animation: "fadeIn 1s ease-in 0.5s both",
-              }}
-            >
-              <button
-                onClick={() => setShowQuestionnaire(!showQuestionnaire)}
-                className="w-full bg-black text-white px-6 py-4 text-left font-bold text-lg hover:bg-gray-800 transition-colors flex items-center justify-between border-b-4 border-black"
-              >
-                <div className="flex items-center gap-3">
-                  <Target className="w-6 h-6" />
-                  <span>Help Support This Research!</span>
-                </div>
-                <span className="text-2xl font-mono">
-                  {showQuestionnaire ? "−" : "+"}
-                </span>
-              </button>
-
-              {showQuestionnaire && (
-                <div className="p-8 space-y-6 bg-white">
-                  <div className="border-4 border-blue-600 rounded-xl p-6 bg-blue-50">
-                    <p className="text-black font-bold text-lg text-center mb-4">
-                      <strong>Your experience matters!</strong> This interactive
-                      app is part of a master thesis research project.
-                    </p>
-                    <p className="text-black font-bold text-center mb-4">
-                      Please take a few minutes to share your insights about the
-                      learning experience you just completed.
-                    </p>
-                    <div className="text-center">
-                      <span className="bg-green-300 px-4 py-2 border-2 border-black rounded font-bold">
-                        Only takes 5-10 minutes
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-center mb-6">
-                    <button
-                      onClick={() => {
-                        // TODO: Replace with your actual questionnaire URL
-                        const questionnaireUrl =
-                          "https://limesurvey.uni-due.de/index.php/847825?lang=en";
-                        window.open(questionnaireUrl, "_blank");
-                      }}
-                      className="px-8 py-4 bg-blue-600 text-white border-4 border-black rounded-xl font-bold text-xl uppercase tracking-wide hover:bg-white hover:text-blue-600 transition-all transform hover:scale-105 flex items-center gap-3"
-                    >
-                      <span>Take Questionnaire</span>
-                      <ArrowRight className="w-6 h-6" />
-                    </button>
-                  </div>
-
-                  <div className="border-l-8 border-green-600 bg-green-100 p-4 rounded-r-lg">
-                    <div className="text-center">
-                      <p className="text-green-800 font-bold text-sm">
-                        Your feedback helps improve educational technology and
-                        supports academic research. Thank you for contributing
-                        to the advancement of learning science!
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
 
           {hoveredTerm === "simulation" && <SimulationTooltip />}
           {hoveredTerm === "parameters" && <ParameterTooltip />}
