@@ -642,7 +642,7 @@ date_pattern = r'(\d{1,2})/(\d{1,2})/(\d{4})'`,
                       </h3>
                     </div>
 
-                    <div className="bg-gray-50 border-4 border-black rounded-lg p-4 flex-1">
+                    <div className="bg-gray-50 border-4 border-black rounded-lg p-4 flex-1 min-h-[400px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <LineChart
                           data={step1Data}
@@ -902,7 +902,7 @@ date_pattern = r'(\d{1,2})/(\d{1,2})/(\d{4})'`,
                       </h3>
                     </div>
 
-                    <div className="bg-gray-50 border-4 border-black rounded-lg p-4 flex-1">
+                    <div className="bg-gray-50 border-4 border-black rounded-lg p-4 flex-1 min-h-[400px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <LineChart
                           data={step1bData}
