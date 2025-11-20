@@ -126,7 +126,19 @@ function NavigationBar({
             </h3>
           </div>
 
-          <div className="space-y-3">
+          {/* Keyboard Shortcuts */}
+          <div className="mb-6 border-l-8 border-purple-600 bg-purple-100 p-4 rounded-r-xl">
+            <h4 className="font-black text-black mb-2 uppercase tracking-wide text-sm">
+              KEYBOARD SHORTCUTS:
+            </h4>
+            <ul className="text-black font-bold text-xs space-y-1 uppercase">
+              <li>• ALT + ARROW LEFT : PREVIOUS SLIDE</li>
+              <li>• ALT + ARROW RIGHT : NEXT SLIDE</li>
+              <li>• N : TOGGLE NAVIGATION</li>
+            </ul>
+          </div>
+
+          <div className="space-y-3 pb-8">
             {SLIDE_TITLES.map((title, index) => (
               <button
                 key={index}
@@ -150,18 +162,6 @@ function NavigationBar({
                 </div>
               </button>
             ))}
-          </div>
-
-          {/* Navigation Instructions */}
-          <div className="mt-6 border-l-8 border-purple-600 bg-purple-100 p-4 rounded-r-xl">
-            <h4 className="font-black text-black mb-2 uppercase tracking-wide text-sm">
-              KEYBOARD SHORTCUTS:
-            </h4>
-            <ul className="text-black font-bold text-xs space-y-1 uppercase">
-              <li>• ALT + ARROW LEFT : PREVIOUS SLIDE</li>
-              <li>• ALT + ARROW RIGHT : NEXT SLIDE</li>
-              <li>• N : TOGGLE NAVIGATION</li>
-            </ul>
           </div>
         </div>
       </div>
