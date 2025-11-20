@@ -6,8 +6,6 @@ import {
   TrendingUp,
   Play,
   RotateCcw,
-  Database,
-  RefreshCw,
   LineChart,
   Lightbulb,
   ArrowRight,
@@ -89,9 +87,7 @@ const paramMeta = {
 export const AFMInteractiveSimulator = ({ navigate }) => {
   // State
   const [params, setParams] = useState(paramDefaults);
-  const [sessionActive, setSessionActive] = useState(true);
   const [responseLog, setResponseLog] = useState([]);
-  const [retrainingData, setRetrainingData] = useState([]);
   const [showTooltip, setShowTooltip] = useState(null);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
   const [lastChangedParam, setLastChangedParam] = useState(null);
@@ -219,7 +215,6 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
 
   // Handlers
   function setParam(p, v) {
-    if (!sessionActive && p !== "practice") return;
     const oldValue = params[p];
     const newValue = p === "practice" ? parseInt(v, 10) : parseFloat(v);
 
@@ -236,7 +231,6 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
       parameterName: p,
       parameterLabel: paramMeta[p].label,
       parameterContext: paramMeta[p].tooltip.desc,
-      sessionActive,
       slideNumber: 20,
       slideName: "AFM Simulator",
       elementType: "slider",
@@ -247,7 +241,6 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
   }
 
   function simulateResponse(isCorrect) {
-    if (!sessionActive) return;
     const entry = {
       practice: params.practice,
       correct: isCorrect,
@@ -255,7 +248,6 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
       timestamp: Date.now(),
     };
     setResponseLog((prev) => [...prev, entry]);
-    setRetrainingData((prev) => [...prev, entry]);
     setParams((prev) => ({ ...prev, practice: prev.practice + 1 }));
     setLastChangedParam("practice");
 
@@ -271,170 +263,7 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
       elementType: "button",
       elementLocation: "session_controls_section",
       buttonType: isCorrect ? "correct_response" : "incorrect_response",
-      sessionActive,
       totalResponses: responseLog.length + 1,
-    });
-  }
-
-  function retrainModel() {
-    if (!retrainingData.length) return;
-
-    // Track retrain attempt with more context
-    const preRetrainParams = { ...params };
-    const retrainDataSnapshot = [...retrainingData];
-
-    // Use larger window with exponential weighting (K=20, fallback to available data)
-    const K = Math.min(20, retrainingData.length);
-    let recent = retrainingData.slice(-K);
-    let total = recent.length;
-
-    // Calculate exponentially weighted accuracy and prediction error
-    let weightedAcc = 0;
-    let weightedErr = 0;
-    let totalWeight = 0;
-
-    for (let i = 0; i < total; i++) {
-      const weight = Math.exp(-0.1 * (total - 1 - i)); // More weight to recent observations
-      const r = recent[i];
-      weightedAcc += weight * (r.correct ? 1 : 0);
-      weightedErr += weight * Math.abs((r.correct ? 1 : 0) - r.probability);
-      totalWeight += weight;
-    }
-
-    weightedAcc /= totalWeight;
-    weightedErr /= totalWeight;
-
-    let { theta, beta, gamma } = params;
-
-    // Hyperparameters for realistic updates
-    const etaTheta = 0.01; // Learning rate for ability
-    const etaBeta = 0.01; // Learning rate for difficulty
-    const alphaGamma = 0.02; // EMA smoothing for gamma
-    const lambda = 0.005; // L2 regularization strength
-    const maxStepSize = 0.05; // Maximum parameter change per update
-    const noiseStd = 0.03; // Process noise standard deviation
-
-    // Prior means (regularization targets)
-    const thetaPrior = 0.0;
-    const betaPrior = 0.0;
-    const gammaPrior = 0.15;
-
-    // SGD-style updates with regularization
-    // Theta update: gradient from prediction error + L2 regularization
-    const thetaGradient = (weightedAcc - 0.5) * 2; // Simple gradient approximation
-    const thetaUpdate =
-      etaTheta * (thetaGradient - lambda * (theta - thetaPrior));
-    theta += Math.max(-maxStepSize, Math.min(maxStepSize, thetaUpdate));
-    theta = Math.max(-3, Math.min(3, theta)); // Enforce bounds
-
-    // Beta update: based on prediction accuracy vs target (0.6-0.7 range)
-    const targetAcc = 0.65;
-    const betaGradient = (weightedAcc - targetAcc) * 2; // Positive if too easy, negative if too hard
-    const betaUpdate = etaBeta * (-betaGradient - lambda * (beta - betaPrior)); // Negative gradient if too easy (decrease beta to make harder)
-    beta += Math.max(-maxStepSize, Math.min(maxStepSize, betaUpdate));
-    beta = Math.max(-2, Math.min(2, beta)); // Enforce bounds
-
-    // Gamma update: EMA-based on learning improvement signal
-    const windowSize = Math.max(8, Math.floor(total / 2));
-    if (total >= windowSize * 2) {
-      const early = recent.slice(0, windowSize);
-      const late = recent.slice(-windowSize);
-
-      const earlyAcc =
-        early.reduce((sum, r) => sum + (r.correct ? 1 : 0), 0) / early.length;
-      const lateAcc =
-        late.reduce((sum, r) => sum + (r.correct ? 1 : 0), 0) / late.length;
-      const improvement = lateAcc - earlyAcc;
-
-      // Target gamma based on observed improvement
-      const gammaSignal = gammaPrior + 0.02 * improvement;
-      const gammaTarget = Math.max(0, Math.min(0.2, gammaSignal)); // Constrain to realistic range
-
-      // EMA update
-      const gammaUpdate = alphaGamma * (gammaTarget - gamma);
-      gamma += Math.max(-maxStepSize, Math.min(maxStepSize, gammaUpdate));
-      gamma = Math.max(0, Math.min(0.2, gamma)); // Enforce bounds
-    }
-
-    // Add small amount of process noise to prevent deterministic behavior
-    const addNoise = (value, bounds) => {
-      const noise = (Math.random() - 0.5) * 2 * noiseStd;
-      return Math.max(bounds[0], Math.min(bounds[1], value + noise));
-    };
-
-    theta = addNoise(theta, [-3, 3]);
-    beta = addNoise(beta, [-2, 2]);
-    gamma = addNoise(gamma, [0, 0.2]);
-
-    const newParams = {
-      theta: parseFloat(theta.toFixed(2)),
-      beta: parseFloat(beta.toFixed(2)),
-      gamma: parseFloat(gamma.toFixed(3)),
-      practice: 0,
-    };
-
-    setParams(newParams);
-    setRetrainingData([]);
-    setSessionActive(true);
-    setLastChangedParam(null); // Clear highlight after retrain
-
-    // Store parameter change information for transparency
-    const parameterChanges = {
-      theta: {
-        before: preRetrainParams.theta,
-        after: newParams.theta,
-        change: newParams.theta - preRetrainParams.theta,
-        reason: `Weighted accuracy: ${(weightedAcc * 100).toFixed(1)}%`,
-      },
-      beta: {
-        before: preRetrainParams.beta,
-        after: newParams.beta,
-        change: newParams.beta - preRetrainParams.beta,
-        reason: `Target accuracy: ${(targetAcc * 100).toFixed(1)}%`,
-      },
-      gamma: {
-        before: preRetrainParams.gamma,
-        after: newParams.gamma,
-        change: newParams.gamma - preRetrainParams.gamma,
-        reason:
-          total >= windowSize * 2
-            ? "Learning improvement detected"
-            : "Insufficient data for gamma update",
-      },
-    };
-
-    // Store for UI display
-    setLastParameterChanges && setLastParameterChanges(parameterChanges);
-
-    // Track retrain completion with more context
-    trackButtonClick("slide20_afm_simulator_retrain", {
-      preRetrainParams,
-      postRetrainParams: newParams,
-      trainingDataCount: retrainDataSnapshot.length,
-      recentAccuracy: acc,
-      avgPredictionError: avgErr,
-      slideNumber: 20,
-      slideName: "AFM Simulator",
-      elementType: "button",
-      elementLocation: "retrain_section",
-      buttonType: "retrain_model",
-      modelUpdates: {
-        theta: {
-          before: preRetrainParams.theta,
-          after: newParams.theta,
-          change: newParams.theta - preRetrainParams.theta,
-        },
-        beta: {
-          before: preRetrainParams.beta,
-          after: newParams.beta,
-          change: newParams.beta - preRetrainParams.beta,
-        },
-        gamma: {
-          before: preRetrainParams.gamma,
-          after: newParams.gamma,
-          change: newParams.gamma - preRetrainParams.gamma,
-        },
-      },
     });
   }
 
@@ -442,14 +271,10 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
     const preResetState = {
       params: { ...params },
       responseLogCount: responseLog.length,
-      retrainingDataCount: retrainingData.length,
-      sessionActive,
     };
 
     setParams(paramDefaults);
-    setSessionActive(true);
     setResponseLog([]);
-    setRetrainingData([]);
     setLastChangedParam(null);
 
     // Track reset action with more context
@@ -461,50 +286,7 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
       elementLocation: "session_controls_section",
       buttonType: "reset_all",
       sessionState: {
-        wasActive: sessionActive,
         hadResponses: responseLog.length > 0,
-        hadRetrainingData: retrainingData.length > 0,
-      },
-    });
-  }
-
-  function endSession() {
-    const sessionStats = {
-      finalParams: { ...params },
-      totalResponses: responseLog.length,
-      correctResponses: responseLog.filter((r) => r.correct).length,
-      finalProbability: prob,
-      sessionDuration: responseLog.length
-        ? responseLog[responseLog.length - 1].timestamp -
-          responseLog[0].timestamp
-        : 0,
-      learningProgress: {
-        initialProb: responseLog[0]?.probability || prob,
-        finalProb: prob,
-        improvement: responseLog[0] ? prob - responseLog[0].probability : 0,
-      },
-    };
-
-    setSessionActive(false);
-
-    // Track session end with more context
-    trackButtonClick("slide20_afm_simulator_end_session", {
-      sessionStats,
-      slideNumber: 20,
-      slideName: "AFM Simulator",
-      elementType: "button",
-      elementLocation: "session_controls_section",
-      buttonType: "end_session",
-      performanceMetrics: {
-        accuracy: sessionStats.correctResponses / sessionStats.totalResponses,
-        averageProbability:
-          responseLog.reduce((sum, r) => sum + r.probability, 0) /
-          responseLog.length,
-        probabilityTrend:
-          responseLog.length > 1
-            ? responseLog[responseLog.length - 1].probability -
-              responseLog[0].probability
-            : 0,
       },
     });
   }
@@ -626,35 +408,22 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
                     <div className="flex items-center gap-3 mb-4">
                       <Lightbulb className="w-6 h-6 text-orange-700" />
                       <h3 className="text-xl font-bold text-black uppercase tracking-wide">
-                        AFM: What Happens When?
+                        AFM: What Happens During Simulation?
                       </h3>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="border-4 border-blue-600 rounded-xl p-4 bg-blue-50">
-                        <h4 className="font-bold text-blue-800 mb-3 text-lg uppercase tracking-wide">
-                          During Session
-                        </h4>
-                        <ul className="space-y-2 text-black font-bold text-sm">
-                          <li>• θ, β, γ stay constant (no tuning!)</li>
-                          <li>• Only Practice (T) increments per attempt</li>
-                          <li>• Success probability updates live</li>
-                          <li>
-                            • Model tracks performance for later retraining
-                          </li>
-                        </ul>
-                      </div>
-
-                      <div className="border-4 border-purple-600 rounded-xl p-4 bg-purple-50">
-                        <h4 className="font-bold text-purple-800 mb-3 text-lg uppercase tracking-wide">
-                          During Retrain
-                        </h4>
-                        <ul className="space-y-2 text-black font-bold text-sm">
-                          <li>• θ, β, γ updated based on performance</li>
-                          <li>• Past responses are used for tuning</li>
-                          <li>• Model learns from collected data</li>
-                        </ul>
-                      </div>
+                    <div className="border-4 border-blue-600 rounded-xl p-4 bg-blue-50">
+                      <h4 className="font-bold text-blue-800 mb-3 text-lg uppercase tracking-wide">
+                        During Simulation
+                      </h4>
+                      <ul className="space-y-2 text-black font-bold text-sm">
+                        <li>• θ, β, γ stay constant (no tuning!)</li>
+                        <li>• Only Practice (T) increments per attempt</li>
+                        <li>• Success probability updates live</li>
+                        <li>
+                          • You can adjust parameters manually anytime
+                        </li>
+                      </ul>
                     </div>
                   </div>
                 </div>
@@ -669,17 +438,9 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
               {/* Left Column - Session Controls */}
               <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
                 <div className="flex items-center gap-3 mb-6">
-                  <div
-                    className={`w-4 h-4 rounded-full border-2 border-black ${
-                      sessionActive
-                        ? "bg-green-500 animate-pulse"
-                        : "bg-gray-400"
-                    }`}
-                  ></div>
+                  <div className="w-4 h-4 rounded-full border-2 border-black bg-green-500 animate-pulse"></div>
                   <h3 className="text-xl font-bold text-black uppercase tracking-wide">
-                    {sessionActive
-                      ? "Simulate Student Responses"
-                      : "Session Ended"}
+                    Simulate Student Responses
                   </h3>
                 </div>
 
@@ -687,24 +448,14 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
                 <div className="grid grid-cols-1 gap-4 mb-6">
                   <button
                     onClick={() => simulateResponse(true)}
-                    disabled={!sessionActive}
-                    className={`px-4 py-3 bg-green-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all transform hover:scale-105 ${
-                      !sessionActive
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:bg-white hover:text-green-600"
-                    }`}
+                    className="px-4 py-3 bg-green-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all transform hover:scale-105 hover:bg-white hover:text-green-600"
                   >
                     ✓ Correct Response
                   </button>
 
                   <button
                     onClick={() => simulateResponse(false)}
-                    disabled={!sessionActive}
-                    className={`px-4 py-3 bg-red-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all transform hover:scale-105 ${
-                      !sessionActive
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:bg-white hover:text-red-600"
-                    }`}
+                    className="px-4 py-3 bg-red-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all transform hover:scale-105 hover:bg-white hover:text-red-600"
                   >
                     ✗ Incorrect Response
                   </button>
@@ -717,42 +468,6 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
                     Reset
                   </button>
                 </div>
-
-                {/* End Session Button */}
-                {sessionActive && (
-                  <div className="mb-6">
-                    <button
-                      onClick={endSession}
-                      className="w-full px-4 py-3 bg-orange-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide hover:bg-white hover:text-orange-600 transition-all transform hover:scale-105 flex items-center justify-center gap-2"
-                    >
-                      <Database className="w-5 h-5" />
-                      <span>End Session → Retrain Model</span>
-                    </button>
-                  </div>
-                )}
-
-                {/* Retrain Section */}
-                {!sessionActive && retrainingData.length > 0 && (
-                  <div className="border-4 border-yellow-600 rounded-xl p-6 bg-yellow-100 mb-6">
-                    <div className="flex items-center gap-3 mb-4">
-                      <Database className="w-6 h-6 text-yellow-700" />
-                      <h4 className="font-bold text-yellow-800 text-lg uppercase">
-                        Retraining Ready
-                      </h4>
-                    </div>
-                    <p className="text-yellow-800 font-bold mb-4">
-                      {retrainingData.length} responses collected. Ready to
-                      update model parameters.
-                    </p>
-                    <button
-                      onClick={retrainModel}
-                      className="w-full px-4 py-3 bg-yellow-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide hover:bg-white hover:text-yellow-600 transition-all transform hover:scale-105 flex items-center justify-center gap-2"
-                    >
-                      <RefreshCw className="w-5 h-5" />
-                      Retrain Model
-                    </button>
-                  </div>
-                )}
 
                 {/* Response Log */}
                 <div className="border-l-8 border-purple-600 bg-purple-100 rounded-r-xl p-4">
@@ -821,13 +536,8 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
                           max={meta.max}
                           step={meta.step}
                           value={params[key]}
-                          disabled={!sessionActive && key !== "practice"}
                           onChange={(e) => setParam(key, e.target.value)}
-                          className={`flex-1 h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer border-2 border-black ${
-                            !sessionActive && key !== "practice"
-                              ? "opacity-50"
-                              : ""
-                          }`}
+                          className="flex-1 h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer border-2 border-black"
                         />
                         <span
                           className={`font-mono w-14 text-center font-bold text-sm border-2 border-black rounded px-1 py-1 bg-gray-50 transition-all duration-500 ${
@@ -1000,7 +710,6 @@ export const AFMInteractiveSimulator = ({ navigate }) => {
                 trackButtonClick("afm_continue_next_slide", {
                   finalState: {
                     params: params,
-                    sessionActive,
                     totalResponses: responseLog.length,
                     correctResponses: responseLog.filter((r) => r.correct)
                       .length,

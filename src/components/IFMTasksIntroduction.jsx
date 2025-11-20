@@ -419,19 +419,37 @@ const MultipleChoiceTask = ({ task, onNavigate, onTaskComplete }) => {
             {/* Hints Section */}
             {task.hasHints && (
               <div className="mb-6">
+                {/* Prominent Hint Banner */}
+                {!showHints && (
+                  <div className="border-4 border-yellow-500 rounded-xl p-4 bg-gradient-to-r from-yellow-100 to-orange-100 mb-4 animate-pulse">
+                    <div className="flex items-center gap-3">
+                      <Lightbulb className="w-8 h-8 text-yellow-600 animate-bounce" />
+                      <div className="flex-1">
+                        <h4 className="font-bold text-black text-lg uppercase tracking-wide">
+                          Need Help? Click to See Hints!
+                        </h4>
+                        <p className="text-black text-sm font-bold">
+                          This task includes helpful hints to guide your
+                          thinking
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-bold flex items-center gap-2 uppercase tracking-tight">
-                    <Lightbulb className="w-5 h-5" />
-                    Hints Available
-                  </h3>
                   <button
                     onClick={() => setShowHints(!showHints)}
-                    className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white border-4 border-black rounded-lg font-bold hover:bg-white hover:text-green-600 hover:border-green-600 transition-all"
+                    className={`flex items-center gap-2 px-6 py-3 border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide transition-all transform hover:scale-110 ${
+                      showHints
+                        ? "bg-gray-600 text-white hover:bg-white hover:text-gray-600"
+                        : "bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 shadow-lg animate-pulse"
+                    }`}
                   >
                     {showHints ? (
-                      <EyeOff className="w-4 h-4" />
+                      <EyeOff className="w-5 h-5" />
                     ) : (
-                      <Eye className="w-4 h-4" />
+                      <Eye className="w-5 h-5" />
                     )}
                     {showHints ? "Hide" : "Show"} Hints
                   </button>

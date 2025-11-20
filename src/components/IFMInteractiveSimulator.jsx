@@ -6,8 +6,6 @@ import {
   TrendingUp,
   Play,
   RotateCcw,
-  Database,
-  RefreshCw,
   LineChart,
   Lightbulb,
   ArrowRight,
@@ -107,9 +105,7 @@ const paramMeta = {
 export const IFMInteractiveSimulator = ({ navigate }) => {
   // State
   const [params, setParams] = useState(paramDefaults);
-  const [sessionActive, setSessionActive] = useState(true);
   const [responseLog, setResponseLog] = useState([]);
-  const [retrainingData, setRetrainingData] = useState([]);
   const [showTooltip, setShowTooltip] = useState(null);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
   const [lastChangedParam, setLastChangedParam] = useState(null);
@@ -374,7 +370,6 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
 
   // Handlers
   function setParam(p, v) {
-    if (!sessionActive) return;
     const oldValue = params[p];
     const newValue = parseFloat(v);
 
@@ -393,7 +388,6 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
   }
 
   function addHint() {
-    if (!sessionActive) return;
     setPendingHints((prev) => prev + 1);
 
     trackButtonClick("ifm_add_hint", {
@@ -403,8 +397,6 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
   }
 
   function simulateResponse(isCorrect) {
-    if (!sessionActive) return;
-
     const newSuccesses = isCorrect ? currentSuccesses + 1 : currentSuccesses;
     const newFailures = isCorrect ? currentFailures : currentFailures + 1;
     const newTotalHints = currentTotalHints + pendingHints;
@@ -431,7 +423,6 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
     };
 
     setResponseLog((prev) => [...prev, entry]);
-    setRetrainingData((prev) => [...prev, entry]);
     setPendingHints(0); // Reset pending hints after submitting response
 
     trackButtonClick("ifm_dynamic_simulate_response", {
@@ -443,182 +434,9 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
     });
   }
 
-  function endSession() {
-    const sessionStats = {
-      finalParams: { ...params },
-      totalResponses: responseLog.length,
-      correctResponses: responseLog.filter((r) => r.correct).length,
-      totalHints: currentTotalHints,
-      finalProbability: currentProb,
-      sessionDuration: responseLog.length
-        ? responseLog[responseLog.length - 1].timestamp -
-          responseLog[0].timestamp
-        : 0,
-    };
-
-    setSessionActive(false);
-
-    trackButtonClick("ifm_dynamic_end_session", {
-      sessionStats,
-      slideContext: "IFM Dynamic Simulator",
-    });
-  }
-
-  function retrainModel() {
-    if (!retrainingData.length) return;
-
-    const preRetrainParams = { ...params };
-    const retrainDataSnapshot = [...retrainingData];
-
-    // Use larger window with exponential weighting (K=20, fallback to available data)
-    const K = Math.min(20, retrainingData.length);
-    let recent = retrainingData.slice(-K);
-    let total = recent.length;
-
-    // Calculate exponentially weighted accuracy and prediction error
-    let weightedAcc = 0;
-    let weightedErr = 0;
-    let totalWeight = 0;
-
-    for (let i = 0; i < total; i++) {
-      const weight = Math.exp(-0.1 * (total - 1 - i)); // More weight to recent observations
-      const r = recent[i];
-      weightedAcc += weight * (r.correct ? 1 : 0);
-      weightedErr += weight * Math.abs((r.correct ? 1 : 0) - r.probability);
-      totalWeight += weight;
-    }
-
-    weightedAcc /= totalWeight;
-    weightedErr /= totalWeight;
-
-    let { theta, beta, mu, rho, nu } = params;
-
-    // Hyperparameters for realistic updates
-    const etaTheta = 0.01; // Learning rate for ability
-    const etaBeta = 0.01; // Learning rate for difficulty
-    const alphaMu = 0.02; // EMA smoothing for success rate
-    const alphaRho = 0.02; // EMA smoothing for failure rate
-    const alphaNu = 0.02; // EMA smoothing for hint rate
-    const lambda = 0.005; // L2 regularization strength
-    const maxStepSize = 0.05; // Maximum parameter change per update
-    const noiseStd = 0.03; // Process noise standard deviation
-
-    // Prior means (regularization targets)
-    const thetaPrior = 0.0;
-    const betaPrior = 0.0;
-    const muPrior = 0.16;
-    const rhoPrior = -0.06;
-    const nuPrior = 0.12;
-
-    // SGD-style updates with regularization
-    // Theta update: gradient from prediction error + L2 regularization
-    const thetaGradient = (weightedAcc - 0.5) * 2; // Simple gradient approximation
-    const thetaUpdate =
-      etaTheta * (thetaGradient - lambda * (theta - thetaPrior));
-    theta += Math.max(-maxStepSize, Math.min(maxStepSize, thetaUpdate));
-    theta = Math.max(-3, Math.min(3, theta)); // Enforce bounds
-
-    // Beta update: based on prediction accuracy vs target (0.6-0.7 range)
-    const targetAcc = 0.65;
-    const betaGradient = (weightedAcc - targetAcc) * 2; // Positive if too easy, negative if too hard
-    const betaUpdate = etaBeta * (-betaGradient - lambda * (beta - betaPrior)); // Negative gradient if too easy (decrease beta to make harder)
-    beta += Math.max(-maxStepSize, Math.min(maxStepSize, betaUpdate));
-    beta = Math.max(-2, Math.min(2, beta)); // Enforce bounds
-
-    // IFM-specific: Separate learning rates for successes, failures, and hints
-    const windowSize = Math.max(8, Math.floor(total / 2));
-    if (total >= windowSize * 2) {
-      const early = recent.slice(0, windowSize);
-      const late = recent.slice(-windowSize);
-
-      const earlySuccessRate =
-        early.reduce((sum, r) => sum + (r.correct ? 1 : 0), 0) / early.length;
-      const lateSuccessRate =
-        late.reduce((sum, r) => sum + (r.correct ? 1 : 0), 0) / late.length;
-      const improvement = lateSuccessRate - earlySuccessRate;
-
-      // Adjust success learning rate based on improvement
-      const muSignal =
-        muPrior + 0.005 * Math.max(-1, Math.min(1, improvement * 5));
-      const muTarget = Math.max(0, Math.min(0.08, muSignal));
-      const muUpdate = alphaMu * (muTarget - mu);
-      mu += Math.max(-maxStepSize, Math.min(maxStepSize, muUpdate));
-      mu = Math.max(0, Math.min(0.08, mu));
-
-      // Adjust failure learning rate inversely to improvement
-      const rhoSignal =
-        rhoPrior - 0.005 * Math.max(-1, Math.min(1, improvement * 5));
-      const rhoTarget = Math.max(-0.08, Math.min(0, rhoSignal));
-      const rhoUpdate = alphaRho * (rhoTarget - rho);
-      rho += Math.max(-maxStepSize, Math.min(maxStepSize, rhoUpdate));
-      rho = Math.max(-0.08, Math.min(0, rho));
-    }
-
-    // Special IFM logic: Adjust hint parameter based on hint effectiveness
-    let hintEntries = recent.filter((r) => r.hintsUsed > 0);
-    let noHintEntries = recent.filter((r) => r.hintsUsed === 0);
-
-    if (hintEntries.length >= 3 && noHintEntries.length >= 3) {
-      let hintSuccessRate =
-        hintEntries.filter((r) => r.correct).length / hintEntries.length;
-      let noHintSuccessRate =
-        noHintEntries.filter((r) => r.correct).length / noHintEntries.length;
-      let hintEffectiveness = hintSuccessRate - noHintSuccessRate;
-
-      // Adjust hint learning rate based on effectiveness with EMA
-      const nuSignal =
-        nuPrior + 0.005 * Math.max(-1, Math.min(1, hintEffectiveness * 10));
-      const nuTarget = Math.max(0, Math.min(0.08, nuSignal));
-      const nuUpdate = alphaNu * (nuTarget - nu);
-      nu += Math.max(-maxStepSize, Math.min(maxStepSize, nuUpdate));
-      nu = Math.max(0, Math.min(0.08, nu));
-    }
-
-    // Add small amount of process noise to prevent deterministic behavior
-    const addNoise = (value, bounds) => {
-      const noise = (Math.random() - 0.5) * 2 * noiseStd;
-      return Math.max(bounds[0], Math.min(bounds[1], value + noise));
-    };
-
-    theta = addNoise(theta, [-3, 3]);
-    beta = addNoise(beta, [-2, 2]);
-    mu = addNoise(mu, [0, 0.08]);
-    rho = addNoise(rho, [-0.08, 0]);
-    nu = addNoise(nu, [0, 0.08]);
-
-    const newParams = {
-      theta: parseFloat(theta.toFixed(2)),
-      beta: parseFloat(beta.toFixed(2)),
-      mu: parseFloat(mu.toFixed(3)),
-      rho: parseFloat(rho.toFixed(3)),
-      nu: parseFloat(nu.toFixed(3)),
-    };
-
-    setParams(newParams);
-    setRetrainingData([]);
-    setSessionActive(true);
-    setResponseLog([]);
-    setLastChangedParam(null);
-    setPendingHints(0);
-
-    trackButtonClick("ifm_dynamic_retrain_model", {
-      preRetrainParams,
-      postRetrainParams: newParams,
-      trainingDataCount: retrainDataSnapshot.length,
-      recentAccuracy: acc,
-      hintUsage: retrainDataSnapshot.reduce(
-        (sum, entry) => sum + entry.hintsUsed,
-        0
-      ),
-      slideContext: "IFM Dynamic Simulator",
-    });
-  }
-
   function resetAll() {
     setParams(paramDefaults);
-    setSessionActive(true);
     setResponseLog([]);
-    setRetrainingData([]);
     setLastChangedParam(null);
     setPendingHints(0);
 
@@ -735,46 +553,29 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
                     <div className="flex items-center gap-3 mb-4">
                       <Lightbulb className="w-6 h-6 text-orange-700" />
                       <h3 className="text-xl font-bold text-black uppercase tracking-wide">
-                        IFM: Real-Time Learning and Retraining
+                        IFM: What Happens During Simulation?
                       </h3>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="border-4 border-green-600 rounded-xl p-4 bg-green-50">
-                        <h4 className="font-bold text-green-800 mb-3 text-lg uppercase tracking-wide">
-                          During Session
-                        </h4>
-                        <ul className="space-y-2 text-black font-bold text-sm">
-                          <li>• θ, β, μ, ρ, ν stay constant (no tuning!)</li>
-                          <li>
-                            • Each opportunity updates success/failure/hint
-                            counts
-                          </li>
-                          <li>• Success probability updates in real-time</li>
-                          <li>
-                            • Model tracks instructional patterns for retraining
-                          </li>
-                        </ul>
-                      </div>
-
-                      <div className="border-4 border-orange-600 rounded-xl p-4 bg-orange-50">
-                        <h4 className="font-bold text-orange-800 mb-3 text-lg uppercase tracking-wide">
-                          During Retrain
-                        </h4>
-                        <ul className="space-y-2 text-black font-bold text-sm">
-                          <li>• θ, β updated based on overall performance</li>
-                          <li>
-                            • μ, ρ adjusted based on success/failure patterns
-                          </li>
-                          <li>
-                            • ν tuned based on hint effectiveness analysis
-                          </li>
-                          <li>
-                            • Most sophisticated: accounts for instructional
-                            support
-                          </li>
-                        </ul>
-                      </div>
+                    <div className="border-4 border-green-600 rounded-xl p-4 bg-green-50">
+                      <h4 className="font-bold text-green-800 mb-3 text-lg uppercase tracking-wide">
+                        During Simulation
+                      </h4>
+                      <ul className="space-y-2 text-black font-bold text-sm">
+                        <li>• θ, β, μ, ρ, ν stay constant (no tuning!)</li>
+                        <li>
+                          • Each opportunity updates success/failure/hint
+                          counts
+                        </li>
+                        <li>• Success probability updates in real-time</li>
+                        <li>
+                          • You can adjust parameters manually anytime
+                        </li>
+                        <li>
+                          • Most sophisticated: accounts for instructional
+                          support
+                        </li>
+                      </ul>
                     </div>
                   </div>
                 </div>
@@ -789,55 +590,35 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
               {/* Left Column - Session Controls */}
               <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
                 <div className="flex items-center gap-3 mb-6">
-                  <div
-                    className={`w-4 h-4 rounded-full border-2 border-black ${
-                      sessionActive
-                        ? "bg-green-500 animate-pulse"
-                        : "bg-gray-400"
-                    }`}
-                  ></div>
+                  <div className="w-4 h-4 rounded-full border-2 border-black bg-green-500 animate-pulse"></div>
                   <h3 className="text-xl font-bold text-black uppercase tracking-wide">
-                    {sessionActive
-                      ? "Simulate Student Responses"
-                      : "Session Ended"}
+                    Simulate Student Responses
                   </h3>
                 </div>
 
                 {/* Add Hint Button */}
-                {sessionActive && (
-                  <div className="mb-6 p-4 border-4 border-orange-600 rounded-xl bg-orange-50">
-                    <div className="text-center mb-4">
-                      <p className="text-orange-800 font-bold mb-2 text-sm">
-                        Add instructional support to this opportunity:
-                      </p>
-                      <button
-                        onClick={addHint}
-                        disabled={!sessionActive}
-                        className={`w-full px-4 py-3 bg-orange-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all transform hover:scale-105 ${
-                          !sessionActive
-                            ? "opacity-50 cursor-not-allowed"
-                            : "hover:bg-white hover:text-orange-600"
-                        }`}
-                      >
-                        Add Hint ({pendingHints})
-                      </button>
-                    </div>
-                    <p className="text-orange-700 text-xs text-center font-bold">
-                      Hints accumulate within the same opportunity!
+                <div className="mb-6 p-4 border-4 border-orange-600 rounded-xl bg-orange-50">
+                  <div className="text-center mb-4">
+                    <p className="text-orange-800 font-bold mb-2 text-sm">
+                      Add instructional support to this opportunity:
                     </p>
+                    <button
+                      onClick={addHint}
+                      className="w-full px-4 py-3 bg-orange-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all transform hover:scale-105 hover:bg-white hover:text-orange-600"
+                    >
+                      Add Hint ({pendingHints})
+                    </button>
                   </div>
-                )}
+                  <p className="text-orange-700 text-xs text-center font-bold">
+                    Hints accumulate within the same opportunity!
+                  </p>
+                </div>
 
                 {/* Response Buttons */}
                 <div className="grid grid-cols-1 gap-4 mb-6">
                   <button
                     onClick={() => simulateResponse(true)}
-                    disabled={!sessionActive}
-                    className={`px-4 py-3 bg-green-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all transform hover:scale-105 ${
-                      !sessionActive
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:bg-white hover:text-green-600"
-                    }`}
+                    className="px-4 py-3 bg-green-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all transform hover:scale-105 hover:bg-white hover:text-green-600"
                   >
                     ✓ Got It Right
                     {pendingHints > 0 && (
@@ -849,12 +630,7 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
 
                   <button
                     onClick={() => simulateResponse(false)}
-                    disabled={!sessionActive}
-                    className={`px-4 py-3 bg-red-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all transform hover:scale-105 ${
-                      !sessionActive
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:bg-white hover:text-red-600"
-                    }`}
+                    className="px-4 py-3 bg-red-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all transform hover:scale-105 hover:bg-white hover:text-red-600"
                   >
                     ✗ Got It Wrong
                     {pendingHints > 0 && (
@@ -872,43 +648,6 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
                     Reset
                   </button>
                 </div>
-
-                {/* End Session Button */}
-                {sessionActive && (
-                  <div className="mb-6">
-                    <button
-                      onClick={endSession}
-                      className="w-full px-4 py-3 bg-orange-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide hover:bg-white hover:text-orange-600 transition-all transform hover:scale-105 flex items-center justify-center gap-2"
-                    >
-                      <Database className="w-5 h-5" />
-                      <span>End Session → Retrain Model</span>
-                    </button>
-                  </div>
-                )}
-
-                {/* Retrain Section */}
-                {!sessionActive && retrainingData.length > 0 && (
-                  <div className="border-4 border-yellow-600 rounded-xl p-6 bg-yellow-100 mb-6">
-                    <div className="flex items-center gap-3 mb-4">
-                      <Database className="w-6 h-6 text-yellow-700" />
-                      <h4 className="font-bold text-yellow-800 text-lg uppercase">
-                        IFM Retraining Ready
-                      </h4>
-                    </div>
-                    <p className="text-yellow-800 font-bold mb-4 text-sm">
-                      {retrainingData.length} opportunities collected. Ready to
-                      update IFM parameters based on your success/failure/hint
-                      patterns.
-                    </p>
-                    <button
-                      onClick={retrainModel}
-                      className="w-full px-4 py-3 bg-yellow-600 text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide hover:bg-white hover:text-yellow-600 transition-all transform hover:scale-105 flex items-center justify-center gap-2"
-                    >
-                      <RefreshCw className="w-5 h-5" />
-                      Retrain IFM Model
-                    </button>
-                  </div>
-                )}
 
                 {/* Response History */}
                 <div className="border-l-8 border-orange-600 bg-orange-100 rounded-r-xl p-4">
@@ -998,11 +737,8 @@ export const IFMInteractiveSimulator = ({ navigate }) => {
                           max={meta.max}
                           step={meta.step}
                           value={params[key]}
-                          disabled={!sessionActive}
                           onChange={(e) => setParam(key, e.target.value)}
-                          className={`flex-1 h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer border-2 border-black ${
-                            !sessionActive ? "opacity-50" : ""
-                          }`}
+                          className="flex-1 h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer border-2 border-black"
                         />
                         <span
                           className={`font-mono w-14 text-center font-bold text-sm border-2 border-black rounded px-1 py-1 bg-gray-50 transition-all duration-500 ${

@@ -360,7 +360,7 @@ export const ModelComparison = ({ navigate }) => {
 
       {/* Content */}
       <div className="flex-1 px-8 py-8">
-        <div className="max-w-7xl mx-auto space-y-8">
+        <div className="max-w-[1920px] mx-auto space-y-8">
           {/* Introduction */}
           <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
             <p className="text-lg text-black leading-relaxed text-center">
@@ -466,21 +466,21 @@ export const ModelComparison = ({ navigate }) => {
             )}
           </div>
 
-          {/* Controls and Current Status */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Controls and Model Predictions - Single Row */}
+          <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
             {/* Controls */}
             <div className="border-4 border-black rounded-xl p-6 bg-gray-50 shadow-lg">
               <h3 className="text-xl font-bold text-black uppercase tracking-wide mb-2 text-center">
-                Simulate the difference in progress tracking
+                Simulate the difference in optimism between models
               </h3>
               <p className="text-sm text-gray-700 text-center mb-4 font-bold">
                 Click step by step to follow the progress
               </p>
-              <div className="flex items-center justify-center space-x-4">
+              <div className="flex flex-col items-center justify-center space-y-3">
                 <button
                   onClick={handlePreviousStep}
                   disabled={currentStep === 0}
-                  className={`flex items-center space-x-2 px-6 py-3 border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide transition-all transform hover:scale-105 ${
+                  className={`flex items-center space-x-2 px-6 py-3 border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide transition-all transform hover:scale-105 w-full justify-center ${
                     currentStep === 0
                       ? "bg-gray-400 text-gray-600 cursor-not-allowed opacity-50"
                       : "bg-blue-600 text-white hover:bg-white hover:text-blue-600"
@@ -493,19 +493,19 @@ export const ModelComparison = ({ navigate }) => {
                 <button
                   onClick={handleNextStep}
                   disabled={currentStep >= answerSequence.length}
-                  className={`flex items-center space-x-2 px-6 py-3 border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide transition-all transform hover:scale-105 ${
+                  className={`flex items-center space-x-2 px-6 py-3 border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide transition-all transform hover:scale-105 w-full justify-center ${
                     currentStep >= answerSequence.length
                       ? "bg-gray-400 text-gray-600 cursor-not-allowed opacity-50"
                       : "bg-green-600 text-white hover:bg-white hover:text-green-600"
                   }`}
                 >
                   <ArrowRight size={20} />
-                  <span>NEXT PRACTICE ATTEMPT</span>
+                  <span>SIMULATE RESPONSE</span>
                 </button>
 
                 <button
                   onClick={resetSimulation}
-                  className="flex items-center space-x-2 px-6 py-3 bg-gray-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-gray-600 transition-all transform hover:scale-105"
+                  className="flex items-center space-x-2 px-6 py-3 bg-gray-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-gray-600 transition-all transform hover:scale-105 w-full justify-center"
                 >
                   <RotateCcw size={20} />
                   <span>RESET</span>
@@ -513,91 +513,7 @@ export const ModelComparison = ({ navigate }) => {
               </div>
             </div>
 
-            {/* Current Status */}
-            <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-bold text-black uppercase tracking-wide">
-                  PRACTICE {currentStep} OF {answerSequence.length}
-                </h3>
-              </div>
-              <div className="flex items-center gap-4 text-sm font-bold mb-4">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  <span className="text-green-600">
-                    {getDetailedStats().totalSuccesses} SUCCESS
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <XCircle className="w-4 h-4 text-red-600" />
-                  <span className="text-red-600">
-                    {getDetailedStats().totalFailures} FAILURE
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Lightbulb className="w-4 h-4 text-yellow-600" />
-                  <span className="text-yellow-600">
-                    {getDetailedStats().totalHints} HINT
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Current Answer Details */}
-          {getCurrentAnswer() && (
-            <div className="border-4 border-black rounded-xl p-8 bg-white shadow-lg">
-              <div
-                className={`border-4 rounded-xl p-6 ${
-                  getCurrentAnswer().correct
-                    ? "bg-green-100 border-green-600"
-                    : "bg-red-100 border-red-600"
-                }`}
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center space-x-3">
-                    {getCurrentAnswer().correct ? (
-                      <CheckCircle size={24} className="text-green-600" />
-                    ) : (
-                      <XCircle size={24} className="text-red-600" />
-                    )}
-                    <span
-                      className={`font-bold text-lg tracking-wide uppercase ${
-                        getCurrentAnswer().correct
-                          ? "text-green-800"
-                          : "text-red-800"
-                      }`}
-                    >
-                      {getCurrentAnswer().correct ? "SUCCESS" : "FAILURE"}
-                    </span>
-                  </div>
-                  <div
-                    className={`flex items-center gap-2 border-4 px-4 py-2 rounded-lg ${
-                      getCurrentAnswer().hints > 0
-                        ? "text-red-600 border-red-600 bg-red-100"
-                        : "text-yellow-600 border-yellow-600 bg-yellow-100"
-                    }`}
-                  >
-                    <Lightbulb size={20} />
-                    <span className="font-bold text-lg">
-                      {getCurrentAnswer().hints} HINT
-                      {getCurrentAnswer().hints !== 1 ? "S" : ""}
-                    </span>
-                    {getCurrentAnswer().hints > 0 && (
-                      <span className="text-red-800 font-bold ml-2">
-                        → PENALIZED!
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <p className="text-black font-bold text-base">
-                  {getCurrentAnswer().description}
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* Model Predictions */}
-          <div className="grid lg:grid-cols-3 gap-6">
+            {/* AFM Success Probability */}
             <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 bg-green-100 border-4 border-green-600 rounded-xl flex items-center justify-center text-green-700 font-bold text-lg">
@@ -606,6 +522,56 @@ export const ModelComparison = ({ navigate }) => {
                 <div className="text-lg font-bold text-black uppercase tracking-wide">
                   Success Probability
                 </div>
+              </div>
+
+              <div className="text-sm font-bold text-gray-700 mb-2 text-center">
+                PRACTICE {currentStep} OF {answerSequence.length}
+              </div>
+
+              {getCurrentAnswer() && (
+                <div
+                  className={`border-2 rounded-lg p-2 mb-3 ${
+                    getCurrentAnswer().correct
+                      ? "bg-green-50 border-green-600"
+                      : "bg-red-50 border-red-600"
+                  }`}
+                >
+                  <div className="flex items-center justify-center gap-2 text-xs font-bold">
+                    {getCurrentAnswer().correct ? (
+                      <>
+                        <CheckCircle className="w-4 h-4 text-green-600" />
+                        <span className="text-green-700">CORRECT</span>
+                      </>
+                    ) : (
+                      <>
+                        <XCircle className="w-4 h-4 text-red-600" />
+                        <span className="text-red-700">INCORRECT</span>
+                      </>
+                    )}
+                    <span className="text-gray-500">|</span>
+                    <Lightbulb className="w-4 h-4 text-yellow-600" />
+                    <span className="text-yellow-700">
+                      {getCurrentAnswer().hints} HINT
+                      {getCurrentAnswer().hints !== 1 ? "S" : ""}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex items-center justify-center gap-3 text-xs font-bold mb-4 text-gray-600">
+                <div className="flex items-center gap-1">
+                  <CheckCircle className="w-3 h-3 text-green-600" />
+                  <span>{getDetailedStats().totalSuccesses}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <XCircle className="w-3 h-3 text-red-600" />
+                  <span>{getDetailedStats().totalFailures}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Lightbulb className="w-3 h-3 text-yellow-600" />
+                  <span>{getDetailedStats().totalHints}</span>
+                </div>
+                <span className="text-xs">(total)</span>
               </div>
 
               <div className="text-3xl font-bold text-green-600 mb-3 text-center">
@@ -626,6 +592,7 @@ export const ModelComparison = ({ navigate }) => {
               </div>
             </div>
 
+            {/* PFM Success Probability */}
             <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 bg-blue-100 border-4 border-blue-600 rounded-xl flex items-center justify-center text-blue-700 font-bold text-lg">
@@ -634,6 +601,56 @@ export const ModelComparison = ({ navigate }) => {
                 <div className="text-lg font-bold text-black uppercase tracking-wide">
                   Success Probability
                 </div>
+              </div>
+
+              <div className="text-sm font-bold text-gray-700 mb-2 text-center">
+                PRACTICE {currentStep} OF {answerSequence.length}
+              </div>
+
+              {getCurrentAnswer() && (
+                <div
+                  className={`border-2 rounded-lg p-2 mb-3 ${
+                    getCurrentAnswer().correct
+                      ? "bg-green-50 border-green-600"
+                      : "bg-red-50 border-red-600"
+                  }`}
+                >
+                  <div className="flex items-center justify-center gap-2 text-xs font-bold">
+                    {getCurrentAnswer().correct ? (
+                      <>
+                        <CheckCircle className="w-4 h-4 text-green-600" />
+                        <span className="text-green-700">CORRECT</span>
+                      </>
+                    ) : (
+                      <>
+                        <XCircle className="w-4 h-4 text-red-600" />
+                        <span className="text-red-700">INCORRECT</span>
+                      </>
+                    )}
+                    <span className="text-gray-500">|</span>
+                    <Lightbulb className="w-4 h-4 text-yellow-600" />
+                    <span className="text-yellow-700">
+                      {getCurrentAnswer().hints} HINT
+                      {getCurrentAnswer().hints !== 1 ? "S" : ""}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex items-center justify-center gap-3 text-xs font-bold mb-4 text-gray-600">
+                <div className="flex items-center gap-1">
+                  <CheckCircle className="w-3 h-3 text-green-600" />
+                  <span>{getDetailedStats().totalSuccesses}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <XCircle className="w-3 h-3 text-red-600" />
+                  <span>{getDetailedStats().totalFailures}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Lightbulb className="w-3 h-3 text-yellow-600" />
+                  <span>{getDetailedStats().totalHints}</span>
+                </div>
+                <span className="text-xs">(total)</span>
               </div>
 
               <div className="text-3xl font-bold text-blue-600 mb-3 text-center">
@@ -654,6 +671,7 @@ export const ModelComparison = ({ navigate }) => {
               </div>
             </div>
 
+            {/* IFM Success Probability */}
             <div className="border-4 border-black rounded-xl p-6 bg-white shadow-lg">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 bg-orange-100 border-4 border-orange-600 rounded-xl flex items-center justify-center text-orange-700 font-bold text-lg">
@@ -662,6 +680,56 @@ export const ModelComparison = ({ navigate }) => {
                 <div className="text-lg font-bold text-black uppercase tracking-wide">
                   Success Probability
                 </div>
+              </div>
+
+              <div className="text-sm font-bold text-gray-700 mb-2 text-center">
+                PRACTICE {currentStep} OF {answerSequence.length}
+              </div>
+
+              {getCurrentAnswer() && (
+                <div
+                  className={`border-2 rounded-lg p-2 mb-3 ${
+                    getCurrentAnswer().correct
+                      ? "bg-green-50 border-green-600"
+                      : "bg-red-50 border-red-600"
+                  }`}
+                >
+                  <div className="flex items-center justify-center gap-2 text-xs font-bold">
+                    {getCurrentAnswer().correct ? (
+                      <>
+                        <CheckCircle className="w-4 h-4 text-green-600" />
+                        <span className="text-green-700">CORRECT</span>
+                      </>
+                    ) : (
+                      <>
+                        <XCircle className="w-4 h-4 text-red-600" />
+                        <span className="text-red-700">INCORRECT</span>
+                      </>
+                    )}
+                    <span className="text-gray-500">|</span>
+                    <Lightbulb className="w-4 h-4 text-yellow-600" />
+                    <span className="text-yellow-700">
+                      {getCurrentAnswer().hints} HINT
+                      {getCurrentAnswer().hints !== 1 ? "S" : ""}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex items-center justify-center gap-3 text-xs font-bold mb-4 text-gray-600">
+                <div className="flex items-center gap-1">
+                  <CheckCircle className="w-3 h-3 text-green-600" />
+                  <span>{getDetailedStats().totalSuccesses}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <XCircle className="w-3 h-3 text-red-600" />
+                  <span>{getDetailedStats().totalFailures}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Lightbulb className="w-3 h-3 text-yellow-600" />
+                  <span>{getDetailedStats().totalHints}</span>
+                </div>
+                <span className="text-xs">(total)</span>
               </div>
 
               <div className="text-3xl font-bold text-orange-600 mb-3 text-center">
@@ -686,13 +754,13 @@ export const ModelComparison = ({ navigate }) => {
             </div>
           </div>
 
-          {/* Model Comparison */}
+          {/* OPTIMISM RANKING */}
           <div className="border-4 border-black rounded-xl p-8 bg-gradient-to-r from-yellow-100 to-orange-100 shadow-lg">
-            <div className="flex items-center justify-between mb-6">
-              <span className="font-bold text-black text-xl tracking-wide uppercase">
+            <div className="mb-6">
+              <div className="font-bold text-black text-xl tracking-wide uppercase mb-4 text-center">
                 OPTIMISM RANKING:
-              </span>
-              <div className="flex gap-4 text-lg font-bold">
+              </div>
+              <div className="flex justify-center gap-8 text-lg font-bold">
                 <span className="text-green-600">
                   AFM: {(afmProbability * 100).toFixed(1)}%
                 </span>

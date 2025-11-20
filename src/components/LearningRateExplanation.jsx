@@ -231,26 +231,6 @@ data = asyncio.run(fetch_all_data())`,
     },
     // Generic examples for extreme cases
     {
-      id: "variable-assignment",
-      name: "VARIABLE ASSIGNMENT",
-      shortName: "Variable Assignment",
-      difficulty: 0.8,
-      learningRate: 0.1,
-      color: "#8b5cf6",
-      bgColor: "bg-violet-50",
-      borderColor: "border-violet-400",
-      textColor: "text-violet-800",
-      description:
-        "Simple concept but requires lots of repetition to become fluent",
-      label: "Low LR + Low Difficulty",
-      codeExample: `# Variable assignment - easy to understand, needs practice for fluency
-name = "Alice"
-age = 25
-is_student = True
-counter = counter + 1  # increment
-greeting = f"Hello {name}"`,
-    },
-    {
       id: "regex-patterns",
       name: "REGEX PATTERNS",
       shortName: "Regex Patterns",
@@ -329,15 +309,15 @@ date_pattern = r'(\d{1,2})/(\d{1,2})/(\d{4})'`,
       const newTry = currentTry1b + 1;
       setCurrentTry1b(newTry);
 
-      // Step 1b: String Formatting vs Variable Assignment (same difficulty, very different learning rate)
+      // Step 1b: String Formatting vs Decorators (same difficulty, very different learning rate)
       const stringFormatting = availableExamples.find(
         (e) => e.id === "string-formatting"
       );
-      const variableAssignment = {
-        ...availableExamples.find((e) => e.id === "variable-assignment"),
+      const decorators = {
+        ...availableExamples.find((e) => e.id === "decorators"),
         difficulty: 0.5, // Adjust to match string-formatting's difficulty for fair comparison
       };
-      const examples = [stringFormatting, variableAssignment];
+      const examples = [stringFormatting, decorators];
       const newData = generateDataForExamples(examples, newTry);
       setStep1bData(newData);
     }
@@ -776,8 +756,8 @@ date_pattern = r'(\d{1,2})/(\d{1,2})/(\d{4})'`,
               <p className="text-orange-900 text-sm font-bold mb-4">
                 Now watch how <strong>String Formatting</strong> (Same
                 Difficulty + High LR = 0.8) compares to{" "}
-                <strong>Variable Assignment</strong> (Same Difficulty + Very Low
-                LR = 0.1). Both have identical Skill Difficulty (β = 0.5), but
+                <strong>Decorators</strong> (Same Difficulty + Very Low LR =
+                0.15). Both have identical Skill Difficulty (β = 0.5), but
                 vastly different Learning Rates - creating a dramatic visual
                 difference!
               </p>
@@ -865,27 +845,24 @@ date_pattern = r'(\d{1,2})/(\d{1,2})/(\d{4})'`,
                       </div>
                       <div
                         className={`border-2 ${
-                          availableExamples.find(
-                            (e) => e.id === "variable-assignment"
-                          ).borderColor
+                          availableExamples.find((e) => e.id === "decorators")
+                            .borderColor
                         } ${
-                          availableExamples.find(
-                            (e) => e.id === "variable-assignment"
-                          ).bgColor
+                          availableExamples.find((e) => e.id === "decorators")
+                            .bgColor
                         } rounded-lg p-3`}
                       >
                         <div
                           className={`font-bold ${
-                            availableExamples.find(
-                              (e) => e.id === "variable-assignment"
-                            ).textColor
+                            availableExamples.find((e) => e.id === "decorators")
+                              .textColor
                           } text-xs mb-2`}
                         >
-                          Variable Assignment
+                          Decorators
                         </div>
                         <div className="text-xs space-y-1">
                           <div>β: 0.5 (Same)</div>
-                          <div>γ: 0.1 (Very Low LR)</div>
+                          <div>γ: 0.15 (Very Low LR)</div>
                         </div>
                       </div>
                     </div>
@@ -985,21 +962,21 @@ date_pattern = r'(\d{1,2})/(\d{1,2})/(\d{4})'`,
                           />
                           <Line
                             type="monotone"
-                            dataKey="variable-assignment"
+                            dataKey="decorators"
                             stroke={
                               availableExamples.find(
-                                (e) => e.id === "variable-assignment"
+                                (e) => e.id === "decorators"
                               ).color
                             }
                             strokeWidth={5}
                             dot={{
                               fill: availableExamples.find(
-                                (e) => e.id === "variable-assignment"
+                                (e) => e.id === "decorators"
                               ).color,
                               strokeWidth: 3,
                               r: 6,
                             }}
-                            name="Variable Assignment (γ=0.1)"
+                            name="Decorators (γ=0.15)"
                           />
                         </LineChart>
                       </ResponsiveContainer>
@@ -1016,9 +993,9 @@ date_pattern = r'(\d{1,2})/(\d{1,2})/(\d{4})'`,
                   <strong>learning speed (slope)</strong>: Learning Rate (γ)
                   determines how steep the curve is. String Formatting (γ = 0.8)
                   has a very steep slope showing rapid improvement, while
-                  Variable Assignment (γ = 0.1) has a very shallow slope showing
-                  very slow progress per practice attempt - despite starting at
-                  the same difficulty level!
+                  Decorators (γ = 0.15) has a very shallow slope showing very
+                  slow progress per practice attempt - despite starting at the
+                  same difficulty level!
                 </p>
               </div>
             </div>

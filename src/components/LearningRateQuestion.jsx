@@ -44,10 +44,11 @@ export const LearningRateQuestion = ({
           {/* Task A */}
           <button
             onClick={() => handleTaskChoice2("A")}
-            className={`border-4 border-black rounded-xl p-8 transition-all font-bold text-xl uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:-translate-y-1 ${taskChoice === "A"
+            disabled={showTaskResult2}
+            className={`border-4 border-black rounded-xl p-8 transition-all font-bold text-xl uppercase tracking-wider shadow-lg ${taskChoice === "A"
               ? "bg-green-500 text-white border-green-700"
               : "bg-white text-black hover:bg-purple-50"
-              }`}
+              } ${showTaskResult2 ? "opacity-50 cursor-not-allowed" : "hover:shadow-xl transform hover:-translate-y-1"}`}
           >
             <div className="flex items-center justify-center gap-3 mb-4">
               <Code className="w-8 h-8" />
@@ -69,10 +70,11 @@ export const LearningRateQuestion = ({
           {/* Task B */}
           <button
             onClick={() => handleTaskChoice2("B")}
-            className={`border-4 border-black rounded-xl p-8 transition-all font-bold text-xl uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:-translate-y-1 ${taskChoice === "B"
+            disabled={showTaskResult2}
+            className={`border-4 border-black rounded-xl p-8 transition-all font-bold text-xl uppercase tracking-wider shadow-lg ${taskChoice === "B"
               ? "bg-red-500 text-white border-red-700"
               : "bg-white text-black hover:bg-purple-50"
-              }`}
+              } ${showTaskResult2 ? "opacity-50 cursor-not-allowed" : "hover:shadow-xl transform hover:-translate-y-1"}`}
           >
             <div className="flex items-center justify-center gap-3 mb-4">
               <RotateCcw className="w-8 h-8" />
@@ -115,7 +117,12 @@ export const LearningRateQuestion = ({
             </div>
             <button
               onClick={handleShowExplanation}
-              className="px-6 py-3 bg-black text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide hover:bg-white hover:text-black transition-all transform hover:scale-105"
+              disabled={showExplanation}
+              className={`px-6 py-3 bg-black text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all transform ${
+                showExplanation
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-white hover:text-black hover:scale-105"
+              }`}
             >
               Tell me!
             </button>

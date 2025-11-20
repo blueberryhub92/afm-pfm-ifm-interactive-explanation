@@ -62,6 +62,7 @@ export const LearningOpportunityChoices = ({ navigate, onChoiceClick }) => {
             <button
               key={choice}
               onClick={() => handleOpportunityChoice(choice)}
+              disabled={showOpportunityResult}
               className={`
                 w-full py-4 px-8 border-4 rounded-xl font-bold uppercase text-lg transition-all shadow-lg flex items-center justify-center gap-3
                 ${
@@ -69,6 +70,7 @@ export const LearningOpportunityChoices = ({ navigate, onChoiceClick }) => {
                     ? `${data.bgColor} text-white border-black`
                     : `bg-white text-black border-black hover:text-gray-700 hover:border-gray-700`
                 }
+                ${showOpportunityResult ? "opacity-50 cursor-not-allowed" : ""}
               `}
             >
               {data.icon}
@@ -79,8 +81,14 @@ export const LearningOpportunityChoices = ({ navigate, onChoiceClick }) => {
 
         {/* Result Section */}
         {showOpportunityResult && (
-          <div className="border-l-8 border-green-600 bg-gradient-to-r from-green-50 to-green-100 rounded-xl p-6 shadow-lg animate-fadeIn">
-            <div className="flex items-center gap-2 mb-4 font-bold text-xl text-green-800">
+          <div className={`border-l-8 rounded-xl p-6 shadow-lg animate-fadeIn ${
+            opportunityChoice === "Increased"
+              ? "border-green-600 bg-gradient-to-r from-green-50 to-green-100"
+              : "border-red-600 bg-gradient-to-r from-red-50 to-red-100"
+          }`}>
+            <div className={`flex items-center gap-2 mb-4 font-bold text-xl ${
+              opportunityChoice === "Increased" ? "text-green-800" : "text-red-800"
+            }`}>
               <Lightbulb className="w-6 h-6" />
               Your practice opportunities increased!
             </div>

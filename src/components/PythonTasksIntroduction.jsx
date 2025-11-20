@@ -157,8 +157,8 @@ print(total)
             code.includes("range( 1, 11 )") ||
             code.includes("range( 1,11 )"));
 
-        const hasSum =
-          code.includes("+=") || code.includes("total") || code.includes("sum");
+        // Check for actual addition operation
+        const hasSum = code.includes("+=") || /\w+\s*=\s*\w+\s*\+/.test(code); // matches patterns like "total = total +"
 
         const hasPrint = code.includes("print");
 
@@ -495,6 +495,7 @@ print(total)
                 value={taskAnswer}
                 onChange={handleCodeChange}
                 onKeyDown={handleKeyDown}
+                spellCheck="false"
                 className="w-full h-40 p-4 bg-black text-white font-mono text-sm border-none resize-none focus:outline-none"
                 placeholder="# Write your Python code here..."
               />

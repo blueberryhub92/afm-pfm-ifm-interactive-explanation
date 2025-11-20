@@ -50,7 +50,8 @@ export const IFMConceptExplanation = ({ navigate }) => {
         <div className="space-y-6">
           <div className="border-l-8 border-purple-600 bg-purple-100 p-6 rounded-r-xl">
             <p className="text-black text-xl font-bold leading-relaxed">
-              Now let's explore the most sophisticated approach: the{" "}
+              There is a model that includes hints. Let's explore this approach:
+              the{" "}
               <span
                 ref={ifmRef}
                 className="cursor-help bg-purple-200 px-3 py-2 border-2 border-purple-600 rounded text-purple-800 font-bold hover:bg-purple-300 transition-all"

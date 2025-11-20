@@ -35,11 +35,12 @@ export const TaskDifficultyQuestion = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <button
               onClick={() => handleTaskChoice1("1")}
-              className={`border-4 border-black rounded-xl p-6 font-bold text-lg uppercase tracking-wide transition-all transform hover:scale-105 ${
+              disabled={showTaskResult1}
+              className={`border-4 border-black rounded-xl p-6 font-bold text-lg uppercase tracking-wide transition-all transform ${
                 taskChoice === "1"
                   ? "bg-black text-white shadow-lg"
                   : "bg-white text-black hover:bg-gray-100"
-              }`}
+              } ${showTaskResult1 ? "opacity-50 cursor-not-allowed" : "hover:scale-105"}`}
             >
               <div className="flex items-center justify-center gap-3 mb-2">
                 <Code className="w-6 h-6" />
@@ -52,11 +53,12 @@ export const TaskDifficultyQuestion = ({
 
             <button
               onClick={() => handleTaskChoice1("2")}
-              className={`border-4 border-black rounded-xl p-6 font-bold text-lg uppercase tracking-wide transition-all transform hover:scale-105 ${
+              disabled={showTaskResult1}
+              className={`border-4 border-black rounded-xl p-6 font-bold text-lg uppercase tracking-wide transition-all transform ${
                 taskChoice === "2"
                   ? "bg-black text-white shadow-lg"
                   : "bg-white text-black hover:bg-gray-100"
-              }`}
+              } ${showTaskResult1 ? "opacity-50 cursor-not-allowed" : "hover:scale-105"}`}
             >
               <div className="flex items-center justify-center gap-3 mb-2">
                 <Zap className="w-6 h-6" />
@@ -86,7 +88,12 @@ export const TaskDifficultyQuestion = ({
             </div>
             <button
               onClick={handleTellMe2}
-              className="px-6 py-3 bg-black text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide hover:bg-white hover:text-black transition-all transform hover:scale-105"
+              disabled={showTellMe2}
+              className={`px-6 py-3 bg-black text-white border-4 border-black rounded-xl font-bold uppercase tracking-wide transition-all transform ${
+                showTellMe2
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-white hover:text-black hover:scale-105"
+              }`}
             >
               Tell me!
             </button>

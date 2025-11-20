@@ -2703,7 +2703,7 @@ print(result)`,
                         Next Problem →
                       </button>
                     ) : (
-                      <div className="space-x-4">
+                      <div className="space-y-4 flex flex-col items-center">
                         <button
                           onClick={resetSimulation}
                           className="px-8 py-4 bg-gray-600 text-white border-4 border-black rounded-xl font-bold text-lg uppercase tracking-wide hover:bg-white hover:text-gray-600 transition-all transform hover:scale-105"
@@ -2868,7 +2868,6 @@ print(result)`,
                     <li>• Updates irrelevant skills if not mapped correctly</li>
                     <li>• Misleading predictions</li>
                     <li>• Wrong intervention recommendations</li>
-                    <li>• Systematic assessment bias</li>
                   </ul>
                 </div>
               </div>
