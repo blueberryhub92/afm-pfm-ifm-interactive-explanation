@@ -2086,7 +2086,7 @@ numbers = [10, 20, 30, 40, 50]
                   KC: {taskComparison.easyTask.skills[0]}
                 </div>
                 <div className="text-base text-gray-700 font-bold mb-2">
-                  Erfolgswahrscheinlichkeit:
+                  Probability of Success:
                 </div>
                 <div className="text-3xl font-bold text-yellow-600 mb-2">
                   {(taskComparison.easyTask.afmPrediction * 100).toFixed(0)}%
