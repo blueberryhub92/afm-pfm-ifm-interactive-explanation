@@ -40,8 +40,6 @@ import { IFMTasksIntroduction } from "./components/IFMTasksIntroduction";
 
 // Other Components
 import { WelcomePage } from "./components/WelcomePage";
-import { ConsentDialog } from "./components/ConsentDialog";
-import { QuestionnaireNotification } from "./components/QuestionnaireNotification";
 import { ModelComparison } from "./components/ModelComparison";
 import { CompletionSlide } from "./components/CompletionSlide";
 import { AFMFormulaTooltip } from "./components/shared/AFMFormulaTooltip";
@@ -199,19 +197,11 @@ function AFMLearningAppContent() {
   const [opportunityChoiceClicked, setOpportunityChoiceClicked] =
     useState(false);
   const [isNavExpanded, setIsNavExpanded] = useState(false);
-  const [consentGiven, setConsentGiven] = useState(false);
-  const [showConsentDialog, setShowConsentDialog] = useState(false);
 
-  // Check consent status and sync events on app load
+  // Sync events on app load
   useEffect(() => {
-    const consentStatus = localStorage.getItem("study_consent_given");
-    if (consentStatus === "true") {
-      setConsentGiven(true);
-      syncEvents();
-      console.log("Anonymous User ID:", getUserId());
-    } else {
-      setShowConsentDialog(true);
-    }
+    syncEvents();
+    console.log("Anonymous User ID:", getUserId());
 
     // Initialize browser history state if not already set
     if (!window.history.state || window.history.state.slide !== currentSlide) {
@@ -225,29 +215,9 @@ function AFMLearningAppContent() {
 
   // Track slide changes
   useEffect(() => {
-    if (consentGiven) {
-      const slideName = SLIDE_TITLES[currentSlide] || `Slide ${currentSlide}`;
-      trackSlideChange(currentSlide, slideName);
-    }
-  }, [currentSlide, consentGiven]);
-
-  // Handle consent given
-  const handleConsentGiven = () => {
-    setConsentGiven(true);
-    setShowConsentDialog(false);
-    syncEvents();
-    console.log("Anonymous User ID:", getUserId());
-  };
-
-  // Handle consent declined
-  const handleConsentDeclined = () => {
-    setShowConsentDialog(false);
-    // Don't track anything if consent is declined
-    // You might want to show a message or redirect instead
-    alert(
-      "Ohne Einverständnis zur Studienteilnahme kann die Anwendung nicht verwendet werden."
-    );
-  };
+    const slideName = SLIDE_TITLES[currentSlide] || `Slide ${currentSlide}`;
+    trackSlideChange(currentSlide, slideName);
+  }, [currentSlide]);
 
   const handleNavigation = (targetSlide, updateHistory = true) => {
     if (targetSlide >= 0 && targetSlide < SLIDE_TITLES.length) {
@@ -271,14 +241,12 @@ function AFMLearningAppContent() {
       setIsNavExpanded(false);
 
       // Track navigation
-      if (consentGiven) {
-        trackButtonClick("navigation_menu", {
-          from: previousSlide,
-          to: targetSlide,
-          method: "navigation_click",
-          slideName: SLIDE_TITLES[targetSlide] || `Slide ${targetSlide}`,
-        });
-      }
+      trackButtonClick("navigation_menu", {
+        from: previousSlide,
+        to: targetSlide,
+        method: "navigation_click",
+        slideName: SLIDE_TITLES[targetSlide] || `Slide ${targetSlide}`,
+      });
     }
   };
 
@@ -289,25 +257,21 @@ function AFMLearningAppContent() {
         if (event.key === "ArrowLeft") {
           event.preventDefault();
           if (currentSlide > 0) {
-            if (consentGiven) {
-              trackButtonClick("keyboard_navigation", {
-                key: "ArrowLeft",
-                from: currentSlide,
-                to: currentSlide - 1,
-              });
-            }
+            trackButtonClick("keyboard_navigation", {
+              key: "ArrowLeft",
+              from: currentSlide,
+              to: currentSlide - 1,
+            });
             handleNavigation(currentSlide - 1);
           }
         } else if (event.key === "ArrowRight") {
           event.preventDefault();
           if (currentSlide < maxVisitedSlide) {
-            if (consentGiven) {
-              trackButtonClick("keyboard_navigation", {
-                key: "ArrowRight",
-                from: currentSlide,
-                to: currentSlide + 1,
-              });
-            }
+            trackButtonClick("keyboard_navigation", {
+              key: "ArrowRight",
+              from: currentSlide,
+              to: currentSlide + 1,
+            });
             handleNavigation(currentSlide + 1);
           }
         }
@@ -325,12 +289,10 @@ function AFMLearningAppContent() {
           document.activeElement?.tagName !== "INPUT" &&
           document.activeElement?.tagName !== "TEXTAREA"
         ) {
-          if (consentGiven) {
-            trackButtonClick("navigation_toggle", {
-              key: "n",
-              expanded: !isNavExpanded,
-            });
-          }
+          trackButtonClick("navigation_toggle", {
+            key: "n",
+            expanded: !isNavExpanded,
+          });
           setIsNavExpanded(!isNavExpanded);
         }
       }
@@ -338,7 +300,7 @@ function AFMLearningAppContent() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentSlide, maxVisitedSlide, isNavExpanded, consentGiven]);
+  }, [currentSlide, maxVisitedSlide, isNavExpanded]);
 
   // Browser history navigation (back/forward buttons)
   useEffect(() => {
@@ -353,13 +315,11 @@ function AFMLearningAppContent() {
           : 0;
 
       if (targetSlide !== currentSlide) {
-        if (consentGiven) {
-          trackButtonClick("browser_navigation", {
-            button: "browser_back_forward",
-            from: currentSlide,
-            to: targetSlide,
-          });
-        }
+        trackButtonClick("browser_navigation", {
+          button: "browser_back_forward",
+          from: currentSlide,
+          to: targetSlide,
+        });
         // Don't update history since this IS a history navigation
         handleNavigation(targetSlide, false);
       }
@@ -367,7 +327,7 @@ function AFMLearningAppContent() {
 
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
-  }, [currentSlide, consentGiven]);
+  }, [currentSlide]);
 
   const renderSlide = (Component, props, slideNumber, slideName) => (
     <SlideTracker
@@ -609,14 +569,6 @@ function AFMLearningAppContent() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
-      {/* Consent Dialog */}
-      {showConsentDialog && (
-        <ConsentDialog
-          onConsent={handleConsentGiven}
-          onDecline={handleConsentDeclined}
-        />
-      )}
-
       {/* Navigation Bar */}
       <NavigationBar
         currentSlide={currentSlide}
@@ -637,9 +589,6 @@ function AFMLearningAppContent() {
           userSkillLevel={userSkillLevel}
         />
       )}
-
-      {/* Questionnaire Notification - visible on all slides except LearningRateExplanation */}
-      {currentSlide !== 13 && <QuestionnaireNotification />}
     </div>
   );
 }
